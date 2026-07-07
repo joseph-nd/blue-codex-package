@@ -1,0 +1,76 @@
+{
+	"name": "Flame Targe",
+	"type": "spell",
+	"img": "icons/magic/fire/barrier-shield-explosion-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flame-targe",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target Defends",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "Until the end of the target's next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 1 Action · Range 8 · Reaction: When a target Defends.</strong></p><p>Until the end of their next turn, melee attackers that hit them take KEY damage, ignoring armor, and gain Smoldering. If you target yourself, this costs 0 Actions.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +KEY damage. If 7+ mana is spent, Smoldering enemies take double damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "fire",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8si6FWY6ds419jVK",
+	"folder": "a3a2c0924188d5ae"
+}

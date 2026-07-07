@@ -1,0 +1,102 @@
+{
+	"name": "To Sand!",
+	"type": "spell",
+	"img": "icons/magic/earth/projectile-boulder-dust.webp",
+	"system": {
+		"macro": "",
+		"identifier": "to-sand",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Slowed Terrain for 24 hours or until dispelled",
+				"quantity": 1,
+				"type": "special"
+			},
+			"effects": [
+				{
+					"id": "toSandSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "toSandCondition1",
+								"type": "condition",
+								"condition": "restrained",
+								"parentContext": "failedSave",
+								"parentNode": "toSandSave1"
+							},
+							{
+								"id": "toSandCondition2",
+								"type": "condition",
+								"condition": "prone",
+								"parentContext": "failedSave",
+								"parentNode": "toSandSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 4,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Cone 4.</strong></p><p>On a failed DEX save, targets are Restrained and knocked Prone. The area becomes Slowed Terrain for 24 hours or until dispelled. Creatures that enter a space or start or end their turn in the area must succeed on a DEX save or be Restrained.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Cone +1. If 9 mana is spent, targets still Restrained after 1 minute are Petrified until dispelled or cured.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "earth",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "TYyPhp0jpUJKGjlM",
+	"folder": "2b4387e8cf1235eb"
+}

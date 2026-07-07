@@ -1,0 +1,25 @@
+{
+	"name": "blue-codex-package",
+	"version": "0.1.0",
+	"description": "Foundry VTT module that adds Blue's Codex content to the Nimble system.",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"build": "node ./build/buildCompendia.mjs",
+		"build:compendia": "node ./build/buildCompendia.mjs",
+		"release": "node ./build/release.mjs",
+		"clean": "rm -rf packs/blue-codex-* dist"
+	},
+	"engines": {
+		"node": ">=22.1.0",
+		"pnpm": ">=10.0.0"
+	},
+	"packageManager": "pnpm@10.11.0",
+	"devDependencies": {
+		"classic-level": "^1.4.1",
+		"glob": "^11.0.3"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": ["classic-level"]
+	}
+}

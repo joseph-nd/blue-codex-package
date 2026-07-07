@@ -1,0 +1,71 @@
+{
+	"name": "Fire Magick",
+	"type": "spell",
+	"img": "icons/magic/fire/flame-burning-hand-orange.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fire-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Range 8.</strong></p><p>Describe your Small or Tiny effect to your GM or pick one from the list below:</p><ul><li>Burn away dirt &amp; stains.</li><li>Conjure a flame that can deal 1 damage when touched.</li><li>Warm an object.</li><li>Control a flame, moving, reshaping, or extinguishing it.</li><li>Sap heat away from an object.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "fire",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "fLoZVrPgOYoTGHjE",
+	"folder": "a3a2c0924188d5ae"
+}

@@ -1,0 +1,71 @@
+{
+	"name": "Earth Magick",
+	"type": "spell",
+	"img": "icons/magic/earth/strike-fist-stone.webp",
+	"system": {
+		"macro": "",
+		"identifier": "earth-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Range 8.</strong></p><p>Describe your Small or Tiny effect to the GM, or choose one from the list below:</p><ul><li>Manipulate earth by moving it or changing its shape.</li><li>Conjure a figure made of stone.</li><li>Crack a section of stone.</li><li>Soil an object with dirt or muck.</li><li>Traverse loose, unstable, or soft earth without sinking or slipping.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "earth",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NdxBJgv6ai2TJg9S",
+	"folder": "2b4387e8cf1235eb"
+}

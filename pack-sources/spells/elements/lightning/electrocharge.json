@@ -1,0 +1,75 @@
+{
+	"name": "Electrocharge",
+	"type": "spell",
+	"img": "icons/magic/lightning/fist-unarmed-strike-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "electrocharge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Reach 1 · Concentration: Up to 1 minute.</strong></p><p>Target gains +1 max Actions, +5 Armor, +6 speed, and advantage on DEX saves; lose Charged. If you lose Charged, target also has advantage on INT saves.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 Armor or +6 speed. If 9 mana is spent, can target 3 creatures.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 1
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "lightning",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "T6aWfsxNYV0pgXDF",
+	"folder": "c7b9155e9a62d07c"
+}

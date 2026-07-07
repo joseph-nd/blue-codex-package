@@ -1,0 +1,76 @@
+{
+	"name": "The Prestige",
+	"type": "spell",
+	"img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "the-prestige",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target would Defend",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "KEY rounds or until the target attacks or casts a spell",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Range 6 · Reaction: When a target would Defend.</strong></p><p>The triggering attack has disadvantage as the target becomes Invisible for KEY rounds or until they attack or cast a spell. If cast on yourself, cost 0 Actions.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 round. If 6+ mana is spent, when Invisible ends, adjacent enemies are Confused.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "illusion",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "6EkFn2HGhj5UFKWT",
+	"folder": "82080e05e73f615a"
+}

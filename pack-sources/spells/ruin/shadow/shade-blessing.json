@@ -1,0 +1,69 @@
+{
+	"name": "Shade Blessing",
+	"type": "spell",
+	"img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "shade-blessing",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until the start of your next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Reach 2.</strong></p><p>The next attack against the target before the start of your next turn misses on a 1 or 2.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> Reach +1 every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "shadow",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "2wPVUVnk0PrMwQ3b",
+	"folder": "6e1b6998275cef34"
+}

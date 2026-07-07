@@ -1,0 +1,74 @@
+{
+	"name": "Foresight",
+	"type": "spell",
+	"img": "icons/magic/perception/eye-ringed-glow-angry-large-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "foresight",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "24 hours",
+				"quantity": 24,
+				"type": "hour"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 3 Actions · Reach 6.</strong></p><p>For the next 24 hours, the target has two instances of advantage on all attacks, saves, skill checks or other rolls. Additionally, all targets have disadvantage on attacks against your target, contested rolls, and saves vs the target's abilities. Once a target gains the benefits of this spell, it can't affect them for 1 week.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "divination",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VBPak2zRmZyHheCz",
+	"folder": "0b3900e492507a48"
+}

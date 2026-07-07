@@ -1,0 +1,105 @@
+{
+	"name": "Cryosleep",
+	"type": "spell",
+	"img": "icons/magic/control/sleep-bubble-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "cryosleep",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "cryosleepSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "cryosleepCondition1",
+								"type": "condition",
+								"condition": "prone",
+								"parentContext": "failedSave",
+								"parentNode": "cryosleepSave1"
+							},
+							{
+								"id": "cryosleepNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "They fall Asleep, 1 turn.",
+								"parentContext": "failedSave",
+								"parentNode": "cryosleepSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Range 12 · Blast 2.</strong></p><p>Targets are Slowed, 1 round. On a failed STR save, they fall Prone and Asleep, 1 turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Blast +1 or +1 Asleep turn. If 7+ mana is spent, targets are Dazed, 1 turn, when Asleep ends.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "ice",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "SVR9jwHeBz9YNRSx",
+	"folder": "4164b206edbd6957"
+}

@@ -1,0 +1,123 @@
+{
+	"name": "Enfeebling Blood",
+	"type": "spell",
+	"img": "icons/magic/death/blood-corruption-vomit-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "enfeebling-blood",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "enfeeblingBloodDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "4d6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "enfeeblingBloodSave1",
+								"type": "savingThrow",
+								"savingThrowType": "strength",
+								"saveType": "strength",
+								"parentContext": "hit",
+								"parentNode": "enfeeblingBloodDamage1",
+								"on": {
+									"failedSave": [
+										{
+											"id": "enfeeblingBloodCondition1",
+											"type": "condition",
+											"condition": "poisoned",
+											"parentContext": "failedSave",
+											"parentNode": "enfeeblingBloodSave1"
+										},
+										{
+											"id": "enfeeblingBloodCondition2",
+											"type": "condition",
+											"condition": "slowed",
+											"parentContext": "failedSave",
+											"parentNode": "enfeeblingBloodSave1"
+										}
+									]
+								},
+								"sharedRolls": []
+							},
+							{
+								"id": "enfeeblingBloodHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "enfeeblingBloodDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Reach 6 · Blast 3.</strong></p><p><strong>Damage:</strong> 4d6. Targets in the area must make a STR save. On a fail, they are Poisoned and Slowed, 1 minute.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 damage or Blast +1. If 8+ mana is spent, you regain KEY HP whenever Poisoned from this spell ends (once per target).</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "blood",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vNGcboS1D56BYN6E",
+	"folder": "b204e0adbaba7f55"
+}

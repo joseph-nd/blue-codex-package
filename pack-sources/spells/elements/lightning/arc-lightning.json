@@ -1,0 +1,107 @@
+{
+	"name": "Arc Lightning",
+	"type": "spell",
+	"img": "icons/magic/lightning/bolt-forked-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "arc-lightning",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "arcLightningDamage1",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "3d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "arcLightningHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "arcLightningDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 2,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 2 Actions · Range 12.</strong></p><p><strong>Damage:</strong> 3d8, lose Charged. If you lost Charged: deal equal damage to a second target in Range 8 from the first.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage. If 5+ mana is spent, if you lost Charged: deal equal damage in Arc 8 originating from the first target.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "lightning",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 6,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "arcLightningDamage1",
+					"durationType": null
+				}
+			],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bh8S6YGaYoaCVPZi",
+	"folder": "c7b9155e9a62d07c"
+}

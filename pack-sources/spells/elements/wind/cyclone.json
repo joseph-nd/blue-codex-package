@@ -1,0 +1,96 @@
+{
+	"name": "Cyclone",
+	"type": "spell",
+	"img": "icons/magic/air/wind-tornado-cyclone-white.webp",
+	"system": {
+		"macro": "",
+		"identifier": "cyclone",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "cycloneDamage1",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "4d4 + 12",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "cycloneHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "cycloneDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Burst 3.</strong></p><p><strong>Damage:</strong> 4d4+12. On a failed STR save, Medium or smaller targets are pushed out of the area. If you are Charged, targets have disadvantage on their save.</p><p><em>What is Placed? Placing a target means they aren't subjected to rules involving forced movement or terrain.</em></p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +4 damage, Burst +1, affected size +1 (max Huge). If 8+ mana is spent, targets of your choice take no damage and can be placed anywhere in the area (including yourself).</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 3
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "wind",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "m0zsr7tWHXnUylkO",
+	"folder": "40c5420206f0ca7a"
+}

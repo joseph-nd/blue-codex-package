@@ -1,0 +1,97 @@
+{
+	"name": "Seething Storm",
+	"type": "spell",
+	"img": "icons/magic/lightning/bolts-salvo-clouds-sky.webp",
+	"system": {
+		"macro": "",
+		"identifier": "seething-storm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "seethingStormDamage1",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "4d8 + 24",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "seethingStormHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "seethingStormDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 3,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 2 Actions · Reach 12 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d8+24 to 3 different targets in Reach. Spend 2 Actions to repeat this effect. You can fly and Ranged attacks against you are made with disadvantage. Each following turn while concentrating, this spell gains +2 Reach and can target 2 more targets. Once you cast this spell, you must Safe Rest for 1 week before you can use it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 12
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "lightning",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NiFjQ7CVEIaaiqLG",
+	"folder": "c7b9155e9a62d07c"
+}

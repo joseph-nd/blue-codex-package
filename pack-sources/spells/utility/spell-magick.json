@@ -1,0 +1,69 @@
+{
+	"name": "Spell Magick",
+	"type": "spell",
+	"img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
+	"system": {
+		"macro": "",
+		"identifier": "spell-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Range: Varies.</strong></p><p>Produce a Tiny or Small minor magical effect from a school you know. Describe your improvised effect to the GM or choose a predefined effect provided in each school. The longer the effect, the more Actions it costs.</p><p><strong>Guidelines.</strong> Spell Magick effects should be utilitarian and never powerful enough to overshadow another hero's skills or replace a tiered spell. Improvised effects cannot be used during combat, only predefined effects or effects that have already been established during play. Players should write down improvised effects for future use (as defined effects now), noting the cast time and effects. A player can have up to KEY player created predefined effects.</p><p><strong>Durations.</strong> A Spell Magick effect lasts as long as it takes to cast. 3 Actions is a full turn, 6 Actions is 2 turns, etc. Any effect can last indefinitely while you Concentrate on it.</p><p><strong>Rituals.</strong> Cast times beyond 8 hours become rituals. Spend 10 - KEY hours casting per day. You may rest, eat, and travel between sessions. Miss a day or perform a strenuous activity and the ritual must be restarted. Intent matters. If your effect is intended to last 1 year, your daily mana cost will reflect that.</p><table><thead><tr><th>Cast Time</th><th>Duration/Intent</th><th>Daily Mana Cost</th></tr></thead><tbody><tr><td>1 day</td><td>1 week</td><td>0</td></tr><tr><td>1 week</td><td>1 month</td><td>1</td></tr><tr><td>1 month</td><td>1 year</td><td>2</td></tr><tr><td>1 year</td><td>permanent until dispelled</td><td>3</td></tr></tbody></table><p><strong>Mana.</strong> You can spend mana up to your unlocked tier on Spell Magick to do the following per mana spent:</p><ul><li>Double Range/Reach.</li><li>Increase effect size by one step.</li></ul><p><strong>Restrictions.</strong> Spell Magick should never:</p><ul><li>Deal meaningful damage, restore HP or grant temp HP.</li><li>Apply or remove conditions or grant damage reduction.</li><li>Summon combat creatures or allies.</li><li>Replicate a tiered spell effect.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RO1r2Tlp72cswXco",
+	"folder": "1e0fe8d55072b297"
+}

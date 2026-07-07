@@ -1,0 +1,76 @@
+{
+	"name": "Wind Barrier",
+	"type": "spell",
+	"img": "icons/magic/air/air-pressure-shield-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "wind-barrier",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target Defends",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "Until the start of the target's next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Range 12 · Reaction: When a target Defends.</strong></p><p>Until the start of the target's next turn, Ranged attacks against them have disadvantage (including the triggering attack). If you target yourself, costs 0 Actions.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +3 Armor or +1 round duration. If 6+ mana is spent, target can fly as fast as they can walk for the duration.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "wind",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "CNJgCSahi89bfI6a",
+	"folder": "40c5420206f0ca7a"
+}

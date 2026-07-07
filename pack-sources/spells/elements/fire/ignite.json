@@ -1,0 +1,107 @@
+{
+	"name": "Ignite",
+	"type": "spell",
+	"img": "icons/magic/fire/explosion-fireball-large-orange.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ignite",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "igniteDamage1",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "2d10",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "igniteHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "igniteDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 2 Actions · Range 8.</strong></p><p><strong>Damage:</strong> 2d10. Removes Smoldering. If Smoldering is removed, ignores armor and deals double damage.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 damage. If 5+ mana is spent, adjacent targets take equal damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "fire",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 5,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "igniteDamage1",
+					"durationType": null
+				}
+			],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "A47aeSOT6CcsHw39",
+	"folder": "a3a2c0924188d5ae"
+}

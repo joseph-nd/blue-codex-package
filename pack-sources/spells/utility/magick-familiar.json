@@ -1,0 +1,72 @@
+{
+	"name": "Magick Familiar",
+	"type": "spell",
+	"img": "icons/magic/light/orbs-firefly-hand-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "magick-familiar",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to KEY hours",
+				"quantity": 1,
+				"type": "hour"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 2
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 1 Minute · Range 2.</strong></p><p>Conjure a Tiny creature for up to KEY hours. It follows directions to the best of its ability when given a command (1 Action) and can telepathically communicate with you. If it takes damage or moves further than 6 spaces away from you, it dissipates. You can have 1 Magick Familiar at a time.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 2
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell",
+				"range"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RK4afnuYmehygWZM",
+	"folder": "1e0fe8d55072b297"
+}

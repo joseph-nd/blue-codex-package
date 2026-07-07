@@ -1,0 +1,85 @@
+{
+	"name": "Reversal of Fortune",
+	"type": "spell",
+	"img": "icons/magic/control/buff-luck-fortune-gold.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reversal-of-fortune",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until the end of the target's next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [
+				{
+					"id": "reversalOfFortuneHealing1",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "4*@key",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Range 6.</strong></p><p>Target gains 4×KEY temp HP until the end of its next turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 multiplier. If 5+ mana is spent, <strong>Restore:</strong> HP equal to any temp HP lost from damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "protection",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "6eZpHRm92VBIEP9z",
+	"folder": "d09b5bab8be23cef"
+}

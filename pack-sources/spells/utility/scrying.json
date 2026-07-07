@@ -1,0 +1,69 @@
+{
+	"name": "Scrying",
+	"type": "spell",
+	"img": "icons/magic/perception/orb-crystal-ball-scrying-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "scrying",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 10,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 10 minutes",
+				"quantity": 10,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 10 Minutes.</strong></p><p>Turn a reflective surface into a viewing portal. Looking through it grants you vision of one desired location within KEYx10 miles for up to 10 minutes. Not all places can be viewed freely and could be warded.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "R9rUIs0MgM1xXCl9",
+	"folder": "1e0fe8d55072b297"
+}

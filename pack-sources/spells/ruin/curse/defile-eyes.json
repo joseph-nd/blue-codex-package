@@ -1,0 +1,84 @@
+{
+	"name": "Defile Eyes",
+	"type": "spell",
+	"img": "icons/magic/perception/eye-tendrils-web-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "defile-eyes",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target attacks",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "1 turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [
+				{
+					"id": "defileEyesCondition1",
+					"type": "condition",
+					"condition": "blinded",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Range 6 · Reaction: When a target attacks.</strong></p><p>Inflict Blinded, 1 turn, before the attack resolves. If they hit, they deal KEY less damage.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 less damage. If 6+ mana is spent, target is Blinded until it can pass a STR save on its turn.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "curse",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "R2wPAWIbn1irA1Rp",
+	"folder": "163d9851e8e1e735"
+}

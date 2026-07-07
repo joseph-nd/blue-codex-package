@@ -1,0 +1,97 @@
+{
+	"name": "Watery Sphere",
+	"type": "spell",
+	"img": "icons/magic/water/orb-water-bubbles-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "watery-sphere",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "waterySphereDamage1",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "4d10",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "waterySphereHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "waterySphereDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "A Large or smaller target"
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Reach 4 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d10. A Large or smaller target is Restrained in a bubble of water. At the start of the Restrained target's turns, it takes 6 damage as they drown. The affected target or its adjacent allies can use an Action to make a STR save, ending the effect on a success.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 Restrained damage or +1 minute duration. If 9 mana is spent, gains Burst: 3, can still crit or miss.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "water",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ZOoz8VIgTfojdHIe",
+	"folder": "7fbc61e1819c8de8"
+}

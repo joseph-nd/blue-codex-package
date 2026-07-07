@@ -1,0 +1,7 @@
+node_modules/
+packs/blue-codex-*/
+dist/
+docs/
+.idea/
+*.log
+.DS_Store

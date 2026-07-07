@@ -1,0 +1,107 @@
+{
+	"name": "Ride the Lightning",
+	"type": "spell",
+	"img": "icons/magic/lightning/bolt-strike-streak-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ride-the-lightning",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "rideTheLightningSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "rideTheLightningNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "rideTheLightningSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "rideTheLightningDamage1",
+								"type": "damage",
+								"damageType": "lightning",
+								"formula": "4d8 + 24",
+								"parentContext": "failedSave",
+								"parentNode": "rideTheLightningSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 6 · 3 Actions · Range 12 · Burst 1.</strong></p><p>Gain Charged. Teleport to a spot in Range or swap places with a willing ally in Range, then <strong>Damage:</strong> 4d8+24 on a failed STR save, half damage on save. Targets that fail are pushed back 3 spaces, knocked Prone, and Deafened, 1 hour.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or Burst +1.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "lightning",
+		"tier": 6,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "KvX01lhQHRGsOaLX",
+	"folder": "c7b9155e9a62d07c"
+}

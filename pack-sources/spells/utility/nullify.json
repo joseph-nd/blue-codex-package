@@ -1,0 +1,95 @@
+{
+	"name": "Nullify",
+	"type": "spell",
+	"img": "icons/magic/control/debuff-energy-hold-blue-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "nullify",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "nullifySave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "nullifyNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Damage resistances suppressed; immunities reduced to resistances for the duration.",
+								"parentContext": "failedSave",
+								"parentNode": "nullifySave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 6 · Concentration: Up to 1 minute.</strong></p><p>Suppress a magical effect. If you target a creature, it must make a STR save. On a fail, its damage resistances are suppressed. If it has immunities, they are reduced to resistances for the duration.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell",
+				"range",
+				"concentration"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RnXKvgX9yAyPdZ2i",
+	"folder": "1e0fe8d55072b297"
+}

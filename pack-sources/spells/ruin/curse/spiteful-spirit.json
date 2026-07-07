@@ -1,0 +1,100 @@
+{
+	"name": "Spiteful Spirit",
+	"type": "spell",
+	"img": "icons/magic/death/undead-ghost-scream-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "spiteful-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "spitefulSpiritDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "3d8",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "spitefulSpiritHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "spitefulSpiritDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 3 Actions · Range 6 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 3d8 to the target when they roll a die. Adjacent enemies take half damage. Ignores armor. You can spend 2 Actions to change targets while you concentrate. Unwilling creatures can make a WIL save to suppress the effect for 1 round on success. Once you cast this spell, you must Safe Rest for 1 week before using it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "curse",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bwhXbtkCnCwGAjTy",
+	"folder": "163d9851e8e1e735"
+}

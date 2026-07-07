@@ -1,0 +1,107 @@
+{
+	"name": "Lightning Bolt",
+	"type": "spell",
+	"img": "icons/magic/lightning/bolt-beam-strike-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "lightning-bolt",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "lightningBoltSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "lightningBoltNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "lightningBoltSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "lightningBoltDamage1",
+								"type": "damage",
+								"damageType": "lightning",
+								"formula": "4d8 + 6",
+								"parentContext": "failedSave",
+								"parentNode": "lightningBoltSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 12,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Line 12.</strong></p><p><strong>Damage:</strong> 4d8+6 on a failed DEX save, half damage on save and lose Charged. If you lose Charged, targets automatically fail their save.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Line +2 or +6 damage. If 7+ mana is spent, ignores obstructions and armor. Targets that fail their save have their armor Sundered.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 12
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "lightning",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "IP0NI12diwBougZG",
+	"folder": "c7b9155e9a62d07c"
+}

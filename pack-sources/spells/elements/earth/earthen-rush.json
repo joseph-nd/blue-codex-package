@@ -1,0 +1,94 @@
+{
+	"name": "Earthen Rush",
+	"type": "spell",
+	"img": "icons/magic/earth/projectile-stone-landslide.webp",
+	"system": {
+		"macro": "",
+		"identifier": "earthen-rush",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Move: Up to Arc 6",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "earthenRushDamage1",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "2d6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "earthenRushHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "earthenRushDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 6,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Move: Up to Arc 6.</strong></p><p><strong>Damage:</strong> 2d6. Ignores creatures' spaces and Slowed Terrain. Must end in an empty space. Large and smaller targets adjacent to the area are pushed 1 space away from you as you move past.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 damage or Arc +2. If 5+ mana is spent, the area becomes Slowed Terrain for 1 minute.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": []
+		},
+		"school": "earth",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "cXerVq3XaJXri7VZ",
+	"folder": "2b4387e8cf1235eb"
+}

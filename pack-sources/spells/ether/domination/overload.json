@@ -1,0 +1,129 @@
+{
+	"name": "Overload",
+	"type": "spell",
+	"img": "icons/magic/perception/third-eye-blue-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "overload",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target attacks or moves",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "overloadDamage1",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "2d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {}
+				},
+				{
+					"id": "overloadSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "will",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "overloadNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "No additional damage.",
+								"parentContext": "passedSave",
+								"parentNode": "overloadSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "overloadDamage2",
+								"type": "damage",
+								"damageType": "psychic",
+								"formula": "2d8",
+								"parentContext": "failedSave",
+								"parentNode": "overloadSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Reach 4 · Reaction: When a target attacks or moves.</strong></p><p>Target takes 2d8 damage. They must then make a WIL save. On a fail, they take the same damage again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage. If 6+ mana is spent, creatures of your choice adjacent to the target take equal damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "domination",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 6,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "overloadDamage1",
+					"durationType": null
+				}
+			],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "uyUYOqUzIhp05HTs",
+	"folder": "d9759520489fa79a"
+}

@@ -1,0 +1,96 @@
+{
+	"name": "Grasping Shadows",
+	"type": "spell",
+	"img": "icons/magic/unholy/hand-grasping-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "grasping-shadows",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target moves",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "graspingShadowsDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "3d12",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "graspingShadowsHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "graspingShadowsDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Reach 6 · Reaction: When a target moves.</strong></p><p><strong>Damage:</strong> 3d12. Can't miss. Medium or smaller targets are Restrained, 1 round or until they succeed on a save on their turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or +1 size (max Huge). If 5+ mana is spent, Restrained targets are Blinded.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "shadow",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "GOgNznWCcDs9IChe",
+	"folder": "6e1b6998275cef34"
+}

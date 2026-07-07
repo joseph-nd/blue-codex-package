@@ -1,0 +1,75 @@
+{
+	"name": "Null Field",
+	"type": "spell",
+	"img": "icons/magic/defensive/barrier-shield-dome-blue-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "null-field",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Reach 4 · Blast 3 · Concentration: Up to 1 minute.</strong></p><p>Any positive or negative conditions (not including Injured) or effects (temp HP, resistances, etc.) are suppressed while inside the area.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Reach +1 and Blast +1 or +1 minute duration. If 9 mana is spent, the area is also a field of anti-magic where spells can't be cast, summons disappear, and magic items become mundane. Magical effects that overlap the area are cancelled out.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "domination",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "k1pdzpFH8EkljX3U",
+	"folder": "d9759520489fa79a"
+}

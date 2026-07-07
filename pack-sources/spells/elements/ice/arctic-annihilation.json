@@ -1,0 +1,104 @@
+{
+	"name": "Arctic Annihilation",
+	"type": "spell",
+	"img": "icons/magic/water/projectiles-ice-explosion.webp",
+	"system": {
+		"macro": "",
+		"identifier": "arctic-annihilation",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "arcticAnnihilationDamage1",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "4d8 + 12",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "arcticAnnihilationHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "arcticAnnihilationDamage1"
+							},
+							{
+								"id": "arcticAnnihilationCondition1",
+								"type": "condition",
+								"condition": "slowed",
+								"parentContext": "hit",
+								"parentNode": "arcticAnnihilationDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 12,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 3 Actions · Burst 12 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d8+12 to enemies of your choice. If you roll a 7 or 8 on the Primary Die, targets are Stunned, 1 turn. Ignores Cover. On damage: inflicts Slowed, 1 turn. Spend 3 Actions to repeat this effect. On first cast, targets of your choice are Frozen and immune to all damage and negative effects until the start of their next turn. Once you cast this spell, you must Safe Rest for 1 week before using it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 12
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "ice",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "6ra68Bxe9VXaVPTe",
+	"folder": "4164b206edbd6957"
+}

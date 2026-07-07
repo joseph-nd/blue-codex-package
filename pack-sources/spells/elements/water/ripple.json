@@ -1,0 +1,67 @@
+{
+	"name": "Ripple",
+	"type": "spell",
+	"img": "icons/magic/water/water-drop-swirl-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ripple",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Move 4.</strong></p><p>Move 4 spaces. You can move through creature spaces without being Slowed but must end in an empty space. Gain KEY temp HP, 1 round.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> Move +1 every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": []
+		},
+		"school": "water",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "xuyWjmcsWQ6b5bfV",
+	"folder": "7fbc61e1819c8de8"
+}

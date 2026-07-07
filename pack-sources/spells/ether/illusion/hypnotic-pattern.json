@@ -1,0 +1,109 @@
+{
+	"name": "Hypnotic Pattern",
+	"type": "spell",
+	"img": "icons/magic/control/hypnosis-mesmerism-swirl.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hypnotic-pattern",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "hypnoticPatternSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "intelligence",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "hypnoticPatternDamage1",
+								"type": "damage",
+								"damageType": "psychic",
+								"formula": "7",
+								"parentContext": "passedSave",
+								"parentNode": "hypnoticPatternSave1",
+								"ignoreArmor": true,
+								"on": {}
+							}
+						],
+						"failedSave": [
+							{
+								"id": "hypnoticPatternNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target falls Asleep.",
+								"parentContext": "failedSave",
+								"parentNode": "hypnoticPatternSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 7 · 2 Actions · Range 6 · Blast 2 · Concentration: Up to 1 minute.</strong></p><p>Once per turn, creatures in the area on cast or that start or end their turns in the area must make an INT save or fall Asleep. On success, targets take tier damage, ignoring armor. Creatures that wake up or take damage from the spell are immune to the current pattern. Spend 2 Actions to move and reshape the pattern in Range.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Blast +2 or +1 minute duration.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "illusion",
+		"tier": 7,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "PR7lgQ5HxkVCnS23",
+	"folder": "82080e05e73f615a"
+}

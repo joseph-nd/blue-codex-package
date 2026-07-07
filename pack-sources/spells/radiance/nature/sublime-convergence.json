@@ -1,0 +1,75 @@
+{
+	"name": "Sublime Convergence",
+	"type": "spell",
+	"img": "icons/magic/nature/barrier-shield-wood-vines.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sublime-convergence",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 6,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 7 · 2 Actions · Range 8 · Wall 6 · Concentration: Up to 1 minute.</strong></p><p>Conjure an Ethereal wall. Enemy Ranged attacks that pass through instead restore HP to the target equal to the damage dealt. Restores a max 50 HP for the spell's duration.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +10 HP max.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "nature",
+		"tier": 7,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lH2cWXMRZGOFnkVt",
+	"folder": "2b6e96335c8f8aad"
+}

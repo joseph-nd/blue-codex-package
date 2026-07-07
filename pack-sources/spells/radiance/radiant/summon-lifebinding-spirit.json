@@ -1,0 +1,74 @@
+{
+	"name": "Summon Lifebinding Spirit",
+	"type": "spell",
+	"img": "icons/magic/light/orbs-firefly-hand-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "summon-lifebinding-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until you cast this spell again, take a Safe Rest, or its ability uses are expended",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Shepherd Only.</strong></p><p>Summon an Ethereal spirit companion that moves when you do and is immune to harm. It lasts until you cast this spell again, take a Safe Rest, or it uses an ability, not including Attack, a number of times equal to the mana spent summoning it. You can use 1 Action to command it to do one of the following:</p><ul><li><strong>Attack</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Damage:</strong> 1d6. Ignores armor. Damage type can be any from the schools you know.</li><li><strong>Cure</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Restore:</strong> 1d6+WIL HP.</li></ul><p><em><strong>Outside Combat.</strong> Your companion is a spirit, so it can pass through most obstacles. It can be up to 12 spaces away before teleporting back to you. Many places are aware of such spells and ward off such spirits.</em></p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 die step (max d12) and +1 ability use. If 5+ mana is spent, 1/turn, you can command the spirit for 0 Actions.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": []
+		},
+		"school": "radiant",
+		"tier": 1,
+		"classes": [
+			"shepherd"
+		],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EfjqVGarrBSsFoAF",
+	"folder": "8facd4aa105a2ab4"
+}

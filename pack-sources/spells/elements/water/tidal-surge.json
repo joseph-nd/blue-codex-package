@@ -1,0 +1,107 @@
+{
+	"name": "Tidal Surge",
+	"type": "spell",
+	"img": "icons/magic/water/wave-water-rolling-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tidal-surge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "tidalSurgeSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "tidalSurgeNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "tidalSurgeSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "tidalSurgeDamage1",
+								"type": "damage",
+								"damageType": "bludgeoning",
+								"formula": "3d10",
+								"parentContext": "failedSave",
+								"parentNode": "tidalSurgeSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 4,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Line 4.</strong></p><p><strong>Damage:</strong> 3d10 on a failed STR save, half damage on save. You can choose to ride the surge, ending in any empty space adjacent to the area. Slowed targets that fail are knocked Prone.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or Line +2. If 7+ mana is spent, allies are unaffected but <strong>Restore:</strong> HP equal to half the amount of damage they would have taken.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "water",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "LaTMQ8aRGvAa75io",
+	"folder": "7fbc61e1819c8de8"
+}

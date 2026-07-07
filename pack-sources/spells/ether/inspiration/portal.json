@@ -1,0 +1,76 @@
+{
+	"name": "Portal",
+	"type": "spell",
+	"img": "icons/magic/air/wind-vortex-swirl-blue-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "portal",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until the end of your next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Range 6 · Blast 1.</strong></p><p>Choose 2 areas in Range. Until the end of your next turn, creatures of your choice that enter one instantly appear on the other instead.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Range +2 or +1 turn duration. If 9 mana is spent, can be cast over 10 minutes. At the end of that time, you can place one area in Range and the second in a location you have been to before. These portals last 1 minute or until closed. Once you cast this spell this way, you must Safe Rest for 1 week before doing so again.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "inspiration",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NluKfmOB4g5rROWA",
+	"folder": "6eb4513e753d9c25"
+}

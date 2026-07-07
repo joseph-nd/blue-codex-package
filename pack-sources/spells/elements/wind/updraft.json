@@ -1,0 +1,98 @@
+{
+	"name": "Updraft",
+	"type": "spell",
+	"img": "icons/magic/air/wind-vortex-swirl-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "updraft",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "updraftDamage1",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "4d4",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "updraftHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "updraftDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Range 12 · Blast 2.</strong></p><p><strong>Damage:</strong> 4d4. On a failed DEX save, targets entirely in the area are pushed up 8 spaces in the air. Targets in the air are Restrained and land Prone at the start of their next turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Blast +1 or 2 spaces pushed. If 9 mana is spent, gains Concentration: Up to 1 minute. Targets that enter the area entirely or start or end their turn entirely in the area must repeat the save or be subject to the effect.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "wind",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DEMPotDSYhkZBNKZ",
+	"folder": "40c5420206f0ca7a"
+}

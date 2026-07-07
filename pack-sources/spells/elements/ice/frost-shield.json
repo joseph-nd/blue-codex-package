@@ -1,0 +1,76 @@
+{
+	"name": "Frost Shield",
+	"type": "spell",
+	"img": "icons/magic/water/barrier-ice-shield.webp",
+	"system": {
+		"macro": "",
+		"identifier": "frost-shield",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target Defends",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "Until the end of the target's next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Range 12 · Reaction: When a target Defends.</strong></p><p>Until the end of the target's next turn, they gain 2xKEY temp HP. If you target yourself, costs 0 Actions.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 multiplier. If 5+ mana is spent, attackers in Range 12 are Slowed, 1 turn.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "ice",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "s9gohPllrsZ1Q2yr",
+	"folder": "4164b206edbd6957"
+}

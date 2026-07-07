@@ -1,0 +1,71 @@
+{
+	"name": "Heart's Fire",
+	"type": "spell",
+	"img": "icons/magic/fire/flame-burning-yellow-orange.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hearts-fire",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until the start of your next turn",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 4.</strong></p><p>Target gains another Action until the start of your next turn. Spend 1 mana to cast this when it's not your turn.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> Range +2 every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 4
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "fire",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DoMXQugX8AIaUr5M",
+	"folder": "a3a2c0924188d5ae"
+}

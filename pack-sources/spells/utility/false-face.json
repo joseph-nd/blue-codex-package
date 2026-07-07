@@ -1,0 +1,74 @@
+{
+	"name": "False Face",
+	"type": "spell",
+	"img": "icons/magic/symbols/mask-metal-silver-white.webp",
+	"system": {
+		"macro": "",
+		"identifier": "false-face",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "KEYx2 minutes",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 1 Minute.</strong></p><p>You take on the facial appearance of a different creature you can describe for KEYx2 minutes. Creatures in Range 1 can make an INT save against your save DC to see through the effect.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 save DC.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "T4vZnovu2iQsjXKT",
+	"folder": "1e0fe8d55072b297"
+}

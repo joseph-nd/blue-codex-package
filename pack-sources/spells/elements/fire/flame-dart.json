@@ -1,0 +1,102 @@
+{
+	"name": "Flame Dart",
+	"type": "spell",
+	"img": "icons/magic/fire/projectile-bolt-zigzag-orange.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flame-dart",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "flameDartDamage1",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "1d10 + floor(@level / 5) * 7",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"criticalHit": [
+							{
+								"id": "flameDartCrit1",
+								"type": "condition",
+								"condition": "smoldering",
+								"parentContext": "criticalHit",
+								"parentNode": "flameDartDamage1"
+							}
+						],
+						"hit": [
+							{
+								"id": "flameDartHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "flameDartDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 8.</strong></p><p><strong>Damage:</strong> 1d10. On crit: inflict Smoldering.</p><p><em>Smoldering. This condition does nothing on its own, though some spells and abilities have additional effects against Smoldering creatures.</em></p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +7 damage every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "fire",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "AcR5lTgtwRvXTEIS",
+	"folder": "a3a2c0924188d5ae"
+}

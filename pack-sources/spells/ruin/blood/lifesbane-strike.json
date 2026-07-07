@@ -1,0 +1,106 @@
+{
+	"name": "Lifesbane Strike",
+	"type": "spell",
+	"img": "icons/magic/unholy/strike-beam-blood-red-gray.webp",
+	"system": {
+		"macro": "",
+		"identifier": "lifesbane-strike",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "lifesbaneStrikeDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "3d6",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "lifesbaneStrikeHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "lifesbaneStrikeDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Reach 6.</strong></p><p><strong>Damage:</strong> 3d6. You can sacrifice HP to deal additional damage equal to the HP lost. Ignores armor.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 damage. If 5+ mana is spent, if this reduces your target to 0 HP, regain KEY+LVL HP.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "blood",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 5,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "lifesbaneStrikeDamage1",
+					"durationType": null
+				}
+			],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lEERGnUL9uA6Hdyd",
+	"folder": "b204e0adbaba7f55"
+}

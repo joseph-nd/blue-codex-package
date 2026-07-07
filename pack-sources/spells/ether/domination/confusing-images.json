@@ -1,0 +1,87 @@
+{
+	"name": "Confusing Images",
+	"type": "spell",
+	"img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+	"system": {
+		"macro": "",
+		"identifier": "confusing-images",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "confusingImagesDamage1",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "4d8 + 12",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 4,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 3 Actions · Burst 4 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d8+12 to enemies of your choice. If you roll a 7 or 8 on the Primary Die, targets are Confused, otherwise, inflict Dazed, 1 turn. You can spend 3 Actions to repeat this effect. Once you cast this spell, you must Safe Rest for 1 week before using it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "domination",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "H3L3hGZHS7V3Z2yw",
+	"folder": "d9759520489fa79a"
+}

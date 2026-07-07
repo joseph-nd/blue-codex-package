@@ -1,0 +1,76 @@
+{
+	"name": "Earth Wall",
+	"type": "spell",
+	"img": "icons/magic/earth/barrier-stone-brown-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "earth-wall",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Lasts 24 hours or until destroyed or dispelled",
+				"quantity": 1,
+				"type": "special"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 4,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Range 8 · Wall 4.</strong></p><p>The wall obstructs vision and lasts 24 hours or until destroyed or dispelled. Each panel can take 2 hits before being destroyed.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 hits or Wall +2. If 7+ mana is spent, each panel can be placed anywhere in Range and no longer follows standard Wall AoE rules.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "earth",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wlem6SW3WtQBcCtB",
+	"folder": "2b4387e8cf1235eb"
+}

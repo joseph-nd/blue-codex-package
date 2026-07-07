@@ -1,0 +1,69 @@
+{
+	"name": "Summon Shadow",
+	"type": "spell",
+	"img": "icons/magic/unholy/silhouette-robe-evil-glow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "summon-shadow",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon a d12 shadow minion (you can summon a max of INT or LVL minions this way, whichever is lower). Your shadow minions follow the normal minion rules: They have 1 HP, no damage bonus, do not crit, and abandon you immediately outside of combat. You can use 1 Action to command all to do the following:</p><ul><li><strong>Attack</strong> | Move: 6 then, Reach: 1, Damage: 1d12 each.</li></ul>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> Reach +1 every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": []
+		},
+		"school": "shadow",
+		"tier": 0,
+		"classes": [
+			"shadowmancer"
+		]
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "nrDkGygSyNE6JR7n",
+	"folder": "6e1b6998275cef34"
+}

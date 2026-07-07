@@ -1,0 +1,98 @@
+{
+	"name": "Deathly Cry",
+	"type": "spell",
+	"img": "icons/magic/death/undead-ghost-scream-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "deathly-cry",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "deathlyCryDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "2d4 + floor(@level / 5) * 6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "deathlyCryHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "deathlyCryDamage1"
+							},
+							{
+								"id": "deathlyCryCondition1",
+								"type": "condition",
+								"condition": "slowed",
+								"parentContext": "hit",
+								"parentNode": "deathlyCryDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Burst 2.</strong></p><p><strong>Damage:</strong> 2d4. On damage: Slowed, 1 turn. Targets are Deafened, 1 turn, if a corpse is in the area.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +6 damage every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "death",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "5sNXu5QoL0VqtrOZ",
+	"folder": "8dec546c75cf50ec"
+}

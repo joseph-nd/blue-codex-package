@@ -1,0 +1,116 @@
+import { ClassicLevel } from 'classic-level';
+import moduleJSON from '../../module.json' with { type: 'json' };
+
+export default class LevelDatabase extends ClassicLevel {
+	#dbKey;
+
+	#embeddedKeys;
+
+	#documentDb;
+
+	#embeddedDbs;
+
+	constructor(location, options) {
+		const dbOptions = options.dbOptions ?? { keyEncoding: 'utf8', valueEncoding: 'json' };
+		super(location, dbOptions);
+
+		const { dbKey, embeddedKeys } = LevelDatabase.#getDBKeys(options.packName);
+
+		this.dbOptions = dbOptions;
+		this.#dbKey = dbKey;
+		this.#embeddedKeys = embeddedKeys ?? [];
+
+		this.#documentDb = this.sublevel(dbKey, dbOptions);
+
+		if (this.#embeddedKeys.length) {
+			this.#embeddedDbs = this.#embeddedKeys.map((key) => ({
+				key: key.replaceAll('.', '-'),
+				db: this.sublevel(`${this.#dbKey}.${key}`, dbOptions),
+			}));
+		}
+	}
+
+	static #getDBKeys(packName) {
+		const metadata = moduleJSON.packs.find((p) => p.name === packName);
+
+		if (!metadata) throw Error(`[ERROR] - Pack ${packName} isn't setup in module.json.`);
+
+		let dbKey = null;
+		if (metadata.type === 'JournalEntry') dbKey = 'journal';
+		else if (metadata.type === 'RollTable') dbKey = 'tables';
+		else dbKey = `${metadata.type.toLowerCase()}s`;
+
+		let embeddedKeys = [];
+		if (dbKey === 'actors') embeddedKeys = ['effects', 'items', 'items.effects'];
+		if (dbKey === 'items') embeddedKeys = ['effects'];
+		else if (dbKey === 'journal') embeddedKeys = ['pages'];
+		else if (dbKey === 'tables') embeddedKeys = ['results'];
+
+		return { dbKey, embeddedKeys };
+	}
+
+	async createPack(docs, options = {}) {
+		const folders = Array.isArray(options.folders) ? options.folders : [];
+
+		const docBatch = this.#documentDb.batch();
+		const embeddedBatches = (this.#embeddedDbs ?? []).reduce((acc, { key, db }) => {
+			acc[key] = db.batch();
+			return acc;
+		}, {});
+		const folderDb = folders.length > 0 ? this.sublevel('folders', this.dbOptions) : null;
+		const folderBatch = folderDb ? folderDb.batch() : null;
+
+		for (const source of docs) {
+			if (this.#embeddedKeys.length) {
+				this.#embeddedKeys.forEach((key) => {
+					if (key === 'items.effects') return;
+					if (this.#dbKey === 'actors' && key === 'items') {
+						const items = source[key];
+						if (!Array.isArray(items)) return;
+
+						for (const item of items) {
+							const { effects } = item;
+							this.#addDataToBatch(
+								effects,
+								embeddedBatches['items-effects'],
+								`${source._id}.${item._id}`,
+							);
+						}
+
+						this.#addDataToBatch(items, embeddedBatches[key], source._id);
+					} else {
+						const embeddedDocs = source[key];
+						this.#addDataToBatch(embeddedDocs, embeddedBatches[key], source._id);
+					}
+				});
+			}
+			docBatch.put(source._id ?? '', source);
+		}
+
+		if (folderBatch) {
+			for (const folder of folders) {
+				folderBatch.put(folder._id ?? '', folder);
+			}
+		}
+
+		await docBatch.write();
+		for await (const batch of Object.values(embeddedBatches)) {
+			if (batch.length) await batch.write();
+		}
+		if (folderBatch?.length) await folderBatch.write();
+
+		await this.close();
+	}
+
+	#addDataToBatch(embeddedDocs, batch, sourceId) {
+		if (Array.isArray(embeddedDocs)) {
+			for (let i = 0; i < embeddedDocs.length; i += 1) {
+				const doc = embeddedDocs[i];
+				if (batch) {
+					batch.put(`${sourceId}.${doc._id}`, doc);
+					embeddedDocs[i] = doc._id ?? '';
+				}
+			}
+		}
+	}
+}

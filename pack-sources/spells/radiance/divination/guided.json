@@ -1,0 +1,75 @@
+{
+	"name": "Guided",
+	"type": "spell",
+	"img": "icons/magic/control/buff-luck-fortune-gold.webp",
+	"system": {
+		"macro": "",
+		"identifier": "guided",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Reach 2 · Concentration: Up to 1 minute.</strong></p><p>Fate guides your ally. 1/round, they can Defend or make an Opportunity Attack without penalty for free.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 target. If 7+ mana is spent, when an attack misses your ally, they can make an attack or cast a cantrip for free.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "divination",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Ywi1ifE8opYG6ujA",
+	"folder": "0b3900e492507a48"
+}

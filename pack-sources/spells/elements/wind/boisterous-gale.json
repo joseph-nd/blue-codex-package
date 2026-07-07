@@ -1,0 +1,77 @@
+{
+	"name": "Boisterous Gale",
+	"type": "spell",
+	"img": "icons/magic/control/buff-flight-wings-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "boisterous-gale",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "You and up to 12 allies in Range",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 7 · 3 Actions · Range 12 · Concentration: Up to 1 minute.</strong></p><p>You and up to 12 allies gain 12 flying speed, can move for free 1/round, and Ranged attacks have disadvantage against those affected.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +1 minute, +6 fly speed, +2 targets.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "wind",
+		"tier": 7,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "BgX2dguyzUPlUKLb",
+	"folder": "40c5420206f0ca7a"
+}

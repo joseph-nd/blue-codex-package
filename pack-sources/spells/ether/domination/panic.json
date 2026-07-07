@@ -1,0 +1,137 @@
+{
+	"name": "Panic",
+	"type": "spell",
+	"img": "icons/magic/control/fear-fright-monster-grin-purple-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "panic",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "panicDamage1",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "4d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "panicHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "panicDamage1"
+							}
+						]
+					}
+				},
+				{
+					"id": "panicSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "intelligence",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "panicCondition1",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "passedSave",
+								"parentNode": "panicSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "panicNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target is Confused.",
+								"parentContext": "failedSave",
+								"parentNode": "panicSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Reach 4.</strong></p><p><strong>Damage:</strong> 4d8. On a failed INT save, target is Confused. On save, inflicted Dazed, 1 turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage. If 8+ mana is spent, gains Blast: 4, can still crit or miss.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "domination",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 6,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "panicDamage1",
+					"durationType": null
+				}
+			],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "LL3QUJQG80rqaWJG",
+	"folder": "d9759520489fa79a"
+}

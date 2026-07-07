@@ -1,0 +1,108 @@
+{
+	"name": "Imagined Burden",
+	"type": "spell",
+	"img": "icons/magic/control/debuff-chains-shackles-movement-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "imagined-burden",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "KEY turns",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [
+				{
+					"id": "imaginedBurdenSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "intelligence",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "imaginedBurdenNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target is Slowed for KEY turns.",
+								"parentContext": "passedSave",
+								"parentNode": "imaginedBurdenSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "imaginedBurdenNote2",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target is Slowed for KEY turns and its rolls have disadvantage for the duration.",
+								"parentContext": "failedSave",
+								"parentNode": "imaginedBurdenSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Range 6.</strong></p><p>Target is Slowed for KEY turns. On a failed INT save, their rolls have disadvantage for the duration. Unwilling targets can make a save on their turns to end the effect.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 round duration. If 8+ mana is spent, gains Blast 3.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "illusion",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Vnt8FLkTvZX065zt",
+	"folder": "82080e05e73f615a"
+}

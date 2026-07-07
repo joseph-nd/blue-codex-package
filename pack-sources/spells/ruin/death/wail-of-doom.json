@@ -1,0 +1,97 @@
+{
+	"name": "Wail of Doom",
+	"type": "spell",
+	"img": "icons/magic/sonic/scream-wail-shout-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "wail-of-doom",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "wailOfDoomDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "4d4",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "wailOfDoomHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "wailOfDoomDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 3,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 1 Action · Cone 3.</strong></p><p><strong>Damage:</strong> 4d4. Ignores armor. Creatures are Dazed, 2 turns, on a failed INT save. Targets fail automatically if you exploit a corpse.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or Cone +1. If 7+ mana is spent, targets that fail move in a direction away from you on their next turn.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 3
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "death",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vQ3pO6rJimUWTNoP",
+	"folder": "8dec546c75cf50ec"
+}

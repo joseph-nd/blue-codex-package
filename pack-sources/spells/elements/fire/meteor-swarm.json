@@ -1,0 +1,105 @@
+{
+	"name": "Meteor Swarm",
+	"type": "spell",
+	"img": "icons/magic/fire/projectile-meteor-salvo-strong-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "meteor-swarm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Range: Line of Sight",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "meteorSwarmDamage1",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "4d10 + 35",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "meteorSwarmHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "meteorSwarmDamage1"
+							},
+							{
+								"id": "meteorSwarmCondition1",
+								"type": "condition",
+								"condition": "smoldering",
+								"parentContext": "hit",
+								"parentNode": "meteorSwarmDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 3 Actions · Range: Line of Sight · Blast 3 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d10+35. Ignores armor. More effective vs. objects. On hit: inflict Smoldering. You can spend 3 Actions to repeat this effect. Once you cast this spell, you must Safe Rest for 1 week before using it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "fire",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "7AW5GH4Jbi6R5NkA",
+	"folder": "a3a2c0924188d5ae"
+}

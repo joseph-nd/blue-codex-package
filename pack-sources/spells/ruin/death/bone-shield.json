@@ -1,0 +1,74 @@
+{
+	"name": "Bone Shield",
+	"type": "spell",
+	"img": "icons/magic/death/bones-crossed-gray.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bone-shield",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target takes damage",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "1 round",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Reach 4 · Reaction: When a target takes damage.</strong></p><p>Target gains temp HP equal to half the damage taken, or if you exploit a corpse, they gain the full amount (max 4xLVL) for 1 round.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 temp HP or +1 round duration. If 6+ mana is spent, target takes tier less damage while they have temp HP from this spell.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "death",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "snVxhbXaUUdPtZwy",
+	"folder": "8dec546c75cf50ec"
+}

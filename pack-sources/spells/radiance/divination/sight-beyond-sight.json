@@ -1,0 +1,69 @@
+{
+	"name": "Sight Beyond Sight",
+	"type": "spell",
+	"img": "icons/magic/perception/eye-ringed-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sight-beyond-sight",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "1 turn (you may maintain Concentration instead)",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Reach 2.</strong></p><p>Target can see in the dark and Blinded is suppressed, 1 turn. You can choose to maintain Concentration on this spell instead of it lasting 1 turn.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 turn every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "divination",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "G3zmVejr2ostXKqi",
+	"folder": "0b3900e492507a48"
+}

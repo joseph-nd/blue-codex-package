@@ -1,0 +1,74 @@
+{
+	"name": "Blood is Power",
+	"type": "spell",
+	"img": "icons/magic/life/heart-shadow-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blood-is-power",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 1 Action · Reach 2.</strong></p><p>Sacrifice HP. Every 10 HP you sacrifice, you can restore either 10 HP or 1 mana to a target in Reach.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> -1 HP sacrifice requirement (min. 5). If 6+ mana is spent, target gains +1 to their KEY stat for 1 minute.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "blood",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "croULY32nOYEh9yR",
+	"folder": "b204e0adbaba7f55"
+}

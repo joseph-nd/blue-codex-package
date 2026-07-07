@@ -1,0 +1,97 @@
+{
+	"name": "Acid Spray",
+	"type": "spell",
+	"img": "icons/magic/acid/projectile-beams-salvo-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "acid-spray",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "acidSprayDamage1",
+					"type": "damage",
+					"damageType": "acid",
+					"formula": "3d4",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "acidSprayHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "acidSprayDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 2,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Cone 2.</strong></p><p><strong>Damage:</strong> 3d4, ignores armor. On crit: inflict Sundered.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or Cone +1. If 5+ mana is spent, Sundered lasts KEY attacks.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "nature",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "JRj1olXjSYpjqCSc",
+	"folder": "2b6e96335c8f8aad"
+}

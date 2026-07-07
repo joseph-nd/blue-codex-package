@@ -1,0 +1,71 @@
+{
+	"name": "Ice Magick",
+	"type": "spell",
+	"img": "icons/magic/water/orb-ice-glow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ice-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Range 12.</strong></p><p>Describe your Small or Tiny effect to the GM, or choose one from the list below:</p><ul><li>Control liquid (not inside a creature), moving, freezing, unfreezing, reshaping it.</li><li>Chill an object.</li><li>Conjure an object made of ice.</li><li>Purify liquid.</li><li>Send a short message on the winter wind.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "ice",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NIWV7IHF4E6J2HjS",
+	"folder": "4164b206edbd6957"
+}

@@ -1,0 +1,75 @@
+{
+	"name": "Sanctuary",
+	"type": "spell",
+	"img": "icons/magic/holy/barrier-shield-winged-cross.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sanctuary",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Range 6 · Blast 2 · Concentration: Up to 1 minute.</strong></p><p>Allies in the area take 4 less damage from all sources. Enemies in the area are Slowed. When an enemy tries to enter the area, it must succeed on a WIL save or it can't this turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 minute or Blast +1. If 9 mana is spent, enemies have disadvantage on their attacks and saves while in the area.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "protection",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "nnlNdvBuqL5zf9y0",
+	"folder": "d09b5bab8be23cef"
+}

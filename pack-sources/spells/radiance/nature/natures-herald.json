@@ -1,0 +1,74 @@
+{
+	"name": "Natures Herald",
+	"type": "spell",
+	"img": "icons/magic/nature/elemental-plant-humanoid.webp",
+	"system": {
+		"macro": "",
+		"identifier": "natures-herald",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 9 · 1 Action · Concentration: Up to 1 minute.</strong></p><p>1/turn, you can use 2 Actions to do one of the following:</p><ul><li><strong>Wraithvine</strong> | Arc: 8, <strong>Damage:</strong> 4d4+16. On hit: Slowed, 1 turn. On crit: you can place Huge or smaller targets anywhere in Range 8. You can choose to do no damage to individual targets.</li><li><strong>Serene Grace</strong> | Burst: 2. Allies gain 4d4 temp HP, 1 round. If this would crit: <strong>Restore:</strong> HP equal to half the amount as well.</li></ul><p>When you move, you can teleport from an adjacent plant to another that you can see. Once you cast this spell, you must Safe Rest for 1 week before using it again.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"concentration"
+			]
+		},
+		"school": "nature",
+		"tier": 9,
+		"classes": [],
+		"scaling": {
+			"mode": "none",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "54WQgP5T26Pu5SQG",
+	"folder": "2b6e96335c8f8aad"
+}

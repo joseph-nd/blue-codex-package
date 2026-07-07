@@ -1,0 +1,91 @@
+{
+	"name": "Life Siphon",
+	"type": "spell",
+	"img": "icons/magic/unholy/projectile-helix-blood-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "life-siphon",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "lifeSiphonDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "1d6 + floor(@level / 5) * 5",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "lifeSiphonHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "lifeSiphonDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Reach 6.</strong></p><p><strong>Damage:</strong> 1d6. Each subsequent time you cast this spell on the same target and hit, regain KEY HP.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +5 damage and +1 HP regained every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "blood",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XC07VKYry5QlhDWA",
+	"folder": "b204e0adbaba7f55"
+}

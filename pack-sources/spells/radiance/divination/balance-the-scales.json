@@ -1,0 +1,75 @@
+{
+	"name": "Balance the Scales",
+	"type": "spell",
+	"img": "icons/magic/holy/yin-yang-balance-symbol.webp",
+	"system": {
+		"macro": "",
+		"identifier": "balance-the-scales",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Reach 6 · Concentration: Up to 1 minute.</strong></p><p>A target of your choice is no longer affected by advantage or disadvantage. For each instance of advantage or disadvantage, their rolls are considered 1 higher or lower respectively. A roll over its maximum is a crit. An unwilling target can make a WIL save on its turn to end this effect.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 minute duration. If 8+ mana is spent, can target 2 creatures in Reach.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "divination",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "QJH1RV7RNY8dDT5m",
+	"folder": "0b3900e492507a48"
+}

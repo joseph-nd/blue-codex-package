@@ -1,0 +1,69 @@
+{
+	"name": "Tongues",
+	"type": "spell",
+	"img": "icons/magic/sonic/scream-wail-shout-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tongues",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 10,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "KEYx2 minutes",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "A target you touch while casting"
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 10 Minutes.</strong></p><p>You and a target you touch while casting can communicate for KEYx2 minutes regardless of languages spoken and intelligence. If you cast this on an object, it gains enough sentience to communicate and knows things from the past day.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "s52ypp7IP9q3m7fg",
+	"folder": "1e0fe8d55072b297"
+}

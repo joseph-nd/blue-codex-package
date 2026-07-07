@@ -1,0 +1,72 @@
+{
+	"name": "Minor Creation",
+	"type": "spell",
+	"img": "icons/magic/symbols/squares-3d-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "minor-creation",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "KEY days or until destroyed",
+				"quantity": 1,
+				"type": "special"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 1 Minute · Range 4.</strong></p><p>Conjure a simple, non-magical, Small or tiny object, composed of mundane materials. The object is clearly worthless. The object lasts for KEY days or until it is destroyed. Recasting this spell on created objects refreshes its duration. Any created object that lasts for 1 month becomes permanent unless destroyed or dispelled.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 4
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"utilitySpell",
+				"range"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8ZLmdSPEcIkSlec3",
+	"folder": "1e0fe8d55072b297"
+}

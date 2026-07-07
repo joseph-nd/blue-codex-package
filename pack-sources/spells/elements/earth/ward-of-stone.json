@@ -1,0 +1,76 @@
+{
+	"name": "Ward of Stone",
+	"type": "spell",
+	"img": "icons/magic/earth/barrier-stone-pillar-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ward-of-stone",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 3,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "1 minute or until reduced to 0 HP",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 7 · 3 Actions · Range 8.</strong></p><p>Conjure a stationary runic stone pillar with 70 HP that remains for 1 minute or until reduced to 0 HP. It cannot be targeted. Creatures of your choice in Range 3 of the pillar take half damage from all sources. The pillar takes an equal amount.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +10 HP.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "earth",
+		"tier": 7,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vvT3thFarCcQW0Qm",
+	"folder": "2b4387e8cf1235eb"
+}

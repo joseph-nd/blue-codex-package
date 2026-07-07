@@ -1,0 +1,74 @@
+{
+	"name": "Charge!",
+	"type": "spell",
+	"img": "icons/magic/movement/trail-streak-impact-blue.webp",
+	"system": {
+		"macro": "",
+		"identifier": "charge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "1 round",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 2 Actions · Burst 3.</strong></p><p>Allies reduce all incoming damage by 2 and gain +6 speed for 1 round.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: Burst +1, +1 damage reduction, or +2 speed. If 6+ mana is spent, targets can immediately move once for free.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 3
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "protection",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "s1oodMQm8UOuqcXx",
+	"folder": "d09b5bab8be23cef"
+}

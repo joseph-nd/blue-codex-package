@@ -1,0 +1,69 @@
+{
+	"name": "Blood Mend",
+	"type": "spell",
+	"img": "icons/magic/life/heart-glowing-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blood-mend",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "A Bloodied creature"
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Reach 6.</strong></p><p><strong>Restore:</strong> 1 HP to a Bloodied creature. You can sacrifice HP to restore an additional amount equal to what you lost.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 initial HP restored to every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "blood",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lI1ge1FB4dCCMOeG",
+	"folder": "b204e0adbaba7f55"
+}

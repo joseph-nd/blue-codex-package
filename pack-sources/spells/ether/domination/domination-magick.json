@@ -1,0 +1,71 @@
+{
+	"name": "Domination Magick",
+	"type": "spell",
+	"img": "icons/magic/control/control-influence-puppet.webp",
+	"system": {
+		"macro": "",
+		"identifier": "domination-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Reach 4.</strong></p><p>Describe your Small or Tiny effect to the GM, or choose one from the list below.</p><ul><li>Divert a creature's attention.</li><li>Weaken a creature's confidence in a decision.</li><li>Implant a harmless thought into a target.</li><li>Protect your mind or others from intrusions.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "domination",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "SDbTPZ7QdTrcdwrN",
+	"folder": "d9759520489fa79a"
+}

@@ -1,0 +1,98 @@
+{
+	"name": "Writhing Dark",
+	"type": "spell",
+	"img": "icons/magic/unholy/energy-smoke-pink.webp",
+	"system": {
+		"macro": "",
+		"identifier": "writhing-dark",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "writhingDarkDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "4d12",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "writhingDarkHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "writhingDarkDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 6 · 2 Actions · Reach 6 · Blast 2 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 4d12. Creatures cannot leave the area until they pass a WIL save on their turn. Targets that end their turn inside take 6 damage. Ignores armor. Frightened or Impaired targets have disadvantage on their save.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 secondary damage or Blast +1.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "shadow",
+		"tier": 6,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ADDcxQjyhWuvUqUE",
+	"folder": "6e1b6998275cef34"
+}

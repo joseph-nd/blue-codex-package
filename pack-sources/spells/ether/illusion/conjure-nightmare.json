@@ -1,0 +1,105 @@
+{
+	"name": "Conjure Nightmare",
+	"type": "spell",
+	"img": "icons/magic/control/fear-fright-shadow-monster-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "conjure-nightmare",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 10 minutes (Concentration)",
+				"quantity": 10,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "conjureNightmareSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "will",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "conjureNightmareCondition2",
+								"type": "condition",
+								"condition": "taunted",
+								"parentContext": "passedSave",
+								"parentNode": "conjureNightmareSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "conjureNightmareCondition1",
+								"type": "condition",
+								"condition": "frightened",
+								"parentContext": "failedSave",
+								"parentNode": "conjureNightmareSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions.</strong></p><p>Cast <strong>Conjure Illusion</strong> at tier 3 for free. Creatures of your choice that start their turn adjacent to or in the area are Frightened by the illusion on a failed WIL save, Taunted on success.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Blast +1 or +10 minute duration. If 7+ mana is spent, targets Frightened by the illusion have their speed reduced to 0.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "illusion",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MUxP8D3sB588ZJsv",
+	"folder": "82080e05e73f615a"
+}

@@ -1,0 +1,74 @@
+{
+	"name": "Rejuvenation Spirit",
+	"type": "spell",
+	"img": "icons/magic/nature/tree-spirit-green.webp",
+	"system": {
+		"macro": "",
+		"identifier": "rejuvenation-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Range 8.</strong></p><p>Summon a Tiny spirit that's immune to harm. Adjacent allies can use 1 Action to touch the spirit and regain 5 HP (max KEY times).</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +2 HP and +1 use. If 7+ mana is spent, targets regain 2 expended Hit Dice on use (once per ally per spell cast).</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "nature",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "P0U0irjT1UpTdab5",
+	"folder": "2b6e96335c8f8aad"
+}

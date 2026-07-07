@@ -1,0 +1,99 @@
+{
+	"name": "Thousand Cuts",
+	"type": "spell",
+	"img": "icons/magic/air/wind-stream-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "thousand-cuts",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "thousandCutsDamage1",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "4d4 + 20",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "thousandCutsHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "thousandCutsDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 6 · 2 Actions · Range 12.</strong></p><p><strong>Damage:</strong> 4d4+20, Vicious. This cannot miss and every d4 can crit. Deal equal damage to enemies in Reach 1 of the target. Ignores armor.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Secondary Reach +1 or +4 damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "wind",
+		"tier": 6,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0zJxdnCyxICltUgP",
+	"folder": "40c5420206f0ca7a"
+}

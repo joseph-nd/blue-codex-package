@@ -1,0 +1,84 @@
+{
+	"name": "Spark Counter",
+	"type": "spell",
+	"img": "icons/magic/lightning/barrier-shield-crackling-orb-pink.webp",
+	"system": {
+		"macro": "",
+		"identifier": "spark-counter",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When a target Defends",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "sparkCounterCondition1",
+					"type": "condition",
+					"condition": "charged",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 2 · 2 Actions · Range 12 · Reaction: When a target Defends.</strong></p><p>After damage is dealt, target becomes Charged and can teleport anywhere in Range 4. If you target yourself, costs 0 Actions.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 multiplier or teleport Range +4. If 6+ mana is spent, attacker takes tier x KEY damage, ignores armor, and is Stunned, 1 turn.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "lightning",
+		"tier": 2,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ekyXUKIeeIZQ06DQ",
+	"folder": "c7b9155e9a62d07c"
+}

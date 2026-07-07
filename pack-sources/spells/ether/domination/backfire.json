@@ -1,0 +1,90 @@
+{
+	"name": "Backfire",
+	"type": "spell",
+	"img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "backfire",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "backfireDamage1",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "1d8",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 6 · 2 Actions · Reach 4 · Concentration: Up to 1 minute.</strong></p><p><strong>Damage:</strong> 1d8 each time the target rolls 1+ die. An unwilling target can make a WIL save to end. Cannot crit. Ignores armor.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1d8 damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "domination",
+		"tier": 6,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "3wYCKvVlF6zW9rjq",
+	"folder": "d9759520489fa79a"
+}

@@ -1,0 +1,103 @@
+{
+	"name": "Death Shackle",
+	"type": "spell",
+	"img": "icons/magic/control/debuff-chains-shackles-movement-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "death-shackle",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "deathShackleDamage1",
+					"type": "damage",
+					"damageType": "necrotic",
+					"formula": "4d4 + 24",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "deathShackleHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "deathShackleDamage1"
+							},
+							{
+								"id": "deathShackleCondition1",
+								"type": "condition",
+								"condition": "slowed",
+								"parentContext": "hit",
+								"parentNode": "deathShackleDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Reach 6.</strong></p><p><strong>Damage:</strong> 4d4+24. On hit: inflict Slowed, 1 turn or Restrained if you exploit a corpse in Reach. A target is Stunned, 1 turn, if it's in Reach of you at the end of its turn.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or +1 turn Stunned. If 8+ mana is spent, target a second creature in Reach. If one target becomes Stunned, they both do.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "death",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WkOHQNZrQS4XToTq",
+	"folder": "8dec546c75cf50ec"
+}

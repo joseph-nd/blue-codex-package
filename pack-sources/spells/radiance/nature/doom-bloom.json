@@ -1,0 +1,106 @@
+{
+	"name": "Doom Bloom",
+	"type": "spell",
+	"img": "icons/magic/nature/plant-maneater-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "doom-bloom",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "doomBloomDamage1",
+					"type": "damage",
+					"damageType": "poison",
+					"formula": "4d4 + 16",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"criticalHit": [
+							{
+								"id": "doomBloomCrit1",
+								"type": "condition",
+								"condition": "prone",
+								"parentContext": "criticalHit",
+								"parentNode": "doomBloomDamage1"
+							}
+						],
+						"hit": [
+							{
+								"id": "doomBloomHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "doomBloomDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 8,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 8 · 2 Actions · Burst 8.</strong></p><p><strong>Damage:</strong> 4d4+16. On crit: enemies are knocked Prone and fall Asleep. If they would take damage while Asleep, they take +20 damage. Ignores armor.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +10 secondary damage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 8
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "nature",
+		"tier": 8,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "asXht5M25EWbBPPI",
+	"folder": "2b6e96335c8f8aad"
+}

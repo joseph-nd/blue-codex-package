@@ -1,0 +1,109 @@
+{
+	"name": "Mistrust",
+	"type": "spell",
+	"img": "icons/magic/perception/eye-ringed-glow-angry-red.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mistrust",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [
+				{
+					"id": "mistrustSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "intelligence",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "mistrustNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target sees you as their primary enemy and focuses you for 1 round.",
+								"parentContext": "passedSave",
+								"parentNode": "mistrustSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "mistrustNote2",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Target sees all other creatures as enemies and acts accordingly.",
+								"parentContext": "failedSave",
+								"parentNode": "mistrustSave1"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 4
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Reach 4 · Concentration: Up to 1 minute.</strong></p><p>On a failed INT save, target sees all other creatures as enemies and acts accordingly. On save, they see you as their primary enemy and focus you for 1 round. The target repeats the save immediately if damaged by any creature.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +1 minute duration. If 7+ mana is spent, target's first roll each turn has disadvantage.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "domination",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "YGbhAkdKiCSZW6It",
+	"folder": "d9759520489fa79a"
+}

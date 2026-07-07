@@ -1,0 +1,107 @@
+{
+	"name": "Ray of Judgment",
+	"type": "spell",
+	"img": "icons/magic/light/beam-horizon-strike-yellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ray-of-judgment",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "rayOfJudgmentSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "rayOfJudgmentNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "rayOfJudgmentSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "rayOfJudgmentDamage1",
+								"type": "damage",
+								"damageType": "radiant",
+								"formula": "4d6 + 10",
+								"parentContext": "failedSave",
+								"parentNode": "rayOfJudgmentSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 6,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Line 6.</strong></p><p><strong>Damage:</strong> 4d6+10 damage on a failed STR save, half damage on save. Targets that have attacked since your last turn have disadvantage on their save.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 damage or Line +2. If 9 mana is spent, becomes an Arc equal to the Line and applies Stunned on failure.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "radiant",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Dln1Liws0kUZISZf",
+	"folder": "8facd4aa105a2ab4"
+}

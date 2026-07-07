@@ -1,0 +1,75 @@
+{
+	"name": "Augury of Death",
+	"type": "spell",
+	"img": "icons/magic/death/skeleton-eye-skull-glow-orange.webp",
+	"system": {
+		"macro": "",
+		"identifier": "augury-of-death",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 1 minute (Concentration)",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 5 · 2 Actions · Reach 6 · Concentration: Up to 1 minute.</strong></p><p>Whenever your target takes damage, it takes an extra 2d4 (max 40 damage). Ignores armor. If you exploit a corpse, the target is Frightened of their attacker, 1 turn. Unwilling targets can make a WIL save to end.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> +5 max damage. If 9 mana is spent, if the spell reaches its damage cap, it explodes dealing its damage cap again. Ignores armor.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach",
+				"concentration"
+			]
+		},
+		"school": "death",
+		"tier": 5,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "laPQ4SZ2o1s3rT7d",
+	"folder": "8dec546c75cf50ec"
+}

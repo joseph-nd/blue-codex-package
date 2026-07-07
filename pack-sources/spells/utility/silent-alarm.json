@@ -1,0 +1,70 @@
+{
+	"name": "Silent Alarm",
+	"type": "spell",
+	"img": "icons/magic/sonic/bell-alarm-red-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "silent-alarm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 10,
+				"type": "minute",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "8 hours or until triggered",
+				"quantity": 8,
+				"type": "hour"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 8,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · Cast Time: 10 Minutes · Blast 8.</strong></p><p>Set a magical, Invisible alarm which mentally alerts you if an unspecified creature enters the area for KEYx2 hours. This effect lasts 8 hours or until triggered.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 8
+			},
+			"selected": [
+				"utilitySpell",
+				"reach"
+			]
+		},
+		"school": "utility",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "kmMdiAl0jLsUSix0",
+	"folder": "1e0fe8d55072b297"
+}

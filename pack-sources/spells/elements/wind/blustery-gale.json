@@ -1,0 +1,98 @@
+{
+	"name": "Blustery Gale",
+	"type": "spell",
+	"img": "icons/magic/air/weather-wind-gust.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blustery-gale",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "blusteryGaleDamage1",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "3d4",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "blusteryGaleHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "blusteryGaleDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Range 12.</strong></p><p><strong>Damage:</strong> 3d4, Vicious. On hit: push a Medium or smaller target 2 spaces. Advantage against flying or Small or Tiny targets and moves them twice as far.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +2 space pushed, affected creatures size +1 (max Huge), +4 damage. If 5+ mana is spent, you can target a willing creature dealing no damage and ignores terrain.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "wind",
+		"tier": 1,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oN9QgOzpVLuEZQr3",
+	"folder": "40c5420206f0ca7a"
+}

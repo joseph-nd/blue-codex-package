@@ -1,0 +1,77 @@
+{
+	"name": "Fly",
+	"type": "spell",
+	"img": "icons/magic/air/wind-stream-blue-gray.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fly",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Up to 10 minutes (Concentration)",
+				"quantity": 10,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 2
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 3 · 2 Actions · Range 2 · Concentration: Up to 10 minutes.</strong></p><p>Target gains 12 flying speed.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +1 target, +10 minutes duration, +6 flying speed. If 7+ mana is spent, targets become clouds of gas with 60 flying speed, cannot attack or take damage for the duration.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 2
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range",
+				"concentration"
+			]
+		},
+		"school": "wind",
+		"tier": 3,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DYVCr0wLD3s8IudV",
+	"folder": "40c5420206f0ca7a"
+}

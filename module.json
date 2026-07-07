@@ -1,0 +1,109 @@
+{
+	"id": "blue-codex-package",
+	"title": "Blue Codex Package",
+	"description": "Adds Blue's Codex content to the Nimble system: the Engineer and Specter classes, additional subclasses for every core class, the elemental / ether / radiance / ruin spell books, Guild Wars–inspired ancestries and backgrounds (Traveler's Guide to Tyria), and a bestiary.",
+	"version": "0.1.0",
+	"authors": [
+		{
+			"name": "Joseph Nunez",
+			"email": "joseph.nunez912@gmail.com"
+		}
+	],
+	"license": "LICENSE",
+	"readme": "README.md",
+	"changelog": "CHANGELOG.md",
+	"compatibility": {
+		"minimum": "13",
+		"verified": "13",
+		"maximum": "13"
+	},
+	"relationships": {
+		"systems": [
+			{
+				"id": "nimble",
+				"type": "system",
+				"compatibility": {
+					"minimum": "0.8.4"
+				}
+			}
+		]
+	},
+	"esmodules": ["scripts/main.mjs"],
+	"packs": [
+		{
+			"name": "blue-codex-classes",
+			"label": "Blue Codex Classes",
+			"path": "packs/blue-codex-classes",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "classes" }
+		},
+		{
+			"name": "blue-codex-subclasses",
+			"label": "Blue Codex Subclasses",
+			"path": "packs/blue-codex-subclasses",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "subclasses" }
+		},
+		{
+			"name": "blue-codex-class-features",
+			"label": "Blue Codex Class Features",
+			"path": "packs/blue-codex-class-features",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "classFeatures" }
+		},
+		{
+			"name": "blue-codex-spells",
+			"label": "Blue Codex Spells",
+			"path": "packs/blue-codex-spells",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "spells" }
+		},
+		{
+			"name": "blue-codex-items",
+			"label": "Blue Codex Items",
+			"path": "packs/blue-codex-items",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "items" }
+		},
+		{
+			"name": "blue-codex-companions",
+			"label": "Blue Codex Companions",
+			"path": "packs/blue-codex-companions",
+			"type": "Actor",
+			"system": "nimble",
+			"flags": { "sourceDir": "companions" }
+		},
+		{
+			"name": "blue-codex-monsters",
+			"label": "Blue Codex Monsters",
+			"path": "packs/blue-codex-monsters",
+			"type": "Actor",
+			"system": "nimble",
+			"flags": { "sourceDir": "monsters" }
+		},
+		{
+			"name": "blue-codex-ancestries",
+			"label": "Blue Codex Ancestries",
+			"path": "packs/blue-codex-ancestries",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "ancestries" }
+		},
+		{
+			"name": "blue-codex-backgrounds",
+			"label": "Blue Codex Backgrounds",
+			"path": "packs/blue-codex-backgrounds",
+			"type": "Item",
+			"system": "nimble",
+			"flags": { "sourceDir": "backgrounds" }
+		}
+	],
+	"url": "https://github.com/joseph-nd/blue-codex-package",
+	"manifest": "https://github.com/joseph-nd/blue-codex-package/releases/latest/download/module.json",
+	"download": "https://github.com/joseph-nd/blue-codex-package/releases/download/v0.1.0/module.zip"
+}

@@ -1,0 +1,69 @@
+{
+	"name": "Death Magick",
+	"type": "spell",
+	"img": "icons/magic/death/skull-energy-light-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "death-magick",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "1+ Actions",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1+ Actions · Reach 6.</strong></p><p>Describe your Small or Tiny effect to the GM, or choose one from the list below:</p><ul><li>Conjure a harmless undead creature.</li><li>Putrefy an object, corpse or food.</li><li>Commune with spirits to get a vague answer to a question.</li><li>Chill the air in Range.</li><li>Sense the presence of death or undead.</li></ul>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "death",
+		"tier": 0,
+		"classes": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bBwGlKrais7KNGVD",
+	"folder": "8dec546c75cf50ec"
+}

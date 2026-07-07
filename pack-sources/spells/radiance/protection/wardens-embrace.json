@@ -1,0 +1,107 @@
+{
+	"name": "Warden's Embrace",
+	"type": "spell",
+	"img": "icons/magic/defensive/shield-barrier-deflect-teal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "wardens-embrace",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "wardensEmbraceSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "wardensEmbraceNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "wardensEmbraceSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "wardensEmbraceDamage1",
+								"type": "damage",
+								"damageType": "radiant",
+								"formula": "4d6 + 15",
+								"parentContext": "failedSave",
+								"parentNode": "wardensEmbraceSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 4,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 4 · 2 Actions · Line 4.</strong></p><p><strong>Damage:</strong> 4d6+15 on a failed DEX save, half damage on save. Targets are Taunted, 1 minute or until they pass a WIL save on their turn. For each target hit, you gain 3×KEY temp HP for 1 minute.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +5 damage, +1 multiplier, Line +2. If 8+ mana is spent, Taunted targets are Dazed for KEY turns.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "protection",
+		"tier": 4,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XsqHunnL3iL9aiUO",
+	"folder": "d09b5bab8be23cef"
+}

@@ -1,0 +1,74 @@
+{
+	"name": "Mirror Army",
+	"type": "spell",
+	"img": "icons/magic/defensive/illusion-evasion-echo-purple.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mirror-army",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "1 minute",
+				"quantity": 1,
+				"type": "minute"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Tier 6 · 2 Actions · Range 6 · Blast 3.</strong></p><p>Each ally in the area gains one illusory clone that follows and mirrors them for 1 minute. As long as they have a clone, attacks damaging affected allies damage the clone instead, destroying it. Clones are unaffected by AoE damage.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p><strong>Upcast:</strong> Choose 1: +1 clone each, Blast +1, +1 minute duration.</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 6
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "illusion",
+		"tier": 6,
+		"classes": [],
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [],
+			"choices": null
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "IC0NyoJI2OVZAOGd",
+	"folder": "82080e05e73f615a"
+}
