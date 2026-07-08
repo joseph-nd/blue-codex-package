@@ -1,0 +1,57 @@
+{
+	"name": "Bump in the Night",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/bump-in-the-night.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bump-in-the-night",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you make a melee attack while Unseen, it deals an extra 1d10 damage.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-hunger",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NIc5TY5RjBkVTohZ",
+	"folder": "3d1fb0727c9baf20"
+}

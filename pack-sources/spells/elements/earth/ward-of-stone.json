@@ -1,7 +1,7 @@
 {
 	"name": "Ward of Stone",
 	"type": "spell",
-	"img": "icons/magic/earth/barrier-stone-pillar-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/ward-of-stone.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ward-of-stone",

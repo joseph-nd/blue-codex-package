@@ -1,0 +1,25 @@
+{
+	"name": "Pact of the Mesmer",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/ether-storm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "pact-of-the-mesmer",
+		"rules": [],
+		"description": "<p><em>\"You blur the line between shadow and thought.\"</em> Your patron is an ancient trickster or an eldritch mind. It warps your shadows into psychic reflections. You summon illusory phantasms to deceive enemies and shatter their will.</p><p><strong>LEVEL 3</strong></p><p><strong>Ether Storm.</strong></p><p>Your Patron grants you knowledge of Illusion and Domination spells. Your Shadow Blast becomes Mind Blast. On crit: summon an illusory clone per Mirror Army. Your spells can deal Psychic or their normal damage.</p><p>Summon Shadows? These remain exactly the same though they can deal Psychic damage now. If you want to stay \"true to the subclasses' inspiration, call them Phantasms instead, though they are still minions.</p><p><strong>LEVEL 7</strong></p><p><strong>Mind Wrack.</strong></p><p>1 Action, Range: 8. Destroy 1 of your minions, enemies in Burst 1 of it take 1d10+KEY Psychic damage, ignores armor.</p><p><strong>LEVEL 11</strong></p><p><strong>Decoy.</strong></p><p>Requires a minion of yours. Reaction: When you would take damage. Swap places with a minion before the attack resolves. If the minion is destroyed, target is Blinded, 1 turn.</p><p><strong>LEVEL 15</strong></p><p><strong>Reclaim Ether.</strong></p><p>Free Action. Destroy 3 of your minions. Your next Illusion or Domination spell costs no Pilfered Power.</p><p><strong>Lesser Invocations</strong></p><ul><li><strong>Fleeting Phantom.</strong> (1/Field Rest) When you move, you can gain Invisibility, 1 turn, or until you attack or cast a spell.</li><li><strong>Mind Veil.</strong> You have advantage on saving throws against things that try to read your thoughts, senses or emotions. Also, creatures have disadvantage to discern if you are lying via Insight checks.</li><li><strong>Focused Mind.</strong> (1/Field Rest) When you fail a Concentration check, you can gain 1 Wound and succeed instead.</li></ul><p><strong>Greater Invocations</strong></p><ul><li><strong>Doppelganger.</strong> (1/Safe Rest) You gain KEY illusory clones per Mirror Army. Whenever a clone is destroyed, summon an appropriate minion adjacent to you.</li><li><strong>Mind Twist.</strong> When you hit a creature with Shadow Blast or a minion attack, you can expend 1 use of Pilfered to inflict Confused.</li><li><strong>Ether Step.</strong> Whenever you spend a Pilfered Power to cast a spell. You may immediately teleport up to 6 spaces away.</li></ul>",
+		"parentClass": "shadowmancer",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "qygM76NmLqmBcZwC",
+	"folder": "157c931a4fa6c46c"
+}

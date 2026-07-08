@@ -1,7 +1,7 @@
 {
 	"name": "Veil",
 	"type": "spell",
-	"img": "icons/magic/air/fog-gas-smoke-purple-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/veil.webp",
 	"system": {
 		"macro": "",
 		"identifier": "veil",
@@ -55,9 +55,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Wall +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 hour duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 60,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

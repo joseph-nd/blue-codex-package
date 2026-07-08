@@ -1,7 +1,7 @@
 {
 	"name": "Arcane Shuffle",
 	"type": "spell",
-	"img": "icons/magic/time/arrows-circling-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/arcane-shuffle.webp",
 	"system": {
 		"macro": "",
 		"identifier": "arcane-shuffle",

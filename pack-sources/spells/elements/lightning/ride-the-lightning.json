@@ -1,7 +1,7 @@
 {
 	"name": "Ride the Lightning",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-strike-streak-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/ride-the-lightning.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ride-the-lightning",
@@ -87,9 +87,36 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "rideTheLightningDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Burst +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

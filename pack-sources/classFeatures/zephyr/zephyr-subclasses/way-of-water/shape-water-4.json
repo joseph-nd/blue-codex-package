@@ -1,0 +1,57 @@
+{
+	"name": "Shape Water (4)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/shape-water-4.webp",
+	"system": {
+		"macro": "",
+		"identifier": "shape-water-4",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can now manipulate up to a Huge amount of water.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vuMHru2vVB7CZmC4",
+	"folder": "1578cb909668662f"
+}

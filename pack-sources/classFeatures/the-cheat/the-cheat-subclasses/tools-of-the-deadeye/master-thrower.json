@@ -1,0 +1,57 @@
+{
+	"name": "Master Thrower",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/master-thrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "master-thrower",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Vicious Opportunist feature now applies to attacks you make with thrown weapons against Distracted targets. Your thrown weapons gain +4 Reach. You may sheathe and draw daggers &amp; improvised weapons for free.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-deadeye",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "gfOquy8B9hwLsVBm",
+	"folder": "cab141c8285d54a0"
+}

@@ -1,0 +1,66 @@
+{
+	"name": "Winged Shield",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/winged-shield.webp",
+	"system": {
+		"macro": "",
+		"identifier": "winged-shield",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "wingedShieldTemp",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "@level",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can Interpose up to 8 spaces away. When you Interpose, you gain LVL temp HP for that attack.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-bringer",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XhgJxw7dfrpPmE8Y",
+	"folder": "54e9d5ec200c04c9"
+}

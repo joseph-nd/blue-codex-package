@@ -1,0 +1,156 @@
+{
+	"name": "Stone Golem",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/stone-golem.webp",
+	"system": {
+		"macro": "",
+		"identifier": "stone-golem",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "stoneGolemStoneFistDmg",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "2d8+@level",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "stoneGolemStoneFistDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "stoneGolemStoneFistDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "stoneGolemStoneFistDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "stoneGolemStoneFistDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "stoneGolemStoneFistDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "stoneGolemStoneFistDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "stoneGolemColossalSmashDmg",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "2d8+@level",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "stoneGolemColossalSmashDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "stoneGolemColossalSmashDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "stoneGolemColossalSmashDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "stoneGolemColossalSmashDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "stoneGolemColossalSmashDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "stoneGolemColossalSmashDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>(Medium).</strong> Transform into a Medium Elemental. Gain +DEX Armor, Colossal Smash and the Stone Fist attack. You can Defend for free 1/round.</p><p><strong>Stone Fist.</strong> 1 Action, Damage: 2d8+LVL Bludgeoning.</p><p><strong>Colossal Smash.</strong> When you hit with Stone Fist, you can spend 1 mana to deal equal damage to enemies adjacent to your target and create an area of Slowed Terrain for 1 round.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "direbeast-form",
+		"gainedAtLevels": [
+			2,
+			3,
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-earth",
+				"name": "Direbeast Forms",
+				"group": "direbeast-form",
+				"levels": [
+					2,
+					3,
+					5
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "T2YpOhfO94FOJVBV",
+	"folder": "4d0ac960a3cbc4ff"
+}

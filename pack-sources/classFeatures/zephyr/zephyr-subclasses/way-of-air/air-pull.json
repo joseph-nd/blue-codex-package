@@ -1,0 +1,106 @@
+{
+	"name": "Air Pull",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/air-pull.webp",
+	"system": {
+		"macro": "",
+		"identifier": "air-pull",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "airPullDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "4d4+16",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "airPullDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "airPullDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "airPullDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "airPullDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "airPullDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "airPullDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Ga Form)</em> Reach: 6, Damage: 4d4+16, Vicious. On Hit: pull a Large or smaller target 2 spaces closer to you.</p><p><strong>High Levels:</strong> +8 damage and +1 space pulled. <strong>Expert Wind Rider:</strong> you can pull Huge or smaller creatures.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bGATidIGZv7UwLdj",
+	"folder": "53d4a6ab0f67d34d"
+}

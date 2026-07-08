@@ -1,0 +1,57 @@
+{
+	"name": "Dusk Step",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-wraith/dusk-step.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dusk-step",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you move, you can spend 2 mana to teleport up to your speed instead. If you are in shadow, this costs 0 mana instead.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-wraith",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "fZhyWBk4LfSDmBvi",
+	"folder": "57203c93f68ebc73"
+}

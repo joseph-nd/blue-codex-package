@@ -1,7 +1,7 @@
 {
 	"name": "Guilt",
 	"type": "spell",
-	"img": "icons/magic/control/voodoo-doll-pain-damage-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/guilt.webp",
 	"system": {
 		"macro": "",
 		"identifier": "guilt",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "guiltDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "guiltDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "guiltDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "guiltDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "guiltDamage1"
 							}
 						]

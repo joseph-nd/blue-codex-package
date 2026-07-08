@@ -1,7 +1,7 @@
 {
 	"name": "Shadow Magick",
 	"type": "spell",
-	"img": "icons/magic/perception/shadow-stealth-eyes-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/shadow-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shadow-magick",

@@ -1,0 +1,64 @@
+{
+	"name": "Sea Glide",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/sea-glide.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sea-glide",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Sho Form)</em> Move: Up to 4 spaces, ignoring Slowed Terrain and bodies of water. Until the end of your next turn, you can \"walk\" on water.</p><p><strong>High Levels:</strong> +2 speed every Tidal Warrior. <strong>Expert Tidal Warrior:</strong> enemies adjacent to your move are Slowed, 1 turn.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "FHBvQ0jeRV7XN5lG",
+	"folder": "a1f65c1ed7e413f7"
+}

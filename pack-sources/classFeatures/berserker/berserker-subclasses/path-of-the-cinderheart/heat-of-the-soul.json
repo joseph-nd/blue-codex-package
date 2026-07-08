@@ -1,0 +1,57 @@
+{
+	"name": "Heat of the Soul",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-cinderheart/heat-of-the-soul.webp",
+	"system": {
+		"macro": "",
+		"identifier": "heat-of-the-soul",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use That All You Got?!, you can instead deal STR+DEX Fire damage per expended Fury Die to enemies in Burst 1. Ignores armor.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-cinderheart",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "m0LvwL3gahXmGRT5",
+	"folder": "6b8409997bad0df6"
+}

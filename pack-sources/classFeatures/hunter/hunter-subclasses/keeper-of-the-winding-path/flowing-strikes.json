@@ -1,0 +1,57 @@
+{
+	"name": "Flowing Strikes",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-winding-path/flowing-strikes.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flowing-strikes",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You no longer suffer the disadvantage from Rushed Attacks on your turn as long as you move or teleport before each attack.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-winding-path",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "IV0rusd4Ynf70Jh9",
+	"folder": "fb48fe10ba524a0f"
+}

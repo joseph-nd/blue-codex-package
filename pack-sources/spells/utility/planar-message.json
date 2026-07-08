@@ -1,7 +1,7 @@
 {
 	"name": "Planar Message",
 	"type": "spell",
-	"img": "icons/magic/sonic/projectile-sound-rings-wave.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/planar-message.webp",
 	"system": {
 		"macro": "",
 		"identifier": "planar-message",

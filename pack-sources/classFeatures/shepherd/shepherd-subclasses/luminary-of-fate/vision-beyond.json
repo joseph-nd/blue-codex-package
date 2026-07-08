@@ -1,0 +1,57 @@
+{
+	"name": "Vision Beyond",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/vision-beyond.webp",
+	"system": {
+		"macro": "",
+		"identifier": "vision-beyond",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Whenever you cast a tiered spell, you automatically gain the benefits of Sight Beyond Sight for free and you can learn one vulnerability, resistance or immunity of one enemy that you can see.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-fate",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4OT2BBt4HccGNZDs",
+	"folder": "6b3a4e066971c20f"
+}

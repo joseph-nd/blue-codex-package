@@ -1,7 +1,7 @@
 {
 	"name": "Heal",
 	"type": "spell",
-	"img": "icons/magic/life/heart-cross-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/heal.webp",
 	"system": {
 		"macro": "",
 		"identifier": "heal",
@@ -63,9 +63,40 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 target",
+					"deltas": [
+						{
+							"operation": "addTargets",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Reach +4",
+					"deltas": [
+						{
+							"operation": "addReach",
+							"value": 4,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+5 HP",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

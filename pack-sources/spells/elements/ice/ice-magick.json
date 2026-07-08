@@ -1,7 +1,7 @@
 {
 	"name": "Ice Magick",
 	"type": "spell",
-	"img": "icons/magic/water/orb-ice-glow.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/ice-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ice-magick",

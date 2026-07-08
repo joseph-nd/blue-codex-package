@@ -1,7 +1,7 @@
 {
 	"name": "Portal",
 	"type": "spell",
-	"img": "icons/magic/air/wind-vortex-swirl-blue-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/portal.webp",
 	"system": {
 		"macro": "",
 		"identifier": "portal",
@@ -56,9 +56,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Range +2",
+					"deltas": [
+						{
+							"operation": "addRange",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 turn duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "round"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

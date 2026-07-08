@@ -1,0 +1,79 @@
+{
+	"name": "Splinter Strike",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/splinter-strike.webp",
+	"system": {
+		"macro": "",
+		"identifier": "splinter-strike",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>On hit: Deal damage equal to one roll of your Combat Die to enemies in a Cone 3. The Cone originates from your target and extends away from you.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "combat-tactics",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-watch",
+				"name": "Combat Tactics",
+				"group": "combat-tactics",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "la2xvhzZNMBsrrPV",
+	"folder": "a9475ef1bf4edd19"
+}

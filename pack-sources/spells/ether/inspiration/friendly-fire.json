@@ -1,7 +1,7 @@
 {
 	"name": "Friendly Fire",
 	"type": "spell",
-	"img": "icons/magic/sonic/projectile-shock-wave-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/friendly-fire.webp",
 	"system": {
 		"macro": "",
 		"identifier": "friendly-fire",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "friendlyFireDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "friendlyFireDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "friendlyFireDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "friendlyFireDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "friendlyFireDamage1"
 							}
 						]

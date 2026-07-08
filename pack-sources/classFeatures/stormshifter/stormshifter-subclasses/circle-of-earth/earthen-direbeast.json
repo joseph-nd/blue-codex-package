@@ -1,0 +1,57 @@
+{
+	"name": "Earthen Direbeast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/earthen-direbeast.webp",
+	"system": {
+		"macro": "",
+		"identifier": "earthen-direbeast",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain a new Direbeast Form, Stone Golem. While Beastshifted, you can cast Earth spells and can move through earth, stone and sand as if walking.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-earth",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "M2mUGyTH8IvE2XJ5",
+	"folder": "0fec6694b9015c19"
+}

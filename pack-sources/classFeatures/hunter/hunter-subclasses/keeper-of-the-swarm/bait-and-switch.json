@@ -1,0 +1,81 @@
+{
+	"name": "Bait and Switch",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/bait-and-switch.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bait-and-switch",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Reach: 4, Reaction: When an ally would be attacked. You Interpose for them and Defend for free. If the attacker was your quarry they have disadvantage.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "thrill-of-the-hunt",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			12,
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "keeper-of-the-swarm",
+				"name": "Thrill of the Hunt",
+				"group": "thrill-of-the-hunt",
+				"levels": [
+					2,
+					4,
+					6,
+					8,
+					12,
+					14
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "dx2ENF4sS0RMlHxJ",
+	"folder": "d5e8939320802cb4"
+}

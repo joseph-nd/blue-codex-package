@@ -1,0 +1,79 @@
+{
+	"name": "Defensive Stance",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/defensive-stance.webp",
+	"system": {
+		"macro": "",
+		"identifier": "defensive-stance",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action. You gain Armor equal to the roll of your Combat Die until the end of your next turn.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "combat-tactics",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-broken",
+				"name": "Combat Tactics",
+				"group": "combat-tactics",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "73QfBTj5A2adHSpD",
+	"folder": "7d685cd94cccec09"
+}

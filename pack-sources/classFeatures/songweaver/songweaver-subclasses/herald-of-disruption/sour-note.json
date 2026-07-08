@@ -1,0 +1,57 @@
+{
+	"name": "Sour Note",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/sour-note.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sour-note",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Free Reaction: Spend a Songweaver's Inspiration to force an enemy to reroll a single die related to an attack or saving throw (you choose which result to keep but it must be either).</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-disruption",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "KXXdxvKdCdj2oBNP",
+	"folder": "616433048f1c9d50"
+}

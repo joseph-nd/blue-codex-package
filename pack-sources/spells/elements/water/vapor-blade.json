@@ -1,7 +1,7 @@
 {
 	"name": "Vapor Blade",
 	"type": "spell",
-	"img": "icons/magic/water/strike-weapon-blade-ice-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/vapor-blade.webp",
 	"system": {
 		"macro": "",
 		"identifier": "vapor-blade",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "vaporBladeDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "vaporBladeDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "vaporBladeDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "vaporBladeDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "vaporBladeDamage1"
 							}
 						]

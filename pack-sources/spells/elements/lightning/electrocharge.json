@@ -1,7 +1,7 @@
 {
 	"name": "Electrocharge",
 	"type": "spell",
-	"img": "icons/magic/lightning/fist-unarmed-strike-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/electrocharge.webp",
 	"system": {
 		"macro": "",
 		"identifier": "electrocharge",
@@ -55,9 +55,18 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 Armor",
+					"deltas": []
+				},
+				{
+					"label": "+6 speed",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

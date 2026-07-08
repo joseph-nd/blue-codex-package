@@ -1,7 +1,7 @@
 {
 	"name": "Zap",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-strike-sparks-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/zap.webp",
 	"system": {
 		"macro": "",
 		"identifier": "zap",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "zapDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "zapDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "zapDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "zapDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "zapDamage1"
 							}
 						]

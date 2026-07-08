@@ -1,0 +1,86 @@
+{
+	"name": "Breath of Wind",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/breath-of-wind.webp",
+	"system": {
+		"macro": "",
+		"identifier": "breath-of-wind",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "breathOfWindDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "4d4+16",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "breathOfWindDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "breathOfWindDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(De Form)</em> Arc: 6, Damage: 4d4+16. Large and smaller targets are knocked Prone on a failed STR save. On save, targets aren't knocked Prone.</p><p><strong>Expert Wind Rider:</strong> +6 damage and Arc +2 and hitting one target deals +LVL damage and they automatically fail their save.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WAJxtmHq50L186WA",
+	"folder": "53d4a6ab0f67d34d"
+}

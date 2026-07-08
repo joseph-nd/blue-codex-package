@@ -1,7 +1,7 @@
 {
 	"name": "Thousand Cuts",
 	"type": "spell",
-	"img": "icons/magic/air/wind-stream-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/thousand-cuts.webp",
 	"system": {
 		"macro": "",
 		"identifier": "thousand-cuts",
@@ -37,6 +37,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "thousandCutsDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "thousandCutsDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
 								"parentNode": "thousandCutsDamage1"
 							}
 						]
@@ -79,9 +89,36 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Secondary Reach +1",
+					"deltas": [
+						{
+							"operation": "addReach",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+4 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 4,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "thousandCutsDamage1",
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

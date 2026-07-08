@@ -1,0 +1,25 @@
+{
+	"name": "Oath of Blood",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/oath-of-blood.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-blood",
+		"rules": [],
+		"description": "<p><em>&ldquo;Blood of Ender bless me and damn my foes.&rdquo;</em> You are a grim champion who commands the battlefield by mastering the flow of life force, sacrificing your own vitality for devastating power and draining your foes to sustain an unending crusade.</p><p><strong>LEVEL 3</strong></p><p><strong>Oath of Blood.</strong></p><p>You no longer know Radiant spells, you instead know Blood spells. Your Radiant Judgement becomes Ender&rsquo;s Judgment and can deal Necrotic or Poison damage instead of Radiant and you can sacrifice HP to deal extra damage equal to the amount you lost. When you use Lay on Hands, you can sacrifice HP to increase the amount restored by the amount you lost.</p><p><strong>Sanguine Aura.</strong></p><p>You gain a Burst 4 aura. Whenever a non-minion creature in the area becomes Bloodied, gains a Wound, or dies, you gain 1 Judgment Die and regain KEY HP.</p><p><strong>LEVEL 7</strong></p><p><strong>Shared Vitality.</strong></p><p>When you regain HP from Sanguine Aura, a second target of your choice in the area regains an equal amount.</p><p><strong>LEVEL 11</strong></p><p><strong>Vampiric Might.</strong></p><p>You can expend 1 Judgment Die to instead cast Vampiric Bite at tier 3 or 2 Judgment Die to cast it at tier 5. While Bloodied, your melee weapon attacks deal an additional 1d8 Necrotic or Poison damage.</p><p><strong>LEVEL 15</strong></p><p><strong>Crimson Surge.</strong></p><p>(1/encounter) When you are Bloodied, you gain as many Judgment Die as you can.</p><p><strong>Sanguine Ruin.</strong></p><p>(1/Safe Rest) When you use Ender&rsquo;s Judgment, you can regain HP equal to the full damage dealt.</p><h3>Sacred Decrees</h3><p><strong>Siphoning Aura.</strong> (1/Safe Rest) 1 Action. KEY Necrotic or Poison damage to all enemies in your aura. You regain KEY HP for each damaged enemy. Any HP gained above your maximum HP becomes temp HP.</p><p><strong>Cloak of Blood.</strong> When you sacrifice HP, you gain temp HP equal to the value lost. This temp HP is lost after 1 minute.</p><p><strong>Predator&rsquo;s Thirst.</strong> When attacking a Bloodied creature, your attacks are considered 1 higher. Rolling a 1 on a die ignores this benefit. Results greater than a die&rsquo;s maximum is a crit.</p><p><strong>Seeping Wounds.</strong> 1 Action, Burst: 2, Damage: 2d10 Necrotic or Poison to enemies and you gain a Wound.</p>",
+		"parentClass": "oathsworn",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "7W6IKj3nJGcqJEcD",
+	"folder": "a81e0dbba16261c1"
+}

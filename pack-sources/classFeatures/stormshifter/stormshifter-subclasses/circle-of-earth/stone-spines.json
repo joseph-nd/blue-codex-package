@@ -1,0 +1,77 @@
+{
+	"name": "Stone Spines",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/stone-spines.webp",
+	"system": {
+		"macro": "",
+		"identifier": "stone-spines",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Creatures that hit you with a melee attack or start its turn grappling or being grappled by you take DEX Piercing damage. Ignores armor.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "chimeric-boon",
+		"gainedAtLevels": [
+			6,
+			9,
+			12,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-earth",
+				"name": "Chimeric Boons",
+				"group": "chimeric-boon",
+				"levels": [
+					6,
+					9,
+					12,
+					17
+				],
+				"count": {
+					"6": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Eqr4gF9rsxbzswP3",
+	"folder": "1f2f3510a2c99c0a"
+}

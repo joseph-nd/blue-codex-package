@@ -1,0 +1,71 @@
+{
+	"name": "The Magnificent Mortimer",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/the-magnificent-mortimer.webp",
+	"system": {
+		"macro": "",
+		"identifier": "the-magnificent-mortimer",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) You summon a stage magician of moderate talent but excellent misdirection. Mortimer fills the area around him with perception warping magic. While he is present, allies can make Stealth checks without Cover and gain +5 bonus to Stealth checks. Mortimer avoids conflict assiduously and vanishes in a puff of smoke the moment initiative is rolled or overt hostilities begin nearby.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "a-people-person",
+		"gainedAtLevels": [
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-disruption",
+				"name": "A \"People\" Person",
+				"group": "a-people-person",
+				"levels": [
+					5
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "uyBTSF1bU0KHwdpB",
+	"folder": "018d83a722cc9e0b"
+}

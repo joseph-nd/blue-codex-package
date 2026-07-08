@@ -1,0 +1,57 @@
+{
+	"name": "Giddy Energy",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-inspiration/giddy-energy.webp",
+	"system": {
+		"macro": "",
+		"identifier": "giddy-energy",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Allies that start their turn in the area of your performance begin to vibrate with energy, their next melee attack deals an additional 1d12 Force damage.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-inspiration",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0ZgHDFPcMNt5Ckfx",
+	"folder": "f8920ca44f41b0b0"
+}

@@ -1,0 +1,79 @@
+{
+	"name": "Cloak of Blood",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/cloak-of-blood.webp",
+	"system": {
+		"macro": "",
+		"identifier": "cloak-of-blood",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you sacrifice HP, you gain temp HP equal to the value lost. This temp HP is lost after 1 minute.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "sacred-decree",
+		"gainedAtLevels": [
+			3,
+			6,
+			9,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "oath-of-blood",
+				"name": "Sacred Decrees",
+				"group": "sacred-decree",
+				"levels": [
+					3,
+					6,
+					9,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DxGiw7UcytJeERQH",
+	"folder": "203ee25b4c3c5e69"
+}

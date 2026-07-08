@@ -1,7 +1,7 @@
 {
 	"name": "Scrying",
 	"type": "spell",
-	"img": "icons/magic/perception/orb-crystal-ball-scrying-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/scrying.webp",
 	"system": {
 		"macro": "",
 		"identifier": "scrying",

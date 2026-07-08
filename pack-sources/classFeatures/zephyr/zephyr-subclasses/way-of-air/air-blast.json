@@ -1,0 +1,106 @@
+{
+	"name": "Air Blast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/air-blast.webp",
+	"system": {
+		"macro": "",
+		"identifier": "air-blast",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "airBlastDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "4d4+16",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "airBlastDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "airBlastDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "airBlastDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "airBlastDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "airBlastDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "airBlastDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Ga Form)</em> Reach: 6, Damage: 4d4+16, Vicious. On hit: push a Large or smaller target or yourself up to 4 spaces. You do not take damage from this form's forced movement ending early.</p><p><strong>High Levels:</strong> +8 damage and +2 spaces pushed every Wind Rider. <strong>Expert Wind Rider:</strong> you can push Huge or smaller targets.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "hnRLWLwKg9n704rS",
+	"folder": "53d4a6ab0f67d34d"
+}

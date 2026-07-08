@@ -1,0 +1,57 @@
+{
+	"name": "Stone&rsquo;s Edge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/stones-edge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "stones-edge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While your Stonemail is activated, your attacks while Beastshifted deal an additional 1d8 Bludgeoning, Piercing or Slashing damage.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-earth",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "B15mcCdAY0FmAKKF",
+	"folder": "0fec6694b9015c19"
+}

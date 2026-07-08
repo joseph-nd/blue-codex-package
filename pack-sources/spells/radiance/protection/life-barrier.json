@@ -1,7 +1,7 @@
 {
 	"name": "Life Barrier",
 	"type": "spell",
-	"img": "icons/magic/life/heart-area-circle-red-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/life-barrier.webp",
 	"system": {
 		"macro": "",
 		"identifier": "life-barrier",

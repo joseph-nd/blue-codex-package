@@ -1,7 +1,7 @@
 {
 	"name": "False Face",
 	"type": "spell",
-	"img": "icons/magic/symbols/mask-metal-silver-white.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/false-face.webp",
 	"system": {
 		"macro": "",
 		"identifier": "false-face",

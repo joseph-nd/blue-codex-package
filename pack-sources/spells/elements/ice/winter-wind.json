@@ -1,7 +1,7 @@
 {
 	"name": "Winter Wind",
 	"type": "spell",
-	"img": "icons/magic/air/wind-weather-snow-gusts.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/winter-wind.webp",
 	"system": {
 		"macro": "",
 		"identifier": "winter-wind",
@@ -97,9 +97,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "winterWindDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Cone +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

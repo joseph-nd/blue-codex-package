@@ -1,7 +1,7 @@
 {
 	"name": "Dread Visage",
 	"type": "spell",
-	"img": "icons/magic/control/fear-fright-mask-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/dread-visage.webp",
 	"system": {
 		"macro": "",
 		"identifier": "dread-visage",

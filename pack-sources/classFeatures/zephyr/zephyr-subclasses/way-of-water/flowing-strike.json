@@ -1,0 +1,106 @@
+{
+	"name": "Flowing Strike",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/flowing-strike.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flowing-strike",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "flowingStrikeDmg",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "1d4+@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "flowingStrikeDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "flowingStrikeDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "flowingStrikeDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "flowingStrikeDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "flowingStrikeDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "flowingStrikeDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Sho Form)</em> Reach: 4, Damage: 1d4+KEY. On hit: push Medium or smaller targets 1 space away or apply Slowed, 1 turn.</p><p><strong>High Levels:</strong> die step increases every Tidal Warrior. <strong>Expert Tidal Warrior:</strong> is considered a melee attack for Reverberating Strikes.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DiI6hPfPjYQeQTGP",
+	"folder": "a1f65c1ed7e413f7"
+}

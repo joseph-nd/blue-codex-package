@@ -1,0 +1,57 @@
+{
+	"name": "Lone Hunter",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-winding-path/lone-hunter.webp",
+	"system": {
+		"macro": "",
+		"identifier": "lone-hunter",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain Cover vs your quarry as long as no enemies other than your quarry or allies are adjacent to you.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-winding-path",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "371AuxPycMMMMrtV",
+	"folder": "fb48fe10ba524a0f"
+}

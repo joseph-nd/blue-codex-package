@@ -1,0 +1,75 @@
+{
+	"name": "Dazing Discharge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-storms/dazing-discharge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dazing-discharge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Burst: 3. Your Lifebinding Spirit sacrifices itself in a violent display of shocking glory. Choose either yourself or the Lifebinding Spirit's last location as the point of origin. All enemies in the area take a number of d6's of Lightning damage equal to any unused ability uses it had and are Dazed and Blinded, 1 turn.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "sacred-grace",
+		"gainedAtLevels": [
+			5,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "luminary-of-storms",
+				"name": "Sacred Graces",
+				"group": "sacred-grace",
+				"levels": [
+					5,
+					9,
+					13
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8aKNUFUEN6qHj9LG",
+	"folder": "eff5defbacaa58f6"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Earth Magick",
 	"type": "spell",
-	"img": "icons/magic/earth/strike-fist-stone.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/earth-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "earth-magick",

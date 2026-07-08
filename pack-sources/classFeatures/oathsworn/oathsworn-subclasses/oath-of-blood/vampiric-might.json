@@ -1,0 +1,57 @@
+{
+	"name": "Vampiric Might",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/vampiric-might.webp",
+	"system": {
+		"macro": "",
+		"identifier": "vampiric-might",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can expend 1 Judgment Die to instead cast Vampiric Bite at tier 3 or 2 Judgment Die to cast it at tier 5. While Bloodied, your melee weapon attacks deal an additional 1d8 Necrotic or Poison damage.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-blood",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "p1Xj5c3vnT1qxPWN",
+	"folder": "d4c837e126872019"
+}

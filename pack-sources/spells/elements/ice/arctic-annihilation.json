@@ -1,7 +1,7 @@
 {
 	"name": "Arctic Annihilation",
 	"type": "spell",
-	"img": "icons/magic/water/projectiles-ice-explosion.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/arctic-annihilation.webp",
 	"system": {
 		"macro": "",
 		"identifier": "arctic-annihilation",

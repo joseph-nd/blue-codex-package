@@ -1,0 +1,81 @@
+{
+	"name": "Shake It Off!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/shake-it-off.webp",
+	"system": {
+		"macro": "",
+		"identifier": "shake-it-off",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(INT/Safe Rest) 1 Action, Range: 6. Remove 2 Impaired, Hampered, or Influenced conditions from the target.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "commanders-orders",
+		"gainedAtLevels": [
+			1,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-broken",
+				"name": "Commander's Order",
+				"group": "commanders-orders",
+				"levels": [
+					1,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lrWP2OiMYU5YZRXY",
+	"folder": "3171d02369c8eac9"
+}

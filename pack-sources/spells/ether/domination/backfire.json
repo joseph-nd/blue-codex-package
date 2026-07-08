@@ -1,7 +1,7 @@
 {
 	"name": "Backfire",
 	"type": "spell",
-	"img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/backfire.webp",
 	"system": {
 		"macro": "",
 		"identifier": "backfire",
@@ -71,7 +71,19 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDice",
+					"value": null,
+					"dice": {
+						"count": 1,
+						"faces": 8
+					},
+					"condition": null,
+					"targetEffectId": "backfireDamage1",
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

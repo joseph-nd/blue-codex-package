@@ -1,0 +1,25 @@
+{
+	"name": "Champion of the Broken",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/combat-medic.webp",
+	"system": {
+		"macro": "",
+		"identifier": "champion-of-the-broken",
+		"rules": [],
+		"description": "<p><em>&ldquo;Glory is for the victors. My work is with the fallen.&rdquo;</em> As the Champion of the Broken, you find your purpose amidst the wounded, using your peerless triage skills to mend grievous injuries and ensure that no soldier is ever left behind.</p><p><strong>LEVEL 3</strong></p><p><strong>Combat Medic.</strong></p><p>You carry INT specialized medic kits that replenish whenever you take a Make a Camp or Safe Rest. You can expend a kit with 1 Action to aid an ally you can touch. The target can immediately expend and roll one of their Hit Die, regaining HP equal to the roll + their STR + your INT. If the target has no Hit Die remaining, you can expend one of your own.</p><p><strong>Years of Study.</strong></p><p>(INT/Safe Rest) You can spend 6 seconds using Examination (INT) to correctly determine any current non-magical maladies a creature is suffering or determine a cause of death.</p><p><strong>LEVEL 7</strong></p><p><strong>Triage Specialist.</strong></p><p>During a Field Rest, allies of your choice roll any Hit Die they expend with advantage. Any ally that uses a Hit Die also gains your Field Medic bonus for each Hit Die expended.</p><p><strong>Second Wind.</strong></p><p>(1/encounter) When you are Bloodied, you can choose to regain 2xLVL HP.</p><p><strong>LEVEL 11</strong></p><p><strong>Advanced Combat Medic.</strong></p><p>You gain +2 medic kits and 2 max Hit Die. Additionally, when used, medic kits can remove 1 negative condition.</p><p><strong>LEVEL 15</strong></p><p><strong>Heroes Never Die!.</strong></p><p>(1/Safe Rest) Free Reaction: When an ally you can see is reduced to 0 HP. The ally is instead reduced to 1 HP. Additionally, all allies that can hear you gain LVL temp HP, 1 minute.</p><h3>Combat Abilities</h3><h4>Commander's Order</h4><p><strong>Hold This Position!</strong> (1/encounter) 1 Action, Burst: 2. Until the start of your next turn, allies in the area gain +LVL temp HP.</p><p><strong>Triage!</strong> (1/Field Rest) 1 Action, Range: 6. For the next minute, any HP target ally regains from consuming potions or your Combat Medic feature is the maximum possible value.</p><p><strong>Dig In!</strong> 1 Action, Range: 6. Target gains INT temp HP and their next attack has advantage.</p><p><strong>Shake It Off!</strong> (INT/Safe Rest) 1 Action, Range: 6. Remove 2 Impaired, Hampered, or Influenced conditions from the target.</p><h4>Combat Tactics</h4><p><strong>Pure Strike.</strong> Allies adjacent to your target regain HP equal to a roll of your Combat Die.</p><p><strong>Defensive Stance.</strong> 1 Action. You gain Armor equal to the roll of your Combat Die until the end of your next turn.</p><p><strong>Endless Combo.</strong> 1 Action. Make an attack. If it hits it deals extra damage equal to a roll of your Combat Die. You can continue expending Combat Die on additional attacks that deal extra damage as long as they continue to hit. Each attack must follow Rushed attack rules.</p>",
+		"parentClass": "commander",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "DG3hNSUBRt1ArZGJ",
+	"folder": "a09b2900fb6185a5"
+}

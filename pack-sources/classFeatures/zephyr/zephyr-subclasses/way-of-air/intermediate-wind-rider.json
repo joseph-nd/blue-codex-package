@@ -1,0 +1,57 @@
+{
+	"name": "Intermediate Wind Rider",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/intermediate-wind-rider.webp",
+	"system": {
+		"macro": "",
+		"identifier": "intermediate-wind-rider",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your unarmed strikes become Reach 4. While falling, you can glide. While gliding you can move horizontally 2 spaces for every 1 space you fall, this counts as a move but ignores your maximum speed. You learn all Intermediate (Ga) Air Forms. Your forms grow stronger. When you roll initiative, you gain +1 Bursts of Speed (total 2).</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "7Jy04EbndsYASpmc",
+	"folder": "7de9e965c0f005ff"
+}

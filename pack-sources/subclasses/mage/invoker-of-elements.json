@@ -1,0 +1,25 @@
+{
+	"name": "Invoker of Elements",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-elements/elementalist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "invoker-of-elements",
+		"rules": [],
+		"description": "<p><strong>\"You're out of your depth!\"</strong> You don't merely wield the elements; you become a chosen aspect&mdash;be it Fire's consuming rage, Water's crushing depths, Air's boundless fury, or Earth's unyielding heart. This profound attunement unlocks focused power and unique boons, shifting as you command a new elemental tide to overwhelm any challenge.</p><p><strong>LEVEL 3</strong></p><p><strong>Elementalist.</strong></p><p>You know 1 additional spell school from the Book of Elements. You MUST know Fire, either Ice or Water, either Wind or Lightning, and Earth.</p><p><strong>Elemental Attunement.</strong></p><p>(1/turn) Free Action. You attune yourself to either Fire, Water (Ice/Water), Air (Wind/Lightning) or Earth. You are always attuned to an element, but can use an Action to swap attunements. While attuned to an element, you can only cast spells from the school(s) associated with that element and you gain a passive boon when you spend mana:</p><p>Fire: Targets take additional Fire damage equal to the mana spent.</p><p>Water: You gain temp HP equal to the mana spent.</p><p>Air: You can Move a number of spaces equal to the mana spent for free.</p><p>Earth: You gain Armor, 1 turn, equal to the mana spent.</p><p><strong>LEVEL 7</strong></p><p><strong>Attunement Shift.</strong></p><p>When you switch Elemental Attunements, you unleash a burst of power based on the element you are newly attuning to. These effects only happen in initiative.</p><p>To Fire: Enemies in Burst 1 of you take KEY Fire damage &amp; gain Smoldering.</p><p>To Water: Enemies in Burst 1 of you are Slowed and allies regain KEY HP.</p><p>To Air: 1 enemy in Range 12 takes 2xKEY Lightning damage. You become Charged.</p><p>To Earth: Large or smaller enemies in Burst 1 of you are pushed 1 space from you.</p><p><strong>LEVEL 11</strong></p><p><strong>One With the Elements.</strong></p><p>The passive boons from Elemental Attunement are stronger:</p><p>Fire: Fire spells gain +1 to their crit range.</p><p>Water: Allies in Reach 2 also gain the temp HP.</p><p>Air: When you Move because of Elemental Attunement, you can teleport instead.</p><p>Earth: Armor gained from this stacks up to max of 5+LVL and lasts until you change attunements.</p><p><strong>LEVEL 15</strong></p><p><strong>Weaver.</strong></p><p>(1/Safe Rest) When you use Elemental Attunement you can activate this; you immediately gain KEY mana and attune to two elements of your choice. For the next minute, you gain KEY mana at the start of your turns. When you swap attunements, you can either swap one or both at the same time.</p><p><strong>Spellshaper</strong></p><ul><li><strong>Elemental Transmutation 2.0.</strong> (1 mana) Change the damage type of a spell to: Fire, Cold, Lightning, Slashing (Wind), or Bludgeoning (Earth).</li><li><strong>Energize.</strong> (1 mana) Your next spell cannot crit, however, it instead deals additional LVL damage. If the spell is an AoE, it deals additional LVL/2 damage.</li></ul>",
+		"parentClass": "mage",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Q1hpexHvFbdcgao9",
+	"folder": "77fbaeff37a5c693"
+}

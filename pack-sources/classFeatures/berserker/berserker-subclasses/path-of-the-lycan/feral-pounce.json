@@ -1,0 +1,57 @@
+{
+	"name": "Feral Pounce",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/feral-pounce.webp",
+	"system": {
+		"macro": "",
+		"identifier": "feral-pounce",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While Raging, if you move at least 3 spaces, your next attack deals +LVL damage. If your target was Large or smaller, you can spend 1 Fury Die to knocked Prone.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-lycan",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "fVkK9KU480DqfKNk",
+	"folder": "b2e2951ee73741e9"
+}

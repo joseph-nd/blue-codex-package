@@ -1,0 +1,64 @@
+{
+	"name": "Twisting Wind",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/twisting-wind.webp",
+	"system": {
+		"macro": "",
+		"identifier": "twisting-wind",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Ga Form)</em> Burst: 1, Concentration: Up to 1 minute. Wind fills the area. Enemies inside are Slowed while allies gain +2 speed.</p><p><strong>High Levels:</strong> Speed +2 and Burst +1 every Wind Rider. <strong>Expert Wind Rider:</strong> Ranged attacks into the area are considered 1 lower. Crits ignore this effect.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Na5Ys9zCZZmeHUBf",
+	"folder": "53d4a6ab0f67d34d"
+}

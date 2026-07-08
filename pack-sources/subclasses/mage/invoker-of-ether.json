@@ -1,0 +1,25 @@
+{
+	"name": "Invoker of Ether",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-ether/illusory-subtlety.webp",
+	"system": {
+		"macro": "",
+		"identifier": "invoker-of-ether",
+		"rules": [],
+		"description": "<p><em><strong>No More Elements.</strong> Mages naturally learn 3 spell schools of their choice from the Book of Elements. However, this subclass requires the spell schools from the Book of Ether. Players can either replace the known spell schools with those from the Book of Ether at level 3 or they can select the Book of Ether spells from level 1 assuming they want to take this subclass.</em></p><p><strong>My mind is a deadly place.</strong> While others shape flame or stone, you weave thought and illusion, bending perception until reality follows. An Evoker of Ether wields the unseen, where imagination strikes harder than any blade and truth is only what you allow others to believe.</p><p><strong>LEVEL 3</strong></p><p><strong>Illusory Subtlety.</strong></p><p>Interacting with an illusion created by your Spell Magick does not automatically reveal it as false. A creature immediately makes an INT save to see through it if they would interact with it.</p><p><strong>Fast Casting.</strong></p><p>You learn Stretch Time for free and it doesn't count against the number of Spellshaper abilities you would learn. Also, it now has a minimum action cost of 0.</p><p><strong>LEVEL 7</strong></p><p><strong>Elemental Mage.</strong></p><p>Learn one cantrip and one tiered spell from the Book of Elements. These spells can deal either Psychic damage or their respective school's damage.</p><p><strong>Sharper Images.</strong></p><p>(1/turn) You can have an illusion deal damage upon interaction for free.</p><p><strong>LEVEL 11</strong></p><p><strong>Mind Fortress.</strong></p><p>Gain resistance to Psychic damage and advantage on saves vs Influenced conditions and mind altering effects.</p><p><strong>LEVEL 15</strong></p><p><strong>Ether Master.</strong></p><p>Your Spellshaper abilities have their cost reduced by 1 (min 0). Also you can use 3/turn instead of 1.</p><p><strong>Spellshaper</strong></p><ul><li><strong>Subtle Casting.</strong> (1 mana) Your next spell has no visual or audio indicators, can be cast without a focus and without notice, though if something would travel from you, it would be obvious.</li><li><strong>Illusory Spell.</strong> (2 mana) The next spell you cast can appear as if it had originated from another creature or object you can see in range. The spell's range is still limited by your location.</li><li><strong>Arcane Thievery.</strong> Choose one spell you've seen cast since your last Safe Rest. Until your next Safe Rest, when you use Spell Magick, you can spend twice the spell's mana to cast it using your stats.</li><li><strong>Temporal Manipulation.</strong> (2 mana) When you cast a spell, you can delay it as long as you would like, though doing so requires Concentration. Select a target when you release the spell.</li></ul>",
+		"parentClass": "mage",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EhkXnDhnB7ZL1r9j",
+	"folder": "77fbaeff37a5c693"
+}

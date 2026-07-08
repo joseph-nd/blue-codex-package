@@ -1,0 +1,57 @@
+{
+	"name": "Oath of the Sea",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-sea/oath-of-the-sea.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-the-sea",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You no longer know Radiant spells, you instead know Water spells. Your Radiant Judgement becomes Depth&rsquo;s Judgment and can deal Bludgeoning or Cold damage. You gain a swim speed equal to your walking speed and can hold your breath twice as long.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-sea",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "YDeZkp5SLvnBnSXb",
+	"folder": "2f0184479cbabb08"
+}

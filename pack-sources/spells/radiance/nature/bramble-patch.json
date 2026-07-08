@@ -1,7 +1,7 @@
 {
 	"name": "Bramble Patch",
 	"type": "spell",
-	"img": "icons/magic/nature/trap-spikes-thorns-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/bramble-patch.webp",
 	"system": {
 		"macro": "",
 		"identifier": "bramble-patch",

@@ -1,0 +1,57 @@
+{
+	"name": "Blood Soaked Briars",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/blood-soaked-briars.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blood-soaked-briars",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Patron grants you knowledge of Nature Spells. Spells you cast from this school can't restore your own HP if you would lose HP from Pilfered Power. Your spells can deal Acid, Poison, or their normal damage.</p><p><em>[M] Grants Blue's Codex spells — school(s): nature.</em></p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-briar",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RDWS9EYFxFQDZ7QT",
+	"folder": "8764439a0fe23334"
+}

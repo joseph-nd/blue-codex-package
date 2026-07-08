@@ -1,7 +1,7 @@
 {
 	"name": "Protective Spirit",
 	"type": "spell",
-	"img": "icons/magic/holy/barrier-shield-winged-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/protective-spirit.webp",
 	"system": {
 		"macro": "",
 		"identifier": "protective-spirit",
@@ -55,9 +55,40 @@
 		"tier": 8,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Burst +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 minute duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				},
+				{
+					"label": "+1 miss range",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

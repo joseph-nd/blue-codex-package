@@ -1,7 +1,7 @@
 {
 	"name": "Soothing Mist",
 	"type": "spell",
-	"img": "icons/magic/air/fog-gas-smoke-dense-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/soothing-mist.webp",
 	"system": {
 		"macro": "",
 		"identifier": "soothing-mist",
@@ -55,9 +55,27 @@
 		"tier": 4,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Burst +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "HP +2",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

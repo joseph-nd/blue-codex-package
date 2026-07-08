@@ -1,0 +1,83 @@
+{
+	"name": "Press the Advantage",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/press-the-advantage.webp",
+	"system": {
+		"macro": "",
+		"identifier": "press-the-advantage",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you successfully hit a Distracted target, you can immediately make a second attack for free against that same creature.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "underhanded-abilities",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "tools-of-the-deadeye",
+				"name": "Underhanded Abilities",
+				"group": "underhanded-abilities",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					14,
+					16,
+					18
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "iqCfYMy4GuubqST0",
+	"folder": "05000d6744b7785a"
+}

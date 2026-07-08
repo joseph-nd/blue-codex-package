@@ -1,0 +1,75 @@
+{
+	"name": "Temporal Manipulation",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-ether/temporal-manipulation.webp",
+	"system": {
+		"macro": "",
+		"identifier": "temporal-manipulation",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>(2 mana)</strong> When you cast a spell, you can delay it as long as you would like, though doing so requires Concentration. Select a target when you release the spell.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "spellshaper",
+		"gainedAtLevels": [
+			4,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "invoker-of-ether",
+				"name": "Spellshaper",
+				"group": "spellshaper",
+				"levels": [
+					4,
+					9,
+					13
+				],
+				"count": {
+					"4": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4AALEJQZ3LCHifPZ",
+	"folder": "fdf0dc6e77922822"
+}

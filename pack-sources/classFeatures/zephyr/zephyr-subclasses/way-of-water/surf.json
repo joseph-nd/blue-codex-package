@@ -1,0 +1,86 @@
+{
+	"name": "Surf",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/surf.webp",
+	"system": {
+		"macro": "",
+		"identifier": "surf",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "surfDmg",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "4d8+6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "surfDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "surfDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(De Form)</em> Blast: 4, Damage: 4d8+6. Ignores armor. On a failed STR save, Large and smaller enemies are pushed out of the area and knocked Prone.</p><p><strong>Expert Tidal Warrior:</strong> +6 damage, Blast +2 and you can choose to ride the wave to anywhere in the area.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WAn4CFyeKF8eqgLw",
+	"folder": "a1f65c1ed7e413f7"
+}

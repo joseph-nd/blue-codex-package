@@ -1,0 +1,79 @@
+{
+	"name": "Winter’s Bite",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-frozen-north/winters-bite.webp",
+	"system": {
+		"macro": "",
+		"identifier": "winters-bite",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "wintersBiteDmg",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "@will",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "wintersBiteDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "wintersBiteDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/turn) Whenever you deal Cold damage, the target and all adjacent enemies take WIL Cold damage. Ignores armor.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-frozen-north",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "meCJCBiyK8SdHCn2",
+	"folder": "d1d0b5c317e355b6"
+}

@@ -1,0 +1,79 @@
+{
+	"name": "Interrupting Strike",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/interrupting-strike.webp",
+	"system": {
+		"macro": "",
+		"identifier": "interrupting-strike",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Reaction:</strong> When an enemy Moves adjacent to an ally. Expend a Combat Die to make an attack against that enemy. On hit: inflict Dazed this turn.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "combat-tactics",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-watch",
+				"name": "Combat Tactics",
+				"group": "combat-tactics",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "kpND99XbAa2da7zD",
+	"folder": "a9475ef1bf4edd19"
+}

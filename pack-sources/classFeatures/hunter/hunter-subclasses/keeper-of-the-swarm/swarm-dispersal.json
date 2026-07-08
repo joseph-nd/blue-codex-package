@@ -1,0 +1,57 @@
+{
+	"name": "Swarm Dispersal",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/swarm-dispersal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "swarm-dispersal",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Range: 12, Reaction: When an ally would be targeted by your quarry. Spend 1 ToTH charge and place them up to 2 spaces away. If they would be out of Range of the attack, ability or area of effect, it misses.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-swarm",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "I0ui8FH0sjpKNs8I",
+	"folder": "882e910e55f5a361"
+}

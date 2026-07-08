@@ -1,7 +1,7 @@
 {
 	"name": "Diversion",
 	"type": "spell",
-	"img": "icons/magic/control/control-influence-rally-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/diversion.webp",
 	"system": {
 		"macro": "",
 		"identifier": "diversion",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "diversionDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "diversionDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "diversionDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "diversionDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "diversionDamage1"
 							}
 						]

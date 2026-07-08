@@ -1,7 +1,7 @@
 {
 	"name": "Shield of Wrath",
 	"type": "spell",
-	"img": "icons/magic/defensive/shield-barrier-flaming-diamond-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/shield-of-wrath.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shield-of-wrath",
@@ -87,9 +87,40 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "shieldOfWrathDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Cone +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+LVL temp HP",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

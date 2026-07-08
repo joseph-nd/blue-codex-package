@@ -1,7 +1,7 @@
 {
 	"name": "Fire Magick",
 	"type": "spell",
-	"img": "icons/magic/fire/flame-burning-hand-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/fire-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "fire-magick",

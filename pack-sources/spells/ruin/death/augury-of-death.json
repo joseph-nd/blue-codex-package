@@ -1,7 +1,7 @@
 {
 	"name": "Augury of Death",
 	"type": "spell",
-	"img": "icons/magic/death/skeleton-eye-skull-glow-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/augury-of-death.webp",
 	"system": {
 		"macro": "",
 		"identifier": "augury-of-death",

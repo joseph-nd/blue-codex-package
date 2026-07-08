@@ -1,0 +1,81 @@
+{
+	"name": "Follow 'em",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/follow-em.webp",
+	"system": {
+		"macro": "",
+		"identifier": "follow-em",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action. You and up to two allies may immediately Move up to half your speeds for free, provided each ends their Move closer to your quarry.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "thrill-of-the-hunt",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			12,
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "keeper-of-the-swarm",
+				"name": "Thrill of the Hunt",
+				"group": "thrill-of-the-hunt",
+				"levels": [
+					2,
+					4,
+					6,
+					8,
+					12,
+					14
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "60rvZW6BN02tuPF8",
+	"folder": "d5e8939320802cb4"
+}

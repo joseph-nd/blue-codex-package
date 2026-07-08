@@ -1,7 +1,7 @@
 {
 	"name": "Time Slip",
 	"type": "spell",
-	"img": "icons/magic/time/hourglass-tilted-glowing-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/time-slip.webp",
 	"system": {
 		"macro": "",
 		"identifier": "time-slip",

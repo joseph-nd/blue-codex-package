@@ -1,0 +1,57 @@
+{
+	"name": "Ether Storm",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/ether-storm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ether-storm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Patron grants you knowledge of Illusion and Domination spells. Your Shadow Blast becomes Mind Blast. On crit: summon an illusory clone per Mirror Army. Your spells can deal Psychic or their normal damage.</p><p>Summon Shadows? These remain exactly the same though they can deal Psychic damage now. If you want to stay \"true to the subclasses' inspiration, call them Phantasms instead, though they are still minions.</p><p><em>[M] Grants Blue's Codex spells — school(s): illusion, domination.</em></p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-mesmer",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "A8GsqG4DiM5ad76q",
+	"folder": "ef1a33a7b0ce12a8"
+}

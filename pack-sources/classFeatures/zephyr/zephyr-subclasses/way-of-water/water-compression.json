@@ -1,0 +1,64 @@
+{
+	"name": "Water Compression",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/water-compression.webp",
+	"system": {
+		"macro": "",
+		"identifier": "water-compression",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Yoi Form)</em> You compress a source of water into a highly dense bead that hovers around you. For 24 hours, you do not need a water source and melee attacks against you have disadvantage. During this time, you gain 1 BoS at the start of your turns while in initiative. Once you use this form, you must Safe Rest for 1 week before doing so again.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "shvVs2gaYyUxMSvd",
+	"folder": "a1f65c1ed7e413f7"
+}

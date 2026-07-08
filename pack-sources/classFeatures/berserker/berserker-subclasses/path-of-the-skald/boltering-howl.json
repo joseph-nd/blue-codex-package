@@ -1,0 +1,57 @@
+{
+	"name": "Boltering Howl",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-skald/boltering-howl.webp",
+	"system": {
+		"macro": "",
+		"identifier": "boltering-howl",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Reaction: When an ally in Reach 4 is attacked. You may use That All You Got?! affecting that ally instead of yourself.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-skald",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MECWlw3Db73kNoet",
+	"folder": "61fb7b6ee4afd7ea"
+}

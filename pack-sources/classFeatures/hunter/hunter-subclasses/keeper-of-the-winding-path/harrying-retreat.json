@@ -1,0 +1,57 @@
+{
+	"name": "Harrying Retreat",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-winding-path/harrying-retreat.webp",
+	"system": {
+		"macro": "",
+		"identifier": "harrying-retreat",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Reaction: When an enemy moves into an adjacent space. You can spend a ToTH charge to immediately make an attack for free, if it’s your quarry you have advantage. Regardless of the outcome, you can also immediately move for free. You can move before or after the attack.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-winding-path",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "JnQ1xwurCWAM1FYz",
+	"folder": "fb48fe10ba524a0f"
+}

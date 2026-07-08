@@ -1,0 +1,57 @@
+{
+	"name": "Oath of Blood",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/oath-of-blood.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-blood",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You no longer know Radiant spells, you instead know Blood spells. Your Radiant Judgement becomes Ender&rsquo;s Judgment and can deal Necrotic or Poison damage instead of Radiant and you can sacrifice HP to deal extra damage equal to the amount you lost. When you use Lay on Hands, you can sacrifice HP to increase the amount restored by the amount you lost.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-blood",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WwipKDkSf90nCqcJ",
+	"folder": "d4c837e126872019"
+}

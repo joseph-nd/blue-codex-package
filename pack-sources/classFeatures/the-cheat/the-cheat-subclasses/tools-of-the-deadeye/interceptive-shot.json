@@ -1,0 +1,57 @@
+{
+	"name": "Interceptive Shot",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/interceptive-shot.webp",
+	"system": {
+		"macro": "",
+		"identifier": "interceptive-shot",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(INT/Safe Rest) Reaction: When an ally in Range 8 is attacked by a Ranged weapon. The attack has disadvantage. If it misses, you can make a free thrown weapon attack against the attacker if they are in Range of you.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-deadeye",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "A6bW4HHnM0UQjPMn",
+	"folder": "cab141c8285d54a0"
+}

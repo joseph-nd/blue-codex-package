@@ -1,7 +1,7 @@
 {
 	"name": "Water Whip",
 	"type": "spell",
-	"img": "icons/magic/water/water-jet-wave-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/water-whip.webp",
 	"system": {
 		"macro": "",
 		"identifier": "water-whip",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "waterWhipDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "waterWhipDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "waterWhipDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "waterWhipDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "waterWhipDamage1"
 							}
 						]
@@ -76,9 +96,36 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Reach +2",
+					"deltas": [
+						{
+							"operation": "addReach",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "waterWhipDamage1",
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

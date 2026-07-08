@@ -1,0 +1,25 @@
+{
+	"name": "Luminary of Trickery",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-trickery/smoke-and-mirrors.webp",
+	"system": {
+		"macro": "",
+		"identifier": "luminary-of-trickery",
+		"rules": [],
+		"description": "<p><em>&ldquo;Trust nothing, not even your own eyes.&rdquo;</em> Your deity is a god of deception or an ancient trickster spirit. It twists your divine light into psychic energy. You summon a perfect illusory double of yourself to deceive enemies and punish their mistakes.</p><p><strong>LEVEL 3</strong></p><p><strong>Smoke &amp; Mirrors.</strong></p><p>You know Illusion spells. You can only know 3 spell schools. Your Searing Light and Lifebinding Spirit can now deal Psychic damage instead. You can add +WIL to any skill checks to lie, deceive, cheat or \"prank\".</p><p><strong>Duplicitous Spirit.</strong></p><p>Your Lifebinding Spirit takes the form of a perfect illusory double of yourself and is considered an illusion. You can cast spells as if you were in the spirit's place, though you use your senses. When a creature would see through your double, it only means they can clearly tell the difference between you and it.</p><p>Illusory Double. Your Lifebinding Spirit is still Ethereal and immune to harm. It follows all normal illusion rules and has every sensory element that you normally would. When a target that can see through your double looses sight of both you and a spirit of yours or you swap places with a spirit, it can no longer tell the difference.</p><p><strong>LEVEL 7</strong></p><p><strong>Who's Who?.</strong></p><p>When you Move you can instead swap places with your Lifebinding spirit if its active.</p><p><strong>LEVEL 11</strong></p><p><strong>Tricksy Ally.</strong></p><p>While your Lifebinding spirit is adjacent to an enemy, allies with 1 space of it have advantage on melee attacks.</p><p><strong>LEVEL 15</strong></p><p><strong>Triple Trouble.</strong></p><p>You create 2 Lifebinding Spirits when using Duplicitious Spirit. They share any usage charges and you command both with the same action, though you can issue different commands.</p><p><strong>Sacred Graces</strong></p><ul><li><strong>Bend the Light.</strong> You can use Searing Light to become Invisible and Hidden, WIL turns, though it deals no damage or restores HP.</li><li><strong>Protective Light.</strong> You can use Searing Lighting to give a Bloodied ally in Reach 6 WIL d8 temp HP that lasts until the end of their next Safe Rest.</li><li><strong>Blessing Light.</strong> You can use Searing Light to imbue an ally's next weapon attack. It deals + WIL d8 Radiant damage.</li><li><strong>Shifting Light.</strong> You can use Searing Light to swap the spaces of two willing allies in Reach 6. This deals no damage and restores no HP.</li></ul>",
+		"parentClass": "shepherd",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "S1Uzp8HdOL9IDMb0",
+	"folder": "a6ec78c34c812783"
+}

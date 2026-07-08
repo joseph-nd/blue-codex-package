@@ -1,0 +1,64 @@
+{
+	"name": "Misted Veil",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/misted-veil.webp",
+	"system": {
+		"macro": "",
+		"identifier": "misted-veil",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Ga Form)</em> Burst: 1, Concentration: Up to 1 minute. Mist fills the area providing Cover and obscuring vision. You can shape the mist inside for free, effecting spaces of your choice.</p><p><strong>High Levels:</strong> Burst +1 every Tidal Warrior. <strong>Expert Tidal Warrior:</strong> enemies inside no longer have Cover.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "gEbM8uA3OmAaxy0b",
+	"folder": "a1f65c1ed7e413f7"
+}

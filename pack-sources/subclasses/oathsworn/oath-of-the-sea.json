@@ -1,0 +1,25 @@
+{
+	"name": "Oath of the Sea",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-sea/oath-of-the-sea.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-the-sea",
+		"rules": [],
+		"description": "<p><em>&ldquo;You cannot fight the ocean. You can only drown in it.&rdquo;</em> As an Oathsworn of the Sea, you are a relentless force of nature, summoning crashing waves to knock your enemies down and empowering your strikes with the crushing pressure of the abyss.</p><p><strong>LEVEL 3</strong></p><p><strong>Oath of the Sea.</strong></p><p>You no longer know Radiant spells, you instead know Water spells. Your Radiant Judgement becomes Depth&rsquo;s Judgment and can deal Bludgeoning or Cold damage. You gain a swim speed equal to your walking speed and can hold your breath twice as long.</p><p><strong>Tidal Aura.</strong></p><p>You gain a Burst 4 aura. Allies in the area gain the benefits of your Oath of Sea. When you start your turn in a Large body of water you gain 1 Judgment Die.</p><p><em>Large Body of Water?:</em> Mostly up the GM&rsquo;s discretion, but objects/things/structures also &ldquo;generally&rdquo; follow monster/creature sizes. So a Large body of water would take up about 4+ spaces on a grid.</p><p><strong>LEVEL 7</strong></p><p><strong>Rushing Wave.</strong></p><p>(1/encounter) 1 Action, Burst: 8. Enemies in the area must make a STR save. On a fail, they are knocked Prone. The area fills with magical sea water for 1 minute.</p><p><strong>LEVEL 11</strong></p><p><strong>Crushing Depths.</strong></p><p>When you use Depth&rsquo;s Judgment, your target is knocked Prone and Slowed. They can&rsquo;t stand until they remove Slowed by spending an action on their turn.</p><p><strong>Blessing of the Depths.</strong></p><p>You take WIL less Bludgeoning and Cold damage and can now breathe underwater. You ignore any negative consequence of deep dives.</p><p><strong>LEVEL 15</strong></p><p><strong>Churning Seas.</strong></p><p>(1/Safe Rest) When you use Rushing Wave, you can choose to maintain Concentration on it for up to 1 minute. During this time, you can use 1 Action to repeat its effect.</p><h3>Sacred Decrees</h3><p><strong>Crushing Aura.</strong> (1/Safe Rest) 1 Action. Enemies in your aura must make a STR save. On a fail, they are knocked Prone and take LVL Bludgeoning or Cold damage. Half damage on a save and they are Slowed, 1 round.</p><p><strong>Tidal Rush.</strong> (1/turn) Free Action. When standing in a Large body of water, you gain +4 speed.</p><p><strong>Raging Tide.</strong> Reaction: When an enemy in your aura hits you or an ally. The attacker takes Bludgeoning or Cold damage equal to 1 roll of your Judgment Die. They must then make a STR save. On a fail, they are pushed STR spaces away. If they are adjacent to you, they automatically fail. You can use this WIL/Safe Rest.</p>",
+		"parentClass": "oathsworn",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "qV4CZIWaFMbdL9SQ",
+	"folder": "a81e0dbba16261c1"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Vinelash",
 	"type": "spell",
-	"img": "icons/magic/nature/root-vine-hand-strike.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/vinelash.webp",
 	"system": {
 		"macro": "",
 		"identifier": "vinelash",
@@ -32,6 +32,14 @@
 					"on": {
 						"criticalHit": [
 							{
+								"id": "vinelashDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "vinelashDamage1"
+							},
+							{
 								"id": "vinelashCrit1",
 								"type": "condition",
 								"condition": "blinded",
@@ -45,6 +53,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "vinelashDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "vinelashDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "vinelashDamage1"
 							}
 						]

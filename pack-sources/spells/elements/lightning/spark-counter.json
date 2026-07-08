@@ -1,7 +1,7 @@
 {
 	"name": "Spark Counter",
 	"type": "spell",
-	"img": "icons/magic/lightning/barrier-shield-crackling-orb-pink.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/spark-counter.webp",
 	"system": {
 		"macro": "",
 		"identifier": "spark-counter",
@@ -64,9 +64,18 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 multiplier",
+					"deltas": []
+				},
+				{
+					"label": "teleport Range +4",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

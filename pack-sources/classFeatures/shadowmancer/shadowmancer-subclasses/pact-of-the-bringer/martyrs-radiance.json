@@ -1,0 +1,57 @@
+{
+	"name": "Martyr's Radiance",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/martyrs-radiance.webp",
+	"system": {
+		"macro": "",
+		"identifier": "martyrs-radiance",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Burst: 3. When you would take damage from Pilfered Power, restore that much HP to allies in the area divided amongst them however you choose and enemies in the area are Blinded, 1 turn.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-bringer",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "9cbD6kaJ8w6cNn7f",
+	"folder": "610751a6ffd3804a"
+}

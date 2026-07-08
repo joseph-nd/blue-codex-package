@@ -1,0 +1,25 @@
+{
+	"name": "Path of the Skald",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-skald/battle-hymn.webp",
+	"system": {
+		"macro": "",
+		"identifier": "path-of-the-skald",
+		"rules": [],
+		"description": "<p><em>\"We do not die today!\"</em> Your rage is a booming battle hymn. You are a frontline Berserker who wades into the fray, weaponizing your own pain and fury to shield allies and empower their strikes.</p><p><strong>LEVEL 3</strong></p><p><strong>Battle Hymn.</strong></p><p>While your Rage is active, allies in Burst 4 gain advantage on STR saves and saves against Frightened and Taunted.</p><p>Additionally, when you Rage, you can expend 1 Fury die and choose one verse below. Effects last until the start of your next turn and affect all allies in Burst 4 that start their turn in the area or enter it on their turn:</p><ul><li>Verse of Violence. Allies next attack, spell or ability gains a bonus to damage, healing or temp HP applied equal to the expended die's roll.</li><li>Verse of Pride. Allies gain bonus Armor, 1 round, equal to the expended die's roll.</li><li>Verse of Survival. Allies gain temp HP equal to half the expended die's roll.</li></ul><p><strong>Storyteller.</strong></p><p>You can use your STR instead of WIL when telling tales of conquests, victories, battles or other Berserker things.</p><p><strong>LEVEL 7</strong></p><p><strong>Boltering Howl.</strong></p><p>Reaction: When an ally in Reach 4 is attacked. You may use That All You Got?! affecting that ally instead of yourself.</p><p><strong>LEVEL 11</strong></p><p><strong>Saga of Battles.</strong></p><p>You can expend up to 2 Fury Die when you use Battle Hymn choosing the same or different verses. Additionally while your Rage is active, allies that start their turn in Burst 4 gain +2 speed.</p><p><strong>LEVEL 15</strong></p><p><strong>Warrior Poet.</strong></p><p>1/turn, whenever an ally in the area of your Battle Hymn deals damage, you can roll a Fury Die.</p><h3>Savage Arsenal</h3><p><strong>Thunderous Bellow.</strong> When you Rage, enemies in Burst 1 take STR Thunder damage and are pushed 1 space away if they are Large or smaller.</p><p><strong>War Chant.</strong> While Raging, when you hit with a weapon attack, you can expend a Fury Die to ignore the Rushed Attack penalty.</p><p><strong>Brothers in Blood.</strong> Whenever you gain a Wound, you can bellow a rallying cry. One ally in Range 4 can immediately Move for free and gains STR temp HP, 1 round.</p><p><strong>Deafening Rebuke.</strong> <em>Reaction:</em> When you expend Fury Dice for That all you got?!, if the attacker is within Range 4, they take Thunder damage equal to the highest die rolled.</p>",
+		"parentClass": "berserker",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "1JJjjJBPIs80ZAK7",
+	"folder": "0c74f1d48f570d26"
+}

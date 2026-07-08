@@ -1,7 +1,7 @@
 {
 	"name": "Vanish",
 	"type": "spell",
-	"img": "icons/magic/perception/shadow-stealth-eyes-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/vanish.webp",
 	"system": {
 		"macro": "",
 		"identifier": "vanish",

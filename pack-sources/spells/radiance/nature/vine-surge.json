@@ -1,7 +1,7 @@
 {
 	"name": "Vine Surge",
 	"type": "spell",
-	"img": "icons/magic/nature/vines-thorned-entwined-glow-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/vine-surge.webp",
 	"system": {
 		"macro": "",
 		"identifier": "vine-surge",
@@ -28,9 +28,17 @@
 					"parentContext": null,
 					"parentNode": null,
 					"canCrit": true,
-					"canMiss": true,
+					"canMiss": false,
 					"on": {
 						"criticalHit": [
+							{
+								"id": "vineSurgeDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "vineSurgeDamage1"
+							},
 							{
 								"id": "vineSurgeCrit1",
 								"type": "condition",
@@ -92,9 +100,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+4 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 4,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "vineSurgeDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Arc +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

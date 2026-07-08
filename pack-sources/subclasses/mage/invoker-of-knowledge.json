@@ -1,0 +1,25 @@
+{
+	"name": "Invoker of Knowledge",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/scholars-grimoire.webp",
+	"system": {
+		"macro": "",
+		"identifier": "invoker-of-knowledge",
+		"rules": [],
+		"description": "<p><strong>\"Magic is not a wild force to be tamed, but a puzzle to be solved.\"</strong> As an Invoker of Knowledge, you treat the arcane as a science. Through meticulous study and observation, you pen your own Grimoire, gathering the exact magic needed to solve any problems.</p><p><strong>LEVEL 3</strong></p><p><strong>Scholar's Grimoire.</strong></p><p>You have a personal Grimoire. When you unlock a new spell tier, you permanently scribe 3 spells of that tier or lower into your Grimoire from any spell school across any book. You can only cast spells scribed in your Grimoire. You can scribe a spell scroll of a tier you cast into your Grimoire during a Safe Rest.</p><p><strong>Custom Spells.</strong></p><p>During a Safe Rest, you can temporarily change the damage type of any spells in your Grimoire to another type that's also in your Grimoire.</p><p><strong>LEVEL 7</strong></p><p><strong>Photographic Casting.</strong></p><p>You learn the Arcane Thievery Spellshaper ability for free, and it does not count against your known limit. When you use Arcane Thievery to cast a spell you have seen cast in the last 24 hours, it costs its normal mana amount instead of double.</p><p><strong>LEVEL 11</strong></p><p><strong>Master Scriviner.</strong></p><p>After a Safe Rest, you can expend up to LVL mana to create temporary spell scrolls from your Grimoire, not including cantrips. Mana cost equals the spell's tier plus any upcasting. These crumble at your next Safe Rest. When an ally reads one, the DC check is reduced by INT.</p><p><strong>LEVEL 15</strong></p><p><strong>Epiphany.</strong></p><p>(1/encounter) Free Action. You instantly recall the exact magic needed to survive. Swap one of your scribed spells for any other spell of the same tier (or lower) from any Book. The first time you cast that new spell this encounter, it costs 0 mana and 0 Actions.</p><p><strong>Spellshaper</strong></p><ul><li><strong>Overcharged Casting.</strong> (1+ mana) The first primary die roll's crit range is reduced for each mana spent.</li><li><strong>Seeking Spell.</strong> (1 mana) Your next spell cannot miss. Rolling a 1 on the primary die is still considered a hit.</li><li><strong>Practiced Reading.</strong> You can spend mana on Spellshaper abilities while casting spells from spell scrolls.</li><li><strong>Lasting Power.</strong> (2 mana) Your next spell's non-instantaneous effects last twice as long.</li></ul>",
+		"parentClass": "mage",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "tEL53oGPMd59TcuW",
+	"folder": "77fbaeff37a5c693"
+}

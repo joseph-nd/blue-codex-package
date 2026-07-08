@@ -1,0 +1,77 @@
+{
+	"name": "Guardian Shade",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/guardian-shade.webp",
+	"system": {
+		"macro": "",
+		"identifier": "guardian-shade",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) You can attach a minion to an ally in Range 8 when you cast Summon Shadow. This minion doesn't count against your maximum and can't be commanded. The next attack that hits your ally hits the minion instead.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "greater-invocations",
+		"gainedAtLevels": [
+			4,
+			6,
+			9,
+			14,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-bringer",
+				"name": "Greater Invocations",
+				"group": "greater-invocations",
+				"levels": [
+					4,
+					6,
+					9,
+					14,
+					18
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Gp9acNUCpvRLZXa7",
+	"folder": "2a14c2f1b466954f"
+}

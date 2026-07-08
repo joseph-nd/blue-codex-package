@@ -1,7 +1,7 @@
 {
 	"name": "Clarity",
 	"type": "spell",
-	"img": "icons/magic/light/beam-rays-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/clarity.webp",
 	"system": {
 		"macro": "",
 		"identifier": "clarity",

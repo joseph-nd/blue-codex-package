@@ -1,0 +1,57 @@
+{
+	"name": "Blinding Light",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/blinding-light.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blinding-light",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you restore HP to a creature, enemies adjacent to your target have disadvantage on their next attack before the start of your next turn.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-bringer",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NtO83dsR5kcE4CFj",
+	"folder": "610751a6ffd3804a"
+}

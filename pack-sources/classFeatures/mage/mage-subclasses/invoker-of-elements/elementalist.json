@@ -1,0 +1,57 @@
+{
+	"name": "Elementalist",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-elements/elementalist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elementalist",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You know 1 additional spell school from the Book of Elements. You MUST know Fire, either Ice or Water, either Wind or Lightning, and Earth.</p><p><em>[M] Grants Blue's Codex spells — school(s): fire, ice, water, wind, lightning, earth.</em></p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-elements",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Ooxfw39nFdVHSVBl",
+	"folder": "b5bbf1f034758ba7"
+}

@@ -491,6 +491,10 @@ export default class Pack {
 					name: className,
 					progressionName: `${className} Progression`,
 					subclasses: new Map(),
+					// subclassId -> Map(poolGroup -> poolName): the choose/gain pools
+					// nested under each subclass folder, kept distinct from the fixed
+					// level-3/7/11/15 features.
+					subclassPools: new Map(),
 				};
 				classFolderData.set(classId, classData);
 			}
@@ -500,6 +504,15 @@ export default class Pack {
 
 			const subclassName = this.#getSubclassFolderName(file, source, subclassId);
 			if (!classData.subclasses.has(subclassId)) classData.subclasses.set(subclassId, subclassName);
+
+			const pool = Pack.#getPoolInfo(source);
+			if (pool) {
+				if (!classData.subclassPools.has(subclassId)) {
+					classData.subclassPools.set(subclassId, new Map());
+				}
+				const pools = classData.subclassPools.get(subclassId);
+				if (!pools.has(pool.group)) pools.set(pool.group, pool.name);
+			}
 		}
 
 		const folders = [];
@@ -547,6 +560,8 @@ export default class Pack {
 			});
 
 			const subclassFolderLookup = new Map();
+			// `${subclassId}:${poolGroup}` -> nested pool folder id.
+			const poolFolderLookup = new Map();
 			const sortedSubclasses = [...classData.subclasses.entries()].sort(([, aName], [, bName]) =>
 				aName.localeCompare(bName, undefined, { sensitivity: 'base' }),
 			);
@@ -567,12 +582,41 @@ export default class Pack {
 					sorting: 'm',
 					type: this.documentType,
 				});
+
+				// Nested "choose/gain pool" folders under the subclass folder,
+				// one per pool (Savage Arsenal, Sacred Decrees, ...), so the
+				// selectable pool is visually separate from the fixed features.
+				const pools = classData.subclassPools.get(subclassId);
+				if (pools) {
+					[...pools.entries()]
+						.sort(([, aName], [, bName]) =>
+							aName.localeCompare(bName, undefined, { sensitivity: 'base' }),
+						)
+						.forEach(([poolGroup, poolName], poolIndex) => {
+							const poolFolderId = Pack.#folderIdForPool(classId, subclassId, poolGroup);
+							poolFolderLookup.set(`${subclassId}:${poolGroup}`, poolFolderId);
+
+							folders.push({
+								_id: poolFolderId,
+								_stats: { ...statsTemplate },
+								color: null,
+								description: '',
+								flags: {},
+								folder: subclassFolderId,
+								name: poolName,
+								sort: (poolIndex + 1) * 10,
+								sorting: 'm',
+								type: this.documentType,
+							});
+						});
+				}
 			});
 
 			classFolderLookup.set(classId, {
 				classFolderId,
 				progressionFolderId,
 				subclassFolderLookup,
+				poolFolderLookup,
 			});
 		});
 
@@ -587,6 +631,17 @@ export default class Pack {
 			if (!classFolders) continue;
 
 			const subclassId = this.#getSubclassId(file, source);
+
+			// Pool options land in their nested pool folder under the subclass.
+			const pool = Pack.#getPoolInfo(source);
+			if (pool && subclassId) {
+				const poolFolderId = classFolders.poolFolderLookup?.get(`${subclassId}:${pool.group}`);
+				if (poolFolderId) {
+					folderAssignments.set(source._id, poolFolderId);
+					continue;
+				}
+			}
+
 			if (subclassId && classFolders.subclassFolderLookup.has(subclassId)) {
 				folderAssignments.set(source._id, classFolders.subclassFolderLookup.get(subclassId));
 				continue;
@@ -858,5 +913,25 @@ export default class Pack {
 
 	static #folderIdForProgressionId(classId) {
 		return Pack.#folderIdForDocument(`blue-codex-class-features-${classId}-progression`);
+	}
+
+	static #folderIdForPool(classId, subclassId, poolGroup) {
+		return Pack.#folderIdForDocument(
+			`blue-codex-class-features-${classId}-${subclassId}-pool-${poolGroup}`,
+		);
+	}
+
+	// Foldering metadata stamped by the content generator, driving the nested
+	// folder a feature lands in under its subclass. Either:
+	//   flags['blue-codex-package'].pool   = { subclass, name, group, … } (choose pools), or
+	//   flags['blue-codex-package'].folder = { name, group }              (e.g. Zephyr forms).
+	static #getPoolInfo(source) {
+		const flags = source?.flags?.['blue-codex-package'];
+		const info = flags?.pool ?? flags?.folder;
+		if (!info || typeof info !== 'object') return null;
+		const group = typeof info.group === 'string' ? info.group : null;
+		if (!group) return null;
+		const name = typeof info.name === 'string' && info.name.trim() ? info.name.trim() : group;
+		return { group, name };
 	}
 }

@@ -1,0 +1,57 @@
+{
+	"name": "Tricksy Ally",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-trickery/tricksy-ally.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tricksy-ally",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While your Lifebinding spirit is adjacent to an enemy, allies with 1 space of it have advantage on melee attacks.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-trickery",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "dJYUhbgMLbfz8FBF",
+	"folder": "791aaacd7dca327c"
+}

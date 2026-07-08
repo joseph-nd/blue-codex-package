@@ -1,7 +1,7 @@
 {
 	"name": "Nullify",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-energy-hold-blue-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/nullify.webp",
 	"system": {
 		"macro": "",
 		"identifier": "nullify",

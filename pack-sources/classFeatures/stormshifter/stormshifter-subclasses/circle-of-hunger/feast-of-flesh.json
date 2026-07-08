@@ -1,0 +1,66 @@
+{
+	"name": "Feast of Flesh",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/feast-of-flesh.webp",
+	"system": {
+		"macro": "",
+		"identifier": "feast-of-flesh",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "feastOfFleshHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "2*@level",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) When you kill a non-minion creature while Beastshifted, you feast upon it. You regain 2xLVL HP and 2 uses of your Beastshift feature. All enemies that see this must make a WIL save or be Frightened of you until they make a WIL save on their turn.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-hunger",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "d7SmiezqFhCtuOp4",
+	"folder": "3d1fb0727c9baf20"
+}

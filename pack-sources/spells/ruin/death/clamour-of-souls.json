@@ -1,7 +1,7 @@
 {
 	"name": "Clamour of Souls",
 	"type": "spell",
-	"img": "icons/magic/death/undead-ghosts-trio-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/clamour-of-souls.webp",
 	"system": {
 		"macro": "",
 		"identifier": "clamour-of-souls",
@@ -31,6 +31,14 @@
 					"canMiss": false,
 					"on": {
 						"criticalHit": [
+							{
+								"id": "clamourOfSoulsDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "clamourOfSoulsDamage1"
+							},
 							{
 								"id": "clamourOfSoulsNote1",
 								"type": "note",

@@ -1,0 +1,25 @@
+{
+	"name": "Pact of the Bringer",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/light-in-the-shadow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "pact-of-the-bringer",
+		"rules": [],
+		"description": "<p><em>\"The brightest light casts the deepest shadow.\"</em> Your patron is a fallen celestial or an entity of twilight. It splits your magic between light and dark. You wield radiant magic to heal allies and shadows to drain foes.</p><p><strong>LEVEL 3</strong></p><p><strong>Light in the Shadow.</strong></p><p>Your Patron grants you knowledge of Radiant, Protection or Divination spells. Spells you cast from this school can't restore your own HP if you would lose HP from Pilfered Power. Your spells can deal Radiant or their normal damage.</p><p><strong>Bringer's Gift.</strong></p><p>You have a pool of d6s equal to your LVL. You can touch an adjacent ally with an Action or command a minion to touch an ally adjacent to them and expend up to KEY d6s to restore HP equal to the total rolled. The pool recharges on a Safe Rest.</p><p><strong>LEVEL 7</strong></p><p><strong>Body Betwixt.</strong></p><p>You gain resistance to Radiant and Necrotic damage. When you deal Radiant or Necrotic damage, deal an extra WIL. Learn 1 additional Utility Spell.</p><p><strong>Blinding Light.</strong></p><p>When you restore HP to a creature, enemies adjacent to your target have disadvantage on their next attack before the start of your next turn.</p><p><strong>LEVEL 11</strong></p><p><strong>Guardian Spirit.</strong></p><p>(1/Safe Rest) Reaction: When you or an ally in Reach 6 would be reduced to 0 HP. The target instead drops to LVL HP. All enemies within a Burst 1 of the target are Frightened of them for 1 minute or until they make a WIL save on their turn.</p><p><strong>LEVEL 15</strong></p><p><strong>Martyr's Radiance.</strong></p><p>Burst: 3. When you would take damage from Pilfered Power, restore that much HP to allies in the area divided amongst them however you choose and enemies in the area are Blinded, 1 turn.</p><p><strong>Lesser Invocations</strong></p><ul><li><strong>Celestial Body.</strong> (1/day) You start the day with WIL+LVL temp HP.</li><li><strong>Ender's Final Gift.</strong> When you die, deal damage equal to 5xLVL to enemies in Burst 2 divided however you choose.</li><li><strong>Bringer's Final Gift.</strong> When you die, restore HP equal to 5xLVL to allies in Burst 2 divided however you choose.</li><li><strong>Path of Shadows.</strong> (1/turn) While in dim light or darkness, you can teleport up to 2 spaces to another place in dim light or darkness for free.</li></ul><p><strong>Greater Invocations</strong></p><ul><li><strong>Dying Light.</strong> Whenever a minion of yours dies, all enemies adjacent to it have disadvantage on their next attack.</li><li><strong>Peer into Shadow.</strong> You can spend a Pilfered Power to destroy any active minions. Enemies in Burst 1 of each minion take 1d12 damage for each tier unlocked and are Frightened of you for 1 turn. Enemies can only take this damage 1 per usage.</li><li><strong>Guardian Shade.</strong> (1/encounter) You can attach a minion to an ally in Range 8 when you cast Summon Shadow. This minion doesn't count against your maximum and can't be commanded. The next attack that hits your ally hits the minion instead.</li></ul>",
+		"parentClass": "shadowmancer",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "SYg4AVDDB1CHWDsl",
+	"folder": "157c931a4fa6c46c"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Dusk Magic (1)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-wraith/dusk-magic-1.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dusk-magic-1",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You learn Spell Magick and two additional cantrips and one tier 1 spell from the Illusion or Shadow schools. Spells can come from either school. Spells you know that use KEY instead use INT. You can’t use Sneak Attack when you crit with a spell. You also gain a mana pool that has a maximum of INT+(LVL/2) which recharges on a Safe Rest.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-wraith",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ebRqP0wJa5vKdJ6R",
+	"folder": "57203c93f68ebc73"
+}

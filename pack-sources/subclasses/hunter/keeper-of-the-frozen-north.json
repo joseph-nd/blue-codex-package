@@ -1,0 +1,25 @@
+{
+	"name": "Keeper of the Frozen North",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-frozen-north/arctic-survivalist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "keeper-of-the-frozen-north",
+		"rules": [],
+		"description": "<p><em>“In the snow, every step is tells a tale.”</em> While other hunters rely on a frantic chase, your art is the patient calculus of the frozen north. You are a tracker, and frost is your greatest ally. You don’t outrun your quarry; you let the creeping cold you command slow their escape, turning any battlefield into your personal tundra until they can run no more.</p><p><strong>LEVEL 3</strong></p><p><strong>Arctic Survivalist.</strong></p><p>You have resistance to Cold damage and you ignore Slowed Terrain created by ice or snow. You can also endure extreme cold without penalty.</p><p><strong>Northern Hunter.</strong></p><p>Your attacks against your quarry now apply Slowed, 1 turn, and damage from your Hunter’s Mark can be Cold damage.</p><p><strong>LEVEL 7</strong></p><p><strong>Enchanted Frost.</strong></p><p>When you hit your quarry, you can spend 1 ToTH charge to inflict Restrained, 1 round. Enemies adjacent to your target are Slowed, 1 turn.</p><p><strong>LEVEL 11</strong></p><p><strong>Winter’s Bite.</strong></p><p>(1/turn) Whenever you deal Cold damage, the target and all adjacent enemies take WIL Cold damage. Ignores armor.</p><p><strong>LEVEL 15</strong></p><p><strong>True Ice.</strong></p><p>When you use Enchanted Frost, you can spend 1 more ToTH to inflict Stunned and your quarry also gains vulnerability to Cold damage for 1 minute.</p><p><strong>Thrill of the Hunt options:</strong></p><ul><li><strong>Icy Shot.</strong> (Half range) 1 Action. Attack with a ranged weapon, add 1d8+WIL Cold damage.</li><li><strong>Frozen Ground.</strong> 2 Actions, Range: 8, Blast: 3. The area becomes Slowed Terrain for 1 minute. Creatures that enter a space must succeed a DEX save or fall Prone.</li><li><strong>Rimebind Shot.</strong> (Half range) 1 Action. Attack with a ranged weapon, on hit, their speed is reduced to 0 for 2 rounds or until they make a STR save on their turn.</li><li><strong>Heart of Ice.</strong> Free Reaction: When you Defend. Gain WIL+LVL temp HP and the attacker takes Cold damage equal to the temp HP lost.</li><li><strong>Cleansing Cold.</strong> Free Action. Take 1d4 Cold damage and remove a negative condition (not including Wounds).</li><li><strong>Fracturing Cold.</strong> 1 Action. Make an attack with a Ranged or Melee weapon. If your target is Slowed, remove Slowed and deal +2d10 Cold damage.</li></ul>",
+		"parentClass": "hunter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NOaqRD5MmauMuutw",
+	"folder": "13e1f97c32f4857c"
+}

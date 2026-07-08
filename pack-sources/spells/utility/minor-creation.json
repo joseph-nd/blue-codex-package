@@ -1,7 +1,7 @@
 {
 	"name": "Minor Creation",
 	"type": "spell",
-	"img": "icons/magic/symbols/squares-3d-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/minor-creation.webp",
 	"system": {
 		"macro": "",
 		"identifier": "minor-creation",

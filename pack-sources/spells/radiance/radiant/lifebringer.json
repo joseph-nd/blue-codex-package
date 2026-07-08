@@ -1,7 +1,7 @@
 {
 	"name": "Lifebringer",
 	"type": "spell",
-	"img": "icons/magic/life/cross-explosion-burst-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/lifebringer.webp",
 	"system": {
 		"macro": "",
 		"identifier": "lifebringer",
@@ -63,9 +63,27 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+10 HP",
+					"deltas": []
+				},
+				{
+					"label": "Reach +6",
+					"deltas": [
+						{
+							"operation": "addReach",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

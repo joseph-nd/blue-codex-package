@@ -1,0 +1,81 @@
+{
+	"name": "Brace for Impact!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/brace-for-impact.webp",
+	"system": {
+		"macro": "",
+		"identifier": "brace-for-impact",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) <strong>Reaction:</strong> When you or your allies that can hear you are forced to make a save. Allies that can hear you gain advantage on their save.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "commanders-orders",
+		"gainedAtLevels": [
+			1,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-bringer",
+				"name": "Commander's Order",
+				"group": "commanders-orders",
+				"levels": [
+					1,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "T0XbaBUnp6TQe3pZ",
+	"folder": "e7de9787f7c7a19a"
+}

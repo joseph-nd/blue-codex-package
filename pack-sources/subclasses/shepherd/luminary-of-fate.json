@@ -1,0 +1,25 @@
+{
+	"name": "Luminary of Fate",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/seeker-of-knowledge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "luminary-of-fate",
+		"rules": [],
+		"description": "<p><em>&ldquo;Chance is a lie told by those who cannot see the design.&rdquo;</em> You are a master of causality, using divine foresight to alter the outcome of any battle by ensuring an ally&rsquo;s blow lands true or a fatal attack simply misses its mark.</p><p><strong>LEVEL 3</strong></p><p><strong>Seeker of Knowledge.</strong></p><p>You know Divination spells if you didn't already know them. You can only know 3 spell schools.</p><p><strong>Foretelling.</strong></p><p>At the start of a new day, you glimpse fragments of the future. Roll 2d4s twice and record the numbers rolled. At any point you can add or subtract the total rolled from any roll you can see. The roll is considered the amount higher or lower. A roll above a die's maximum is a crit and a roll 1 or lower is a miss. You must choose to do so before the roll is made. Each foretelling roll can be used only once, and any unused rolls are lost when you start a new day.</p><p><strong>LEVEL 7</strong></p><p><strong>Vision Beyond.</strong></p><p>Whenever you cast a tiered spell, you automatically gain the benefits of Sight Beyond Sight for free and you can learn one vulnerability, resistance or immunity of one enemy that you can see.</p><p><strong>LEVEL 11</strong></p><p><strong>Unravel Destiny.</strong></p><p>(1/ Field Rest) Reaction: When an enemy you can see hits an attack. The attack must be rerolled with disadvantage 2. If your Lifebinding Spirit is active, you can sacrifice it to activate this ability again. You can use a charge of Searing Light to use this ability again.</p><p><strong>LEVEL 15</strong></p><p><strong>Blessed by Fate.</strong></p><p>You roll 2d6 three times for your Foretelling ability instead of 2d4 twice.</p><p><strong>Sacred Graces</strong></p><ul><li><strong>Spirits Ward.</strong> While your Lifebinding Spirit is active and in Range 6 of you, you gain bonus Armor equal to the mana spent to summon it.</li><li><strong>Contemplation of Purity.</strong> 1 Action. Sacrifice your active Lifebinding Spirit. Remove a number of negative conditions from an ally in Range 6 equal to the mana spent to summon it.</li><li><strong>Life Attunement.</strong> When you summon your Lifebinding Spirit, you can attach it to an ally. It no longer moves but it gains Reach 6.</li><li><strong>Ender&rsquo;s Pendulum.</strong> The first time you deal Radiant damage on your turn, the next Necrotic damage you deal before the end of your next turn is increased by 1d6. The first time you deal Necrotic damage on your turn, the next healing you provide with a spell or ability is increased by 1d6.</li><li><strong>Sacred Ground.</strong> Spaces your Lifebinding Spirit enters become Sacred Ground for 1 round. Undead and Fiends cannot enter spaces that are Sacred Ground without passing on a WIL save.</li></ul>",
+		"parentClass": "shepherd",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "nqYdZ6lRbhJe02up",
+	"folder": "a6ec78c34c812783"
+}

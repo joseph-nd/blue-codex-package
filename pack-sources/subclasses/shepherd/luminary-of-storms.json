@@ -1,0 +1,25 @@
+{
+	"name": "Luminary of Storms",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-storms/storms-blessing.webp",
+	"system": {
+		"macro": "",
+		"identifier": "luminary-of-storms",
+		"rules": [],
+		"description": "<p><em>&ldquo;You know what happens to a toad when it&rsquo;s struck by lightning? The same thing that happens to everything else.&rdquo;</em> You are an unflinching conduit of the tempest, a warrior-priest who delivers the same overwhelming, thunderous judgment to all who stand against you, be they beast, king, or dragon.</p><p><strong>LEVEL 3</strong></p><p><strong>Storm's Blessing.</strong></p><p>You know Lightning spells. You can only know 3 spell schools. Your Searing Light and Lifebinding Spirit can now deal Lightning damage instead.</p><p><strong>Wrath of the Storm.</strong></p><p>(1/round) Free Reaction: When hit by a melee attack. Deal WIL Lightning damage to your attacker and push them back 1 space.</p><p><strong>Destructive Wrath.</strong></p><p>(1/encounter) You maximize damage for a Lightning spell or Searing Light once. This counts as a crit.</p><p><strong>LEVEL 7</strong></p><p><strong>Thunderous Strikes.</strong></p><p>Your melee attacks deal an extra 1d8 Lightning damage. When you deal Lightning damage, you can spend 1 mana to push a Large or smaller target 2 spaces away.</p><p><strong>LEVEL 11</strong></p><p><strong>Stormborn.</strong></p><p>You gain a flying speed equal to your walking speed.</p><p><strong>LEVEL 15</strong></p><p><strong>Charged Wrath.</strong></p><p>(1/Safe Rest) When you activate your Wrath of the Storm feature, you can also cast Electrocharge on yourself for free and without Concentration. You can use Destructive Wrath twice per encounter now.</p><p><strong>Sacred Graces</strong></p><ul><li><strong>Gift of Lightning.</strong> Your Lifebinding Spirit moves up to 8 spaces when commanded. Enemies it moves through take KEY Lightning, 1/turn.</li><li><strong>Reclaim Energy.</strong> Free Action. You can dismiss your Lifebinding Spirit early, regaining any unspent ability charges as mana.</li><li><strong>Polaric Swap.</strong> 2 Actions. Swap places with your Lifebinding Spirit.</li><li><strong>Dazing Discharge.</strong> 1 Action, Burst: 3. Your Lifebinding Spirit sacrifices itself in a violent display of shocking glory. Choose either yourself or the Lifebinding Spirit's last location as the point of origin. All enemies in the area take a number of d6's of Lightning damage equal to any unused ability uses it had and are Dazed and Blinded, 1 turn.</li><li><strong>Shocking Revival.</strong> Whenever you remove the Dying condition on an ally, all enemies adjacent to them take LVL Lightning damage.</li></ul>",
+		"parentClass": "shepherd",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "2QZVGvL61T4iF5mc",
+	"folder": "a6ec78c34c812783"
+}

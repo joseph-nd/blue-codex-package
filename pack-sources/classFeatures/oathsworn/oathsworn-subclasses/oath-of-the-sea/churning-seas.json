@@ -1,0 +1,57 @@
+{
+	"name": "Churning Seas",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-sea/churning-seas.webp",
+	"system": {
+		"macro": "",
+		"identifier": "churning-seas",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) When you use Rushing Wave, you can choose to maintain Concentration on it for up to 1 minute. During this time, you can use 1 Action to repeat its effect.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-sea",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VyT6X41nWPOmQm4c",
+	"folder": "2f0184479cbabb08"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Overgrowth",
 	"type": "spell",
-	"img": "icons/magic/nature/root-vines-grow-brown.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/overgrowth.webp",
 	"system": {
 		"macro": "",
 		"identifier": "overgrowth",
@@ -57,9 +57,18 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 size (max Huge)",
+					"deltas": []
+				},
+				{
+					"label": "+2 damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -1,0 +1,25 @@
+{
+	"name": "Oath of the Verdant",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/oath-of-the-verdant.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-the-verdant",
+		"rules": [],
+		"description": "<p><em>&ldquo;The forest does not ask for permission to grow; it simply reclaims what is hers.&rdquo;</em> As a Verdant Oathsworn, you are the inevitable advance of the wilds. You transform the battlefield into a choking gauntlet of thorns and toxic growth, shielding your allies within a living sanctuary while rooting enemies in place to face nature&rsquo;s final judgment.</p><p><strong>LEVEL 3</strong></p><p><strong>Oath of the Verdant.</strong></p><p>You no longer know Radiant spells, you instead know Nature spells. Your Radiant Judgement becomes Nature&rsquo;s Judgment and can deal Acid or Poison damage. You ignore Slowed Terrain from natural sources like dense underbrush and your own Nature spells.</p><p><strong>Verdant Aura.</strong></p><p>You gain a Burst 4 aura. Allies in the area gain the benefits of your Oath of the Verdant. You gain 1 Judgment Die when Slowed Terrain you create is destroyed or dispelled.</p><p><strong>LEVEL 7</strong></p><p><strong>Nature&amp;rsquo;s Protection.</strong></p><p>You and adjacent allies take WIL less damage from magical attacks and effects.</p><p><strong>Field of Brambles.</strong></p><p>When you cast Bramble Patch, you can have it affect the area in your aura instead. When you do this, it lasts 1 minute, follows you, and only affects the area in your aura.</p><p><strong>LEVEL 11</strong></p><p><strong>Ancient Seeds.</strong></p><p>When you hit a Large or smaller enemy with Nature&rsquo;s Judgment while they are in Slowed Terrain you create, they are Restrained by vines (10HP) until they make a STR save on their turn or destroy the vines.</p><p><strong>LEVEL 15</strong></p><p><strong>Verdant Renewal.</strong></p><p>(1/Safe Rest) When you cast Rejuvenation Spirit, it affects your entire aura instead. The spell lasts 1 minute and no longer has a healing cap. 1/turn, allies that start their turn in your aura or enter it for the first time on a turn automatically regain the spell&rsquo;s HP amount.</p><h3>Sacred Decrees</h3><p><strong>Healing Aura.</strong> (1/Safe Rest) 1 Action. Allies in the area regain LVL+KEY HP and heal 1 Wound.</p><p><strong>Ancestral Grace.</strong> (1/turn) When you Move, if your are in an area of Slowed Terrain you created, you can instead teleport to another area of Slowed Terrain that you created that you can see.</p><p><strong>Verdant Etchings.</strong> When you damage an enemy with your Judgment Dice, the next attack against them ignores resistances.</p><p><strong>Best Friends.</strong> At the end of a Safe Rest, designate an ally as your &ldquo;Best Friend&rdquo;. You and your best friend have +WIL Armor while adjacent to each other.</p>",
+		"parentClass": "oathsworn",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zj2zvV8uUjGn5HtQ",
+	"folder": "a81e0dbba16261c1"
+}

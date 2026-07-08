@@ -1,0 +1,77 @@
+{
+	"name": "Amorphous Hide",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/amorphous-hide.webp",
+	"system": {
+		"macro": "",
+		"identifier": "amorphous-hide",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can move through spaces as narrow as one foot wide without squeezing. (1/encounter) A critical hit of your choice against you becomes a normal hit instead.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "chimeric-boon",
+		"gainedAtLevels": [
+			6,
+			9,
+			12,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-hunger",
+				"name": "Chimeric Boons",
+				"group": "chimeric-boon",
+				"levels": [
+					6,
+					9,
+					12,
+					17
+				],
+				"count": {
+					"6": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ICenrC2wdIbzSadB",
+	"folder": "d7e0ca5c125602d6"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Seeker of Knowledge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/seeker-of-knowledge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "seeker-of-knowledge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You know Divination spells if you didn't already know them. You can only know 3 spell schools.</p><p><em>[M] Grants Blue's Codex spells — school(s): divination.</em></p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-fate",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "5mp0iXPGlHbWSFw1",
+	"folder": "6b3a4e066971c20f"
+}

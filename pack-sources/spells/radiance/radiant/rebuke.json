@@ -1,7 +1,7 @@
 {
 	"name": "Rebuke",
 	"type": "spell",
-	"img": "icons/magic/light/beam-strike-orange-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/rebuke.webp",
 	"system": {
 		"macro": "",
 		"identifier": "rebuke",
@@ -37,6 +37,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "rebukeDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "rebukeDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "rebukeDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "rebukeDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "rebukeDamage1"
 							}
 						]

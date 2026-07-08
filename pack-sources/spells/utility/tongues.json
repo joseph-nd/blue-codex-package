@@ -1,7 +1,7 @@
 {
 	"name": "Tongues",
 	"type": "spell",
-	"img": "icons/magic/sonic/scream-wail-shout-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/tongues.webp",
 	"system": {
 		"macro": "",
 		"identifier": "tongues",

@@ -1,7 +1,7 @@
 {
 	"name": "Ethereal Step",
 	"type": "spell",
-	"img": "icons/magic/defensive/illusion-evasion-echo-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/ethereal-step.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ethereal-step",

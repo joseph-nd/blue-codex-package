@@ -1,7 +1,7 @@
 {
 	"name": "Pyroclasm",
 	"type": "spell",
-	"img": "icons/magic/fire/barrier-wall-explosion-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/pyroclasm.webp",
 	"system": {
 		"macro": "",
 		"identifier": "pyroclasm",

@@ -1,0 +1,99 @@
+{
+	"name": "Sneaky Beast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-shifter/sneaky-beast.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sneaky-beast",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "swipeDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "1d4+@dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"criticalHit": [
+							{
+								"id": "swipeDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "swipeDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "swipeDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "swipeDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "swipeDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "swipeDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can Cheater’s Shift into the Sneaky Direbeast gaining the following: (Medium or Small). Transform into a Medium or Small Beast. Gain +DEX Speed and Armor, Quick Footed and the Swipe attack. Swipe. 1 Action, Damage: 1d4+DEX. On crit: You can choose to do no damage and instead steal one Small or Tiny object off that target. The item must be easily accessible. Underfoot. Enemies’ spaces are not considered Slowed Terrain for you and when you Move through a Large or smaller enemy’s space, they are considered Distracted.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-shifter",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zoiPugXIwJi52Yns",
+	"folder": "e5d40ffef3ca6b0e"
+}

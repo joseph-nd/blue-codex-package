@@ -1,7 +1,7 @@
 {
 	"name": "Linked Jaunt",
 	"type": "spell",
-	"img": "icons/magic/control/energy-stream-link-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/linked-jaunt.webp",
 	"system": {
 		"macro": "",
 		"identifier": "linked-jaunt",

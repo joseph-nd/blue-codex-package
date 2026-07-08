@@ -1,7 +1,7 @@
 {
 	"name": "Ray of Judgment",
 	"type": "spell",
-	"img": "icons/magic/light/beam-horizon-strike-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/ray-of-judgment.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ray-of-judgment",
@@ -87,9 +87,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "rayOfJudgmentDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Line +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

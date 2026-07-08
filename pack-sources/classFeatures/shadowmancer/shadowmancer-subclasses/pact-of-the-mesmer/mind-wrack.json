@@ -1,0 +1,79 @@
+{
+	"name": "Mind Wrack",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/mind-wrack.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mind-wrack",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "mindWrackDmg",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "1d10+@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "mindWrackDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "mindWrackDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Range: 8. Destroy 1 of your minions, enemies in Burst 1 of it take 1d10+KEY Psychic damage, ignores armor.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-mesmer",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "sjKJjL7JyHfjD2uY",
+	"folder": "ef1a33a7b0ce12a8"
+}

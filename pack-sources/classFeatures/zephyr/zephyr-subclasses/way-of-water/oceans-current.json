@@ -1,0 +1,64 @@
+{
+	"name": "Ocean's Current",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/oceans-current.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oceans-current",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(De Form)</em> Concentration: Up to 1 minute. You gain a fly speed of 8, though your maximum height is 8 spaces. Medium or smaller enemies you fly over are pushed 1 space out of the way and Slowed, 1 turn. Enemies can be affected by this 1/turn.</p><p><strong>Expert Tidal Warrior:</strong> all non-AoE forms become Reach 8 for the duration.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "mcB8qMikUWCccOLy",
+	"folder": "a1f65c1ed7e413f7"
+}

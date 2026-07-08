@@ -1,0 +1,57 @@
+{
+	"name": "Impossible Angle",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/impossible-angle.webp",
+	"system": {
+		"macro": "",
+		"identifier": "impossible-angle",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Field Rest) 1 Action. You can make a thrown weapon attack against a target you are aware of in Range 8 regardless of Cover. This attack is made with advantage and if it hits, it deals your normal weapon damage and your maximum possible Sneak Attack damage automatically.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-deadeye",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lTyWhohjwCnFYmr9",
+	"folder": "cab141c8285d54a0"
+}

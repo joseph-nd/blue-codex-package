@@ -1,0 +1,57 @@
+{
+	"name": "Virulent Spores",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/virulent-spores.webp",
+	"system": {
+		"macro": "",
+		"identifier": "virulent-spores",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Halo of Spores affects deals 2xKEY damage now. When your &amp;lsquo;Shroom Minions die, all enemies adjacent to them take your Halo of Spores damage.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-spores",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Wjq5Xf0aIxb0751H",
+	"folder": "b71ffbe2edba2090"
+}

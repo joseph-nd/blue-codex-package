@@ -1,0 +1,97 @@
+{
+	"name": "Ocean's Prison",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/oceans-prison.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oceans-prison",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "oceansPrisonSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "oceansPrisonNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "oceansPrisonSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "oceansPrisonDmg1",
+								"type": "damage",
+								"damageType": "cold",
+								"formula": "4d8+12",
+								"parentContext": "failedSave",
+								"parentNode": "oceansPrisonSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Yoi Form)</em> Reach: 4, Blast: 2, Concentration: Up to 1 minute. Damage: 4d8+12 on a failed DEX save and targets are Frozen. Half damage on a success and targets aren't Frozen. Allies in the area can choose to fail and become Frozen for 1 turn instead of the entire duration and regain HP equal to half the damage dealt instead.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "cgkFtPtC2dyHzRne",
+	"folder": "a1f65c1ed7e413f7"
+}

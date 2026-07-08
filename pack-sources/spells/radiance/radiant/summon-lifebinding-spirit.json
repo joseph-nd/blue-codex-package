@@ -1,7 +1,7 @@
 {
 	"name": "Summon Lifebinding Spirit",
 	"type": "spell",
-	"img": "icons/magic/light/orbs-firefly-hand-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
 	"system": {
 		"macro": "",
 		"identifier": "summon-lifebinding-spirit",

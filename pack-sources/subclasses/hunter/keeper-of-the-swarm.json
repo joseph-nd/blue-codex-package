@@ -1,0 +1,25 @@
+{
+	"name": "Keeper of the Swarm",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/gathered-swarm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "keeper-of-the-swarm",
+		"rules": [],
+		"description": "<p><em>“A single strike can be dodged, but a swarm cannot be outrun.”</em> As a Keeper of the Swarm, you command a multitude to control the flow of combat. You overwhelm your foes with a relentless tide that batters them across the battlefield, all while effortlessly sweeping your allies out of harm’s way.</p><p><strong>LEVEL 3</strong></p><p><strong>Gathered Swarm.</strong></p><p>Your attacks against your quarry can now push Large targets 1 space, Medium targets 2 spaces and Small or Tiny targets 3 spaces instead of either normal choice.</p><p><strong>LEVEL 7</strong></p><p><strong>Writhing Tide.</strong></p><p>While you have a marked quarry, you gain 2 flying speed. When you quarry dies, the next closest enemy in Range 8 is marked as your quarry.</p><p><strong>Swarm Dispersal.</strong></p><p>1 Action, Range: 12, Reaction: When an ally would be targeted by your quarry. Spend 1 ToTH charge and place them up to 2 spaces away. If they would be out of Range of the attack, ability or area of effect, it misses.</p><p><strong>LEVEL 11</strong></p><p><strong>Mighty Swarm.</strong></p><p>Your Gathering Swarm can now push each size category 1 space further and now push Huge targets 1 space. When you deal LVL damage with your Hunter’s Mark you can now push Huge or smaller targets 1 space.</p><p><strong>LEVEL 15</strong></p><p><strong>Living Swarm.</strong></p><p>(1/encounter) Free Action, Burst: 3. Your swarm emanates from you for the next minute. The area is Slowed Terrain for enemies and you can target yourself with Swarm Dispersal whenever you are attacked instead. When you target yourself, it costs 0 ToTH charges.</p><p><strong>Thrill of the Hunt options:</strong></p><ul><li><strong>Follow ‘em.</strong> 1 Action. You and up to two allies may immediately Move up to half your speeds for free, provided each ends their Move closer to your quarry.</li><li><strong>Leech Life.</strong> 1 Action. Attack with a weapon. On hit: regain WIL HP. If your target is Bloodied or is your quarry, regain twice the amount instead.</li><li><strong>Bait and Switch.</strong> 1 Action, Reach: 4, Reaction: When an ally would be attacked. You Interpose for them and Defend for free. If the attacker was your quarry they have disadvantage.</li><li><strong>Get Over Here.</strong> (Half range) 1 Action. Attack with a ranged weapon. On hit: Medium or smaller targets are pulled up to an adjacent space.</li></ul>",
+		"parentClass": "hunter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "3ZwSukcUMocbNJBo",
+	"folder": "13e1f97c32f4857c"
+}

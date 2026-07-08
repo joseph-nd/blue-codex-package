@@ -1,7 +1,7 @@
 {
 	"name": "Domination Magick",
 	"type": "spell",
-	"img": "icons/magic/control/control-influence-puppet.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/domination-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "domination-magick",

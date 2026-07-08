@@ -1,0 +1,57 @@
+{
+	"name": "Gathered Swarm",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/gathered-swarm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "gathered-swarm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your attacks against your quarry can now push Large targets 1 space, Medium targets 2 spaces and Small or Tiny targets 3 spaces instead of either normal choice.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-swarm",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "7mA4a1M8q3orwLqo",
+	"folder": "882e910e55f5a361"
+}

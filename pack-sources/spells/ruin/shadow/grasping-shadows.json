@@ -1,7 +1,7 @@
 {
 	"name": "Grasping Shadows",
 	"type": "spell",
-	"img": "icons/magic/unholy/hand-grasping-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/grasping-shadows.webp",
 	"system": {
 		"macro": "",
 		"identifier": "grasping-shadows",
@@ -27,7 +27,7 @@
 					"formula": "3d12",
 					"parentContext": null,
 					"parentNode": null,
-					"canCrit": false,
+					"canCrit": true,
 					"canMiss": false,
 					"on": {
 						"hit": [
@@ -36,6 +36,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "graspingShadowsDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "graspingShadowsDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
 								"parentNode": "graspingShadowsDamage1"
 							}
 						]
@@ -76,9 +86,27 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "graspingShadowsDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 size (max Huge)",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

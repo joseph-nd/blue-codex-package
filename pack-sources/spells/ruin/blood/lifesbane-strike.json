@@ -1,7 +1,7 @@
 {
 	"name": "Lifesbane Strike",
 	"type": "spell",
-	"img": "icons/magic/unholy/strike-beam-blood-red-gray.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/lifesbane-strike.webp",
 	"system": {
 		"macro": "",
 		"identifier": "lifesbane-strike",
@@ -37,6 +37,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "lifesbaneStrikeDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "lifesbaneStrikeDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "lifesbaneStrikeDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "lifesbaneStrikeDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "lifesbaneStrikeDamage1"
 							}
 						]

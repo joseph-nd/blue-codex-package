@@ -1,7 +1,7 @@
 {
 	"name": "Arc Lightning",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-forked-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/arc-lightning.webp",
 	"system": {
 		"macro": "",
 		"identifier": "arc-lightning",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "arcLightningDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "arcLightningDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "arcLightningDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "arcLightningDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "arcLightningDamage1"
 							}
 						]

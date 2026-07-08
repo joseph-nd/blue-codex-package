@@ -1,0 +1,75 @@
+{
+	"name": "I Meant to Do That!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/i-meant-to-do-that.webp",
+	"system": {
+		"macro": "",
+		"identifier": "i-meant-to-do-that",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use Songweaver's Inspiration on yourself, you roll 2 dice instead of 1 for the reroll, choosing the highest result.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "lyrical-weaponry",
+		"gainedAtLevels": [
+			4,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-swords",
+				"name": "Lyrical Weaponry",
+				"group": "lyrical-weaponry",
+				"levels": [
+					4,
+					9,
+					13,
+					17
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bPd4ZZP0hQJY8kzY",
+	"folder": "7aa427a44cf5f97a"
+}

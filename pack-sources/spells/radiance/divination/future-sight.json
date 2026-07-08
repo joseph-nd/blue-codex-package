@@ -1,7 +1,7 @@
 {
 	"name": "Future Sight",
 	"type": "spell",
-	"img": "icons/magic/perception/orb-crystal-ball-scrying-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/future-sight.webp",
 	"system": {
 		"macro": "",
 		"identifier": "future-sight",

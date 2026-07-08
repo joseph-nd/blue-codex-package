@@ -1,0 +1,57 @@
+{
+	"name": "Predator's Senses",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/predators-senses.webp",
+	"system": {
+		"macro": "",
+		"identifier": "predators-senses",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can see in the dark and you have advantage on Perception (WIL) to see, hear, or smell creatures.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-lycan",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WPpHrTG8NE4VPZJc",
+	"folder": "b2e2951ee73741e9"
+}

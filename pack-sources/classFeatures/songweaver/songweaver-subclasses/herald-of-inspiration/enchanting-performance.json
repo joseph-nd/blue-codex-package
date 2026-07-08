@@ -1,0 +1,57 @@
+{
+	"name": "Enchanting Performance",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-inspiration/enchanting-performance.webp",
+	"system": {
+		"macro": "",
+		"identifier": "enchanting-performance",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While performing Inspiring Performance, you can spend 3 mana as an Action to force all enemies in the area to make a WIL save. On a fail, their speed is reduced to 0 as they dance on their next turn. On a save, they are Slowed, 1 turn.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-inspiration",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "1ISzbDTQxY1Zwc0z",
+	"folder": "f8920ca44f41b0b0"
+}

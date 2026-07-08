@@ -1,0 +1,57 @@
+{
+	"name": "Master Scriviner",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/master-scriviner.webp",
+	"system": {
+		"macro": "",
+		"identifier": "master-scriviner",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>After a Safe Rest, you can expend up to LVL mana to create temporary spell scrolls from your Grimoire, not including cantrips. Mana cost equals the spell's tier plus any upcasting. These crumble at your next Safe Rest. When an ally reads one, the DC check is reduced by INT.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-knowledge",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "dzncr244mBeWqpgF",
+	"folder": "d576cc52fd4fe7b6"
+}

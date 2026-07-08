@@ -1,7 +1,7 @@
 {
 	"name": "Abyssal Drift",
 	"type": "spell",
-	"img": "icons/magic/water/vortex-water-whirlpool-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/abyssal-drift.webp",
 	"system": {
 		"macro": "",
 		"identifier": "abyssal-drift",
@@ -56,7 +56,24 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDuration",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": "minute"
+				},
+				{
+					"operation": "addAreaSize",
+					"value": 4,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

@@ -1,0 +1,87 @@
+{
+	"name": "Fungal Guardian",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/fungal-guardian.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fungal-guardian",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "fungalGuardianShellTemp",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "10+2*@level",
+					"parentContext": null,
+					"parentNode": null
+				},
+				{
+					"id": "fungalGuardianHaloDmg",
+					"type": "damage",
+					"damageType": "acid",
+					"formula": "@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "fungalGuardianHaloDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "fungalGuardianHaloDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "You can spend a Beastshift charge to awaken the Fungal Guardian within you. You retain your humanoid shape, weapons, and armor, but gain the following: <strong>Fungal Shell.</strong> Gain 10+2xLVL temp HP. Temp HP gained from Fungal Host adds to this tempHP instead of replacing it, though the max can&rsquo;t exceed 10+2xLVL. <strong>Halo of Spores.</strong> Targets of your choice in Reach 2 take KEY Acid damage when they start their turn in the area. Fungal Guardian lasts as long as you have temp HP from Fungal Shell and is considered Beastshifting.",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-spores",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "3UwUWOTaepfPjwaw",
+	"folder": "b71ffbe2edba2090"
+}

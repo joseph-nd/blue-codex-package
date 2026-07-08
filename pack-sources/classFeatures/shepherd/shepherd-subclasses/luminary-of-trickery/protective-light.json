@@ -1,0 +1,84 @@
+{
+	"name": "Protective Light",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-trickery/protective-light.webp",
+	"system": {
+		"macro": "",
+		"identifier": "protective-light",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "protectiveLightTemp",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "(@will)d8",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can use Searing Light to give a Bloodied ally in Reach 6 WIL d8 temp HP that lasts until the end of their next Safe Rest.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "sacred-grace",
+		"gainedAtLevels": [
+			5,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "luminary-of-trickery",
+				"name": "Sacred Graces",
+				"group": "sacred-grace",
+				"levels": [
+					5,
+					9,
+					13
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "9QdxnQRs70kziz9V",
+	"folder": "f5c6e5d18e17592c"
+}

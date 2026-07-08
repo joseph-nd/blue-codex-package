@@ -1,7 +1,7 @@
 {
 	"name": "Flame Targe",
 	"type": "spell",
-	"img": "icons/magic/fire/barrier-shield-explosion-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/flame-targe.webp",
 	"system": {
 		"macro": "",
 		"identifier": "flame-targe",

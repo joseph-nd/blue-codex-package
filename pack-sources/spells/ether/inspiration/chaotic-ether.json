@@ -1,7 +1,7 @@
 {
 	"name": "Chaotic Ether",
 	"type": "spell",
-	"img": "icons/magic/sonic/explosion-shock-sound-wave.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/chaotic-ether.webp",
 	"system": {
 		"macro": "",
 		"identifier": "chaotic-ether",
@@ -43,6 +43,26 @@
 								"type": "condition",
 								"condition": "slowed",
 								"parentContext": "hit",
+								"parentNode": "chaoticEtherDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "chaoticEtherDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "chaoticEtherDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "chaoticEtherDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "chaoticEtherDamage1"
 							}
 						]

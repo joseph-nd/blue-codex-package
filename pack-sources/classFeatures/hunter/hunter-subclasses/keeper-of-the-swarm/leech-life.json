@@ -1,0 +1,90 @@
+{
+	"name": "Leech Life",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/leech-life.webp",
+	"system": {
+		"macro": "",
+		"identifier": "leech-life",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "leechLifeHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "@will",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action. Attack with a weapon. On hit: regain WIL HP. If your target is Bloodied or is your quarry, regain twice the amount instead.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "thrill-of-the-hunt",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			12,
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "keeper-of-the-swarm",
+				"name": "Thrill of the Hunt",
+				"group": "thrill-of-the-hunt",
+				"levels": [
+					2,
+					4,
+					6,
+					8,
+					12,
+					14
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "U7FSQJSjai5F0Rfn",
+	"folder": "d5e8939320802cb4"
+}

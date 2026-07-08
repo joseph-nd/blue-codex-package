@@ -1,0 +1,79 @@
+{
+	"name": "Endless Combo",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/endless-combo.webp",
+	"system": {
+		"macro": "",
+		"identifier": "endless-combo",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action. Make an attack. If it hits it deals extra damage equal to a roll of your Combat Die. You can continue expending Combat Die on additional attacks that deal extra damage as long as they continue to hit. Each attack must follow Rushed attack rules.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "combat-tactics",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-broken",
+				"name": "Combat Tactics",
+				"group": "combat-tactics",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4Kt10uB9J8P0vFUy",
+	"folder": "7d685cd94cccec09"
+}

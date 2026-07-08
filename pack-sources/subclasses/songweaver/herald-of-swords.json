@@ -1,0 +1,25 @@
+{
+	"name": "Herald of Swords",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/blade-dancer.webp",
+	"system": {
+		"macro": "",
+		"identifier": "herald-of-swords",
+		"rules": [],
+		"description": "<p><em>&ldquo;Let my performance guide you.&rdquo;</em> You are a true battlefield conductor, creating a persistent aura of inspiring magic that makes your allies faster, stronger, and more resilient with every note.</p><p><strong>LEVEL 3</strong></p><p><strong>Blade Dancer.</strong></p><p>You can use WIL instead of DEX for melee weapons and Armor.</p><p><strong>Blade Flourish.</strong></p><p>When you hit with a melee weapon, you can spend a Songweaver's Inspiration to use one of the following:</p><p>Defensive: Gain KEY+DEX temp HP, 1 minute.</p><p>Mobile: Move for free (ignoring enemies).</p><p>Slashing: Attack a second enemy within reach ignoring Rushed Attack rules.</p><p><strong>LEVEL 7</strong></p><p><strong>Vicious Rhythm.</strong></p><p>(1/turn) When you cast a tiered spell or Vicious Mockery, you can make a melee attack as part of the same action ignoring Rushed Attack rules.</p><p><strong>LEVEL 11</strong></p><p><strong>Dazzling Parry.</strong></p><p>Reaction: When targeted by a melee attack. Spend a Songweaver's Inspiration to roll a melee attack against the attacker. If your primiary die roll is higher than theirs, their attack misses and you deal your attacks damage.</p><p><strong>LEVEL 15</strong></p><p><strong>Blade Master.</strong></p><p>When you use Blade Flourish, you may choose 2 different options at the same time.</p><p><strong>Grand Finale.</strong></p><p>(1/encounter) 2 Actions, Move: up to your speed for free. During this movement, you can make a single melee weapon attack against up to 5 different enemies, ignoring Rushed Attack rules. For every enemy you hit, regain 1 spent Songweaver's Inspiration.</p><h3>Lyrical Weaponry</h3><p><strong>I Meant to Do That!</strong> When you use Songweaver's Inspiration on yourself, you roll 2 dice instead of 1 for the reroll, choosing the highest result.</p><p><strong>Courage Friends!</strong> (1/encounter) <em>1 Action.</em> Allies who can hear you immediately lose the Frightened condition and gain immunity to it for 1 minute.</p><h3>A &ldquo;People&rdquo; Person</h3><p><strong>Silverlight, the Singing Sword.</strong> You summon a sentient, obnoxiously loud magical sword. It deals 4d4+DEX Force damage. On crit: the target can't speak as its compelled to sing until the end of its next turn. While wielding it, you cannot be Hidden or Invisible. The sword vanishes after 1 hour, or immediately if you refuse to sing along with it.</p>",
+		"parentClass": "songweaver",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Jz1wtxPRSfOJhFcO",
+	"folder": "d4ad0382cf1fc641"
+}

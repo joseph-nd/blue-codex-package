@@ -1,7 +1,7 @@
 {
 	"name": "Spoil the Victor",
 	"type": "spell",
-	"img": "icons/magic/control/buff-luck-fortune-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/spoil-the-victor.webp",
 	"system": {
 		"macro": "",
 		"identifier": "spoil-the-victor",
@@ -56,9 +56,18 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Inspired lasts +1 roll",
+					"deltas": []
+				},
+				{
+					"label": "+4 damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

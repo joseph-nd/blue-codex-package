@@ -1,7 +1,7 @@
 {
 	"name": "Meteor Swarm",
 	"type": "spell",
-	"img": "icons/magic/fire/projectile-meteor-salvo-strong-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/meteor-swarm.webp",
 	"system": {
 		"macro": "",
 		"identifier": "meteor-swarm",
@@ -28,8 +28,8 @@
 					"parentContext": null,
 					"parentNode": null,
 					"ignoreArmor": true,
-					"canCrit": true,
-					"canMiss": true,
+					"canCrit": false,
+					"canMiss": false,
 					"on": {
 						"hit": [
 							{

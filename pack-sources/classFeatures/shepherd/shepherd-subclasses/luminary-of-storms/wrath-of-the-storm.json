@@ -1,0 +1,57 @@
+{
+	"name": "Wrath of the Storm",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-storms/wrath-of-the-storm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "wrath-of-the-storm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/round) Free Reaction: When hit by a melee attack. Deal WIL Lightning damage to your attacker and push them back 1 space.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-storms",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "W9oSUSeaaXcUHShd",
+	"folder": "e401ec9c915929ab"
+}

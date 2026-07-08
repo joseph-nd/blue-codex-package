@@ -1,0 +1,106 @@
+{
+	"name": "Air Ball",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/air-ball.webp",
+	"system": {
+		"macro": "",
+		"identifier": "air-ball",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "airBallDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "1d4+@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "airBallDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "airBallDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "airBallDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "airBallDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "airBallDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "airBallDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Sho Form)</em> Reach: 6, Damage: 1d4+KEY. On hit: push a Large or smaller target or yourself 1 space. You do not take damage from this form's forced movement ending early.</p><p><strong>High Levels:</strong> die step increases every Wind Rider. <strong>Expert Wind Rider:</strong> is considered a melee attack for Reverberating Strikes.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ciHCuUi0whyXuuTF",
+	"folder": "53d4a6ab0f67d34d"
+}

@@ -1,0 +1,75 @@
+{
+	"name": "Never Gonna Let You Down!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-inspiration/never-gonna-let-you-down.webp",
+	"system": {
+		"macro": "",
+		"identifier": "never-gonna-let-you-down",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) <em>1 Action.</em> Allies that can hear you gain 1d4 instances of advantage on their next activity. This advantage lasts until they succeed once.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "lyrical-weaponry",
+		"gainedAtLevels": [
+			4,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-inspiration",
+				"name": "Lyrical Weaponry",
+				"group": "lyrical-weaponry",
+				"levels": [
+					4,
+					9,
+					13,
+					17
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "L3PlVD62rJ1OaDhi",
+	"folder": "8c06f09cf07177f2"
+}

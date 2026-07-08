@@ -1,7 +1,7 @@
 {
 	"name": "Enfeebling Blood",
 	"type": "spell",
-	"img": "icons/magic/death/blood-corruption-vomit-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/enfeebling-blood.webp",
 	"system": {
 		"macro": "",
 		"identifier": "enfeebling-blood",
@@ -103,9 +103,36 @@
 		"tier": 4,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "enfeeblingBloodDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Blast +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

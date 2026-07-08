@@ -1,0 +1,57 @@
+{
+	"name": "Dazzling Parry",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/dazzling-parry.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dazzling-parry",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Reaction: When targeted by a melee attack. Spend a Songweaver's Inspiration to roll a melee attack against the attacker. If your primiary die roll is higher than theirs, their attack misses and you deal your attacks damage.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-swords",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "LFb1gari6Y5EhoJJ",
+	"folder": "21c6519cf533ad6e"
+}

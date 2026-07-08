@@ -1,0 +1,57 @@
+{
+	"name": "Charged Wrath",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-storms/charged-wrath.webp",
+	"system": {
+		"macro": "",
+		"identifier": "charged-wrath",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) When you activate your Wrath of the Storm feature, you can also cast Electrocharge on yourself for free and without Concentration. You can use Destructive Wrath twice per encounter now.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-storms",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0Ifz2JBrccoQePPW",
+	"folder": "e401ec9c915929ab"
+}

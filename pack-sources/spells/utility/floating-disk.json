@@ -1,7 +1,7 @@
 {
 	"name": "Floating Disk",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-energy-hold-levitate-blue-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/floating-disk.webp",
 	"system": {
 		"macro": "",
 		"identifier": "floating-disk",

@@ -1,0 +1,57 @@
+{
+	"name": "Bringer's Gift",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/bringers-gift.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bringers-gift",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You have a pool of d6s equal to your LVL. You can touch an adjacent ally with an Action or command a minion to touch an ally adjacent to them and expend up to KEY d6s to restore HP equal to the total rolled. The pool recharges on a Safe Rest.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-bringer",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Eg7ixe3jk9uRPOtY",
+	"folder": "610751a6ffd3804a"
+}

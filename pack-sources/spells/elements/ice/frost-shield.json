@@ -1,7 +1,7 @@
 {
 	"name": "Frost Shield",
 	"type": "spell",
-	"img": "icons/magic/water/barrier-ice-shield.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/frost-shield.webp",
 	"system": {
 		"macro": "",
 		"identifier": "frost-shield",

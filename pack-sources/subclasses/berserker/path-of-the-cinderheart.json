@@ -1,0 +1,25 @@
+{
+	"name": "Path of the Cinderheart",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-cinderheart/immolating-fury.webp",
+	"system": {
+		"macro": "",
+		"identifier": "path-of-the-cinderheart",
+		"rules": [],
+		"description": "<p><em>\"BURN!\"</em> Some Berserkers tap into primal rage, others ancestral spirits. You, however, have found a more volatile and consuming power: the inferno within. By embracing the flame, you become a living conflagration, your fury burning away your foes and searing the battlefield.</p><p><strong>LEVEL 3</strong></p><p><strong>Immolating Fury.</strong></p><p>When you Rage, you can take STR Fire damage to set yourself Ablaze which lasts until your Rage ends or when you choose for it to end. While Ablaze you gain the following:</p><ul><li>You take STR Fire damage at the start of each of your turns after the first.</li><li>Damage from your Fury Die is increased by 1 per die and now deals Fire damage.</li><li>You gain a fiery aura that deals KEY Fire damage to enemies in Reach 1 at the end of your turns. Ignores armor.</li></ul><p><strong>Heat of the Soul.</strong></p><p>When you use That All You Got?!, you can instead deal STR+DEX Fire damage per expended Fury Die to enemies in Burst 1. Ignores armor.</p><p><strong>LEVEL 7</strong></p><p><strong>Blaze Breaker.</strong></p><p>1 Action, Cone: 3. Expend 1 or more Fury Die. Creatures in the area must make a DEX save. On a fail, they take Fire damage equal to the sum of expended Fury Die + KEY. On a save, half damage. The area burns for the next minute. Creatures that enter a space take KEY Fire damage.</p><p><strong>LEVEL 11</strong></p><p><strong>King of Fires.</strong></p><p>You gain resistance to Fire damage. While Ablaze, Fire damage you take is reduced by STR. Additionally, enemies damaged by your fiery aura or Blaze Breaker gain Smoldering.</p><p><strong>LEVEL 15</strong></p><p><strong>Flames of War.</strong></p><p>While Ablaze, the max number of Fury Die you can have increases by 2.</p><h3>Savage Arsenal</h3><p><strong>Flaming Heart.</strong> When you Rage or gain a Fury Die, enemies in Reach 1 take STR Fire damage.</p><p><strong>Scorched Earth.</strong> While Raging, when you move, each space you enter is set on fire, 1 round. Creatures that enter a space take DEX Fire damage.</p><p><strong>Burn Together.</strong> When you gain a Wound, all enemies in Burst 1 take 2d10 Fire damage.</p><p><strong>Last Blaze.</strong> <em>Free Action.</em> You end your Rage and sacrifice HP. Adjacent enemies take Fire damage equal to the HP lost. Ignores Armor.</p><p><strong>Cleansing Fire.</strong> (1/encounter) When you take Fire damage, you can choose to lose one negative condition (not including Wounds).</p><p><strong>Phoenix Rising.</strong> When you die, you instead return to life in 1d4 days. This can only occur once every 30 days.</p>",
+		"parentClass": "berserker",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vaj1EBAlsnm7mdq4",
+	"folder": "0c74f1d48f570d26"
+}

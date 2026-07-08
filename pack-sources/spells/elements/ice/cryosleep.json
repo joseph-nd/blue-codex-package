@@ -1,7 +1,7 @@
 {
 	"name": "Cryosleep",
 	"type": "spell",
-	"img": "icons/magic/control/sleep-bubble-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/cryosleep.webp",
 	"system": {
 		"macro": "",
 		"identifier": "cryosleep",
@@ -85,9 +85,27 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Blast +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 Asleep turn",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

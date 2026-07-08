@@ -1,7 +1,7 @@
 {
 	"name": "Blood is Power",
 	"type": "spell",
-	"img": "icons/magic/life/heart-shadow-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/blood-is-power.webp",
 	"system": {
 		"macro": "",
 		"identifier": "blood-is-power",

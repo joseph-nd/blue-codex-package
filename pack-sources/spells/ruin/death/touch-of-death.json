@@ -1,7 +1,7 @@
 {
 	"name": "Touch of Death",
 	"type": "spell",
-	"img": "icons/magic/death/hand-withered-gray.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/touch-of-death.webp",
 	"system": {
 		"macro": "",
 		"identifier": "touch-of-death",
@@ -33,6 +33,14 @@
 					"on": {
 						"criticalHit": [
 							{
+								"id": "touchOfDeathDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "touchOfDeathDamage1"
+							},
+							{
 								"id": "touchOfDeathNote1",
 								"type": "note",
 								"noteType": "flavor",
@@ -47,6 +55,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "touchOfDeathDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "touchOfDeathDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "touchOfDeathDamage1"
 							}
 						]

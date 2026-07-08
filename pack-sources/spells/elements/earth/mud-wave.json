@@ -1,7 +1,7 @@
 {
 	"name": "Mud Wave",
 	"type": "spell",
-	"img": "icons/magic/earth/barrier-stone-explosion-debris.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/mud-wave.webp",
 	"system": {
 		"macro": "",
 		"identifier": "mud-wave",
@@ -97,9 +97,27 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "mudWaveDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 pushed space",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -1,7 +1,7 @@
 {
 	"name": "Divination Magick",
 	"type": "spell",
-	"img": "icons/magic/perception/orb-crystal-ball-scrying.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/divination-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "divination-magick",

@@ -1,0 +1,57 @@
+{
+	"name": "Shape Water (1)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/shape-water-1.webp",
+	"system": {
+		"macro": "",
+		"identifier": "shape-water-1",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Requires:</strong> a source of water in Reach. 1+ Actions, Reach: 2. Describe your Small or Tiny water/ice effect to the GM, or choose one from the list below. The longer or more powerful the effect, the more Actions it costs. Effects must be utilitarian and cannot replace attacks or tiered abilities.</p><ul><li><strong>Control</strong> liquid (not inside a creature), changing its temperature, reshaping it, etc.</li><li><strong>Pull</strong> water from a plant.</li><li><strong>Create</strong> a cloud.</li><li><strong>Remove</strong> water from mud to create dirt.</li><li><strong>Wash</strong> dirt &amp; stains from an object.</li></ul>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0AVubpWgSduWQRIW",
+	"folder": "1578cb909668662f"
+}

@@ -1,0 +1,73 @@
+{
+	"name": "Mind Veil",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/mind-veil.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mind-veil",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You have advantage on saving throws against things that try to read your thoughts, senses or emotions. Also, creatures have disadvantage to discern if you are lying via Insight checks.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "lesser-invocations",
+		"gainedAtLevels": [
+			3,
+			8,
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-mesmer",
+				"name": "Lesser Invocations",
+				"group": "lesser-invocations",
+				"levels": [
+					3,
+					8,
+					11
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8YgwmsBszgzdNXqK",
+	"folder": "c32d83a876744652"
+}

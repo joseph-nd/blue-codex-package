@@ -1,0 +1,57 @@
+{
+	"name": "Photographic Casting",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/photographic-casting.webp",
+	"system": {
+		"macro": "",
+		"identifier": "photographic-casting",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You learn the Arcane Thievery Spellshaper ability for free, and it does not count against your known limit. When you use Arcane Thievery to cast a spell you have seen cast in the last 24 hours, it costs its normal mana amount instead of double.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-knowledge",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lpwRCT9nsT7mXqs3",
+	"folder": "d576cc52fd4fe7b6"
+}

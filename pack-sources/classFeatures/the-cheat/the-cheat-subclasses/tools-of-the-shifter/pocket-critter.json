@@ -1,0 +1,83 @@
+{
+	"name": "Pocket Critter",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-shifter/pocket-critter.webp",
+	"system": {
+		"macro": "",
+		"identifier": "pocket-critter",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<strong>1 Action, Reach 2.</strong> Throw a Tiny critter that lives in your pocket. Target is Distracted and Slowed, 1 turn.",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "underhanded-abilities",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "tools-of-the-shifter",
+				"name": "Underhanded Abilities",
+				"group": "underhanded-abilities",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					14,
+					16,
+					18
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "95XXdUHiB8zV6mph",
+	"folder": "5776c118bc8e0f57"
+}

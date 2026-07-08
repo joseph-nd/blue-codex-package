@@ -1,7 +1,7 @@
 {
 	"name": "Acid Spray",
 	"type": "spell",
-	"img": "icons/magic/acid/projectile-beams-salvo-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/acid-spray.webp",
 	"system": {
 		"macro": "",
 		"identifier": "acid-spray",
@@ -29,7 +29,7 @@
 					"parentNode": null,
 					"ignoreArmor": true,
 					"canCrit": true,
-					"canMiss": true,
+					"canMiss": false,
 					"on": {
 						"hit": [
 							{
@@ -37,6 +37,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "acidSprayDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "acidSprayDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
 								"parentNode": "acidSprayDamage1"
 							}
 						]
@@ -77,9 +87,36 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "acidSprayDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Cone +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

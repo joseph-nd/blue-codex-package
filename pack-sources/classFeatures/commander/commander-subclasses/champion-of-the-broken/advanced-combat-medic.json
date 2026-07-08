@@ -1,0 +1,57 @@
+{
+	"name": "Advanced Combat Medic",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/advanced-combat-medic.webp",
+	"system": {
+		"macro": "",
+		"identifier": "advanced-combat-medic",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain +2 medic kits and 2 max Hit Die. Additionally, when used, medic kits can remove 1 negative condition.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-broken",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "whoLYAFjoEONPyjf",
+	"folder": "03195996a2cb3d0e"
+}

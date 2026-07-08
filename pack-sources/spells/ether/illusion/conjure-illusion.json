@@ -1,7 +1,7 @@
 {
 	"name": "Conjure Illusion",
 	"type": "spell",
-	"img": "icons/magic/perception/eye-winged-pink.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/conjure-illusion.webp",
 	"system": {
 		"macro": "",
 		"identifier": "conjure-illusion",

@@ -1,7 +1,7 @@
 {
 	"name": "Death Magick",
 	"type": "spell",
-	"img": "icons/magic/death/skull-energy-light-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/death-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "death-magick",

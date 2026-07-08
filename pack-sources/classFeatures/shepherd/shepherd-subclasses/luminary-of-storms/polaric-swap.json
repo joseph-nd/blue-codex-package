@@ -1,0 +1,75 @@
+{
+	"name": "Polaric Swap",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-storms/polaric-swap.webp",
+	"system": {
+		"macro": "",
+		"identifier": "polaric-swap",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>2 Actions. Swap places with your Lifebinding Spirit.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "sacred-grace",
+		"gainedAtLevels": [
+			5,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "luminary-of-storms",
+				"name": "Sacred Graces",
+				"group": "sacred-grace",
+				"levels": [
+					5,
+					9,
+					13
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "yuFjPJidCkYQ0wLc",
+	"folder": "eff5defbacaa58f6"
+}

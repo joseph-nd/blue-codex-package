@@ -1,7 +1,7 @@
 {
 	"name": "Inspiration Magick",
 	"type": "spell",
-	"img": "icons/magic/sonic/projectile-sound-rings-wave.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/inspiration-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "inspiration-magick",

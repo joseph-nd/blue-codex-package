@@ -1,0 +1,25 @@
+{
+	"name": "Circle of Hunger",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/cursed-magic.webp",
+	"system": {
+		"macro": "",
+		"identifier": "circle-of-hunger",
+		"rules": [],
+		"description": "<p><em>&ldquo;The forest has teeth. And it is always hungry.&rdquo;</em> You are a terrifying predator who uses illusion and shadow to stalk your prey, shifting into a gaunt, monstrous form to deliver debilitating strikes before feasting upon the fallen.</p><p><strong>LEVEL 3</strong></p><p><strong>Cursed Magic.</strong></p><p>You know Shadow spells and Illusion spells. You can only know 3 Spell Schools.</p><p><strong>Unending Hunger.</strong></p><p>You gain a new Direbeast Form, The Hunger. All your Direbeast Forms now appear gaunt and emaciated. While Beastshifted, you gain Curse of Hunger: All your Direbeast Forms are considered Demons now. Your attacks have advantage against Frightened or Bloodied targets.</p><p><strong>LEVEL 7</strong></p><p><strong>Bump in the Night.</strong></p><p>When you make a melee attack while Unseen, it deals an extra 1d10 damage.</p><p><strong>LEVEL 11</strong></p><p><strong>Curse of Bleeding.</strong></p><p>When you hit a target with an attack while Beastshifted, they cannot regain HP, 1 turn. Targets can make a WIL save on their turn to remove this effect.</p><p><strong>LEVEL 15</strong></p><p><strong>Feast of Flesh.</strong></p><p>(1/encounter) When you kill a non-minion creature while Beastshifted, you feast upon it. You regain 2xLVL HP and 2 uses of your Beastshift feature. All enemies that see this must make a WIL save or be Frightened of you until they make a WIL save on their turn.</p><h3>Direbeast Forms &mdash; The Hunger</h3><p><strong>The Hunger (Medium).</strong> Transform into a Medium Demon. Gain +DEX speed, Claws, Bite, Ritual Hunter. You have advantage to Hide. <strong>Claws.</strong> 1 Action, Damage: 2d4+DEX Slashing. On Crit: +LVL damage. <strong>Bite.</strong> 1 Action, Damage: 2d4+DEX Piercing. On crit: regain. <strong>Ritual Hunter.</strong> You can cast Illusion and Shadow spells while Beastshifted as The Hunger. You do not need to speak, use hand gestures, or have a free hand/spellcasting focus. Spells you cast are hidden until their effect occurs.</p><h3>Chimeric Boons</h3><p><strong>Fearsome Presence.</strong> When you Beastshift, enemies in Burst 2 must make a WIL save or become Frightened of you until they make a WIL save on their turn. When a creature saves from this boon, they are immune to it for 24 hours.</p><p><strong>Amorphous Hide.</strong> You can move through spaces as narrow as one foot wide without squeezing. (1/encounter) A critical hit of your choice against you becomes a normal hit instead.</p>",
+		"parentClass": "stormshifter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ObJX5HBrILzeGgGR",
+	"folder": "8c2f8af707639ef7"
+}

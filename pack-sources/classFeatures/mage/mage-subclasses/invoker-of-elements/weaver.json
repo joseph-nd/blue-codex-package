@@ -1,0 +1,57 @@
+{
+	"name": "Weaver",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-elements/weaver.webp",
+	"system": {
+		"macro": "",
+		"identifier": "weaver",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) When you use Elemental Attunement you can activate this; you immediately gain KEY mana and attune to two elements of your choice. For the next minute, you gain KEY mana at the start of your turns. When you swap attunements, you can either swap one or both at the same time.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-elements",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "mcXpHeyDWcXVgbbF",
+	"folder": "b5bbf1f034758ba7"
+}

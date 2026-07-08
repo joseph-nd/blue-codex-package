@@ -1,7 +1,7 @@
 {
 	"name": "Warding Bond",
 	"type": "spell",
-	"img": "icons/magic/control/energy-stream-link-large-white.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/warding-bond.webp",
 	"system": {
 		"macro": "",
 		"identifier": "warding-bond",
@@ -54,9 +54,27 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 hour",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 60,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				},
+				{
+					"label": "+2 reduced damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -1,0 +1,57 @@
+{
+	"name": "Howl in the Night",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/howl-in-the-night.webp",
+	"system": {
+		"macro": "",
+		"identifier": "howl-in-the-night",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Burst: 3. Spend a Fury Die to unleash a blood freezing howl. Enemies in the area must make a WIL save or be Frightened of you, 1 turn. Whenever you attack a target Frightened of you, two of your Fury Die are always their max value.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-lycan",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "v65wOXRiHnCzy1bG",
+	"folder": "b2e2951ee73741e9"
+}

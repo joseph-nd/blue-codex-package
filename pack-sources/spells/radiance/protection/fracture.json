@@ -1,7 +1,7 @@
 {
 	"name": "Fracture",
 	"type": "spell",
-	"img": "icons/magic/light/explosion-star-blue-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/fracture.webp",
 	"system": {
 		"macro": "",
 		"identifier": "fracture",
@@ -37,6 +37,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "fractureDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "fractureDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
 								"parentNode": "fractureDamage1"
 							}
 						]

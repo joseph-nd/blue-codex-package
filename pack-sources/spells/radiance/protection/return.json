@@ -1,7 +1,7 @@
 {
 	"name": "Return!",
 	"type": "spell",
-	"img": "icons/magic/life/heart-cross-strong-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/return.webp",
 	"system": {
 		"macro": "",
 		"identifier": "return",
@@ -56,9 +56,27 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 damage reduced",
+					"deltas": []
+				},
+				{
+					"label": "+2 rounds",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "round"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

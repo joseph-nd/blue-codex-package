@@ -1,0 +1,73 @@
+{
+	"name": "Whispers of Nature",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/whispers-of-nature.webp",
+	"system": {
+		"macro": "",
+		"identifier": "whispers-of-nature",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) Imbue a plant with a moment of consciousness and ask it 3 yes/no questions.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "lesser-invocations",
+		"gainedAtLevels": [
+			3,
+			8,
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-briar",
+				"name": "Lesser Invocations",
+				"group": "lesser-invocations",
+				"levels": [
+					3,
+					8,
+					11
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "egIaDt4HZBHFGJyg",
+	"folder": "0d50b1b6207583d7"
+}

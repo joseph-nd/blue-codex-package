@@ -1,0 +1,81 @@
+{
+	"name": "Help Me!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/help-me.webp",
+	"system": {
+		"macro": "",
+		"identifier": "help-me",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) <strong>Free Reaction:</strong> When any ally would Interpose for you. Ally takes INT+LVL less damage from the attack.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "commanders-orders",
+		"gainedAtLevels": [
+			1,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-watch",
+				"name": "Commander's Order",
+				"group": "commanders-orders",
+				"levels": [
+					1,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VUTW3g0fAjvANCvl",
+	"folder": "e6430df7fd8daeaa"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Shield of Justice",
 	"type": "spell",
-	"img": "icons/magic/defensive/shield-barrier-deflect-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/shield-of-justice.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shield-of-justice",
@@ -54,9 +54,18 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 Armor",
+					"deltas": []
+				},
+				{
+					"label": "+5 damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

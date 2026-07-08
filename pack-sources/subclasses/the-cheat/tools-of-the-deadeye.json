@@ -1,0 +1,25 @@
+{
+	"name": "Tools of the Deadeye",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/master-thrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tools-of-the-deadeye",
+		"rules": [],
+		"description": "<p><em>“It’s not about throwing hard. It’s about throwing smart.”</em> You are a ranged prodigy who has perfected the art of the thrown weapon, striking multiple targets with a single throw, and always landing the perfect shot.</p><p><strong>LEVEL 3</strong></p><p><strong>Master Thrower.</strong></p><p>Your Vicious Opportunist feature now applies to attacks you make with thrown weapons against Distracted targets. Your thrown weapons gain +4 Reach. You may sheathe and draw daggers &amp; improvised weapons for free.</p><p><strong>Improviser.</strong></p><p>Anything small enough (and dangerous enough) that you can hold becomes a thrown weapon. Your improvised weapons deal 1d4+DEX and have the Light and Thrown properties. Additionally, you always seem to have at least 2xLVL “things” within reach to throw.</p><p><strong>LEVEL 7</strong></p><p><strong>Ricochet Shot.</strong></p><p>(INT/Safe Rest) When you hit a creature with a thrown weapon attack, a second target in Range 4 of the first takes damage equal to your Sneak attack die.</p><p><strong>LEVEL 11</strong></p><p><strong>Interceptive Shot.</strong></p><p>(INT/Safe Rest) Reaction: When an ally in Range 8 is attacked by a Ranged weapon. The attack has disadvantage. If it misses, you can make a free thrown weapon attack against the attacker if they are in Range of you.</p><p><strong>LEVEL 15</strong></p><p><strong>Impossible Angle.</strong></p><p>(1/Field Rest) 1 Action. You can make a thrown weapon attack against a target you are aware of in Range 8 regardless of Cover. This attack is made with advantage and if it hits, it deals your normal weapon damage and your maximum possible Sneak Attack damage automatically.</p><h3>Underhanded Abilities</h3><p><strong>Grappling Hook!</strong> 1 Action. Fire a tether up to 12 spaces leaving a rope behind. Allies can use an Action to travel the length of the rope.</p><p><strong>Press the Advantage.</strong> When you successfully hit a Distracted target, you can immediately make a second attack for free against that same creature.</p><p><strong>Hamstringer.</strong> When you hit a creature with your Sneak Attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target’s speed is reduced to 0, 1 turn.</p><p><strong>Temple Strike.</strong> When you hit a creature with your Sneak attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target is Blinded, Stunned and Deafened 2 turns.</p>",
+		"parentClass": "the-cheat",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4ncqeETo4CPKYc5C",
+	"folder": "a129586610d86ed1"
+}

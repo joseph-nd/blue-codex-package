@@ -1,7 +1,7 @@
 {
 	"name": "Shade Touch",
 	"type": "spell",
-	"img": "icons/magic/unholy/strike-hand-glow-pink.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/shade-touch.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shade-touch",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "shadeTouchDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "shadeTouchDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "shadeTouchDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "shadeTouchDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "shadeTouchDamage1"
 							}
 						]

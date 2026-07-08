@@ -1,0 +1,81 @@
+{
+	"name": "Fracturing Cold",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-frozen-north/fracturing-cold.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fracturing-cold",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action. Make an attack with a Ranged or Melee weapon. If your target is Slowed, remove Slowed and deal +2d10 Cold damage.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "thrill-of-the-hunt",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			12,
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "keeper-of-the-frozen-north",
+				"name": "Thrill of the Hunt",
+				"group": "thrill-of-the-hunt",
+				"levels": [
+					2,
+					4,
+					6,
+					8,
+					12,
+					14
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "HM2TmMrYOTDDkXwQ",
+	"folder": "582c2fdb5f3228de"
+}

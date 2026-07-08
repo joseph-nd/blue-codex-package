@@ -1,7 +1,7 @@
 {
 	"name": "Mantra of Resolve",
 	"type": "spell",
-	"img": "icons/magic/defensive/barrier-shield-dome-blue-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/mantra-of-resolve.webp",
 	"system": {
 		"macro": "",
 		"identifier": "mantra-of-resolve",
@@ -57,9 +57,27 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 less damage",
+					"deltas": []
+				},
+				{
+					"label": "+1 minute duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

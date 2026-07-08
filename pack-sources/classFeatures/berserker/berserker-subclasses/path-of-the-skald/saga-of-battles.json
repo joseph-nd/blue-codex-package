@@ -1,0 +1,57 @@
+{
+	"name": "Saga of Battles",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-skald/saga-of-battles.webp",
+	"system": {
+		"macro": "",
+		"identifier": "saga-of-battles",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can expend up to 2 Fury Die when you use Battle Hymn choosing the same or different verses. Additionally while your Rage is active, allies that start their turn in Burst 4 gain +2 speed.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-skald",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "5iCVFfisq7cOZ114",
+	"folder": "61fb7b6ee4afd7ea"
+}

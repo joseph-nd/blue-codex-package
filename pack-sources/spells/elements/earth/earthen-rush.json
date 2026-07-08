@@ -1,7 +1,7 @@
 {
 	"name": "Earthen Rush",
 	"type": "spell",
-	"img": "icons/magic/earth/projectile-stone-landslide.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/earthen-rush.webp",
 	"system": {
 		"macro": "",
 		"identifier": "earthen-rush",
@@ -74,9 +74,36 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "earthenRushDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Arc +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

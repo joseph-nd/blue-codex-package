@@ -1,0 +1,97 @@
+{
+	"name": "Creeping Ice",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/creeping-ice.webp",
+	"system": {
+		"macro": "",
+		"identifier": "creeping-ice",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "creepingIceSave1",
+					"type": "savingThrow",
+					"savingThrowType": "strength",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"passedSave": [
+							{
+								"id": "creepingIceNote1",
+								"type": "note",
+								"noteType": "flavor",
+								"text": "Half damage on save.",
+								"parentContext": "passedSave",
+								"parentNode": "creepingIceSave1"
+							}
+						],
+						"failedSave": [
+							{
+								"id": "creepingIceDmg1",
+								"type": "damage",
+								"damageType": "cold",
+								"formula": "4d8",
+								"parentContext": "failedSave",
+								"parentNode": "creepingIceSave1",
+								"on": {}
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(Ga Form)</em> Arc: 4, Damage: 4d8 and targets are Restrained by ice (KEY HP) on a failed DEX save. Half damage on save and targets aren't Restrained.</p><p><strong>High Levels:</strong> +6 damage and Arc +2 every Tidal Warrior. <strong>Expert Tidal Warrior:</strong> the area remains Slowed Terrain for 24 hours.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ke6HNOzWa3seJVkQ",
+	"folder": "a1f65c1ed7e413f7"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Tectonic Transformation",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/tectonic-transformation.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tectonic-transformation",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you Beastshift into a Fearsome Beast, Beast of the Pack or Stone Golem, the area in Burst 2 becomes Slowed Terrain for 24 hours and enemies in the area are Blinded, 1 turn. You can transform into a Stone Golem now.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-earth",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "jveX8ny84gYJatWS",
+	"folder": "0fec6694b9015c19"
+}

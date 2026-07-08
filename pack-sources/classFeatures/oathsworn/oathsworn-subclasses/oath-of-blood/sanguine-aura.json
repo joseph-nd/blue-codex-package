@@ -1,0 +1,66 @@
+{
+	"name": "Sanguine Aura",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/sanguine-aura.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sanguine-aura",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "sanguineAuraHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "@key",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain a Burst 4 aura. Whenever a non-minion creature in the area becomes Bloodied, gains a Wound, or dies, you gain 1 Judgment Die and regain KEY HP.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-blood",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vjfS4b37TOMLik65",
+	"folder": "d4c837e126872019"
+}

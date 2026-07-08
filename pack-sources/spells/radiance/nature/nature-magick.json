@@ -1,7 +1,7 @@
 {
 	"name": "Nature Magick",
 	"type": "spell",
-	"img": "icons/magic/nature/beam-hand-leaves-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/nature-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "nature-magick",

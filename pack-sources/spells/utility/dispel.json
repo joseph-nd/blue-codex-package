@@ -1,7 +1,7 @@
 {
 	"name": "Dispel",
 	"type": "spell",
-	"img": "icons/magic/symbols/cross-circle-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/dispel.webp",
 	"system": {
 		"macro": "",
 		"identifier": "dispel",

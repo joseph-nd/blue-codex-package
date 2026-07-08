@@ -1,0 +1,57 @@
+{
+	"name": "On My Mark!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/on-my-mark.webp",
+	"system": {
+		"macro": "",
+		"identifier": "on-my-mark",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use Coordinated Strike! you can forgo your attack. When you do so, your ally has advantage and deals bonus damage equal to your Combat Die.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-watch",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0YeitfZPi2ZiUZSy",
+	"folder": "48242b898b5d2dbc"
+}

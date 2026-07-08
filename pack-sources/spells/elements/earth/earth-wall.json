@@ -1,7 +1,7 @@
 {
 	"name": "Earth Wall",
 	"type": "spell",
-	"img": "icons/magic/earth/barrier-stone-brown-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/earth-wall.webp",
 	"system": {
 		"macro": "",
 		"identifier": "earth-wall",
@@ -56,9 +56,27 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+2 hits",
+					"deltas": []
+				},
+				{
+					"label": "Wall +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

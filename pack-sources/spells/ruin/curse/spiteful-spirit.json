@@ -1,7 +1,7 @@
 {
 	"name": "Spiteful Spirit",
 	"type": "spell",
-	"img": "icons/magic/death/undead-ghost-scream-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/spiteful-spirit.webp",
 	"system": {
 		"macro": "",
 		"identifier": "spiteful-spirit",

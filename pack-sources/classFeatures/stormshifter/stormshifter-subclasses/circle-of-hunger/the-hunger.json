@@ -1,0 +1,156 @@
+{
+	"name": "The Hunger",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/the-hunger.webp",
+	"system": {
+		"macro": "",
+		"identifier": "the-hunger",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "theHungerClawsDmg",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "2d4+@dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"criticalHit": [
+							{
+								"id": "theHungerClawsDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "theHungerClawsDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "theHungerClawsDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "theHungerClawsDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "theHungerClawsDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "theHungerClawsDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "theHungerBiteDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "2d4+@dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"criticalHit": [
+							{
+								"id": "theHungerBiteDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "theHungerBiteDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "theHungerBiteDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "theHungerBiteDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "theHungerBiteDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "theHungerBiteDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>(Medium).</strong> Transform into a Medium Demon. Gain +DEX speed, Claws, Bite, Ritual Hunter. You have advantage to Hide.</p><p><strong>Claws.</strong> 1 Action, Damage: 2d4+DEX Slashing. On Crit: +LVL damage.</p><p><strong>Bite.</strong> 1 Action, Damage: 2d4+DEX Piercing. On crit: regain.</p><p><strong>Ritual Hunter.</strong> You can cast Illusion and Shadow spells while Beastshifted as The Hunger. You do not need to speak, use hand gestures, or have a free hand/spell casting focus. Spells you cast are hidden until their effect occurs.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "direbeast-form",
+		"gainedAtLevels": [
+			2,
+			3,
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-hunger",
+				"name": "Direbeast Forms",
+				"group": "direbeast-form",
+				"levels": [
+					2,
+					3,
+					5
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "tsyrlWBou2HAx5P8",
+	"folder": "538ee0be1846c6a9"
+}

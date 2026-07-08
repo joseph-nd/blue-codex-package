@@ -1,0 +1,57 @@
+{
+	"name": "Ancient Seeds",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/ancient-seeds.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ancient-seeds",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you hit a Large or smaller enemy with Nature&rsquo;s Judgment while they are in Slowed Terrain you create, they are Restrained by vines (10HP) until they make a STR save on their turn or destroy the vines.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-verdant",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "nsNycBfEjJo32H5K",
+	"folder": "fb81833546b81b40"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Defile Eyes",
 	"type": "spell",
-	"img": "icons/magic/perception/eye-tendrils-web-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/defile-eyes.webp",
 	"system": {
 		"macro": "",
 		"identifier": "defile-eyes",

@@ -1,0 +1,25 @@
+{
+	"name": "Champion of the Bringer",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/javelin-of-light.webp",
+	"system": {
+		"macro": "",
+		"identifier": "champion-of-the-bringer",
+		"rules": [],
+		"description": "<p><em>&ldquo;I am the aegis. I am the spear.&rdquo;</em> As a celestial champion, you take to the sky on wings of light, protecting the worthy with divine intervention and smiting your foes with a radiant javelin.</p><p><strong>LEVEL 3</strong></p><p><strong>Javelin of Light.</strong></p><p>Free Action. Create a javelin of light that deals Piercing or Radiant damage. It disappears at the end of your turn. These javelins' die increase 1 step at levels 7, 11 and 15.</p><p><strong>Paragon's Wings.</strong></p><p>When you use Coordinated Strike, both you and your chosen ally gain a flying speed equal to your walk speed, 1 turn. You both can move for free once before attacking or casting a spell.</p><p><strong>LEVEL 7</strong></p><p><strong>Winged Shield.</strong></p><p>You can Interpose up to 8 spaces away. When you Interpose, you gain LVL temp HP for that attack.</p><p><strong>LEVEL 11</strong></p><p><strong>Defender's Zeal.</strong></p><p>Whenever you or ally you can see gains a Wound, you gain 1 Coordinated Strike charge.</p><p><strong>LEVEL 15</strong></p><p><strong>Ascended Wings.</strong></p><p>You gain Paragon's Wings flying speed permanently. Allies deal +INT Radiant damage on attacks and spells while they have a flying speed granted by you.</p><h3>Combat Abilities</h3><h4>Commander's Order</h4><p><strong>Brace for Impact!</strong> (1/encounter) <em>Reaction:</em> When you or your allies that can hear you are forced to make a save. Allies that can hear you gain advantage on their save.</p><p><strong>Go for the Eyes!</strong> (1/encounter) <em>Free Action.</em> A target of your choice in Range 6 is inspired. Their attack inflicts Blinded on hit for 1 minute or until they make a STR save on their turn.</p><p><strong>It's Just a Flesh Wound!</strong> (INT/Safe Rest) <em>Reaction:</em> When an ally in Range 6 gains a Wound. Target ally regains INT+5 HP.</p><h4>Combat Tactics</h4><p><strong>Sundering Strike.</strong> Your attack deals extra damage equal to a roll of your Combat Die and inflicts Sundered.</p><p><strong>Blazing Strike.</strong> Your attack deals extra Fire damage equal to a roll of your Combat Die and the target gains Smoldering.</p><p><strong>Maiming Strike.</strong> Your attack deals extra damage equal to a roll of your Combat Die and the target is Maimed: Slowed and Dazed. Maimed cannot be removed until the target makes a STR save on its turn.</p><h4>Weapon Mastery</h4><p><strong>Javelin.</strong> Your javelin attacks treat monster armor as 1 tier lower.</p>",
+		"parentClass": "commander",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "tzXDO29rmVi1S0h0",
+	"folder": "a09b2900fb6185a5"
+}

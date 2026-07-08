@@ -1,7 +1,7 @@
 {
 	"name": "Charge!",
 	"type": "spell",
-	"img": "icons/magic/movement/trail-streak-impact-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/charge.webp",
 	"system": {
 		"macro": "",
 		"identifier": "charge",
@@ -54,9 +54,31 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Burst +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 damage reduction",
+					"deltas": []
+				},
+				{
+					"label": "+2 speed",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

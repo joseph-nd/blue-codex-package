@@ -1,7 +1,7 @@
 {
 	"name": "Defile Defenses",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-energy-hold-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/defile-defenses.webp",
 	"system": {
 		"macro": "",
 		"identifier": "defile-defenses",

@@ -1,0 +1,57 @@
+{
+	"name": "Sharper Images",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-ether/sharper-images.webp",
+	"system": {
+		"macro": "",
+		"identifier": "sharper-images",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/turn) You can have an illusion deal damage upon interaction for free.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-ether",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RG72ijj30I3rCT3Z",
+	"folder": "c854c6c5f41f1453"
+}

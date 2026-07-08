@@ -1,7 +1,7 @@
 {
 	"name": "Ghastly Claw",
 	"type": "spell",
-	"img": "icons/magic/unholy/hand-claw-fire-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/ghastly-claw.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ghastly-claw",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "ghastlyClawDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "ghastlyClawDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "ghastlyClawDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "ghastlyClawDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "ghastlyClawDamage1"
 							}
 						]

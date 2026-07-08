@@ -1,0 +1,103 @@
+{
+	"name": "Burn Together",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-cinderheart/burn-together.webp",
+	"system": {
+		"macro": "",
+		"identifier": "burn-together",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "burnTogetherDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "2d10",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "burnTogetherDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "burnTogetherDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you gain a Wound, all enemies in Burst 1 take 2d10 Fire damage.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "savage-arsenal",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "path-of-the-cinderheart",
+				"name": "Savage Arsenal",
+				"group": "savage-arsenal",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oayHs5pDkmU3jdiB",
+	"folder": "d5c4497fcd98af31"
+}

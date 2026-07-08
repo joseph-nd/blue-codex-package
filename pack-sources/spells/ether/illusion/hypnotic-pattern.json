@@ -1,7 +1,7 @@
 {
 	"name": "Hypnotic Pattern",
 	"type": "spell",
-	"img": "icons/magic/control/hypnosis-mesmerism-swirl.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/hypnotic-pattern.webp",
 	"system": {
 		"macro": "",
 		"identifier": "hypnotic-pattern",
@@ -89,9 +89,36 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Blast +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 minute duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

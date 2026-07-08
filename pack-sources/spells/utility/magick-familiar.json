@@ -1,7 +1,7 @@
 {
 	"name": "Magick Familiar",
 	"type": "spell",
-	"img": "icons/magic/light/orbs-firefly-hand-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/magick-familiar.webp",
 	"system": {
 		"macro": "",
 		"identifier": "magick-familiar",

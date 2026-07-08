@@ -1,7 +1,7 @@
 {
 	"name": "Mirror Army",
 	"type": "spell",
-	"img": "icons/magic/defensive/illusion-evasion-echo-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/mirror-army.webp",
 	"system": {
 		"macro": "",
 		"identifier": "mirror-army",
@@ -54,9 +54,40 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 clone each",
+					"deltas": []
+				},
+				{
+					"label": "Blast +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 minute duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

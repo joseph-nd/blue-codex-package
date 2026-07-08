@@ -1,0 +1,57 @@
+{
+	"name": "Unending Hunger",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/unending-hunger.webp",
+	"system": {
+		"macro": "",
+		"identifier": "unending-hunger",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain a new Direbeast Form, The Hunger. All your Direbeast Forms now appear gaunt and emaciated. While Beastshifted, you gain Curse of Hunger: All your Direbeast Forms are considered Demons now. Your attacks have advantage against Frightened or Bloodied targets.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-hunger",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oZs4xdY7QEIC5bGc",
+	"folder": "3d1fb0727c9baf20"
+}

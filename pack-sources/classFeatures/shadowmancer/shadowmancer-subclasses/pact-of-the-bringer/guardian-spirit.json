@@ -1,0 +1,57 @@
+{
+	"name": "Guardian Spirit",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/guardian-spirit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "guardian-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) Reaction: When you or an ally in Reach 6 would be reduced to 0 HP. The target instead drops to LVL HP. All enemies within a Burst 1 of the target are Frightened of them for 1 minute or until they make a WIL save on their turn.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-bringer",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "enrYGaFIjXUOUupZ",
+	"folder": "610751a6ffd3804a"
+}

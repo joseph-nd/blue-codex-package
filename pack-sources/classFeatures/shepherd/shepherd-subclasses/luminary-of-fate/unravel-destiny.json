@@ -1,0 +1,57 @@
+{
+	"name": "Unravel Destiny",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/unravel-destiny.webp",
+	"system": {
+		"macro": "",
+		"identifier": "unravel-destiny",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/ Field Rest) Reaction: When an enemy you can see hits an attack. The attack must be rerolled with disadvantage 2. If your Lifebinding Spirit is active, you can sacrifice it to activate this ability again. You can use a charge of Searing Light to use this ability again.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-fate",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XcD2NYdGxGS4hOWA",
+	"folder": "6b3a4e066971c20f"
+}

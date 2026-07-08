@@ -1,7 +1,7 @@
 {
 	"name": "Imagined Burden",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-chains-shackles-movement-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/imagined-burden.webp",
 	"system": {
 		"macro": "",
 		"identifier": "imagined-burden",
@@ -89,7 +89,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDuration",
+					"value": 2,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": "round"
+				}
+			],
 			"choices": null
 		}
 	},

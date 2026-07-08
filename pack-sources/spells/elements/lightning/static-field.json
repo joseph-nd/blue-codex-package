@@ -1,7 +1,7 @@
 {
 	"name": "Static Field",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-strike-forked-sparks-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/static-field.webp",
 	"system": {
 		"macro": "",
 		"identifier": "static-field",
@@ -76,9 +76,27 @@
 		"tier": 4,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Blast +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+6 secondary damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

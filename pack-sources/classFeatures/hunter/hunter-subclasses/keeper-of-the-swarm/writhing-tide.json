@@ -1,0 +1,57 @@
+{
+	"name": "Writhing Tide",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/writhing-tide.webp",
+	"system": {
+		"macro": "",
+		"identifier": "writhing-tide",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While you have a marked quarry, you gain 2 flying speed. When you quarry dies, the next closest enemy in Range 8 is marked as your quarry.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-swarm",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lt91USibc58YqZXu",
+	"folder": "882e910e55f5a361"
+}

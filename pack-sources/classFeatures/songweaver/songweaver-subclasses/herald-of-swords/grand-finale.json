@@ -1,0 +1,57 @@
+{
+	"name": "Grand Finale",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/grand-finale.webp",
+	"system": {
+		"macro": "",
+		"identifier": "grand-finale",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) 2 Actions, Move: up to your speed for free. During this movement, you can make a single melee weapon attack against up to 5 different enemies, ignoring Rushed Attack rules. For every enemy you hit, regain 1 spent Songweaver's Inspiration.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-swords",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "sDX3Y4whW0Hdxwoz",
+	"folder": "21c6519cf533ad6e"
+}

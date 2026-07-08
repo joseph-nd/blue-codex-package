@@ -1,7 +1,7 @@
 {
 	"name": "Shadow Tendrils",
 	"type": "spell",
-	"img": "icons/magic/unholy/projectile-smoke-tendril-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/shadow-tendrils.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shadow-tendrils",

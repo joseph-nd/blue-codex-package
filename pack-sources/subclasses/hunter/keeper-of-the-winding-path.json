@@ -1,0 +1,25 @@
+{
+	"name": "Keeper of the Winding Path",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-winding-path/skirmishers-step.webp",
+	"system": {
+		"macro": "",
+		"identifier": "keeper-of-the-winding-path",
+		"rules": [],
+		"description": "<p><em>“The path to victory is never a straight line.”</em> As a Keeper of the Winding Path, you treat combat as a dance, flowing across the battlefield to stay just out of reach while unleashing a relentless flurry of attacks.</p><p><strong>LEVEL 3</strong></p><p><strong>Skirmisher’s Step.</strong></p><p>When you move, if there are no adjacent enemies to you when you end your move, you can immediately use Hunter’s Mark for free.</p><p><strong>Lone Hunter.</strong></p><p>You gain Cover vs your quarry as long as no enemies other than your quarry or allies are adjacent to you.</p><p><strong>LEVEL 7</strong></p><p><strong>Harrying Retreat.</strong></p><p>Reaction: When an enemy moves into an adjacent space. You can spend a ToTH charge to immediately make an attack for free, if it’s your quarry you have advantage. Regardless of the outcome, you can also immediately move for free. You can move before or after the attack.</p><p><strong>LEVEL 11</strong></p><p><strong>Flowing Strikes.</strong></p><p>You no longer suffer the disadvantage from Rushed Attacks on your turn as long as you move or teleport before each attack.</p><p><strong>LEVEL 15</strong></p><p><strong>Ghost of the Wilds.</strong></p><p>(1/encounter) Free Action. For 1 minute your speed is doubled and each time you attack, you can immediately teleport up to 2 spaces before or after the attack resolves for free.</p><p><strong>Thrill of the Hunt options:</strong></p><ul><li><strong>Venom Coated.</strong> 1 Action. Attack with a weapon (Half range if ranged weapon). On Hit: target is Poisoned for 1 minute or until they pass a STR save on their turn.</li><li><strong>Smoke Screen.</strong> 1 Action, Blast: 2. The area is filled with thick smoke for 2 rounds. It obscures view and can’t be seen through.</li><li><strong>Fade Away.</strong> 1 Action. You immediately make Stealth (DEX) Check against a DC 12. On a success, you are Hidden and turn Invisible while Hidden.</li><li><strong>Spike Trap.</strong> (1/encounter) Reaction: When a Huge or smaller enemy moves adjacent to you or an ally in Range 6. Target falls into a 6 space deep pit and takes LVL Piercing damage. The pit remains until filled.</li><li><strong>Trip Wire Trap.</strong> (2/encounter) Reaction: When a Huge or smaller enemy moves to a space in Range 6. Target takes LVL damage and falls Prone. Their speed is reduced by 2 for 1 minute.</li></ul>",
+		"parentClass": "hunter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "xbx2ealr5oL9dDtt",
+	"folder": "13e1f97c32f4857c"
+}

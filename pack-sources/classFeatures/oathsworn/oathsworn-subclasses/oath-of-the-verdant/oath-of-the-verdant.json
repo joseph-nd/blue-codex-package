@@ -1,0 +1,57 @@
+{
+	"name": "Oath of the Verdant",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/oath-of-the-verdant.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oath-of-the-verdant",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You no longer know Radiant spells, you instead know Nature spells. Your Radiant Judgement becomes Nature&rsquo;s Judgment and can deal Acid or Poison damage. You ignore Slowed Terrain from natural sources like dense underbrush and your own Nature spells.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-verdant",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "baS7g3dTvCsLQLh0",
+	"folder": "fb81833546b81b40"
+}

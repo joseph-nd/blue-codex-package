@@ -1,0 +1,57 @@
+{
+	"name": "True Ice",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-frozen-north/true-ice.webp",
+	"system": {
+		"macro": "",
+		"identifier": "true-ice",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use Enchanted Frost, you can spend 1 more ToTH to inflict Stunned and your quarry also gains vulnerability to Cold damage for 1 minute.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-frozen-north",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Kan3IZPSdwaeg30X",
+	"folder": "d1d0b5c317e355b6"
+}

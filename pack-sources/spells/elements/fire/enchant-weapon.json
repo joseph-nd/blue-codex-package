@@ -1,7 +1,7 @@
 {
 	"name": "Enchant Weapon",
 	"type": "spell",
-	"img": "icons/magic/fire/dagger-rune-enchant-flame-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/enchant-weapon.webp",
 	"system": {
 		"macro": "",
 		"identifier": "enchant-weapon",
@@ -57,9 +57,40 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 target",
+					"deltas": [
+						{
+							"operation": "addTargets",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+KEY damage",
+					"deltas": []
+				},
+				{
+					"label": "+1 minute duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

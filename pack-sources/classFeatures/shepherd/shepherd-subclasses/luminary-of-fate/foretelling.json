@@ -1,0 +1,57 @@
+{
+	"name": "Foretelling",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/foretelling.webp",
+	"system": {
+		"macro": "",
+		"identifier": "foretelling",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>At the start of a new day, you glimpse fragments of the future. Roll 2d4s twice and record the numbers rolled. At any point you can add or subtract the total rolled from any roll you can see. The roll is considered the amount higher or lower. A roll above a die's maximum is a crit and a roll 1 or lower is a miss. You must choose to do so before the roll is made. Each foretelling roll can be used only once, and any unused rolls are lost when you start a new day.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-fate",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MAUjffQeRMmM3ZD2",
+	"folder": "6b3a4e066971c20f"
+}

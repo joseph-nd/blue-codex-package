@@ -1,7 +1,7 @@
 {
 	"name": "Guided",
 	"type": "spell",
-	"img": "icons/magic/control/buff-luck-fortune-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/guided.webp",
 	"system": {
 		"macro": "",
 		"identifier": "guided",
@@ -56,7 +56,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addTargets",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

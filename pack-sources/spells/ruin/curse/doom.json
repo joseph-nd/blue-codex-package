@@ -1,7 +1,7 @@
 {
 	"name": "Doom",
 	"type": "spell",
-	"img": "icons/magic/control/fear-fright-shadow-monster-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/doom.webp",
 	"system": {
 		"macro": "",
 		"identifier": "doom",

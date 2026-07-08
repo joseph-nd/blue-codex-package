@@ -1,7 +1,7 @@
 {
 	"name": "Water Magick",
 	"type": "spell",
-	"img": "icons/magic/water/water-hand.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/water-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "water-magick",

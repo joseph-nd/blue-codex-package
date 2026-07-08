@@ -1,7 +1,7 @@
 {
 	"name": "Rejuvenation Spirit",
 	"type": "spell",
-	"img": "icons/magic/nature/tree-spirit-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/rejuvenation-spirit.webp",
 	"system": {
 		"macro": "",
 		"identifier": "rejuvenation-spirit",

@@ -1,0 +1,57 @@
+{
+	"name": "Elemental Attunement",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-elements/elemental-attunement.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elemental-attunement",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/turn) Free Action. You attune yourself to either Fire, Water (Ice/Water), Air (Wind/Lightning) or Earth. You are always attuned to an element, but can use an Action to swap attunements. While attuned to an element, you can only cast spells from the school(s) associated with that element and you gain a passive boon when you spend mana:</p><p>Fire: Targets take additional Fire damage equal to the mana spent.</p><p>Water: You gain temp HP equal to the mana spent.</p><p>Air: You can Move a number of spaces equal to the mana spent for free.</p><p>Earth: You gain Armor, 1 turn, equal to the mana spent.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-elements",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "l1OjUXY2pmEk1Mwt",
+	"folder": "b5bbf1f034758ba7"
+}

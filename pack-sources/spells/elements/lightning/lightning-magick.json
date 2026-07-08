@@ -1,7 +1,7 @@
 {
 	"name": "Lightning Magick",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-strike-hand-gray.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/lightning-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "lightning-magick",

@@ -1,0 +1,77 @@
+{
+	"name": "Deep Roots",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/deep-roots.webp",
+	"system": {
+		"macro": "",
+		"identifier": "deep-roots",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "free",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Free Action. You root yourself into the earth. Your speed becomes 0, but you cannot be knocked Prone or moved against your will, and you gain +KEY Armor. You can unroot at any time as a Free Action.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "chimeric-boon",
+		"gainedAtLevels": [
+			6,
+			9,
+			12,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-spores",
+				"name": "Chimeric Boons",
+				"group": "chimeric-boon",
+				"levels": [
+					6,
+					9,
+					12,
+					17
+				],
+				"count": {
+					"6": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Mpg4ma4DoMZ3bDYC",
+	"folder": "a4922ac2eddebc93"
+}

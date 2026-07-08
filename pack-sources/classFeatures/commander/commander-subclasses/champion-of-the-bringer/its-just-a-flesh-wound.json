@@ -1,0 +1,90 @@
+{
+	"name": "It's Just a Flesh Wound!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/its-just-a-flesh-wound.webp",
+	"system": {
+		"macro": "",
+		"identifier": "its-just-a-flesh-wound",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "fleshWoundHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "@intelligence + 5",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(INT/Safe Rest) <strong>Reaction:</strong> When an ally in Range 6 gains a Wound. Target ally regains INT+5 HP.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "commanders-orders",
+		"gainedAtLevels": [
+			1,
+			6,
+			8,
+			10,
+			12,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-bringer",
+				"name": "Commander's Order",
+				"group": "commanders-orders",
+				"levels": [
+					1,
+					6,
+					8,
+					10,
+					12,
+					16
+				],
+				"count": {
+					"2": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "agbBp1JqCsbc3NF4",
+	"folder": "e7de9787f7c7a19a"
+}

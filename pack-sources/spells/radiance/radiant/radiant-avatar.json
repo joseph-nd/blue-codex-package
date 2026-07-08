@@ -1,7 +1,7 @@
 {
 	"name": "Radiant Avatar",
 	"type": "spell",
-	"img": "icons/magic/holy/angel-winged-humanoid-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/radiant-avatar.webp",
 	"system": {
 		"macro": "",
 		"identifier": "radiant-avatar",

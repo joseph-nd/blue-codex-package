@@ -1,7 +1,7 @@
 {
 	"name": "Ether Surge",
 	"type": "spell",
-	"img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/ether-surge.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ether-surge",

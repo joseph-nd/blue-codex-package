@@ -1,7 +1,7 @@
 {
 	"name": "Confusing Images",
 	"type": "spell",
-	"img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/confusing-images.webp",
 	"system": {
 		"macro": "",
 		"identifier": "confusing-images",

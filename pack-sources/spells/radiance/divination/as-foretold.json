@@ -1,7 +1,7 @@
 {
 	"name": "As Foretold",
 	"type": "spell",
-	"img": "icons/magic/time/hourglass-tilted-glowing-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/as-foretold.webp",
 	"system": {
 		"macro": "",
 		"identifier": "as-foretold",
@@ -55,7 +55,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addTargets",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

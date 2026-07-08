@@ -1,0 +1,57 @@
+{
+	"name": "Field of Brambles",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/field-of-brambles.webp",
+	"system": {
+		"macro": "",
+		"identifier": "field-of-brambles",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you cast Bramble Patch, you can have it affect the area in your aura instead. When you do this, it lasts 1 minute, follows you, and only affects the area in your aura.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-verdant",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "GVa7ollSgaAstfKY",
+	"folder": "fb81833546b81b40"
+}

@@ -1,0 +1,77 @@
+{
+	"name": "Ether Step",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/ether-step.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ether-step",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Whenever you spend a Pilfered Power to cast a spell, you may immediately teleport up to 6 spaces away.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "greater-invocations",
+		"gainedAtLevels": [
+			4,
+			6,
+			9,
+			14,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-mesmer",
+				"name": "Greater Invocations",
+				"group": "greater-invocations",
+				"levels": [
+					4,
+					6,
+					9,
+					14,
+					18
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "A6yeNvNcnEgk3cZt",
+	"folder": "6fb707db54448dd6"
+}

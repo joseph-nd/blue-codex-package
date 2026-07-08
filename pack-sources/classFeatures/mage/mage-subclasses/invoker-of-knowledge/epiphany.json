@@ -1,0 +1,57 @@
+{
+	"name": "Epiphany",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/epiphany.webp",
+	"system": {
+		"macro": "",
+		"identifier": "epiphany",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) Free Action. You instantly recall the exact magic needed to survive. Swap one of your scribed spells for any other spell of the same tier (or lower) from any Book. The first time you cast that new spell this encounter, it costs 0 mana and 0 Actions.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-knowledge",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "e3gh0NpwetgRqQRr",
+	"folder": "d576cc52fd4fe7b6"
+}

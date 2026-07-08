@@ -1,7 +1,7 @@
 {
 	"name": "Prescience",
 	"type": "spell",
-	"img": "icons/magic/time/clock-stopwatch-white-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/prescience.webp",
 	"system": {
 		"macro": "",
 		"identifier": "prescience",

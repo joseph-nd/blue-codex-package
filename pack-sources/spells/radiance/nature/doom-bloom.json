@@ -1,7 +1,7 @@
 {
 	"name": "Doom Bloom",
 	"type": "spell",
-	"img": "icons/magic/nature/plant-maneater-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/doom-bloom.webp",
 	"system": {
 		"macro": "",
 		"identifier": "doom-bloom",
@@ -29,9 +29,17 @@
 					"parentNode": null,
 					"ignoreArmor": true,
 					"canCrit": true,
-					"canMiss": true,
+					"canMiss": false,
 					"on": {
 						"criticalHit": [
+							{
+								"id": "doomBloomDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "doomBloomDamage1"
+							},
 							{
 								"id": "doomBloomCrit1",
 								"type": "condition",

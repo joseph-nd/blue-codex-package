@@ -1,0 +1,57 @@
+{
+	"name": "Spiteful Bloom",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/spiteful-bloom.webp",
+	"system": {
+		"macro": "",
+		"identifier": "spiteful-bloom",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When a minion would be destroyed, all adjacent enemies take LVL Poison and are Blinded, 1 turn. Ignores armor.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-briar",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "JGHEGBB4tDKcagqL",
+	"folder": "8764439a0fe23334"
+}

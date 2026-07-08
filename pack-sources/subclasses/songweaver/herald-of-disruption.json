@@ -1,0 +1,25 @@
+{
+	"name": "Herald of Disruption",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/maestro-of-confusion.webp",
+	"system": {
+		"macro": "",
+		"identifier": "herald-of-disruption",
+		"rules": [],
+		"description": "<p><em>&ldquo;You seem&hellip; uncertain. Allow me to help.&rdquo;</em> Why rely on mere swords when you can shatter egos? The Herald of Disruption weaponizes mockery, seeding crippling Confusion with every jeer and forcing enemies to snatch failure from the jaws of victory. Get ready for psychic backlash and performance reviews that really sting.</p><p><strong>LEVEL 3</strong></p><p><strong>Maestro of Confusion.</strong></p><p>You know Domination Spells.</p><p><strong>Stinging Words.</strong></p><p>Rolls affected by Vicious Mockery are considered 1 less. Results of 1 or less are a miss.</p><p><strong>LEVEL 7</strong></p><p><strong>Sour Note.</strong></p><p>Free Reaction: Spend a Songweaver's Inspiration to force an enemy to reroll a single die related to an attack or saving throw (you choose which result to keep but it must be either).</p><p><strong>LEVEL 11</strong></p><p><strong>Web of Disruption.</strong></p><p>(1/encounter) All enemies that can hear you must make a WIL save. On fail, inflict Confused. On save, inflict Dazed, 1 turn.</p><p><strong>LEVEL 15</strong></p><p><strong>Chain of Mockery.</strong></p><p>When Vicious Mockery crits, you can cast it again ignoring Rushed Attack rules. This can chain a max of KEY times.</p><h3>Lyrical Weaponry</h3><p><strong>Aria of Distraction.</strong> (1/encounter) <em>2 Actions.</em> On a failed WIL save, targets that hear you become Enthralled by you, 2 turns. On success, inflict Dazed.</p><p><em>Enthralled. Target cannot see, attack, or interact with creatures that aren&rsquo;t you. Others still affect them, but during their turn, you are their primary target. Anything &ldquo;out of the ordinary&rdquo; to them is rationalized.</em></p><h3>A &ldquo;People&rdquo; Person</h3><p><strong>The Magnificent Mortimer.</strong> (1/Safe Rest) You summon a stage magician of moderate talent but excellent misdirection. Mortimer fills the area around him with perception warping magic. While he is present, allies can make Stealth checks without Cover and gain +5 bonus to Stealth checks. Mortimer avoids conflict assiduously and vanishes in a puff of smoke the moment initiative is rolled or overt hostilities begin nearby.</p>",
+		"parentClass": "songweaver",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RoxGIrjUDAQZEoDm",
+	"folder": "d4ad0382cf1fc641"
+}

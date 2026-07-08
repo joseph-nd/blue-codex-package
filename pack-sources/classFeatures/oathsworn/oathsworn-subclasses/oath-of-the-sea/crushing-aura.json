@@ -1,0 +1,79 @@
+{
+	"name": "Crushing Aura",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-sea/crushing-aura.webp",
+	"system": {
+		"macro": "",
+		"identifier": "crushing-aura",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action. Enemies in your aura must make a STR save. On a fail, they are knocked Prone and take LVL Bludgeoning or Cold damage. Half damage on a save and they are Slowed, 1 round.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "sacred-decree",
+		"gainedAtLevels": [
+			3,
+			6,
+			9,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "oath-of-the-sea",
+				"name": "Sacred Decrees",
+				"group": "sacred-decree",
+				"levels": [
+					3,
+					6,
+					9,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zxUe8kXQTzgAAGNF",
+	"folder": "8ba48ce2a1ca8300"
+}

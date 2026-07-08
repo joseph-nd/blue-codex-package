@@ -1,7 +1,7 @@
 {
 	"name": "Natures Herald",
 	"type": "spell",
-	"img": "icons/magic/nature/elemental-plant-humanoid.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/natures-herald.webp",
 	"system": {
 		"macro": "",
 		"identifier": "natures-herald",

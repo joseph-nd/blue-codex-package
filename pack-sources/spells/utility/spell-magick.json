@@ -1,7 +1,7 @@
 {
 	"name": "Spell Magick",
 	"type": "spell",
-	"img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/spell-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "spell-magick",

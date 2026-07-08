@@ -1,0 +1,25 @@
+{
+	"name": "Champion of the Watch",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/crossbow-specialist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "champion-of-the-watch",
+		"rules": [],
+		"description": "<p><em>&ldquo;Not another step.&rdquo;</em> While others charge into the fray, you control the battlefield from afar. As a deadly marksman and tactical sniper, you use heavy crossbows and suppressing fire to halt enemy advances and orchestrate the perfect strike.</p><p><strong>LEVEL 3</strong></p><p><strong>Crossbow Specialist.</strong></p><p>You gain proficiency with crossbows and handheld ballista can use INT instead of DEX. You ignore the STR needed for hand ballista. While Prone, you do not have disadvantage on attacks with Ranged weapons.</p><p><strong>On My Mark!.</strong></p><p>When you use Coordinated Strike! you can forgo your attack. When you do so, your ally has advantage and deals bonus damage equal to your Combat Die.</p><p><strong>LEVEL 7</strong></p><p><strong>Suppressing Fire.</strong></p><p>When an enemy provokes an Opportunity Attack from an ally, you can make an Opportunity Attack with a ranged weapon against them if they are in your weapon's range. On hit: inflict Slowed, 2 turns.</p><p><strong>LEVEL 11</strong></p><p><strong>Tactical Reload.</strong></p><p>(1/Round) When you Move, the next time you reload your weapon takes 1 less Action (min 0).</p><p><strong>LEVEL 15</strong></p><p><strong>Precision Command.</strong></p><p>When you use On My Mark! your allies attack treats monster Armor as 1 tier less. If they are already unarmored, they deal bonus damage equal to two rolls of your combat die.</p><h3>Combat Abilities</h3><h4>Commander's Order</h4><p><strong>Dodge This!</strong> (1/encounter) 1 Action, Range: 6. Target ally's next attack ignores Cover and crits on its highest two die values.</p><p><strong>Find Their Weakness!</strong> (1/encounter) 1 Action, Range: 6. The next attack target ally makes treats Immunity as Resistance and ignores Resistances.</p><p><strong>Help Me!</strong> (1/encounter) <em>Free Reaction:</em> When any ally would Interpose for you. Ally takes INT+LVL less damage from the attack.</p><h4>Combat Tactics</h4><p><strong>Interrupting Strike.</strong> <em>Reaction:</em> When an enemy Moves adjacent to an ally. Expend a Combat Die to make an attack against that enemy. On hit: inflict Dazed this turn.</p><p><strong>Retreating Strike.</strong> On hit: deal bonus damage equal to a roll of your Combat Die and Move half your speed for free. You gain Guarded, 1 round.</p><p><strong>Splinter Strike.</strong> On hit: Deal damage equal to one roll of your Combat Die to enemies in a Cone 3. The Cone originates from your target and extends away from you.</p><h4>Weapon Mastery</h4><p><strong>Crossbows.</strong> Crossbows gain the Vicious Property and Hand Ballistas take 1 less Action to reload.</p>",
+		"parentClass": "commander",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "fd0sB1IhevZwGov2",
+	"folder": "a09b2900fb6185a5"
+}

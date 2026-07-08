@@ -1,0 +1,86 @@
+{
+	"name": "Cascading Columns",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-water/cascading-columns.webp",
+	"system": {
+		"macro": "",
+		"identifier": "cascading-columns",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "cascadingColumnsDmg",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "4d8+6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "cascadingColumnsDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "cascadingColumnsDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(De Form)</em> Line: 8 or Arc: 6, Damage: 4d8+6. Medium and smaller targets are launched 8 spaces in the air and fall on a failed DEX save. On a save they are not launched.</p><p><strong>Expert Tidal Warrior:</strong> +6 damage and the columns remain in place for 1 minute. Each column takes up 1 space, is 8 spaces high, and has LVL HP. Effected allies take no damage, automatically pass their save and can remain on/besides the columns.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-water",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Water Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "f1VrIwKyaEoUqllT",
+	"folder": "a1f65c1ed7e413f7"
+}

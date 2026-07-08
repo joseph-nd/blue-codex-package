@@ -1,0 +1,25 @@
+{
+	"name": "Herald of Inspiration",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-inspiration/voice-of-the-muse.webp",
+	"system": {
+		"macro": "",
+		"identifier": "herald-of-inspiration",
+		"rules": [],
+		"description": "<p><em>&ldquo;Let my performance guide you.&rdquo;</em> You are a true battlefield conductor, creating a persistent aura of inspiring magic that makes your allies faster, stronger, and more resilient with every note.</p><p><strong>LEVEL 3</strong></p><p><strong>Voice of the Muse.</strong></p><p>You know Inspiration spells.</p><p><strong>Inspiring Performance.</strong></p><p>1 Action, Burst: 2. Spend a Songweaver's Inspiration. You can perform for 1 minute as if maintaining Concentration. Allies that start their turn in the area gain +2 speed until the end of their turn. While performing, you can spend 1 mana as an Action to give allies in the area KEY temp HP, 1 round.</p><p><strong>LEVEL 7</strong></p><p><strong>Enchanting Performance.</strong></p><p>While performing Inspiring Performance, you can spend 3 mana as an Action to force all enemies in the area to make a WIL save. On a fail, their speed is reduced to 0 as they dance on their next turn. On a save, they are Slowed, 1 turn.</p><p><strong>LEVEL 11</strong></p><p><strong>Giddy Energy.</strong></p><p>Allies that start their turn in the area of your performance begin to vibrate with energy, their next melee attack deals an additional 1d12 Force damage.</p><p><strong>LEVEL 15</strong></p><p><strong>Grande Performance.</strong></p><p>Inspiring Performance increases to Burst 4. Allies that start their turn in the area can move for free 1/turn. Temp HP gained by spending mana increases to 3xKEY.</p><h3>Lyrical Weaponry</h3><p><strong>Never Gonna Give You Up!</strong> (1/encounter) <em>1 Action.</em> Enemies that can hear you take LVL Psychic damage. Ignores armor. They must then make an INT save. On a fail, they are Dazed and knocked Prone, 1 turn. On a save, they are Slowed, 1 turn.</p><p><strong>Never Gonna Let You Down!</strong> (1/encounter) <em>1 Action.</em> Allies that can hear you gain 1d4 instances of advantage on their next activity. This advantage lasts until they succeed once.</p><h3>A &ldquo;People&rdquo; Person</h3><p><strong>Alec Ristky, The Sentient Storybook.</strong> You summon a sentient storybook of endless curiosity and tomfoolery. The book will tell a special restorative tale for 10 minutes to those it deems good willed and kind. All who listen attentively for the duration gain the benefits of a Safe Rest and are somehow magically washed and cleaned. <em>Once Alec Ristky tells you a tale, it won't do so again until you Safe Rest for at least 1 week.</em></p>",
+		"parentClass": "songweaver",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bmdSqvEWVPxR2etN",
+	"folder": "d4ad0382cf1fc641"
+}

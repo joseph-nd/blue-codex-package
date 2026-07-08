@@ -1,7 +1,7 @@
 {
 	"name": "Gout of Fire",
 	"type": "spell",
-	"img": "icons/magic/fire/blast-jet-stream-embers-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/gout-of-fire.webp",
 	"system": {
 		"macro": "",
 		"identifier": "gout-of-fire",

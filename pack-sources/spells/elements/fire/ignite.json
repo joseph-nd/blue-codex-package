@@ -1,7 +1,7 @@
 {
 	"name": "Ignite",
 	"type": "spell",
-	"img": "icons/magic/fire/explosion-fireball-large-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/ignite.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ignite",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "igniteDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "igniteDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "igniteDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "igniteDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "igniteDamage1"
 							}
 						]

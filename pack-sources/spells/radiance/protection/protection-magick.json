@@ -1,7 +1,7 @@
 {
 	"name": "Protection Magick",
 	"type": "spell",
-	"img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/protection-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "protection-magick",

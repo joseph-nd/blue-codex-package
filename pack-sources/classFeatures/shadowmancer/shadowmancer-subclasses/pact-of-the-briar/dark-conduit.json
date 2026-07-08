@@ -1,0 +1,77 @@
+{
+	"name": "Dark Conduit",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/dark-conduit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dark-conduit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you cast Shadow Blast, you can cast it from the space of one of your minions instead, using it to determine range. Either you or your minion must be able to see the target(s).</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "greater-invocations",
+		"gainedAtLevels": [
+			4,
+			6,
+			9,
+			14,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-briar",
+				"name": "Greater Invocations",
+				"group": "greater-invocations",
+				"levels": [
+					4,
+					6,
+					9,
+					14,
+					18
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "2mondfMpVErJbkl3",
+	"folder": "2e872e0203f733c8"
+}

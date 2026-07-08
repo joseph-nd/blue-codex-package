@@ -1,7 +1,7 @@
 {
 	"name": "Shade Blessing",
 	"type": "spell",
-	"img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/shade-blessing.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shade-blessing",

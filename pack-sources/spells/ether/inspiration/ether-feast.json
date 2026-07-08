@@ -1,7 +1,7 @@
 {
 	"name": "Ether Feast",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-energy-hold-teal-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/inspiration/ether-feast.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ether-feast",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "etherFeastDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "etherFeastDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "etherFeastDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "etherFeastDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "etherFeastDamage1"
 							}
 						]
@@ -79,7 +99,19 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDice",
+					"value": null,
+					"dice": {
+						"count": 1,
+						"faces": 4
+					},
+					"condition": null,
+					"targetEffectId": "etherFeastDamage1",
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

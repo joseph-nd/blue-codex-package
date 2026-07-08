@@ -1,0 +1,57 @@
+{
+	"name": "Crossbow Specialist",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/crossbow-specialist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "crossbow-specialist",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain proficiency with crossbows and handheld ballista can use INT instead of DEX. You ignore the STR needed for hand ballista. While Prone, you do not have disadvantage on attacks with Ranged weapons.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-watch",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Q83ydM8hrjQk6srT",
+	"folder": "48242b898b5d2dbc"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Radiant Magick",
 	"type": "spell",
-	"img": "icons/magic/light/hand-sparks-glow-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/radiant-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "radiant-magick",

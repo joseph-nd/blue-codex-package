@@ -1,0 +1,66 @@
+{
+	"name": "Blade Flourish",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/blade-flourish.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blade-flourish",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "bladeFlourishTemp",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "@key+@dexterity",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you hit with a melee weapon, you can spend a Songweaver's Inspiration to use one of the following:</p><p>Defensive: Gain KEY+DEX temp HP, 1 minute.</p><p>Mobile: Move for free (ignoring enemies).</p><p>Slashing: Attack a second enemy within reach ignoring Rushed Attack rules.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-swords",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zfCcJEHxIv8I6hg5",
+	"folder": "21c6519cf533ad6e"
+}

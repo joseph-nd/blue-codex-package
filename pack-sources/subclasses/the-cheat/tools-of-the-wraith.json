@@ -1,0 +1,25 @@
+{
+	"name": "Tools of the Wraith",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-wraith/time-to-practice.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tools-of-the-wraith",
+		"rules": [],
+		"description": "<p><em>“The perfect trick? The one they never even knew was played.”</em> Where others rely on quick fingers and a quicker blade, you weave illusions and shadow into your art. Your magic is the unseen path, the silent deception, the doubt that unravels an enemy’s mind long before your dagger strikes.</p><p><strong>LEVEL 3</strong></p><p><strong>Time to Practice.</strong></p><p>To learn magic, The Cheat that uses the Tools of the Wraith no longer learns any Underhanded Abilities.</p><p><strong>Dusk Magic (1).</strong></p><p>You learn Spell Magick and two additional cantrips and one tier 1 spell from the Illusion or Shadow schools. Spells can come from either school. Spells you know that use KEY instead use INT. You can’t use Sneak Attack when you crit with a spell. You also gain a mana pool that has a maximum of INT+(LVL/2) which recharges on a Safe Rest.</p><p><strong>Eyes of Darkness.</strong></p><p>While you have at least 1 mana, you can see in the dark.</p><p><strong>LEVEL 7</strong></p><p><strong>Dusk Magic (2).</strong></p><p>You learn the last cantrips, the other tier 1 spell and one tier 2 spell from the Illusion or Shadow schools. You learn 1 Utility Spell.</p><p><strong>Who Did That?.</strong></p><p>(INT/Safe Rest) You can cast a cantrip without the need to speak, use hand gestures, or require a free hand/ spellcasting focus. Its casting is hidden until its effect occurs.</p><p><strong>LEVEL 11</strong></p><p><strong>Dusk Magic (3).</strong></p><p>You learn the other tier 2 spell from the Illusion of Shadow schools. You learn 1 Utility Spell.</p><p><strong>Dusk Step.</strong></p><p>When you move, you can spend 2 mana to teleport up to your speed instead. If you are in shadow, this costs 0 mana instead.</p><p><strong>LEVEL 15</strong></p><p><strong>Dusk Magic (4).</strong></p><p>You learn one tier 3 spell from the Illusion or Shadow schools. You learn 1 Utility Spell.</p><p><strong>Rending Shade.</strong></p><p>(INT/Safe Rest) When a spell would crit, you can choose to add your Sneak Attack die.</p><h3>Underhanded Abilities</h3><p><strong>Never Really There.</strong> Reaction: When targeted by a melee attack. “Teleport” half your speed before the attack resolves, if you’re not in Reach it misses.</p><p><strong>Ledgermain.</strong> When you hit a melee attack, you can do no damage and instead steal a Small or Tiny object off their person. This item must be easily accessible.</p><p><strong>Sudden Opportunity.</strong> (1/turn) When an ally in Range 6 crits on an attack, you can immediately make a free attack with a DEX weapon against the same creature with advantage.</p><p><strong>Are You Sure About That?</strong> When a creature fails a check to see you or determine if you are lying, they’re next roll is reduced by 1.</p>",
+		"parentClass": "the-cheat",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "BPPnMuYWvXqjadet",
+	"folder": "a129586610d86ed1"
+}

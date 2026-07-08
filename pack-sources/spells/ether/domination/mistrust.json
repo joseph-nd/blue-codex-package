@@ -1,7 +1,7 @@
 {
 	"name": "Mistrust",
 	"type": "spell",
-	"img": "icons/magic/perception/eye-ringed-glow-angry-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/mistrust.webp",
 	"system": {
 		"macro": "",
 		"identifier": "mistrust",
@@ -90,7 +90,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDuration",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": "minute"
+				}
+			],
 			"choices": null
 		}
 	},

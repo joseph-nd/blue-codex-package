@@ -1,0 +1,57 @@
+{
+	"name": "Paragon's Wings",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/paragons-wings.webp",
+	"system": {
+		"macro": "",
+		"identifier": "paragons-wings",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use Coordinated Strike, both you and your chosen ally gain a flying speed equal to your walk speed, 1 turn. You both can move for free once before attacking or casting a spell.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-bringer",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "rZkRYGhJrXtrgB1B",
+	"folder": "54e9d5ec200c04c9"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Bone Shield",
 	"type": "spell",
-	"img": "icons/magic/death/bones-crossed-gray.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/bone-shield.webp",
 	"system": {
 		"macro": "",
 		"identifier": "bone-shield",
@@ -54,9 +54,27 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+5 temp HP",
+					"deltas": []
+				},
+				{
+					"label": "+1 round duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "round"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

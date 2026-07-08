@@ -1,7 +1,7 @@
 {
 	"name": "Lightning Bolt",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-beam-strike-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/lightning-bolt.webp",
 	"system": {
 		"macro": "",
 		"identifier": "lightning-bolt",
@@ -87,9 +87,36 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Line +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "lightningBoltDamage1",
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

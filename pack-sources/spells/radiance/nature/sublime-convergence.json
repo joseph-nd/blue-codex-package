@@ -1,7 +1,7 @@
 {
 	"name": "Sublime Convergence",
 	"type": "spell",
-	"img": "icons/magic/nature/barrier-shield-wood-vines.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/nature/sublime-convergence.webp",
 	"system": {
 		"macro": "",
 		"identifier": "sublime-convergence",

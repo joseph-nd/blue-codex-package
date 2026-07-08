@@ -1,7 +1,7 @@
 {
 	"name": "Ripple",
 	"type": "spell",
-	"img": "icons/magic/water/water-drop-swirl-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/ripple.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ripple",

@@ -1,7 +1,7 @@
 {
 	"name": "Vampiric Bite",
 	"type": "spell",
-	"img": "icons/magic/death/mouth-bite-fangs-vampire.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/vampiric-bite.webp",
 	"system": {
 		"macro": "",
 		"identifier": "vampiric-bite",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "vampiricBiteDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "vampiricBiteDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "vampiricBiteDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "vampiricBiteDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "vampiricBiteDamage1"
 							}
 						]

@@ -1,7 +1,7 @@
 {
 	"name": "Breath of Life",
 	"type": "spell",
-	"img": "icons/magic/life/heart-cross-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/breath-of-life.webp",
 	"system": {
 		"macro": "",
 		"identifier": "breath-of-life",

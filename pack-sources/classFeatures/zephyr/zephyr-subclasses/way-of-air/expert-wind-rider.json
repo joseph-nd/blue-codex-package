@@ -1,0 +1,57 @@
+{
+	"name": "Expert Wind Rider",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/expert-wind-rider.webp",
+	"system": {
+		"macro": "",
+		"identifier": "expert-wind-rider",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While flying or gliding, your unarmed attacks have Reach 6. When gliding, you can move 3 spaces for every 1 space you fall now. You learn all Expert (Yoi) Air Forms. Your forms grow stronger. When you roll initiative, you gain +1 Bursts of Speed (total 3).</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "YzTY8xwmvEkTSwzk",
+	"folder": "7de9e965c0f005ff"
+}

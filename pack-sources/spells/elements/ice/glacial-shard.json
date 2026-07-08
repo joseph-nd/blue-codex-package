@@ -1,7 +1,7 @@
 {
 	"name": "Glacial Shard",
 	"type": "spell",
-	"img": "icons/magic/water/projectile-ice-shard.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/glacial-shard.webp",
 	"system": {
 		"macro": "",
 		"identifier": "glacial-shard",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "glacialShardDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "glacialShardDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "glacialShardDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "glacialShardDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "glacialShardDamage1"
 							}
 						]
@@ -79,7 +99,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addFlatDamage",
+					"value": 6,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": "glacialShardDamage1",
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

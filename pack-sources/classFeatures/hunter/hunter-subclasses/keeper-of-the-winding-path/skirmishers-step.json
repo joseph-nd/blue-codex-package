@@ -1,0 +1,57 @@
+{
+	"name": "Skirmisher’s Step",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-winding-path/skirmishers-step.webp",
+	"system": {
+		"macro": "",
+		"identifier": "skirmishers-step",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you move, if there are no adjacent enemies to you when you end your move, you can immediately use Hunter’s Mark for free.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-winding-path",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "pCyHqbgKBX3wx0yE",
+	"folder": "fb48fe10ba524a0f"
+}

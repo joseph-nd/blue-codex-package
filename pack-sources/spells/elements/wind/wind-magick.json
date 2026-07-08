@@ -1,7 +1,7 @@
 {
 	"name": "Wind Magick",
 	"type": "spell",
-	"img": "icons/magic/air/air-smoke-casting.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/wind-magick.webp",
 	"system": {
 		"macro": "",
 		"identifier": "wind-magick",

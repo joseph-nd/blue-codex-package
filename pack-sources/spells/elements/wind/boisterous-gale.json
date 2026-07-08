@@ -1,7 +1,7 @@
 {
 	"name": "Boisterous Gale",
 	"type": "spell",
-	"img": "icons/magic/control/buff-flight-wings-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/boisterous-gale.webp",
 	"system": {
 		"macro": "",
 		"identifier": "boisterous-gale",
@@ -57,9 +57,40 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 minute",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				},
+				{
+					"label": "+6 fly speed",
+					"deltas": []
+				},
+				{
+					"label": "+2 targets",
+					"deltas": [
+						{
+							"operation": "addTargets",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

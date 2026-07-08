@@ -1,7 +1,7 @@
 {
 	"name": "Summon Shadow",
 	"type": "spell",
-	"img": "icons/magic/unholy/silhouette-robe-evil-glow.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/summon-shadow.webp",
 	"system": {
 		"macro": "",
 		"identifier": "summon-shadow",

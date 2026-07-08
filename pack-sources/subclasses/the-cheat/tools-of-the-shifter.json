@@ -1,0 +1,25 @@
+{
+	"name": "Tools of the Shifter",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-shifter/cheaters-shift.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tools-of-the-shifter",
+		"rules": [],
+		"description": "<p><em>“They lock the vault, but they always ignore the rat.”</em> You weaponize the wild. By transforming into scurrying beasts and deadly predators, you outmaneuver heavily armored foes, making you an impossible-to-pin-down phantom on the battlefield.</p><p><strong>LEVEL 3</strong></p><p><strong>Cheater’s Shift.</strong></p><p>1 Action: You can transform into a harmless beast (squirrel, pigeon, etc.). While transformed, you can speak with animals. This form lasts until you drop to 0 HP, or if you end it on your turn for free. You have INT Beastshift charges; they reset on a Safe Rest.</p><p><strong>Tiny Beasts.</strong></p><p>Whenever you shapeshift into a Tiny beast, attacks against you are made with disadvantage, but ANY damage ends that shapeshift form.</p><p><strong>LEVEL 7</strong></p><p><strong>Sneaky Beast.</strong></p><p>You can Cheater’s Shift into the Sneaky Direbeast gaining the following: (Medium or Small). Transform into a Medium or Small Beast. Gain +DEX Speed and Armor, Quick Footed and the Swipe attack. Swipe. 1 Action, Damage: 1d4+DEX. On crit: You can choose to do no damage and instead steal one Small or Tiny object off that target. The item must be easily accessible. Underfoot. Enemies’ spaces are not considered Slowed Terrain for you and when you Move through a Large or smaller enemy’s space, they are considered Distracted.</p><p><strong>LEVEL 11</strong></p><p><strong>Cheater’s Evolution.</strong></p><p>Choose 1 Chimeric Boon from the Stormshifter. When you shift into the Sneaky Beast, you can modify it with that boon.</p><p><strong>LEVEL 15</strong></p><p><strong>Hidden Predator.</strong></p><p>(1/encounter) When you end your Beastshift form, you may immediately make a melee attack as a free. The target is considered Distracted and if the attack hits, your Sneak Attack dice automatically deal their maximum value.</p><h3>Underhanded Abilities</h3><p><strong>Pocket Critter.</strong> 1 Action, Reach: 2. Throw a Tiny critter that lives in your pocket. Target is Distracted and Slowed, 1 turn.</p><p><strong>Roguish Charm.</strong> 1 Action. On a successful DC 15 Influence check, target is Charmed by you, 1 hour, treating you as a friendly acquaintance, though it will not risk its life for you. This effect ends if you or your allies do anything harmful to the Charmed creature.</p><p><strong>Play Possum.</strong> (1/encounter) Free Reaction: When you take damage. Immediately drop Prone. You appear Dead and cannot be targeted until you take an Action.</p><p><strong>Beguiling Haze.</strong> (1/encounter) When you hit a creature with your Sneak Attack, you can forgo all your Sneak Attack damage. If you do, the target’s passive monster traits (such as Pack Tactics, Brute, or Shifty) are suppressed, 1 turn.</p>",
+		"parentClass": "the-cheat",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "cd4vOHNEEcDUgsr8",
+	"folder": "a129586610d86ed1"
+}

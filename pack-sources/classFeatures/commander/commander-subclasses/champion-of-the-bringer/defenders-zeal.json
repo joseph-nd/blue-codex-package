@@ -1,0 +1,57 @@
+{
+	"name": "Defender's Zeal",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/defenders-zeal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "defenders-zeal",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Whenever you or ally you can see gains a Wound, you gain 1 Coordinated Strike charge.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-bringer",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wlbRStoplyTB8QVY",
+	"folder": "54e9d5ec200c04c9"
+}

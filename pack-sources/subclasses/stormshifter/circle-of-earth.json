@@ -1,0 +1,25 @@
+{
+	"name": "Circle of Earth",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-earth/student-of-the-earth.webp",
+	"system": {
+		"macro": "",
+		"identifier": "circle-of-earth",
+		"rules": [],
+		"description": "<p><em>&ldquo;I am the calm in the storm&rsquo;s eye.&rdquo;</em> You draw power not from the chaotic sky but from the unyielding earth, becoming an anchor of stability who wields stone and soil as both a fortress and a crushing weapon.</p><p><strong>LEVEL 3</strong></p><p><strong>Student of the Earth.</strong></p><p>You know Earth spells and you ignore Slowed Terrain you create.</p><p><strong>Earthen Direbeast.</strong></p><p>You gain a new Direbeast Form, Stone Golem. While Beastshifted, you can cast Earth spells and can move through earth, stone and sand as if walking.</p><p><strong>LEVEL 7</strong></p><p><strong>Stonemail.</strong></p><p>When you cast an Earth spell, you gain 3 x tier Armor and you can&amp;rsquo;t be moved against your will until the end of your next turn.</p><p><strong>Tectonic Transformation.</strong></p><p>When you Beastshift into a Fearsome Beast, Beast of the Pack or Stone Golem, the area in Burst 2 becomes Slowed Terrain for 24 hours and enemies in the area are Blinded, 1 turn. You can transform into a Stone Golem now.</p><p><strong>LEVEL 11</strong></p><p><strong>Earthen Force.</strong></p><p>You push enemies 1 additional space.</p><p><strong>Stone&amp;rsquo;s Edge.</strong></p><p>While your Stonemail is activated, your attacks while Beastshifted deal an additional 1d8 Bludgeoning, Piercing or Slashing damage.</p><p><strong>LEVEL 15</strong></p><p><strong>Master of Earth.</strong></p><p>(1/turn) You can cast Armor of Earth for free. Additionally, damage creatures take from your abilities and spells that cause forced movement is increased to 1d8 per space ended early instead of 1d6.</p><h3>Direbeast Forms &mdash; Stone Golem</h3><p><strong>Stone Golem (Medium).</strong> Transform into a Medium Elemental. Gain +DEX Armor, Colossal Smash and the Stone Fist attack. You can Defend for free 1/round. <strong>Stone Fist.</strong> 1 Action, Damage: 2d8+LVL Bludgeoning. <strong>Colossal Smash.</strong> When you hit with Stone Fist, you can spend 1 mana to deal equal damage to enemies adjacent to your target and create an area of Slowed Terrain for 1 round.</p><h3>Chimeric Boons</h3><p><strong>Stone Spines.</strong> Creatures that hit you with a melee attack or start its turn grappling or being grappled by you take DEX Piercing damage. Ignores armor.</p><p><strong>Seismic Sense.</strong> While in contact with the ground, you can sense the location of any creatures also in contact with the ground in 8 spaces. They do not gain the benefit of Cover.</p><p><strong>Juggernaut&rsquo;s Momentum.</strong> When you move as a Fearsome Beast or Beast of the Pack, you can move through Huge or smaller creatures&rsquo; spaces. The first time you enter a creature&rsquo;s space this way on your turn, they must make a STR save or be knocked Prone. You must end your move in an empty space.</p>",
+		"parentClass": "stormshifter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MLzFwirPqvlL3Y07",
+	"folder": "8c2f8af707639ef7"
+}

@@ -1,0 +1,75 @@
+{
+	"name": "Ender's Pendulum",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-fate/enders-pendulum.webp",
+	"system": {
+		"macro": "",
+		"identifier": "enders-pendulum",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>The first time you deal Radiant damage on your turn, the next Necrotic damage you deal before the end of your next turn is increased by 1d6. The first time you deal Necrotic damage on your turn, the next healing you provide with a spell or ability is increased by 1d6.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "sacred-grace",
+		"gainedAtLevels": [
+			5,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "luminary-of-fate",
+				"name": "Sacred Graces",
+				"group": "sacred-grace",
+				"levels": [
+					5,
+					9,
+					13
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "pxhPCWkwVasawR0U",
+	"folder": "4075b5c680378aac"
+}

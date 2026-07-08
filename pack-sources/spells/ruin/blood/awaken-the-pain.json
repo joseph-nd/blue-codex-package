@@ -1,7 +1,7 @@
 {
 	"name": "Awaken the Pain",
 	"type": "spell",
-	"img": "icons/magic/unholy/strike-body-life-soul-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/awaken-the-pain.webp",
 	"system": {
 		"macro": "",
 		"identifier": "awaken-the-pain",
@@ -55,7 +55,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDuration",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": "minute"
+				}
+			],
 			"choices": null
 		}
 	},

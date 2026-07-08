@@ -1,0 +1,57 @@
+{
+	"name": "Stinging Words",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/stinging-words.webp",
+	"system": {
+		"macro": "",
+		"identifier": "stinging-words",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Rolls affected by Vicious Mockery are considered 1 less. Results of 1 or less are a miss.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-disruption",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Y5SWEkHRacfHtilY",
+	"folder": "616433048f1c9d50"
+}

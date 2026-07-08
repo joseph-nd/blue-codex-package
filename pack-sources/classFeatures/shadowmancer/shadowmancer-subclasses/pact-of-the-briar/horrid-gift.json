@@ -1,0 +1,73 @@
+{
+	"name": "Horrid Gift",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/horrid-gift.webp",
+	"system": {
+		"macro": "",
+		"identifier": "horrid-gift",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can spend a Safe Rest to create a Horrid Gift. You can telepathically communicate across any distance with a creature that holds it. You can only have one Horrid Gift active at a time.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "lesser-invocations",
+		"gainedAtLevels": [
+			3,
+			8,
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "pact-of-the-briar",
+				"name": "Lesser Invocations",
+				"group": "lesser-invocations",
+				"levels": [
+					3,
+					8,
+					11
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "x5ThDvPWaadoVFWu",
+	"folder": "0d50b1b6207583d7"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "The Prestige",
 	"type": "spell",
-	"img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/illusion/the-prestige.webp",
 	"system": {
 		"macro": "",
 		"identifier": "the-prestige",
@@ -57,7 +57,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addDuration",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": "round"
+				}
+			],
 			"choices": null
 		}
 	},

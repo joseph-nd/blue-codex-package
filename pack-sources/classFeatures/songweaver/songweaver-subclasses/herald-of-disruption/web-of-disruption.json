@@ -1,0 +1,57 @@
+{
+	"name": "Web of Disruption",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/web-of-disruption.webp",
+	"system": {
+		"macro": "",
+		"identifier": "web-of-disruption",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) All enemies that can hear you must make a WIL save. On fail, inflict Confused. On save, inflict Dazed, 1 turn.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-disruption",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "9DkNMgZw7YdQOOt0",
+	"folder": "616433048f1c9d50"
+}

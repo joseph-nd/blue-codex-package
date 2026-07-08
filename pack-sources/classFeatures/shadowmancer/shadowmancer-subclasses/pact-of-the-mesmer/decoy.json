@@ -1,0 +1,57 @@
+{
+	"name": "Decoy",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/decoy.webp",
+	"system": {
+		"macro": "",
+		"identifier": "decoy",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Requires a minion of yours. Reaction: When you would take damage. Swap places with a minion before the attack resolves. If the minion is destroyed, target is Blinded, 1 turn.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-mesmer",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "bp6rE3P1jY7w4rLt",
+	"folder": "ef1a33a7b0ce12a8"
+}

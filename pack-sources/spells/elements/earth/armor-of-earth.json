@@ -1,7 +1,7 @@
 {
 	"name": "Armor of Earth",
 	"type": "spell",
-	"img": "icons/magic/defensive/armor-stone-skin.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/armor-of-earth.webp",
 	"system": {
 		"macro": "",
 		"identifier": "armor-of-earth",

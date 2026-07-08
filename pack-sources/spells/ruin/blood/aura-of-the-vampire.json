@@ -1,7 +1,7 @@
 {
 	"name": "Aura of the Vampire",
 	"type": "spell",
-	"img": "icons/magic/death/mouth-teeth-fangs-vampire.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/aura-of-the-vampire.webp",
 	"system": {
 		"macro": "",
 		"identifier": "aura-of-the-vampire",
@@ -55,9 +55,27 @@
 		"tier": 8,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Damage die increases to d10",
+					"deltas": []
+				},
+				{
+					"label": "Burst +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

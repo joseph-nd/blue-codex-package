@@ -1,7 +1,7 @@
 {
 	"name": "Blink Step",
 	"type": "spell",
-	"img": "icons/magic/movement/trail-streak-impact-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/blink-step.webp",
 	"system": {
 		"macro": "",
 		"identifier": "blink-step",

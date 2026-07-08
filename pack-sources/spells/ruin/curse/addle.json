@@ -1,7 +1,7 @@
 {
 	"name": "Addle",
 	"type": "spell",
-	"img": "icons/magic/control/hypnosis-mesmerism-swirl.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/addle.webp",
 	"system": {
 		"macro": "",
 		"identifier": "addle",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "addleDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "addleDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "addleDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "addleDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "addleDamage1"
 							}
 						]

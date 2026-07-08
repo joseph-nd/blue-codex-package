@@ -1,0 +1,57 @@
+{
+	"name": "Immolating Fury",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-cinderheart/immolating-fury.webp",
+	"system": {
+		"macro": "",
+		"identifier": "immolating-fury",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you Rage, you can take STR Fire damage to set yourself Ablaze which lasts until your Rage ends or when you choose for it to end. While Ablaze you gain the following:</p><ul><li>You take STR Fire damage at the start of each of your turns after the first.</li><li>Damage from your Fury Die is increased by 1 per die and now deals Fire damage.</li><li>You gain a fiery aura that deals KEY Fire damage to enemies in Reach 1 at the end of your turns. Ignores armor.</li></ul>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-cinderheart",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Qr66HLDkbYtxMijT",
+	"folder": "6b8409997bad0df6"
+}

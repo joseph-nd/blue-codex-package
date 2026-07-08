@@ -1,7 +1,7 @@
 {
 	"name": "Deathly Cry",
 	"type": "spell",
-	"img": "icons/magic/death/undead-ghost-scream-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/deathly-cry.webp",
 	"system": {
 		"macro": "",
 		"identifier": "deathly-cry",
@@ -27,8 +27,8 @@
 					"formula": "2d4 + floor(@level / 5) * 6",
 					"parentContext": null,
 					"parentNode": null,
-					"canCrit": true,
-					"canMiss": true,
+					"canCrit": false,
+					"canMiss": false,
 					"on": {
 						"hit": [
 							{

@@ -1,7 +1,7 @@
 {
 	"name": "Fly",
 	"type": "spell",
-	"img": "icons/magic/air/wind-stream-blue-gray.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/fly.webp",
 	"system": {
 		"macro": "",
 		"identifier": "fly",
@@ -57,9 +57,40 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 target",
+					"deltas": [
+						{
+							"operation": "addTargets",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+10 minutes duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 10,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						}
+					]
+				},
+				{
+					"label": "+6 flying speed",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

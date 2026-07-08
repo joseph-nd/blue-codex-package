@@ -1,0 +1,57 @@
+{
+	"name": "Light in the Shadow",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-bringer/light-in-the-shadow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "light-in-the-shadow",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Patron grants you knowledge of Radiant, Protection or Divination spells. Spells you cast from this school can't restore your own HP if you would lose HP from Pilfered Power. Your spells can deal Radiant or their normal damage.</p><p><em>[M] Grants Blue's Codex spells — school(s): radiant, protection, divination.</em></p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-bringer",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "JH460HAcUp9c0UCY",
+	"folder": "610751a6ffd3804a"
+}

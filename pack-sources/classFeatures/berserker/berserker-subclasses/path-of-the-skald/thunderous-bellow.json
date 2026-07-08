@@ -1,0 +1,103 @@
+{
+	"name": "Thunderous Bellow",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-skald/thunderous-bellow.webp",
+	"system": {
+		"macro": "",
+		"identifier": "thunderous-bellow",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "thunderousBellowDmg",
+					"type": "damage",
+					"damageType": "thunder",
+					"formula": "@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "thunderousBellowDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "thunderousBellowDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you Rage, enemies in Burst 1 take STR Thunder damage and are pushed 1 space away if they are Large or smaller.</p>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "savage-arsenal",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "path-of-the-skald",
+				"name": "Savage Arsenal",
+				"group": "savage-arsenal",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oiZLSzRUP7qZPCyF",
+	"folder": "99c4ff59fae60d6f"
+}

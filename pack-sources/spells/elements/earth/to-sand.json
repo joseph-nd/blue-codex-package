@@ -1,7 +1,7 @@
 {
 	"name": "To Sand!",
 	"type": "spell",
-	"img": "icons/magic/earth/projectile-boulder-dust.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/to-sand.webp",
 	"system": {
 		"macro": "",
 		"identifier": "to-sand",
@@ -83,7 +83,16 @@
 		"classes": [],
 		"scaling": {
 			"mode": "upcast",
-			"deltas": [],
+			"deltas": [
+				{
+					"operation": "addAreaSize",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": null
+				}
+			],
 			"choices": null
 		}
 	},

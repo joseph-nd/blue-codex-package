@@ -1,0 +1,71 @@
+{
+	"name": "Alec Ristky, The Sentient Storybook",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-inspiration/alec-ristky-the-sentient-storybook.webp",
+	"system": {
+		"macro": "",
+		"identifier": "alec-ristky-the-sentient-storybook",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You summon a sentient storybook of endless curiosity and tomfoolery. The book will tell a special restorative tale for 10 minutes to those it deems good willed and kind. All who listen attentively for the duration gain the benefits of a Safe Rest and are somehow magically washed and cleaned.</p><p><em>Once Alec Ristky tells you a tale, it won't do so again until you Safe Rest for at least 1 week.</em></p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "a-people-person",
+		"gainedAtLevels": [
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-inspiration",
+				"name": "A \"People\" Person",
+				"group": "a-people-person",
+				"levels": [
+					5
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8vjPGTbgfJtQQkeg",
+	"folder": "cda38cabc7fb554a"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Who Did That?",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-wraith/who-did-that.webp",
+	"system": {
+		"macro": "",
+		"identifier": "who-did-that",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(INT/Safe Rest) You can cast a cantrip without the need to speak, use hand gestures, or require a free hand/ spellcasting focus. Its casting is hidden until its effect occurs.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-wraith",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4brK7V13TRLo3D1e",
+	"folder": "57203c93f68ebc73"
+}

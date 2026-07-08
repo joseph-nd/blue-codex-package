@@ -1,0 +1,57 @@
+{
+	"name": "Combat Medic",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-broken/combat-medic.webp",
+	"system": {
+		"macro": "",
+		"identifier": "combat-medic",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You carry INT specialized medic kits that replenish whenever you take a Make a Camp or Safe Rest. You can expend a kit with 1 Action to aid an ally you can touch. The target can immediately expend and roll one of their Hit Die, regaining HP equal to the roll + their STR + your INT. If the target has no Hit Die remaining, you can expend one of your own.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-broken",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "gHFUlaxRWZHQ9Bz8",
+	"folder": "03195996a2cb3d0e"
+}

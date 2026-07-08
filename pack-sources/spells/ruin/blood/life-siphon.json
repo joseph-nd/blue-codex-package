@@ -1,7 +1,7 @@
 {
 	"name": "Life Siphon",
 	"type": "spell",
-	"img": "icons/magic/unholy/projectile-helix-blood-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/life-siphon.webp",
 	"system": {
 		"macro": "",
 		"identifier": "life-siphon",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "lifeSiphonDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "lifeSiphonDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "lifeSiphonDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "lifeSiphonDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "lifeSiphonDamage1"
 							}
 						]

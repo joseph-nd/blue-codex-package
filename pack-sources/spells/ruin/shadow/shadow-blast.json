@@ -1,7 +1,7 @@
 {
 	"name": "Shadow Blast",
 	"type": "spell",
-	"img": "icons/magic/unholy/beam-impact-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/shadow-blast.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shadow-blast",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "shadowBlastDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "shadowBlastDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "shadowBlastDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "shadowBlastDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "shadowBlastDamage1"
 							}
 						]

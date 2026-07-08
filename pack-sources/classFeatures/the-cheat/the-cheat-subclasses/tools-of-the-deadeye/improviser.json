@@ -1,0 +1,57 @@
+{
+	"name": "Improviser",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-deadeye/improviser.webp",
+	"system": {
+		"macro": "",
+		"identifier": "improviser",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Anything small enough (and dangerous enough) that you can hold becomes a thrown weapon. Your improvised weapons deal 1d4+DEX and have the Light and Thrown properties. Additionally, you always seem to have at least 2xLVL “things” within reach to throw.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-deadeye",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VWacLLEldxwDnzz1",
+	"folder": "cab141c8285d54a0"
+}

@@ -1,0 +1,77 @@
+{
+	"name": "Fearsome Presence",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-hunger/fearsome-presence.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fearsome-presence",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you Beastshift, enemies in Burst 2 must make a WIL save or become Frightened of you until they make a WIL save on their turn. When a creature saves from this boon, they are immune to it for 24 hours.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "chimeric-boon",
+		"gainedAtLevels": [
+			6,
+			9,
+			12,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-hunger",
+				"name": "Chimeric Boons",
+				"group": "chimeric-boon",
+				"levels": [
+					6,
+					9,
+					12,
+					17
+				],
+				"count": {
+					"6": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8SYvvXREp6zlGOHg",
+	"folder": "d7e0ca5c125602d6"
+}

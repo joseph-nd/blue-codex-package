@@ -1,7 +1,7 @@
 {
 	"name": "Heart's Fire",
 	"type": "spell",
-	"img": "icons/magic/fire/flame-burning-yellow-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/hearts-fire.webp",
 	"system": {
 		"macro": "",
 		"identifier": "hearts-fire",

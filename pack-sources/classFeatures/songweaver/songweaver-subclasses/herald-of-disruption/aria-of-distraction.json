@@ -1,0 +1,75 @@
+{
+	"name": "Aria of Distraction",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/aria-of-distraction.webp",
+	"system": {
+		"macro": "",
+		"identifier": "aria-of-distraction",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/encounter) <em>2 Actions.</em> On a failed WIL save, targets that hear you become Enthralled by you, 2 turns. On success, inflict Dazed.</p><p><em>Enthralled. Target cannot see, attack, or interact with creatures that aren't you. Others still affect them, but during their turn, you are their primary target. Anything &ldquo;out of the ordinary&rdquo; to them is rationalized.</em></p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "lyrical-weaponry",
+		"gainedAtLevels": [
+			4,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-disruption",
+				"name": "Lyrical Weaponry",
+				"group": "lyrical-weaponry",
+				"levels": [
+					4,
+					9,
+					13,
+					17
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "UI3rpUPKBEa7ZTCF",
+	"folder": "cb63c29d451fcc93"
+}

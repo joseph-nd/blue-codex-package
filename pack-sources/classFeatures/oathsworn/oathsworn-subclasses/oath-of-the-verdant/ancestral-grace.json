@@ -1,0 +1,79 @@
+{
+	"name": "Ancestral Grace",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/ancestral-grace.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ancestral-grace",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/turn) When you Move, if you are in an area of Slowed Terrain you created, you can instead teleport to another area of Slowed Terrain that you created that you can see.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "sacred-decree",
+		"gainedAtLevels": [
+			3,
+			6,
+			9,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "oath-of-the-verdant",
+				"name": "Sacred Decrees",
+				"group": "sacred-decree",
+				"levels": [
+					3,
+					6,
+					9,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "u3TActmnDC8cpoBm",
+	"folder": "d9bf7340228281e8"
+}

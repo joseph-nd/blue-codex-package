@@ -1,0 +1,81 @@
+{
+	"name": "Last Blaze",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-cinderheart/last-blaze.webp",
+	"system": {
+		"macro": "",
+		"identifier": "last-blaze",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "free",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<strong>Free Action.</strong> You end your Rage and sacrifice HP. Adjacent enemies take Fire damage equal to the HP lost. Ignores Armor.",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "savage-arsenal",
+		"gainedAtLevels": [
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "path-of-the-cinderheart",
+				"name": "Savage Arsenal",
+				"group": "savage-arsenal",
+				"levels": [
+					4,
+					6,
+					8,
+					10,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "QDEdEBHKToFD5B0x",
+	"folder": "d5c4497fcd98af31"
+}

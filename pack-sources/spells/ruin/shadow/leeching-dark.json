@@ -1,7 +1,7 @@
 {
 	"name": "Leeching Dark",
 	"type": "spell",
-	"img": "icons/magic/unholy/strike-body-life-soul-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/leeching-dark.webp",
 	"system": {
 		"macro": "",
 		"identifier": "leeching-dark",
@@ -87,9 +87,36 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "leechingDarkDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Burst +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

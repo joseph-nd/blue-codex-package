@@ -1,0 +1,109 @@
+{
+	"name": "Siphoning Aura",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-blood/siphoning-aura.webp",
+	"system": {
+		"macro": "",
+		"identifier": "siphoning-aura",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "siphoningAuraDmg",
+					"type": "damage",
+					"damageType": "",
+					"formula": "@key",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "siphoningAuraDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "siphoningAuraDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "siphoningAuraHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "@key",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action. KEY Necrotic or Poison damage to all enemies in your aura. You regain KEY HP for each damaged enemy. Any HP gained above your maximum HP becomes temp HP.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "sacred-decree",
+		"gainedAtLevels": [
+			3,
+			6,
+			9,
+			12,
+			14,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "oath-of-blood",
+				"name": "Sacred Decrees",
+				"group": "sacred-decree",
+				"levels": [
+					3,
+					6,
+					9,
+					12,
+					14,
+					16
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "BJQp1aeJBKqkU4Qu",
+	"folder": "203ee25b4c3c5e69"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Foresight",
 	"type": "spell",
-	"img": "icons/magic/perception/eye-ringed-glow-angry-large-teal.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/divination/foresight.webp",
 	"system": {
 		"macro": "",
 		"identifier": "foresight",

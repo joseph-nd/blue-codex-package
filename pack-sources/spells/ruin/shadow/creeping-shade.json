@@ -1,7 +1,7 @@
 {
 	"name": "Creeping Shade",
 	"type": "spell",
-	"img": "icons/magic/control/fear-fright-shadow-monster-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/creeping-shade.webp",
 	"system": {
 		"macro": "",
 		"identifier": "creeping-shade",
@@ -37,6 +37,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "creepingShadeDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "creepingShadeDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "creepingShadeDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "creepingShadeDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "creepingShadeDamage1"
 							}
 						]
@@ -77,9 +97,36 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "creepingShadeDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Arc +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

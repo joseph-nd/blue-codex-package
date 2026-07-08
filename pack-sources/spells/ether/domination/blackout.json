@@ -1,7 +1,7 @@
 {
 	"name": "Blackout",
 	"type": "spell",
-	"img": "icons/magic/perception/hand-eye-black.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/blackout.webp",
 	"system": {
 		"macro": "",
 		"identifier": "blackout",

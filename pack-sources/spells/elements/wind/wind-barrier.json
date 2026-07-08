@@ -1,7 +1,7 @@
 {
 	"name": "Wind Barrier",
 	"type": "spell",
-	"img": "icons/magic/air/air-pressure-shield-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/wind-barrier.webp",
 	"system": {
 		"macro": "",
 		"identifier": "wind-barrier",
@@ -56,9 +56,27 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+3 Armor",
+					"deltas": []
+				},
+				{
+					"label": "+1 round duration",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "round"
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

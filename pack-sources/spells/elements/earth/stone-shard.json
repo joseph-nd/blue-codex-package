@@ -1,7 +1,7 @@
 {
 	"name": "Stone Shard",
 	"type": "spell",
-	"img": "icons/magic/earth/projectile-stone-ball-brown.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/stone-shard.webp",
 	"system": {
 		"macro": "",
 		"identifier": "stone-shard",
@@ -32,6 +32,14 @@
 					"on": {
 						"criticalHit": [
 							{
+								"id": "stoneShardDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "stoneShardDamage1"
+							},
+							{
 								"id": "stoneShardCrit1",
 								"type": "note",
 								"noteType": "flavor",
@@ -46,6 +54,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "stoneShardDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "stoneShardDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "stoneShardDamage1"
 							}
 						]

@@ -1,7 +1,7 @@
 {
 	"name": "Seething Storm",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolts-salvo-clouds-sky.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/seething-storm.webp",
 	"system": {
 		"macro": "",
 		"identifier": "seething-storm",

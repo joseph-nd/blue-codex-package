@@ -1,0 +1,57 @@
+{
+	"name": "Mighty Swarm",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-swarm/mighty-swarm.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mighty-swarm",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Gathering Swarm can now push each size category 1 space further and now push Huge targets 1 space. When you deal LVL damage with your Hunter’s Mark you can now push Huge or smaller targets 1 space.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-swarm",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "IMyCKWRnWTQq6ZAE",
+	"folder": "882e910e55f5a361"
+}

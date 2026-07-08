@@ -1,0 +1,57 @@
+{
+	"name": "Suppressing Fire",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-watch/suppressing-fire.webp",
+	"system": {
+		"macro": "",
+		"identifier": "suppressing-fire",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When an enemy provokes an Opportunity Attack from an ally, you can make an Opportunity Attack with a ranged weapon against them if they are in your weapon's range. On hit: inflict Slowed, 2 turns.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "champion-of-the-watch",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "eMmq0iLDRdaV3wI6",
+	"folder": "48242b898b5d2dbc"
+}

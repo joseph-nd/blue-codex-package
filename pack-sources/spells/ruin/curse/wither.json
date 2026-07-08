@@ -1,7 +1,7 @@
 {
 	"name": "Wither",
 	"type": "spell",
-	"img": "icons/magic/control/silhouette-grow-shrink-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/wither.webp",
 	"system": {
 		"macro": "",
 		"identifier": "wither",

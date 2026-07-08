@@ -1,7 +1,7 @@
 {
 	"name": "Flame Dart",
 	"type": "spell",
-	"img": "icons/magic/fire/projectile-bolt-zigzag-orange.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/flame-dart.webp",
 	"system": {
 		"macro": "",
 		"identifier": "flame-dart",
@@ -32,6 +32,14 @@
 					"on": {
 						"criticalHit": [
 							{
+								"id": "flameDartDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "flameDartDamage1"
+							},
+							{
 								"id": "flameDartCrit1",
 								"type": "condition",
 								"condition": "smoldering",
@@ -45,6 +53,16 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "flameDartDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "flameDartDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "flameDartDamage1"
 							}
 						]

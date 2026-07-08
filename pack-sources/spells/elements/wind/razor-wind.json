@@ -1,7 +1,7 @@
 {
 	"name": "Razor Wind",
 	"type": "spell",
-	"img": "icons/magic/air/air-wave-gust-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/razor-wind.webp",
 	"system": {
 		"macro": "",
 		"identifier": "razor-wind",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "razorWindDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "razorWindDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "razorWindDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "razorWindDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "razorWindDamage1"
 							}
 						]

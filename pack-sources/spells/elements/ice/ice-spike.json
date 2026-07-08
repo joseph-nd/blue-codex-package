@@ -1,7 +1,7 @@
 {
 	"name": "Ice Spike",
 	"type": "spell",
-	"img": "icons/magic/water/projectile-icecicle-glowing.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/ice-spike.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ice-spike",
@@ -78,9 +78,36 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Blast +1",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "iceSpikeDamage1",
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -1,0 +1,57 @@
+{
+	"name": "Tiny Beasts",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/the-cheat/tools-of-the-shifter/tiny-beasts.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tiny-beasts",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Whenever you shapeshift into a Tiny beast, attacks against you are made with disadvantage, but ANY damage ends that shapeshift form.</p>",
+		"featureType": "class",
+		"class": "the-cheat",
+		"group": "tools-of-the-shifter",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "mMTRuS7pLFjdgqc5",
+	"folder": "e5d40ffef3ca6b0e"
+}

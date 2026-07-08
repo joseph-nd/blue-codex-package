@@ -1,7 +1,7 @@
 {
 	"name": "Blustery Gale",
 	"type": "spell",
-	"img": "icons/magic/air/weather-wind-gust.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/blustery-gale.webp",
 	"system": {
 		"macro": "",
 		"identifier": "blustery-gale",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "blusteryGaleDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "blusteryGaleDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "blusteryGaleDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "blusteryGaleDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "blusteryGaleDamage1"
 							}
 						]
@@ -78,9 +98,31 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+2 space pushed",
+					"deltas": []
+				},
+				{
+					"label": "affected creatures size +1 (max Huge)",
+					"deltas": []
+				},
+				{
+					"label": "+4 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 4,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "blusteryGaleDamage1",
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -1,7 +1,7 @@
 {
 	"name": "Detect Magic",
 	"type": "spell",
-	"img": "icons/magic/perception/third-eye-blue-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/detect-magic.webp",
 	"system": {
 		"macro": "",
 		"identifier": "detect-magic",

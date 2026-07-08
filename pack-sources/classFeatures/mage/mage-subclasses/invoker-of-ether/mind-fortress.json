@@ -1,0 +1,57 @@
+{
+	"name": "Mind Fortress",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-ether/mind-fortress.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mind-fortress",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Gain resistance to Psychic damage and advantage on saves vs Influenced conditions and mind altering effects.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-ether",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "CTetEoGl1Sq8oTaQ",
+	"folder": "c854c6c5f41f1453"
+}

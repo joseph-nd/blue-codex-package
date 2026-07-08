@@ -1,7 +1,7 @@
 {
 	"name": "Friends",
 	"type": "spell",
-	"img": "icons/magic/control/mouth-smile-deception-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/friends.webp",
 	"system": {
 		"macro": "",
 		"identifier": "friends",

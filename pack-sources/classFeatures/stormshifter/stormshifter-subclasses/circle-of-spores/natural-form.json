@@ -1,0 +1,77 @@
+{
+	"name": "Natural Form",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/natural-form.webp",
+	"system": {
+		"macro": "",
+		"identifier": "natural-form",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Choose 1 Chimeric Boon you know. You can spend 1 Action to gain benefits of that Chimeric Boon whether you are Beastshifted or not. Lasts as long as you maintain Concentration.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "chimeric-boon",
+		"gainedAtLevels": [
+			6,
+			9,
+			12,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "circle-of-spores",
+				"name": "Chimeric Boons",
+				"group": "chimeric-boon",
+				"levels": [
+					6,
+					9,
+					12,
+					17
+				],
+				"count": {
+					"6": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "cnD3yhzDdCiNYabR",
+	"folder": "a4922ac2eddebc93"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Northern Hunter",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/hunter/keeper-of-the-frozen-north/northern-hunter.webp",
+	"system": {
+		"macro": "",
+		"identifier": "northern-hunter",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your attacks against your quarry now apply Slowed, 1 turn, and damage from your Hunter’s Mark can be Cold damage.</p>",
+		"featureType": "class",
+		"class": "hunter",
+		"group": "keeper-of-the-frozen-north",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "HBw4neUyRcOPR2py",
+	"folder": "d1d0b5c317e355b6"
+}

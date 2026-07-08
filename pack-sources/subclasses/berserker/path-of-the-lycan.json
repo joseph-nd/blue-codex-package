@@ -1,0 +1,25 @@
+{
+	"name": "Path of the Lycan",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/lycan-fury.webp",
+	"system": {
+		"macro": "",
+		"identifier": "path-of-the-lycan",
+		"rules": [],
+		"description": "<p><em>\"This isn't rage. This is hunger.\"</em> You unleash the savage beast within, transforming into a monstrous hybrid warrior who tears through enemies with powerful claws and a relentless, regenerating fury.</p><p><em><strong>I Don't Want To Be a Wolf:</strong> Each Lycanthrope should have at least 2 attacks. One that deals 1d10 damage and another that deals 1d8. It could be a bite, tail, claws, horns, whatever makes sense.</em></p><p><em><strong>I'm an \"X\" Lycan That Can \"X\":</strong> Talk with your GM. Giving a Hero a swimming or flying speed shouldn't break the game. Don't give a Hero extra damage, abilities, or advantages on other skills.</em></p><p><em><strong>On the Curse of Lycanthropy:</strong> Lycanthrope is usually about the inner struggle between man and beast. Here is an optional mechanic to play out such things:</em></p><p><em><strong>Lust of the Hunt.</strong> While Raging, you must succeed at a DC 10 WIL saving at the start of each of your turns or lose control. If you are in the light of a full moon, you fail. On fail, you must follow these rules until you succeed:</em></p><ul><li><em>You cannot willingly revert to your normal form (end your Rage).</em></li><li><em>You must always move toward the closest creature you can see, smell or hear, prioritising creatures missing HP.</em></li><li><em>If there is a creature in reach of you and you have remaining Actions, you must make as many melee attacks as you can against it, prioritizing creatures missing the most hit points if two or more creatures are in reach.</em></li></ul><p><em>If you are subjected to the light of a full moon you must succeed at a DC 20 WIL save or automatically begin Raging and cannot transform back until dawn. You lose control for the entire duration. If you succeed this save, you are immune to its effects for 24 hours. Finally, you automatically succeed at all saves relating to the Lust of the Hunt while in your Beast form.</em></p><p><strong>LEVEL 3</strong></p><p><strong>Lycan Fury.</strong></p><p>When you Rage, you shift into a monstrous hybrid form for the duration. While in this form, you gain the following benefits:</p><ul><li>You cannot wield weapons, but you gain natural weapons you're proficient with: a Bite, 1d10 +STR, and Claws, 1d8 +STR.</li><li>+DEX speed and That All You Got?! is now 2xSTR+DEX per Fury Die spent.</li></ul><p><strong>Predator's Senses.</strong></p><p>You can see in the dark and you have advantage on Perception (WIL) to see, hear, or smell creatures.</p><p><strong>Beast Form.</strong></p><p>Free Action. You can transform into an animal representation of your Lycanthrope curse gaining your Lycan Fury features, but no other benefits from Raging. You cannot speak, do activities requiring hands or anything a normal animal couldn't do.</p><p><strong>LEVEL 7</strong></p><p><strong>Feral Pounce.</strong></p><p>While Raging, if you move at least 3 spaces, your next attack deals +LVL damage. If your target was Large or smaller, you can spend 1 Fury Die to knocked Prone.</p><p><strong>LEVEL 11</strong></p><p><strong>Lunar Regeneration.</strong></p><p>While Bloodied, you regain STR HP at the start of each of your turns.</p><p><strong>LEVEL 15</strong></p><p><strong>Apex Lycan.</strong></p><p>Your natural weapons gain 1 additional damage die.</p><p><strong>Howl in the Night.</strong></p><p>1 Action, Burst: 3. Spend a Fury Die to unleash a blood freezing howl. Enemies in the area must make a WIL save or be Frightened of you, 1 turn. Whenever you attack a target Frightened of you, two of your Fury Die are always their max value.</p>",
+		"parentClass": "berserker",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "qSYxhaQFsiROjBgB",
+	"folder": "0c74f1d48f570d26"
+}

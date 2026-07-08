@@ -1,0 +1,57 @@
+{
+	"name": "Reclaim Ether",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-mesmer/reclaim-ether.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reclaim-ether",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "free",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Free Action. Destroy 3 of your minions. Your next Illusion or Domination spell costs no Pilfered Power.</p>",
+		"featureType": "class",
+		"class": "shadowmancer",
+		"group": "pact-of-the-mesmer",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ZIxkO7irZ3mot0lZ",
+	"folder": "ef1a33a7b0ce12a8"
+}

@@ -1,7 +1,7 @@
 {
 	"name": "Silent Alarm",
 	"type": "spell",
-	"img": "icons/magic/sonic/bell-alarm-red-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/silent-alarm.webp",
 	"system": {
 		"macro": "",
 		"identifier": "silent-alarm",

@@ -1,7 +1,7 @@
 {
 	"name": "Ice Ray",
 	"type": "spell",
-	"img": "icons/magic/water/beam-ice-impact.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/ice-ray.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ice-ray",
@@ -43,6 +43,26 @@
 								"type": "condition",
 								"condition": "slowed",
 								"parentContext": "hit",
+								"parentNode": "iceRayDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "iceRayDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "iceRayDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "iceRayDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "iceRayDamage1"
 							}
 						]

@@ -1,0 +1,25 @@
+{
+	"name": "Pact of the Briar",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/shadowmancer/pact-of-the-briar/blood-soaked-briars.webp",
+	"system": {
+		"macro": "",
+		"identifier": "pact-of-the-briar",
+		"rules": [],
+		"description": "<p><em>\"Nature's always had a dark side.\"</em> Your patron is a primordial rot or predatory overgrowth. It warps your connection to the dark. You summon blighted flora and thorny roots to choke the battlefield.</p><p><strong>LEVEL 3</strong></p><p><strong>Blood Soaked Briars.</strong></p><p>Your Patron grants you knowledge of Nature Spells. Spells you cast from this school can't restore your own HP if you would lose HP from Pilfered Power. Your spells can deal Acid, Poison, or their normal damage.</p><p><strong>Violent Flora.</strong></p><p>Your shadow minions have no speed but you can now summon them in Range 8 and their attacks have Range 8. They still follow all normal minion rules.</p><p><strong>LEVEL 7</strong></p><p><strong>Snaring Spines.</strong></p><p>Your minion attacks inflict Slowed, 1 turn, on hit. If 3 or more hit the same target, the target is Restrained by a thorny spine (10 HP) until they make a save or destroy the spine.</p><p><strong>LEVEL 11</strong></p><p><strong>Spiteful Bloom.</strong></p><p>When a minion would be destroyed, all adjacent enemies take LVL Poison and are Blinded, 1 turn. Ignores armor.</p><p><strong>LEVEL 15</strong></p><p><strong>Garden of Thorns.</strong></p><p>Your minion limit is increased by 2.</p><p><strong>Rampant Overgrowth.</strong></p><p>(1/Safe Rest) 1 Action. Summon your max number of minions and command them all to attack.</p><p><strong>Lesser Invocations</strong></p><ul><li><strong>Whispers of Nature.</strong> (1/Safe Rest) Imbue a plant with a moment of consciousness and ask it 3 yes/no questions.</li><li><strong>Horrid Gift.</strong> You can spend a Safe Rest to create a Horrid Gift. You can telepathically communicate across any distance with a creature that holds it. You can only have one Horrid Gift active at a time.</li></ul><p><strong>Greater Invocations</strong></p><ul><li><strong>Stranglethorn.</strong> When a minion of yours dies, its space becomes Slowed Terrain for the remainder of the encounter.</li><li><strong>Dark Conduit.</strong> When you cast Shadow Blast, you can cast it from the space of one of your minions instead, using it to determine range. Either you or your minion must be able to see the target(s).</li></ul>",
+		"parentClass": "shadowmancer",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ADc9dLAYIiMyakjU",
+	"folder": "157c931a4fa6c46c"
+}

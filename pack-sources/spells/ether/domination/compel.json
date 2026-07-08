@@ -1,7 +1,7 @@
 {
 	"name": "Compel",
 	"type": "spell",
-	"img": "icons/magic/control/control-influence-crown-gold.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/compel.webp",
 	"system": {
 		"macro": "",
 		"identifier": "compel",

@@ -1,7 +1,7 @@
 {
 	"name": "Flame Wall",
 	"type": "spell",
-	"img": "icons/magic/fire/barrier-wall-flame-ring-yellow.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/fire/flame-wall.webp",
 	"system": {
 		"macro": "",
 		"identifier": "flame-wall",
@@ -86,9 +86,36 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+7 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 7,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "flameWallDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "Wall +2",
+					"deltas": [
+						{
+							"operation": "addAreaSize",
+							"value": 2,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
+				}
+			]
 		}
 	},
 	"effects": [],

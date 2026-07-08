@@ -1,0 +1,25 @@
+{
+	"name": "Circle of Spores",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/fungal-host.webp",
+	"system": {
+		"macro": "",
+		"identifier": "circle-of-spores",
+		"rules": [],
+		"description": "<p><em>&ldquo;Death isn&rsquo;t the end, it&rsquo;s the start of something new.&rdquo;</em> You are a symbiotic vessel for a ravenous fungal colony, wading directly into the frontline to weaponize dangerous spores and reanimate the fallen as your minions.</p><p><strong>LEVEL 3</strong></p><p><strong>Fungal Host.</strong></p><p>You know Nature spells. When you deal Acid or Poison damage, gain temp HP equal to the damage dealt (max LVL).</p><p><strong>Fungal Guardian.</strong></p>You can spend a Beastshift charge to awaken the Fungal Guardian within you. You retain your humanoid shape, weapons, and armor, but gain the following: <strong>Fungal Shell.</strong> Gain 10+2xLVL temp HP. Temp HP gained from Fungal Host adds to this tempHP instead of replacing it, though the max can&rsquo;t exceed 10+2xLVL. <strong>Halo of Spores.</strong> Targets of your choice in Reach 2 take KEY Acid damage when they start their turn in the area. Fungal Guardian lasts as long as you have temp HP from Fungal Shell and is considered Beastshifting.<p><strong>LEVEL 7</strong></p><p><strong>&amp;lsquo;Shroom Minion.</strong></p>When you kill a creature of your level or lower, you can reanimate it as a d8 &lsquo;Shroom Minion for free. &lsquo;Shroom Minions follow all normal minion rules but only last until the end of the encounter. You can have up to KEY or LVL minions, whichever is lower. You can use 1 Action to command all to do the following: <strong>Attack | Move:</strong> 6 then, Damage: 1d8 each.<p><strong>LEVEL 11</strong></p><p><strong>Virulent Spores.</strong></p><p>Your Halo of Spores affects deals 2xKEY damage now. When your &amp;lsquo;Shroom Minions die, all enemies adjacent to them take your Halo of Spores damage.</p><p><strong>LEVEL 15</strong></p><p><strong>Elder Colony.</strong></p><p>While Bloodied, when you gain temp HP from Fungal Host, you can choose to regain actual HP instead. All your Direbeast forms now gain your Halo of Spores feature.</p><h3>Chimeric Boons</h3><p><strong>Natural Form.</strong> Choose 1 Chimeric Boon you know. You can spend 1 Action to gain benefits of that Chimeric Boon whether you are Beastshifted or not. Last as long as you maintain Concentration.</p><p><strong>Deep Roots.</strong> Free Action. You root yourself into the earth. Your speed becomes 0, but you cannot be knocked Prone or moved against your will, and you gain +KEY Armor. You can unroot at any time as a Free Action.</p>",
+		"parentClass": "stormshifter",
+		"resources": []
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VWe90Imuz0Dlm2en",
+	"folder": "8c2f8af707639ef7"
+}

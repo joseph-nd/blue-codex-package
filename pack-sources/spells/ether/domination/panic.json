@@ -1,7 +1,7 @@
 {
 	"name": "Panic",
 	"type": "spell",
-	"img": "icons/magic/control/fear-fright-monster-grin-purple-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/ether/domination/panic.webp",
 	"system": {
 		"macro": "",
 		"identifier": "panic",
@@ -36,6 +36,26 @@
 								"type": "damageOutcome",
 								"outcome": "fullDamage",
 								"parentContext": "hit",
+								"parentNode": "panicDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "panicDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "panicDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "panicDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
 								"parentNode": "panicDamage1"
 							}
 						]

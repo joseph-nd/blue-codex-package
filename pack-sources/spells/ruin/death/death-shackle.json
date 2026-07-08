@@ -1,7 +1,7 @@
 {
 	"name": "Death Shackle",
 	"type": "spell",
-	"img": "icons/magic/control/debuff-chains-shackles-movement-purple.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/death/death-shackle.webp",
 	"system": {
 		"macro": "",
 		"identifier": "death-shackle",
@@ -45,6 +45,26 @@
 								"parentContext": "hit",
 								"parentNode": "deathShackleDamage1"
 							}
+						],
+						"criticalHit": [
+							{
+								"id": "deathShackleDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "deathShackleDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "deathShackleDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "deathShackleDamage1"
+							}
 						]
 					}
 				}
@@ -83,9 +103,27 @@
 		"tier": 4,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "deathShackleDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 turn Stunned",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

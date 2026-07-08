@@ -1,7 +1,7 @@
 {
 	"name": "Ward",
 	"type": "spell",
-	"img": "icons/magic/defensive/barrier-shield-dome-deflect-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/radiance/protection/ward.webp",
 	"system": {
 		"macro": "",
 		"identifier": "ward",

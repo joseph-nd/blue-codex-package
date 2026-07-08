@@ -1,0 +1,113 @@
+{
+	"name": "Silverlight, the Singing Sword",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-swords/silverlight-the-singing-sword.webp",
+	"system": {
+		"macro": "",
+		"identifier": "silverlight-the-singing-sword",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "silverlightDmg",
+					"type": "damage",
+					"damageType": "force",
+					"formula": "4d4+@dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"miss": [
+							{
+								"id": "silverlightDmgMiss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "silverlightDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "silverlightDmgCrit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "silverlightDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "silverlightDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "silverlightDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You summon a sentient, obnoxiously loud magical sword. It deals 4d4+DEX Force damage. On crit: the target can't speak as its compelled to sing until the end of its next turn. While wielding it, you cannot be Hidden or Invisible.</p><p><em>The sword vanishes after 1 hour, or immediately if you refuse to sing along with it.</em></p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "a-people-person",
+		"gainedAtLevels": [
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "herald-of-swords",
+				"name": "A \"People\" Person",
+				"group": "a-people-person",
+				"levels": [
+					5
+				],
+				"count": {
+					"5": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "lvLk7dCcsSYOFLmO",
+	"folder": "5e5517b059f9d022"
+}

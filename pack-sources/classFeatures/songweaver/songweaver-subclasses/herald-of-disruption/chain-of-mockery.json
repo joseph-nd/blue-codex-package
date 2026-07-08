@@ -1,0 +1,57 @@
+{
+	"name": "Chain of Mockery",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/songweaver/herald-of-disruption/chain-of-mockery.webp",
+	"system": {
+		"macro": "",
+		"identifier": "chain-of-mockery",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When Vicious Mockery crits, you can cast it again ignoring Rushed Attack rules. This can chain a max of KEY times.</p>",
+		"featureType": "class",
+		"class": "songweaver",
+		"group": "herald-of-disruption",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oHtssSO8RaNNmFmF",
+	"folder": "616433048f1c9d50"
+}

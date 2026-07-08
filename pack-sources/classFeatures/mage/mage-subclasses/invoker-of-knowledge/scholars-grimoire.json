@@ -1,0 +1,57 @@
+{
+	"name": "Scholar's Grimoire",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/scholars-grimoire.webp",
+	"system": {
+		"macro": "",
+		"identifier": "scholars-grimoire",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You have a personal Grimoire. When you unlock a new spell tier, you permanently scribe 3 spells of that tier or lower into your Grimoire from any spell school across any book. You can only cast spells scribed in your Grimoire. You can scribe a spell scroll of a tier you cast into your Grimoire during a Safe Rest.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-knowledge",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "dmctWnVWcHlsZlcR",
+	"folder": "d576cc52fd4fe7b6"
+}

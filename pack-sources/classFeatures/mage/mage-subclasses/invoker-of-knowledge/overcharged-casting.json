@@ -1,0 +1,75 @@
+{
+	"name": "Overcharged Casting",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-knowledge/overcharged-casting.webp",
+	"system": {
+		"macro": "",
+		"identifier": "overcharged-casting",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>(1+ mana)</strong> The first primary die roll's crit range is reduced for each mana spent.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "spellshaper",
+		"gainedAtLevels": [
+			4,
+			9,
+			13
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "invoker-of-knowledge",
+				"name": "Spellshaper",
+				"group": "spellshaper",
+				"levels": [
+					4,
+					9,
+					13
+				],
+				"count": {
+					"4": 2
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "hr6F3B92g66IpGAV",
+	"folder": "e14c7a4eb4dcc9a9"
+}

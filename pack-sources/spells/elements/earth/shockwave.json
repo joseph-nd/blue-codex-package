@@ -1,7 +1,7 @@
 {
 	"name": "Shockwave",
 	"type": "spell",
-	"img": "icons/magic/sonic/explosion-impact-shock-wave.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/earth/shockwave.webp",
 	"system": {
 		"macro": "",
 		"identifier": "shockwave",

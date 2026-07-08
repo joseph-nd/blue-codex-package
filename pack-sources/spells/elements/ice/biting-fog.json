@@ -1,7 +1,7 @@
 {
 	"name": "Biting Fog",
 	"type": "spell",
-	"img": "icons/magic/air/fog-gas-smoke-dense-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/biting-fog.webp",
 	"system": {
 		"macro": "",
 		"identifier": "biting-fog",

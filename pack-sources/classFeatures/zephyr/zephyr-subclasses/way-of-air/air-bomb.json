@@ -1,0 +1,64 @@
+{
+	"name": "Air Bomb",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/zephyr/way-of-air/air-bomb.webp",
+	"system": {
+		"macro": "",
+		"identifier": "air-bomb",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>(De Form)</em> Burst: 2, Reaction: When you are flying, gliding or falling. Immediately land on the ground. Enemies in the area must make a STR save. On a fail, they take damage equal to the potential fall damage and are pushed out of the area. On a save they take half damage only.</p><p><strong>Expert Wind Rider:</strong> Burst +1 and you immediately launch back in the air 12 spaces.</p>",
+		"featureType": "class",
+		"class": "zephyr",
+		"group": "way-of-air",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"folder": {
+				"group": "forms",
+				"name": "Air Forms"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "KkqlpmAxCrDfHwdq",
+	"folder": "53d4a6ab0f67d34d"
+}

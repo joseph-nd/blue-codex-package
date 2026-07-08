@@ -1,0 +1,57 @@
+{
+	"name": "Verdant Renewal",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/oathsworn/oath-of-the-verdant/verdant-renewal.webp",
+	"system": {
+		"macro": "",
+		"identifier": "verdant-renewal",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) When you cast Rejuvenation Spirit, it affects your entire aura instead. The spell lasts 1 minute and no longer has a healing cap. 1/turn, allies that start their turn in your aura or enter it for the first time on a turn automatically regain the spell&rsquo;s HP amount.</p>",
+		"featureType": "class",
+		"class": "oathsworn",
+		"group": "oath-of-the-verdant",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "oLeFeb3Q3KFFBoHB",
+	"folder": "fb81833546b81b40"
+}

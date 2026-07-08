@@ -1,7 +1,7 @@
 {
 	"name": "Seiche",
 	"type": "spell",
-	"img": "icons/magic/water/wave-water-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/water/seiche.webp",
 	"system": {
 		"macro": "",
 		"identifier": "seiche",
@@ -76,9 +76,27 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "seicheDamage1",
+							"durationType": null
+						}
+					]
+				},
+				{
+					"label": "+1 space pushed",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

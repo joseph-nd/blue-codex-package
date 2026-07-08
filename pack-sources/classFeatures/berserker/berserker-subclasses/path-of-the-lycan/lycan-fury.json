@@ -1,0 +1,57 @@
+{
+	"name": "Lycan Fury",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/lycan-fury.webp",
+	"system": {
+		"macro": "",
+		"identifier": "lycan-fury",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you Rage, you shift into a monstrous hybrid form for the duration. While in this form, you gain the following benefits:</p><ul><li>You cannot wield weapons, but you gain natural weapons you're proficient with: a Bite, 1d10 +STR, and Claws, 1d8 +STR.</li><li>+DEX speed and That All You Got?! is now 2xSTR+DEX per Fury Die spent.</li></ul>",
+		"featureType": "class",
+		"class": "berserker",
+		"group": "path-of-the-lycan",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "p67Mk95cU0ZpYlCZ",
+	"folder": "b2e2951ee73741e9"
+}

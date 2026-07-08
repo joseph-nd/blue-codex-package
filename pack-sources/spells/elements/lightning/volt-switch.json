@@ -1,7 +1,7 @@
 {
 	"name": "Volt Switch",
 	"type": "spell",
-	"img": "icons/magic/lightning/bolt-strike-explosion-blue.webp",
+	"img": "modules/blue-codex-package/assets/spells/elements/lightning/volt-switch.webp",
 	"system": {
 		"macro": "",
 		"identifier": "volt-switch",

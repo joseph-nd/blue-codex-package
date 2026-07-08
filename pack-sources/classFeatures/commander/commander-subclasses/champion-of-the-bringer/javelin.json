@@ -1,0 +1,73 @@
+{
+	"name": "Javelin",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/commander/champion-of-the-bringer/javelin.webp",
+	"system": {
+		"macro": "",
+		"identifier": "javelin",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your javelin attacks treat monster armor as 1 tier lower.</p>",
+		"featureType": "class",
+		"class": "commander",
+		"group": "weapon-mastery",
+		"gainedAtLevels": [
+			6,
+			10,
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"pool": {
+				"subclass": "champion-of-the-bringer",
+				"name": "Weapon Mastery",
+				"group": "weapon-mastery",
+				"levels": [
+					6,
+					10,
+					14
+				],
+				"count": {}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "8M5jEXQBfScO95B3",
+	"folder": "77fab4e412a96545"
+}

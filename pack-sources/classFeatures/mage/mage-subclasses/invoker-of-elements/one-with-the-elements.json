@@ -1,0 +1,57 @@
+{
+	"name": "One With the Elements",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/mage/invoker-of-elements/one-with-the-elements.webp",
+	"system": {
+		"macro": "",
+		"identifier": "one-with-the-elements",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>The passive boons from Elemental Attunement are stronger:</p><p>Fire: Fire spells gain +1 to their crit range.</p><p>Water: Allies in Reach 2 also gain the temp HP.</p><p>Air: When you Move because of Elemental Attunement, you can teleport instead.</p><p>Earth: Armor gained from this stacks up to max of 5+LVL and lasts until you change attunements.</p>",
+		"featureType": "class",
+		"class": "mage",
+		"group": "invoker-of-elements",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "OlvFJzi4IOpCIpH1",
+	"folder": "b5bbf1f034758ba7"
+}

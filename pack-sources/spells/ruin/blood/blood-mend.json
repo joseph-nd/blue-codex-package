@@ -1,7 +1,7 @@
 {
 	"name": "Blood Mend",
 	"type": "spell",
-	"img": "icons/magic/life/heart-glowing-red.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/blood/blood-mend.webp",
 	"system": {
 		"macro": "",
 		"identifier": "blood-mend",

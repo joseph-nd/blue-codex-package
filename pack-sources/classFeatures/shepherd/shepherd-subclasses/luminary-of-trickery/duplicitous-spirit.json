@@ -1,0 +1,57 @@
+{
+	"name": "Duplicitous Spirit",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/shepherd/luminary-of-trickery/duplicitous-spirit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "duplicitous-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your Lifebinding Spirit takes the form of a perfect illusory double of yourself and is considered an illusion. You can cast spells as if you were in the spirit's place, though you use your senses. When a creature would see through your double, it only means they can clearly tell the difference between you and it.</p><p>Illusory Double. Your Lifebinding Spirit is still Ethereal and immune to harm. It follows all normal illusion rules and has every sensory element that you normally would. When a target that can see through your double looses sight of both you and a spirit of yours or you swap places with a spirit, it can no longer tell the difference.</p>",
+		"featureType": "class",
+		"class": "shepherd",
+		"group": "luminary-of-trickery",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "JuOzR8HJNqyDAQ0f",
+	"folder": "791aaacd7dca327c"
+}

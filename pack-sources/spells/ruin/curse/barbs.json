@@ -1,7 +1,7 @@
 {
 	"name": "Barbs",
 	"type": "spell",
-	"img": "icons/magic/nature/trap-spikes-thorns-green.webp",
+	"img": "modules/blue-codex-package/assets/spells/ruin/curse/barbs.webp",
 	"system": {
 		"macro": "",
 		"identifier": "barbs",

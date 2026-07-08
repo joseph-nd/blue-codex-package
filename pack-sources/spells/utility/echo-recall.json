@@ -1,7 +1,7 @@
 {
 	"name": "Echo Recall",
 	"type": "spell",
-	"img": "icons/magic/time/clock-spinning-gold-pink.webp",
+	"img": "modules/blue-codex-package/assets/spells/utility/echo-recall.webp",
 	"system": {
 		"macro": "",
 		"identifier": "echo-recall",

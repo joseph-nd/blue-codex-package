@@ -1,0 +1,57 @@
+{
+	"name": "Elder Colony",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/stormshifter/circle-of-spores/elder-colony.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elder-colony",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While Bloodied, when you gain temp HP from Fungal Host, you can choose to regain actual HP instead. All your Direbeast forms now gain your Halo of Spores feature.</p>",
+		"featureType": "class",
+		"class": "stormshifter",
+		"group": "circle-of-spores",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "CxRsADe4TLrlH251",
+	"folder": "b71ffbe2edba2090"
+}
