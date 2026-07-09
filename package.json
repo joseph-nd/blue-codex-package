@@ -1,6 +1,6 @@
 {
 	"name": "blue-codex-package",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Foundry VTT module that adds Blue's Codex content to the Nimble system.",
 	"type": "module",
 	"private": true,

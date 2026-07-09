@@ -36,11 +36,29 @@ jobs:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: pnpm release
 
+      - name: Extract changelog notes for this version
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p dist
+          awk -v ver="$RELEASE_VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { capture=1; next }
+            capture && /^## \[/ { exit }
+            capture { print }
+          ' CHANGELOG.md > dist/release-notes.md
+          if [ ! -s dist/release-notes.md ]; then
+            echo "No CHANGELOG.md section found for version $RELEASE_VERSION" >&2
+            exit 1
+          fi
+          echo "----- release notes -----"
+          cat dist/release-notes.md
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
+          body_path: dist/release-notes.md
           generate_release_notes: true
           files: |
             dist/module.json
