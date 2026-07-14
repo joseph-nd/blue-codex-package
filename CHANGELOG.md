@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-14
+
+### Added
+
+- **Companions compendium** — new Actor pack with the first two summonable
+  companions: **Shadow Minion** and **Lifebinding Spirit**, each with a custom
+  circular token (transparent, school-colored ring: shadow violet / radiant
+  gold).
+- **Summon automation.** Casting **Summon Shadow** or **Summon Lifebinding
+  Spirit** now imports the companion (once) and places its token next to the
+  caster automatically.
+  - *Summon Shadow*: combat-only, capped at min(INT, level) minions, and all
+    summoned shadows vanish when combat ends.
+  - *Summon Lifebinding Spirit*: unique (one spirit at a time); recasting
+    dismisses it **without spending mana**; the spirit tracks ability charges
+    equal to the mana spent and dismisses itself when they run out or on a
+    Safe Rest. Upcasting steps the Attack/Cure die (d6→d8→d10→d12) and the
+    caster's WIL is baked into both formulas at summon time.
+- **Empowered Companion (Sacred Grace) support** — when owned, the spirit
+  gains +1 effective mana (one extra charge and die step), its die cap rises
+  to d20, and the spell's upcast slider is no longer limited by your unlocked
+  spell tier (real mana still applies).
+- **School-gated spirit commands** — the Lifebinding Spirit automatically
+  gains the seven bonus commands from the Codex (Courage, Twist Fate, Wild
+  Bloom, Cloaked, Reap, Share Vitality, Misfortune) for exactly the spell
+  schools the Shepherd knows at summon time; each consumes an ability charge.
+- **Vicious Mockery** — new wind-school spell with icon.
+
+### Fixed
+
+- **Duplicate death-school grant at Shepherd creation** — the death school's
+  spells could be granted twice when creating a Shepherd; grants are now
+  deduplicated and already-affected characters are repaired automatically the
+  next time their sheet is opened.
+- Shadow Minion attacks no longer claim they can crit (minions do not crit).
+
 ## [0.2.1] - 2026-07-09
 
 ### Fixed

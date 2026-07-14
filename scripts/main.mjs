@@ -221,14 +221,22 @@ function patchSpellGrantIndex() {
 			if (!OFFICIAL_SPELL_PACKS.has(this.collection)) return result;
 			if (!isGrantPath) return result;
 
-			const coverage = await ensureCodexCoverage();
-			if (!coverage || coverage.size === 0) return result;
+			const coverage = (await ensureCodexCoverage()) ?? new Set();
+
+			// During a necrotic-remapped class's own level-up, also hide official
+			// necrotic from the grant preview / selection lists — Shadowmancer and
+			// Shepherd learn a Codex school (shadow / death) in its place. Scoped to
+			// that class via levelUpContext so Mage (Invoker of Control) and Songweaver,
+			// which offer necrotic as a *choice*, are left untouched. The authoritative,
+			// all-paths suppression is the preCreateItem block below.
+			const dropNecrotic = !!CLASS_SPELL_REMAP[levelUpContext?.classId];
 
 			const filtered = new foundry.utils.Collection();
 			for (const [key, entry] of result.entries()) {
 				if (entry?.type === 'spell') {
 					const school = entry?.system?.school;
 					const tier = entry?.system?.tier ?? 0;
+					if (dropNecrotic && school === 'necrotic') continue;
 					// Drop the official spell only where the Codex replaces it.
 					if (school && coverage.has(`${school}:${tier}`)) continue;
 				}
@@ -266,6 +274,20 @@ Hooks.on('preCreateItem', (item, data) => {
 
 		const school = item?.system?.school;
 		const tier = item?.system?.tier ?? 0;
+
+		// Authoritative, all-paths suppression of official necrotic on the two base
+		// necrotic casters that Blue's Codex re-homes (Shadowmancer → shadow,
+		// Shepherd → death). Catches the school-, uuid- and selectSpell-mode grants
+		// alike (they all funnel through here). Scoped to those classes so Mage /
+		// Songweaver necrotic choices are untouched. classSpellRemapSync grants the
+		// Codex replacement school.
+		if (school === 'necrotic' && CLASS_SPELL_REMAP[getPrimaryClass(actor)?.classId]) {
+			console.log(
+				`[${MODULE_ID}] Blocked official necrotic spell "${item.name}" — re-homed to a Blue's Codex school for this class.`,
+			);
+			return false;
+		}
+
 		if (codexCoverageSet && school && codexCoverageSet.has(`${school}:${tier}`)) {
 			console.log(
 				`[${MODULE_ID}] Blocked official spell "${item.name}" (${school} T${tier}) — Blue's Codex is the default magic system.`,
@@ -447,6 +469,15 @@ Hooks.once('ready', () => {
 	globalThis.blueCodex = api;
 
 	patchSpellGrantIndex();
+	// Rewrite the necrotic-caster / Songweaver class-feature spell rules so the
+	// creation & level-up dialogs preview and grant the Codex schools.
+	installFromUuidRewrite();
+	// Reusable on-hit automation: wrap item activation so a marked actor's next
+	// attack rolls at disadvantage, and listen for hits that apply the mark.
+	installOnHitAutomation();
+	// Summon automation: combat-end + Safe Rest cleanup for spawned companions
+	// (the spawn/gate/charge hooks piggyback on the on-hit install above).
+	installSummonAutomation();
 	// Warm the Codex coverage cache so the synchronous preCreateItem net has it.
 	ensureCodexCoverage();
 	// Warm the subclass-pool option + auto-grant indexes.
@@ -905,6 +936,118 @@ const SUBCLASS_SPELL_POLICY = {
 	'herald-of-inspiration': { mandatory: ['inspiration'], cap: 3, summary: 'Learn Inspiration spells.' },
 };
 
+// ── Class-level necrotic re-home ─────────────────────────────────────────────
+// necrotic is the one base spell school Blue's Codex doesn't re-author — it splits
+// it into shadow / death / blood / curse — so the coverage filter can't auto-swap
+// it the way it does fire / radiant / etc. The two base necrotic casters are
+// remapped here (keyed by class identifier → the Codex school they learn instead):
+// their official necrotic grants are suppressed (grant-index drop + preCreateItem
+// block, which together catch the school-, uuid- and selectSpell-mode grants) and
+// the Codex replacement school is granted at runtime by classSpellRemapSync, one
+// tier at a time. Only these two classes grant necrotic as a fixed part of their
+// progression; Mage (Invoker of Control) and Songweaver merely *offer* it as a
+// choice and are deliberately excluded so those picks keep working.
+const CLASS_SPELL_REMAP = {
+	shadowmancer: 'shadow',
+	shepherd: 'death',
+};
+
+// ── System class-feature spell-rule rewrites ─────────────────────────────────
+// The character-creation and level-up dialogs read each class feature's own
+// `grantSpells` rules (via the global `fromUuid`) both to PREVIEW and to GRANT
+// spells. To make those dialogs reflect Blue's Codex schools we rewrite the rules
+// of the relevant SYSTEM features as they're resolved (see installFromUuidRewrite).
+// Keyed by `system.class`:
+//   swap        — replace these school names wherever they appear in a grantSpells
+//                 rule's `schools` (Shadowmancer/Shepherd necrotic → shadow/death;
+//                 Songweaver's necrotic *choice* → death).
+//   uuidTo      — convert a uuid-only grant (Shadowmancer's conduit-of-shadow patron
+//                 cantrips, which are official necrotic) into a tier-0 school grant
+//                 so the level-1 caster previews/learns the Codex school instead.
+//   addSchools  — extend a `selectSchool` rule's option list (Songweaver gains the
+//                 Book of Ether + Divination + Curse as choosable additional schools).
+const CLASS_FEATURE_SPELL_REWRITES = {
+	shadowmancer: { swap: { necrotic: 'shadow' }, uuidTo: 'shadow' },
+	shepherd: { swap: { necrotic: 'death' } },
+	songweaver: {
+		swap: { necrotic: 'death' },
+		addSchools: ['illusion', 'domination', 'inspiration', 'divination', 'curse'],
+	},
+};
+
+/** Order-preserving de-dupe of a string list. */
+function uniqueList(list) {
+	const seen = new Set();
+	return list.filter((value) => (seen.has(value) ? false : seen.add(value)));
+}
+
+/**
+ * Return a rewritten copy of a feature's `rules` per `cfg`, or null when nothing
+ * changed. Only `grantSpells` rules are touched.
+ */
+function rewriteFeatureSpellRules(rules, cfg) {
+	let changed = false;
+	const out = rules.map((rule) => {
+		if (rule?.type !== 'grantSpells') return rule;
+
+		// A uuid-only grant (no schools) → a tier-0 grant of the Codex school.
+		if (cfg.uuidTo && Array.isArray(rule.uuids) && rule.uuids.length && !rule.schools?.length) {
+			changed = true;
+			return { id: rule.id, type: 'grantSpells', mode: 'auto', schools: [cfg.uuidTo], tiers: [0] };
+		}
+
+		if (Array.isArray(rule.schools) && rule.schools.length) {
+			let schools = rule.schools.map((school) => cfg.swap?.[school] ?? school);
+			if (cfg.addSchools && rule.mode === 'selectSchool') schools = [...schools, ...cfg.addSchools];
+			schools = uniqueList(schools);
+			if (schools.join(',') !== rule.schools.join(',')) {
+				changed = true;
+				return { ...rule, schools };
+			}
+		}
+		return rule;
+	});
+	return changed ? out : null;
+}
+
+// fromUuid returns cached compendium docs; rewriting one in place (idempotently)
+// updates every reader. The WeakSet skips docs already handled; the rewrite itself
+// is idempotent anyway (re-running finds no necrotic / already-added schools).
+const rewrittenFeatureDocs = new WeakSet();
+
+/**
+ * Wrap the global `fromUuid` so a SYSTEM class feature belonging to a rewritten
+ * class comes back with Codex-adjusted grantSpells rules. This is the single point
+ * that makes the creation/level-up dialogs both preview and grant the Codex schools
+ * (Shadowmancer→shadow, Shepherd→death, Songweaver's extra-school choice). Gated on
+ * the `replaceOfficialSpells` setting; fully guarded so a failure leaves fromUuid
+ * behaving normally.
+ */
+function installFromUuidRewrite() {
+	const original = globalThis.fromUuid;
+	if (typeof original !== 'function' || original.__blueCodexRewrapped) return;
+	const wrapped = async function blueCodexFromUuid(...args) {
+		const doc = await original.apply(this, args);
+		try {
+			if (!isReplaceSpellsEnabled()) return doc;
+			if (!doc || doc.type !== 'feature' || rewrittenFeatureDocs.has(doc)) return doc;
+			const cfg = doc.system?.class ? CLASS_FEATURE_SPELL_REWRITES[doc.system.class] : null;
+			if (!cfg) return doc;
+			const rules = doc.system?.rules;
+			if (Array.isArray(rules)) {
+				const rewritten = rewriteFeatureSpellRules(rules, cfg);
+				if (rewritten) doc.updateSource({ 'system.rules': rewritten });
+			}
+			rewrittenFeatureDocs.add(doc);
+		} catch (error) {
+			console.error(`[${MODULE_ID}] fromUuid spell-rule rewrite failed`, error);
+		}
+		return doc;
+	};
+	wrapped.__blueCodexRewrapped = true;
+	globalThis.fromUuid = wrapped;
+}
+
 /**
  * The managed spell schools to hide from the grant index during the current
  * level-up, so the native "GRANTED SPELLS" preview doesn't list base-class
@@ -1186,21 +1329,37 @@ async function promptSchoolChoice(actor, policy) {
 }
 
 /**
- * Sync the actor's spell items to `finalSchools`: delete owned managed-school
- * spells not in the set, then grant every Codex spell of the chosen schools up to
- * the caster's unlocked tier that they don't already own. Idempotent.
+ * Sync the actor's spell items toward `finalSchools`: (optionally) drop spells of
+ * the schools this subclass no longer keeps, then grant every Codex spell of the
+ * chosen schools in the tier band `(fromTier, unlocked tier]` they don't own.
+ *
+ * Both halves are ONE-TIME transitions, never per-render enforcement, so the
+ * player keeps full manual control of their spellbook:
+ *   - `fromTier` is the exclusive lower bound — the highest tier already granted
+ *     for this school set. The initial school choice grants `(-1, maxTier]`, a
+ *     later level-up grants only the newly-unlocked tiers, and a plain re-render
+ *     grants nothing. Without it, a manually removed spell was re-added next render.
+ *   - `pruneDropped` is true ONLY when the schools are actually (re)chosen. On a
+ *     routine re-render it is false, so a spell the player deliberately added — from
+ *     ANY school, including one this subclass "dropped" — is left untouched. The
+ *     swap's school drop still happens once, at the moment of the choice.
  */
-async function applySpellSchools(actor, finalSchools, level) {
+async function applySpellSchools(actor, finalSchools, level, fromTier = -1, pruneDropped = false) {
 	const maxTier = maxSpellTierForLevel(level);
 	const spellItems = (actor.items ?? []).filter((item) => item.type === 'spell');
 
-	const toDelete = spellItems
-		.filter(
-			(item) =>
-				MANAGED_SPELL_SCHOOLS.has(item.system?.school) && !finalSchools.has(item.system?.school),
-		)
-		.map((item) => item.id);
-	if (toDelete.length) await actor.deleteEmbeddedDocuments('Item', toDelete);
+	let removed = 0;
+	if (pruneDropped) {
+		const toDelete = spellItems
+			.filter(
+				(item) =>
+					MANAGED_SPELL_SCHOOLS.has(item.system?.school) &&
+					!finalSchools.has(item.system?.school),
+			)
+			.map((item) => item.id);
+		if (toDelete.length) await actor.deleteEmbeddedDocuments('Item', toDelete);
+		removed = toDelete.length;
+	}
 
 	const bySchool = await loadCodexSpellsBySchool();
 	const ownedSources = new Set(
@@ -1209,6 +1368,14 @@ async function applySpellSchools(actor, finalSchools, level) {
 	const ownedNameSchool = new Set(
 		spellItems.map((item) => `${item.name}|${item.system?.school}`),
 	);
+	// A spell already learned via another path (e.g. the creation dialog's rewritten
+	// grantSpells rules) can carry a different compendiumSource/name casing; its stable
+	// `system.identifier` is the cross-path key that stops us re-creating a duplicate.
+	const ownedIdentifiers = new Set(
+		spellItems
+			.filter((item) => item.system?.identifier)
+			.map((item) => `${item.system.identifier}|${item.system?.school}`),
+	);
 
 	const toCreate = [];
 	const seen = new Set();
@@ -1216,12 +1383,13 @@ async function applySpellSchools(actor, finalSchools, level) {
 		const list = bySchool.get(school); // necrotic/official schools aren't in the Codex pack
 		if (!list) continue;
 		for (const { uuid, tier } of list) {
-			if (tier > maxTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
+			if (tier > maxTier || tier <= fromTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
 			seen.add(uuid);
 			// eslint-disable-next-line no-await-in-loop
 			const doc = await fromUuid(uuid);
 			if (!doc) continue;
 			if (ownedNameSchool.has(`${doc.name}|${doc.system?.school}`)) continue;
+			if (doc.system?.identifier && ownedIdentifiers.has(`${doc.system.identifier}|${doc.system?.school}`)) continue;
 			const obj = doc.toObject();
 			delete obj._id;
 			obj._stats = obj._stats ?? {};
@@ -1230,7 +1398,7 @@ async function applySpellSchools(actor, finalSchools, level) {
 		}
 	}
 	if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
-	return { removed: toDelete.length, granted: toCreate.length };
+	return { removed, granted: toCreate.length };
 }
 
 // Guard against the render-storm (our own create/delete re-triggers the hooks).
@@ -1256,20 +1424,49 @@ async function spellSchoolSync(actor) {
 	// document writes (which re-fire the sheet-render hook) can't re-enter.
 	spellSyncActive.add(actor.id);
 	try {
+		const maxTier = maxSpellTierForLevel(classInfo.classLevel);
 		let finalSchools;
+		// Exclusive lower bound of tiers to grant now: the highest tier already
+		// granted for this school set. This makes the grant one-time-per-tier so a
+		// manually removed spell is NOT re-added on the next render.
+		let fromTier;
+		// True only when the schools are actually (re)chosen — the one moment we
+		// apply the swap's school drop. False on routine renders / level-ups so the
+		// player's manual additions from any school survive.
+		let pruneDropped = false;
 		if (stored && stored.subclass === subclassId && Array.isArray(stored.schools)) {
 			finalSchools = new Set(stored.schools);
+			// Existing pick. `grantedTier` is the high-water mark. When it is absent
+			// the flag pre-dates this field: the previous back-fill-every-render
+			// behavior already granted every unlocked tier, so adopt the current tier
+			// as the mark WITHOUT re-granting (nothing new to grant this render, and
+			// deletions stick). When present, grant only the tiers a level-up has
+			// since unlocked, `(grantedTier, maxTier]`.
+			fromTier = typeof stored.grantedTier === 'number' ? stored.grantedTier : maxTier;
 		} else {
-			// New/changed subclass — offer the choice.
+			// New/changed subclass — offer the choice, grant every unlocked tier, and
+			// apply the school drop this once.
 			finalSchools = await promptSchoolChoice(actor, policy);
 			if (!finalSchools) return; // deferred
-			await actor.setFlag(MODULE_ID, 'spellSchools', {
-				subclass: subclassId,
-				schools: [...finalSchools],
-			});
+			fromTier = -1;
+			pruneDropped = true;
 		}
 
-		const { removed, granted } = await applySpellSchools(actor, finalSchools, classInfo.classLevel);
+		// Persist the school set + advanced high-water mark BEFORE granting so a
+		// re-entrant render (fired by our own writes) already sees the final state.
+		await actor.setFlag(MODULE_ID, 'spellSchools', {
+			subclass: subclassId,
+			schools: [...finalSchools],
+			grantedTier: Math.max(fromTier, maxTier),
+		});
+
+		const { removed, granted } = await applySpellSchools(
+			actor,
+			finalSchools,
+			classInfo.classLevel,
+			fromTier,
+			pruneDropped,
+		);
 		if (removed || granted) {
 			ui.notifications?.info(
 				`${actor.name}: spell schools updated (${granted} learned${
@@ -1282,11 +1479,187 @@ async function spellSchoolSync(actor) {
 	}
 }
 
-// Block the base class (or a manual add) from giving a swapped caster a spell of
-// a managed school they didn't choose — this is what stops an Invoker of Ether
-// from continuing to gain Book of Elements spells on every level-up. Runs as its
-// own hook because the official-spell filter above returns early for non-official
-// (i.e. Codex) spells, which we still need to gate here.
+// Grant every Codex spell of a single `school` in the tier band `(fromTier, maxTier]`
+// the actor doesn't already own. Same one-time-per-tier discipline as
+// applySpellSchools, so a manually removed spell isn't re-added and manual adds of
+// any school survive. Returns the count created.
+async function grantCodexSchoolSpells(actor, school, maxTier, fromTier) {
+	const bySchool = await loadCodexSpellsBySchool();
+	const list = bySchool.get(school);
+	if (!list || list.length === 0) return 0;
+
+	const spellItems = (actor.items ?? []).filter((item) => item.type === 'spell');
+	const ownedSources = new Set(
+		(actor.items ?? []).map((item) => item._stats?.compendiumSource).filter(Boolean),
+	);
+	const ownedNameSchool = new Set(spellItems.map((item) => `${item.name}|${item.system?.school}`));
+	// Cross-path duplicate guard: the creation/level-up dialog can grant this school's
+	// spells directly (its necrotic rules are rewritten to death/shadow), so match on
+	// the stable `system.identifier` too — a spell already present that way, even with a
+	// different compendiumSource, must never be re-created here.
+	const ownedIdentifiers = new Set(
+		spellItems
+			.filter((item) => item.system?.identifier)
+			.map((item) => `${item.system.identifier}|${item.system?.school}`),
+	);
+
+	const toCreate = [];
+	const seen = new Set();
+	for (const { uuid, tier } of list) {
+		if (tier > maxTier || tier <= fromTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
+		seen.add(uuid);
+		// eslint-disable-next-line no-await-in-loop
+		const doc = await fromUuid(uuid);
+		if (!doc) continue;
+		if (ownedNameSchool.has(`${doc.name}|${doc.system?.school}`)) continue;
+		if (doc.system?.identifier && ownedIdentifiers.has(`${doc.system.identifier}|${doc.system?.school}`)) continue;
+		const obj = doc.toObject();
+		delete obj._id;
+		obj._stats = obj._stats ?? {};
+		obj._stats.compendiumSource = doc.uuid;
+		toCreate.push(obj);
+	}
+	if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
+	return toCreate.length;
+}
+
+// Self-heal: collapse accidental duplicate Codex spells down to one copy. A spell is
+// a duplicate when another spell item on the actor shares its (non-empty)
+// `system.identifier` AND `system.school`. Conservative on purpose — it only ever
+// touches spell items, requires an exact identifier+school match, and always keeps
+// the first occurrence — so a legitimately distinct spell is never removed. Fully
+// guarded; returns the number deleted. Cleans characters already affected by the
+// earlier double-grant bug.
+async function pruneDuplicateCodexSpells(actor) {
+	try {
+		const spellItems = (actor.items ?? []).filter((item) => item.type === 'spell');
+		const kept = new Set();
+		const duplicateIds = [];
+		for (const item of spellItems) {
+			const identifier = item.system?.identifier;
+			const school = item.system?.school;
+			if (!identifier || !school) continue; // only exact identifier+school matches
+			const key = `${identifier}|${school}`;
+			if (kept.has(key)) duplicateIds.push(item.id);
+			else kept.add(key);
+		}
+		if (duplicateIds.length) await actor.deleteEmbeddedDocuments('Item', duplicateIds);
+		return duplicateIds.length;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] duplicate Codex-spell sweep failed`, error);
+		return 0;
+	}
+}
+
+// Guard against the render-storm (our own create/delete re-fires the hooks).
+const classRemapActive = new Set();
+
+// Re-home a base necrotic caster (Shadowmancer → shadow, Shepherd → death) onto its
+// Codex school. Idempotent and one-time-per-tier via a `classSchools` high-water
+// mark, exactly like the subclass swap, so a manually removed spell is not re-added
+// and a spell added from any school survives. The official necrotic spells the class
+// replaces are pruned ONCE (when the remap is first applied or the class changes);
+// future necrotic grants are already suppressed by the grant-index drop + the
+// preCreateItem block, so no continuous deletion is needed.
+async function classSpellRemapSync(actor) {
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !actor.isOwner) return;
+	if (!isReplaceSpellsEnabled()) return;
+	if (classRemapActive.has(actor.id)) return;
+
+	const classInfo = getPrimaryClass(actor);
+	if (!classInfo?.classId || classInfo.classLevel < 1) return;
+	const target = CLASS_SPELL_REMAP[classInfo.classId];
+	if (!target) return;
+
+	const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+	const stored = actor.getFlag(MODULE_ID, 'classSchools');
+	const isNew = !stored || stored.classId !== classInfo.classId;
+
+	classRemapActive.add(actor.id);
+	try {
+		// Self-heal characters already hit by the earlier double-grant: collapse any
+		// duplicate Codex spells (same identifier+school) to a single copy. Cheap,
+		// idempotent, guarded — safe to run on every sync.
+		await pruneDuplicateCodexSpells(actor);
+
+		// Adoption discipline (mirrors applySpellSchools' "absent high-water flag ⇒
+		// adopt current tier, don't re-grant"). At character creation the dialog grants
+		// this class's Codex school directly — its necrotic grantSpells rules are
+		// rewritten to death/shadow (see installFromUuidRewrite) — so the actor can own
+		// the target-school spells before this back-fill ever runs. When there is no
+		// high-water flag yet but the actor already owns spells of the target school,
+		// those grants happened elsewhere: adopt the current tier as the mark WITHOUT
+		// re-granting, or we would create a second copy of each. (An untouched existing
+		// character owns only official necrotic here — not the Codex school — so it
+		// still falls through to the one-time prune + grant below.)
+		const ownsTargetSchool = (actor.items ?? []).some(
+			(item) => item.type === 'spell' && item.system?.school === target,
+		);
+		if (isNew && ownsTargetSchool) {
+			// Still prune any official necrotic this class replaces that leaked through.
+			const necroticIds = (actor.items ?? [])
+				.filter((item) => item.type === 'spell' && item.system?.school === 'necrotic')
+				.map((item) => item.id);
+			if (necroticIds.length) await actor.deleteEmbeddedDocuments('Item', necroticIds);
+			await actor.setFlag(MODULE_ID, 'classSchools', {
+				classId: classInfo.classId,
+				grantedTier: maxTier,
+			});
+			return;
+		}
+
+		const fromTier = isNew
+			? -1
+			: typeof stored.grantedTier === 'number'
+				? stored.grantedTier
+				: maxTier;
+
+		// Already granted through the current tier and no class change → nothing to do
+		// (persist a missing grantedTier so an upgraded flag stops re-checking).
+		if (!isNew && fromTier >= maxTier) {
+			if (typeof stored.grantedTier !== 'number') {
+				await actor.setFlag(MODULE_ID, 'classSchools', {
+					classId: classInfo.classId,
+					grantedTier: maxTier,
+				});
+			}
+			return;
+		}
+
+		if (isNew) {
+			// One-time prune of the official necrotic spells this class replaces (e.g.
+			// a character that already leveled before this remap existed).
+			const necroticIds = (actor.items ?? [])
+				.filter((item) => item.type === 'spell' && item.system?.school === 'necrotic')
+				.map((item) => item.id);
+			if (necroticIds.length) await actor.deleteEmbeddedDocuments('Item', necroticIds);
+		}
+
+		// Persist the advanced high-water mark BEFORE granting so a re-entrant render
+		// (fired by our own writes) already sees the final state.
+		await actor.setFlag(MODULE_ID, 'classSchools', {
+			classId: classInfo.classId,
+			grantedTier: Math.max(fromTier, maxTier),
+		});
+
+		const granted = await grantCodexSchoolSpells(actor, target, maxTier, fromTier);
+		if (granted) {
+			ui.notifications?.info(
+				`${actor.name}: learned ${granted} ${SCHOOL_LABEL(target)} spell${granted > 1 ? 's' : ''}.`,
+			);
+		}
+	} finally {
+		classRemapActive.delete(actor.id);
+	}
+}
+
+// Suppress ONLY the automated base-class grant that fires during a swapped
+// caster's level-up — this is what stops an Invoker of Ether from re-gaining Book
+// of Elements spells every level-up. It is deliberately scoped to the leveling
+// character's own level-up (levelUpContext): outside a level-up this returns early,
+// so the player can freely add a spell of ANY school and ANY tier from the sheet
+// (drag-in, spell browser, etc.). Runs as its own hook because the official-spell
+// filter above returns early for non-official (i.e. Codex) spells.
 Hooks.on('preCreateItem', (item, data) => {
 	try {
 		if (!isReplaceSpellsEnabled()) return true;
@@ -1294,13 +1667,16 @@ Hooks.on('preCreateItem', (item, data) => {
 		const actor = item?.parent;
 		if (!(actor instanceof Actor) || actor.type !== 'character') return true;
 
+		// Manual adds happen outside any level-up dialog — let them all through.
+		if (levelUpContext?.actorId !== actor.id) return true;
+
 		const stored = actor.getFlag(MODULE_ID, 'spellSchools');
 		if (!stored || !Array.isArray(stored.schools)) return true;
 
 		const school = item?.system?.school ?? data?.system?.school;
 		if (school && MANAGED_SPELL_SCHOOLS.has(school) && !stored.schools.includes(school)) {
 			console.log(
-				`[${MODULE_ID}] Blocked ${school} spell "${item.name}" — not among this subclass's chosen schools (${stored.schools.join(', ')}).`,
+				`[${MODULE_ID}] Blocked ${school} spell "${item.name}" during level-up — not among this subclass's chosen schools (${stored.schools.join(', ')}).`,
 			);
 			return false;
 		}
@@ -1332,10 +1708,19 @@ function wrapTriggerLevelUp(actor) {
 		let carrierId = null;
 		try {
 			const classInfo = getPrimaryClass(this);
-			const subclassId = classInfo?.classId ? getActorSubclassId(this, classInfo.classId) : '';
-			levelUpContext = subclassId ? { actorId: this.id, subclassId } : null;
+			const classId = classInfo?.classId ?? '';
+			const subclassId = classId ? getActorSubclassId(this, classId) : '';
+			// Track the leveling character's subclass AND class. `classId` scopes the
+			// grant-index necrotic drop to a remapped class's own level-up; `subclassId`
+			// drives the swap machinery. Set whenever either applies.
+			levelUpContext =
+				subclassId || CLASS_SPELL_REMAP[classId]
+					? { actorId: this.id, subclassId, classId }
+					: null;
 			// Seed the native preview/grant with the chosen swapped schools (transient;
-			// removed in the finally so it never sticks on the sheet).
+			// removed in the finally so it never sticks on the sheet). Necrotic base
+			// casters (Shadowmancer/Shepherd) need no carrier: installFromUuidRewrite
+			// already rewrites their base feature rules to grant the Codex school.
 			carrierId = await createSwapGrantCarrier(this, subclassId);
 			return await originalTriggerLevelUp.apply(this, args);
 		} finally {
@@ -1353,6 +1738,871 @@ function wrapTriggerLevelUp(actor) {
 	levelUpWrapInstalled = true;
 }
 
+// ── Reusable on-hit automation ───────────────────────────────────────────────
+// A small, data-driven "when this item hits a target, do X" framework. Any item
+// (spell, weapon, feature) opts in with a flag:
+//
+//   flags.blue-codex-package.automation.onHit = [ { type: '<effect>' }, … ]
+//
+// Currently the only effect is `disadvantageNextAttack` (used by Vicious
+// Mockery): on a hit, the target's *next* attack rolls at disadvantage, then the
+// mark clears itself. Nimble has no rule/condition for this — attack advantage/
+// disadvantage is the `rollMode` passed into `item.activate` (negative =
+// disadvantage), which flows through the activation dialog into the DamageRoll's
+// primary die. So the mechanism is two halves:
+//   1. On a hit (the system's `useItem` hook), drop a tracking ActiveEffect on
+//      each hit target.
+//   2. Wrap `item.activate`: if the acting actor carries a mark and the item is
+//      an attack, decrement `rollMode` (pre-selecting disadvantage in the roll
+//      dialog) and, once the attack resolves, delete the mark.
+//
+// New on-hit effects can be added by extending ON_HIT_APPLIERS and the marker
+// bookkeeping — the flag schema and the useItem plumbing are already generic.
+const DISADVANTAGE_MARK_FLAG = 'disadvantageNextAttack';
+
+// Read an item's declared on-hit automations (always an array).
+function getItemOnHitAutomations(item) {
+	const automation =
+		item?.getFlag?.(MODULE_ID, 'automation') ?? item?.flags?.[MODULE_ID]?.automation;
+	const onHit = automation?.onHit;
+	return Array.isArray(onHit) ? onHit : [];
+}
+
+// True when the item makes a to-hit attack roll — a `damage` activation effect
+// that can miss. Auto-hit effects (canMiss:false) roll no d20, so disadvantage
+// is meaningless and such items neither trigger nor consume a mark.
+function isAttackItem(item) {
+	const effects = item?.system?.activation?.effects;
+	if (!Array.isArray(effects)) return false;
+	return effects.some((effect) => effect?.type === 'damage' && effect?.canMiss !== false);
+}
+
+// The disadvantage-on-next-attack marks currently on an actor.
+function getDisadvantageMarks(actor) {
+	const effects = actor?.effects ? [...actor.effects] : [];
+	return effects.filter((effect) => effect?.getFlag?.(MODULE_ID, DISADVANTAGE_MARK_FLAG) === true);
+}
+
+// Drop a tracking ActiveEffect that flags the target's next attack as
+// disadvantaged. Idempotent (one mark at a time — you can't be "more" than
+// disadvantaged on a single next attack). Requires permission to edit the
+// target actor; in single-GM play the acting client is the GM so this always
+// succeeds. In multiplayer, a player targeting an actor they don't own can't
+// create the effect — it degrades to the reminder note on the spell's chat card.
+async function applyDisadvantageNextAttack(targetActor, sourceItem) {
+	if (!targetActor) return;
+	if (getDisadvantageMarks(targetActor).length) return;
+	const effectData = {
+		name: sourceItem?.name ?? 'Disadvantage (Next Attack)',
+		img: sourceItem?.img ?? 'icons/svg/downgrade.svg',
+		description: '<p>Disadvantage on your next attack.</p>',
+		disabled: false,
+		transfer: false,
+		flags: {
+			[MODULE_ID]: {
+				[DISADVANTAGE_MARK_FLAG]: true,
+				sourceName: sourceItem?.name ?? '',
+			},
+		},
+	};
+	try {
+		await targetActor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+	} catch (error) {
+		console.warn(
+			`[${MODULE_ID}] Could not apply "disadvantage on next attack" to ${targetActor?.name}` +
+				' (insufficient permission?); relying on the chat-card reminder instead.',
+			error,
+		);
+	}
+}
+
+// Maps an on-hit automation type to the function that applies it to a target.
+const ON_HIT_APPLIERS = {
+	disadvantageNextAttack: applyDisadvantageNextAttack,
+};
+
+// `useItem` fires (on the acting client only) after an item's chat card is
+// created, with the aggregate hit/miss of its primary attack. For any item that
+// declares on-hit automations, apply each to every target the attack hit.
+async function onItemUsed(item, _chatCard, context) {
+	try {
+		await applyOnHitAutomations(item, context);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] on-hit automation failed`, error);
+	}
+	// Summon spells spawn their companion after the cast resolves; summoned
+	// healers spend a heal charge when their Cure resolves. Both are independent
+	// of the on-hit path and each degrade to a console.warn (single-GM play).
+	try {
+		await handleSummonSpawn(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] summon spawn failed`, error);
+	}
+	try {
+		await consumeSummonCharge(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] summon charge consumption failed`, error);
+	}
+}
+
+// Apply every declared on-hit automation to each target the primary attack hit.
+async function applyOnHitAutomations(item, context) {
+	const automations = getItemOnHitAutomations(item);
+	if (!automations.length) return;
+	// Only fire on a hit. `isMiss` is the primary attack's aggregate outcome
+	// (undefined for auto-hit items, which count as hits here).
+	if (context?.isMiss === true) return;
+	const targets = context?.targets ?? [];
+	for (const automation of automations) {
+		const apply = ON_HIT_APPLIERS[automation?.type];
+		if (!apply) continue;
+		for (const token of targets) {
+			const targetActor = token?.actor ?? token?.document?.actor;
+			if (targetActor) await apply(targetActor, item, automation);
+		}
+	}
+}
+
+// The wrapped body shared by every item document class's `activate`: if the
+// acting actor carries a disadvantage mark and this item is an attack, pre-apply
+// disadvantage (rollMode −1) and, once the attack resolves, clear the mark(s).
+async function runWrappedActivate(originalActivate, options = {}) {
+	// The macro path is not an attack roll; pass straight through.
+	if (options?.executeMacro) return originalActivate.call(this, options);
+	// Summon gating: for spells carrying a summon automation flag, decide whether
+	// the cast may proceed BEFORE the dialog/mana/chat-card. Blocking here means
+	// `originalActivate` never runs, so a recast-dismiss costs no mana (see the
+	// Summon automation section below).
+	try {
+		if (await summonActivationBlocked(this)) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] summon pre-activate gate failed`, error);
+	}
+	let marks = [];
+	try {
+		if (this?.actor && isAttackItem(this)) {
+			marks = getDisadvantageMarks(this.actor);
+			if (marks.length) options = { ...options, rollMode: (options.rollMode ?? 0) - 1 };
+		}
+	} catch (error) {
+		console.error(`[${MODULE_ID}] disadvantage pre-activate failed`, error);
+	}
+	// Tier-cap lift: a summon boost with `uncapsTierLimit` (Empowered Companion —
+	// "ignoring the typical spell tier restrictions") lets the upcast slider run
+	// to full mana. The system's SpellUpcastDialog reads the DERIVED in-memory
+	// value `actor.system.resources.highestUnlockedSpellTier` both at render and
+	// at submit validation, and `originalActivate` awaits the dialog's whole
+	// lifetime — so raising the value here and restoring it in `finally` brackets
+	// both reads. Real mana still bounds the slider's maxMana, so the player can
+	// never overspend actual mana; and if the system re-derives the value
+	// mid-dialog, submit validation just falls back to the real cap (fail-safe:
+	// dialog warns, the user retries).
+	let tierResources = null;
+	let priorTier = 0;
+	let hadOverride = false;
+	try {
+		const summon = getItemSummonAutomation(this);
+		if (summon && getSummonFeatureBoosts(summon, this?.actor).uncapTier) {
+			const resources = this?.actor?.system?.resources;
+			const current = resources?.highestUnlockedSpellTier;
+			// Only lift a real numeric cap that sits below Nimble's max tier (9).
+			if (resources && typeof current === 'number' && current < 9) {
+				tierResources = resources;
+				priorTier = current;
+				resources.highestUnlockedSpellTier = 9;
+				hadOverride = true;
+			}
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] summon tier-uncap pre-activate failed`, error);
+	}
+	try {
+		const result = await originalActivate.call(this, options);
+		// Consume the mark only if an attack actually resolved (dialog not cancelled).
+		if (marks.length && result) {
+			try {
+				await this.actor.deleteEmbeddedDocuments(
+					'ActiveEffect',
+					marks.map((mark) => mark.id).filter(Boolean),
+				);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not clear disadvantage mark`, error);
+			}
+		}
+		return result;
+	} finally {
+		// ALWAYS restore the exact prior tier cap, even when activate throws.
+		if (hadOverride) {
+			try {
+				tierResources.highestUnlockedSpellTier = priorTier;
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not restore spell tier cap`, error);
+			}
+		}
+	}
+}
+
+// Wrap `activate` on every distinct item document class prototype that defines
+// its own. `NimbleSpellItem` reimplements activate (it only calls super in the
+// macro path), so wrapping `NimbleBaseItem` alone would miss attack spells —
+// hence iterating the per-type classes. Idempotent per prototype.
+let onHitAutomationInstalled = false;
+function installOnHitAutomation() {
+	if (onHitAutomationInstalled) return;
+
+	Hooks.on(`${game.system?.id ?? 'nimble'}.useItem`, onItemUsed);
+
+	const classes = CONFIG?.NIMBLE?.Item?.documentClasses;
+	if (classes) {
+		const seen = new Set();
+		for (const cls of Object.values(classes)) {
+			const proto = cls?.prototype;
+			if (!proto || seen.has(proto)) continue;
+			seen.add(proto);
+			if (!Object.prototype.hasOwnProperty.call(proto, 'activate')) continue;
+			// Own-property check: a subclass (e.g. NimbleSpellItem, which reimplements
+			// activate) inherits the base prototype's `__blueCodexActivateWrapped`
+			// flag, so an inherited-value guard would wrongly skip wrapping its own
+			// activate. Only skip a prototype we have already wrapped directly.
+			if (typeof proto.activate !== 'function') continue;
+			if (Object.prototype.hasOwnProperty.call(proto, '__blueCodexActivateWrapped')) continue;
+			const originalActivate = proto.activate;
+			proto.activate = async function blueCodexActivate(options = {}) {
+				return runWrappedActivate.call(this, originalActivate, options);
+			};
+			proto.__blueCodexActivateWrapped = true;
+		}
+	} else {
+		console.warn(`[${MODULE_ID}] CONFIG.NIMBLE.Item.documentClasses missing; on-hit attack-roll automation not installed.`);
+	}
+
+	onHitAutomationInstalled = true;
+}
+
+// ── Summon automation ────────────────────────────────────────────────────────
+// A data-driven "casting this spell spawns/dismisses a companion token" layer,
+// riding the same `useItem` hook and `activate` wrap as the on-hit section. A
+// spell opts in with a flag:
+//
+//   flags.blue-codex-package.automation.summon = {
+//     template, combatOnly?, expireOnCombatEnd?, maxCount?, unique?,
+//     recastDismisses?, chargesFromMana?, upcastDieStep?: { baseFaces, maxFaces }
+//   }
+//
+// Two spells use it today:
+//   • summon-shadow → many shadow-minion tokens, capped at min(INT, level), only
+//     during combat, cleaned up when combat ends.
+//   • summon-lifebinding-spirit → one unique spirit; recasting dismisses it (no
+//     mana); its heal die scales with upcast; its Cure carries a pool of heal
+//     charges (= mana spent) that dismiss the spirit when exhausted.
+//
+// The companions themselves are world actors imported once from the
+// `blue-codex-package.blue-codex-companions` pack, tagged with an actor flag
+// `flags.blue-codex-package.companionTemplate === '<template>'`. Each spawned
+// token records its provenance on `flags.blue-codex-package.summon`; unique
+// templates are also tracked on the caster under
+// `flags.blue-codex-package.summons.<template>`. All spawning/patching degrades
+// to console.warn — single-GM play, same assumption as the on-hit section.
+const COMPANION_PACK = `${MODULE_ID}.blue-codex-companions`;
+const COMPANION_TEMPLATE_FLAG = 'companionTemplate';
+const SUMMON_FLAG = 'summon'; // token flag: provenance of a spawned companion
+const SUMMONS_TRACK_FLAG = 'summons'; // caster-actor flag namespace for unique summons
+
+// Read a spell's declared summon automation (or null).
+function getItemSummonAutomation(item) {
+	const automation =
+		item?.getFlag?.(MODULE_ID, 'automation') ?? item?.flags?.[MODULE_ID]?.automation;
+	const summon = automation?.summon;
+	return summon && typeof summon === 'object' ? summon : null;
+}
+
+// Read the raw summon provenance flag off a token document.
+function getTokenSummonFlag(tokenDoc) {
+	return tokenDoc?.getFlag?.(MODULE_ID, SUMMON_FLAG) ?? tokenDoc?.flags?.[MODULE_ID]?.[SUMMON_FLAG] ?? null;
+}
+
+// Total character level = one entry per level in classData.levels (matches the
+// system's own `_prepareLevelData`).
+function getCharacterLevel(actor) {
+	const levels = actor?.system?.classData?.levels;
+	return Array.isArray(levels) ? levels.length : 0;
+}
+
+function getAbilityMod(actor, ability) {
+	return Number(actor?.system?.abilities?.[ability]?.mod ?? 0);
+}
+
+// Die-size steps walk the standard ladder (upcast "+1 die step" semantics), so
+// a d12 steps straight to a d20 — never a nonstandard d14/16/18.
+const SUMMON_DIE_LADDER = [4, 6, 8, 10, 12, 20];
+
+// Step `baseFaces` up the standard die ladder by `steps`, then clamp DOWN to the
+// largest ladder value <= `maxFaces` (a d12 cap yields d6/d8/d10/d12; a d20 cap
+// yields d6→d8→d10→d12→d20). If baseFaces isn't a standard die, fall back to the
+// old +2-faces arithmetic as a safety net.
+function stepSummonDie(baseFaces, steps, maxFaces) {
+	const start = SUMMON_DIE_LADDER.indexOf(baseFaces);
+	if (start === -1) return Math.min(maxFaces, baseFaces + 2 * steps);
+	const stepped = SUMMON_DIE_LADDER[Math.min(start + steps, SUMMON_DIE_LADDER.length - 1)];
+	// Largest standard die that fits under the cap (fall back to baseFaces should
+	// the cap somehow sit below every ladder entry).
+	let cap = baseFaces;
+	for (const faces of SUMMON_DIE_LADDER) {
+		if (faces <= maxFaces) cap = faces;
+	}
+	return Math.min(stepped, cap);
+}
+
+// A summon flag may declare featureBoosts: bonuses granted when the caster owns
+// a specific feature (e.g. the Shepherd Sacred Grace "Empowered Companion":
+// +1 effective mana ignoring tier restrictions, die cap raised to d20). Each
+// entry applies AT MOST ONCE — the grace cannot be owned more than once, and a
+// duplicated item still counts a single time. Returns an aggregate
+// { bonusMana, maxFacesOverride, uncapTier } (0 / null / false when the caster
+// owns none).
+function getSummonFeatureBoosts(summon, actor) {
+	const result = { bonusMana: 0, maxFacesOverride: null, uncapTier: false };
+	const boosts = summon?.featureBoosts;
+	if (!Array.isArray(boosts) || !(actor instanceof Actor)) return result;
+
+	// Snapshot the caster's feature items once for cheap identifier/name matching.
+	const features = [];
+	for (const it of actor.items ?? []) {
+		if (it?.type === 'feature') features.push(it);
+	}
+
+	for (const entry of boosts) {
+		if (!entry || typeof entry !== 'object') continue;
+		// The owned item's identifier is often EMPTY in the core pack, so match on
+		// identifier OR exact (case-sensitive) name — either counts the entry once.
+		const owned = features.some(
+			(it) =>
+				(entry.feature && it.system?.identifier === entry.feature) ||
+				(entry.name && it.name === entry.name),
+		);
+		if (!owned) continue;
+		result.bonusMana += Number(entry.bonusMana) || 0;
+		const faces = Number(entry.maxFaces) || 0;
+		if (faces > (result.maxFacesOverride ?? 0)) result.maxFacesOverride = faces;
+		if (entry.uncapsTierLimit === true) result.uncapTier = true;
+	}
+	return result;
+}
+
+// Every live token, across all scenes, that this caster summoned of `template`.
+// Iterating scene.tokens (never getDocuments) keeps this cheap and never stalls.
+// Uses the caster's UUID rather than the (possibly stale) caster tracking flag,
+// so a tracking flag pointing at a deleted token never produces a phantom.
+function findLiveSummons(casterActor, template) {
+	const out = [];
+	const casterUuid = casterActor?.uuid;
+	if (!casterUuid) return out;
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			const flag = getTokenSummonFlag(token);
+			if (!flag || flag.template !== template) continue;
+			if (flag.summonerActorUuid !== casterUuid) continue;
+			out.push(token);
+		}
+	}
+	return out;
+}
+
+// Resolve the caster Actor recorded on a summoned token's flag.
+function resolveSummonerFromToken(tokenDoc) {
+	const uuid = getTokenSummonFlag(tokenDoc)?.summonerActorUuid;
+	if (!uuid) return null;
+	try {
+		const doc = fromUuidSync?.(uuid);
+		if (doc instanceof Actor) return doc;
+		return doc?.actor instanceof Actor ? doc.actor : null;
+	} catch {
+		return null;
+	}
+}
+
+// Post a brief summon chat card. `content` is trusted HTML (callers escape any
+// interpolated names); `flavor` is a plain string.
+function postSummonChat(actor, content, flavor) {
+	try {
+		const data = { content };
+		if (actor) data.speaker = ChatMessage.getSpeaker({ actor });
+		if (flavor) data.flavor = `<strong>${escapeHtml(flavor)}</strong>`;
+		ChatMessage.create(data);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post summon chat card`, error);
+	}
+}
+
+// Import (once) or find the world actor backing a companion template.
+async function resolveCompanionBaseActor(template) {
+	const existing = game.actors?.find?.(
+		(a) =>
+			(a.getFlag?.(MODULE_ID, COMPANION_TEMPLATE_FLAG) ??
+				a.flags?.[MODULE_ID]?.[COMPANION_TEMPLATE_FLAG]) === template,
+	);
+	if (existing) return existing;
+
+	const pack = game.packs?.get?.(COMPANION_PACK);
+	if (!pack) return null;
+
+	// Index-only lookup, then a single getDocument — never getDocuments (stalls).
+	const index = await pack.getIndex({ fields: [`flags.${MODULE_ID}.${COMPANION_TEMPLATE_FLAG}`] });
+	const entry = index.find(
+		(e) => foundry.utils.getProperty(e, `flags.${MODULE_ID}.${COMPANION_TEMPLATE_FLAG}`) === template,
+	);
+	if (!entry) return null;
+
+	const source = await pack.getDocument(entry._id);
+	if (!source) return null;
+
+	return Actor.implementation.create(source.toObject(), { keepId: false });
+}
+
+// Adjacent to the caster's token, else the scene centre.
+function computeSummonSpawnPosition(actor, scene) {
+	const ownToken = actor?.getActiveTokens?.(true, true)?.[0];
+	const grid = scene?.grid?.size ?? 100;
+	if (ownToken) return { x: ownToken.x + grid, y: ownToken.y };
+	return {
+		x: Math.round((scene?.dimensions?.sceneWidth ?? scene?.width ?? 4000) / 2),
+		y: Math.round((scene?.dimensions?.sceneHeight ?? scene?.height ?? 4000) / 2),
+	};
+}
+
+// Shared teardown for a single summoned token: delete it, clear the caster's
+// matching unique-tracking flag, and (optionally) narrate why. Fully null-safe.
+async function dismissSummon(tokenDoc, { reason, summonerActor, template } = {}) {
+	try {
+		const flag = getTokenSummonFlag(tokenDoc);
+		const tmpl = template ?? flag?.template;
+		const caster = summonerActor ?? resolveSummonerFromToken(tokenDoc);
+		const tokenId = tokenDoc?.id;
+
+		if (tokenDoc) {
+			try {
+				await tokenDoc.delete();
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not delete summoned token`, error);
+			}
+		}
+		if (caster && tmpl) {
+			try {
+				const tracked = caster.getFlag?.(MODULE_ID, `${SUMMONS_TRACK_FLAG}.${tmpl}`);
+				// Only clear the tracking flag if it points at the token we removed
+				// (or we have no id to compare) — never clobber a newer summon.
+				if (!tracked || !tokenId || tracked.tokenId === tokenId) {
+					await caster.unsetFlag(MODULE_ID, `${SUMMONS_TRACK_FLAG}.${tmpl}`);
+				}
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not clear summon tracking flag`, error);
+			}
+		}
+		if (reason) postSummonChat(caster ?? null, reason);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] dismissSummon failed`, error);
+	}
+}
+
+// Pre-activate gate (A): returns true when the cast must be BLOCKED. Runs inside
+// the activate wrap, before any dialog/mana/chat card.
+async function summonActivationBlocked(item) {
+	const summon = getItemSummonAutomation(item);
+	if (!summon) return false;
+	const actor = item?.actor;
+	if (!(actor instanceof Actor)) return false;
+
+	// 1. combat-only spells cannot be cast outside combat.
+	if (summon.combatOnly && !game.combat?.started) {
+		ui.notifications?.warn(`${item.name} can only be cast during combat.`);
+		return true;
+	}
+
+	// 3. recast dismisses: if a live summon of this template exists, remove it
+	// (no mana, since originalActivate never runs) and block. With no live
+	// summon, fall through and let the cast proceed normally.
+	if (summon.recastDismisses) {
+		const live = findLiveSummons(actor, summon.template);
+		if (live.length) {
+			await dismissSummon(live[0], {
+				summonerActor: actor,
+				template: summon.template,
+				reason: `<p><strong>${escapeHtml(live[0].name ?? 'Lifebinding Spirit')}</strong> dismissed.</p>`,
+			});
+			// Sweep any strays (shouldn't happen for a unique summon, but stay safe).
+			for (let i = 1; i < live.length; i += 1) {
+				await dismissSummon(live[i], { summonerActor: actor, template: summon.template });
+			}
+			return true;
+		}
+	}
+
+	// 2. maxCount cap = min(INT mod, character level), floored at 0.
+	if (summon.maxCount === 'minIntOrLevel') {
+		const cap = Math.max(0, Math.min(getAbilityMod(actor, 'intelligence'), getCharacterLevel(actor)));
+		if (cap <= 0) {
+			ui.notifications?.warn(`${actor.name} cannot summon any shadow minions right now.`);
+			return true;
+		}
+		const count = findLiveSummons(actor, summon.template).length;
+		if (count >= cap) {
+			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} shadow minion${cap === 1 ? '' : 's'}.`);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Post-cast spawn (B): fires from `useItem` after the summon spell resolves.
+async function handleSummonSpawn(item, context) {
+	const summon = getItemSummonAutomation(item);
+	if (!summon) return;
+	const caster = item?.actor;
+	if (!(caster instanceof Actor)) return;
+
+	const scene = canvas?.scene;
+	if (!scene) {
+		console.warn(`[${MODULE_ID}] No active scene to summon "${summon.template}" onto.`);
+		return;
+	}
+
+	const baseActor = await resolveCompanionBaseActor(summon.template);
+	if (!baseActor) {
+		console.warn(`[${MODULE_ID}] Could not resolve companion template "${summon.template}".`);
+		return;
+	}
+
+	const casterToken = caster.getActiveTokens?.(true, true)?.[0] ?? null;
+	const { x, y } = computeSummonSpawnPosition(caster, scene);
+
+	// Mana actually spent = upcast amount, else the base tier cost.
+	const manaSpent = Number(context?.upcast?.manaSpent ?? item?.system?.tier ?? 0) || 0;
+	// Owned-feature bonuses (e.g. "Empowered Companion"). The REAL mana deduction
+	// stays whatever the system already took; effectiveMana is a virtual total the
+	// summon's charges and die scaling treat as if that much mana were spent.
+	const boosts = getSummonFeatureBoosts(summon, caster);
+	const effectiveMana = manaSpent + boosts.bonusMana;
+
+	const tokenFlag = {
+		template: summon.template,
+		summonerActorUuid: caster.uuid,
+		summonerTokenId: casterToken?.id ?? null,
+	};
+	if (summon.expireOnCombatEnd) tokenFlag.combatId = game.combat?.id ?? null;
+	if (summon.chargesFromMana) tokenFlag.charges = effectiveMana;
+
+	const tokenSrc = baseActor.prototypeToken.toObject();
+	const tokenData = foundry.utils.mergeObject(
+		tokenSrc,
+		{
+			name: baseActor.name,
+			x,
+			y,
+			actorId: baseActor.id,
+			actorLink: false,
+			disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY,
+			flags: { [MODULE_ID]: { [SUMMON_FLAG]: tokenFlag } },
+		},
+		{ inplace: false },
+	);
+	delete tokenData._id;
+
+	const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+	if (!created) {
+		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" token.`);
+		return;
+	}
+
+	// Track unique summons on the caster so future casts can find/dismiss them.
+	if (summon.unique) {
+		try {
+			await caster.setFlag(MODULE_ID, `${SUMMONS_TRACK_FLAG}.${summon.template}`, {
+				tokenId: created.id,
+				sceneId: scene.id,
+			});
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not record unique summon tracking`, error);
+		}
+	}
+
+	// Lifebinding Spirit: scale its die by upcast and bake in the caster's WIL.
+	if (summon.upcastDieStep && typeof summon.upcastDieStep === 'object') {
+		const baseFaces = Number(summon.upcastDieStep.baseFaces) || 6;
+		const flagMax = Number(summon.upcastDieStep.maxFaces) || baseFaces;
+		// A feature boost can raise the die cap (e.g. "Empowered Companion" → d20)
+		// and add virtual mana steps. The higher of the flag cap / boost cap wins.
+		const maxFaces = Math.max(flagMax, boosts.maxFacesOverride ?? 0);
+		const steps = Math.max(0, Number(context?.upcast?.upcastSteps) || 0) + boosts.bonusMana;
+		const faces = stepSummonDie(baseFaces, steps, maxFaces);
+		await patchLifebindingSpiritFormulas(created, faces, getAbilityMod(caster, 'will'));
+	}
+
+	// School-gated bonus commands: keep only the spirit's commands whose required
+	// spell school the caster knows (deletes the rest from the spawned token).
+	let schoolGrant = { gated: false, granted: [] };
+	try {
+		schoolGrant = await applySchoolGatedAbilities(created, caster);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] school-gated ability filtering failed`, error);
+	}
+
+	// Summon chat card (with charge count for the spirit).
+	let content = `<p>${escapeHtml(caster.name)} summons <strong>${escapeHtml(created.name ?? summon.template)}</strong>.</p>`;
+	if (summon.chargesFromMana) {
+		content += `<p>Heal charges remaining: <strong>${effectiveMana}</strong>.</p>`;
+	}
+	if (schoolGrant.gated) {
+		const names = schoolGrant.granted.length
+			? schoolGrant.granted.map(escapeHtml).join(', ')
+			: 'none';
+		content += `<p>School abilities: <strong>${names}</strong>.</p>`;
+	}
+	postSummonChat(caster, content, item?.name);
+}
+
+// Every embedded item on `actorLike` as a plain array, spanning both the live
+// client (Foundry Collection → `.contents`) and the test harness (a plain array
+// with a `getName` helper). Never triggers a getDocuments load.
+function listEmbeddedItems(actorLike) {
+	const items = actorLike?.items;
+	if (!items) return [];
+	if (Array.isArray(items.contents)) return items.contents;
+	if (Array.isArray(items)) return items;
+	try {
+		return Array.from(items);
+	} catch {
+		return [];
+	}
+}
+
+// Read a companion-item automation config (works for real Item docs via getFlag
+// and for the plain-object items the harness/synthetic actors expose).
+function getItemAutomationFlag(item, key) {
+	const automation =
+		item?.getFlag?.(MODULE_ID, 'automation') ??
+		foundry.utils.getProperty(item, `flags.${MODULE_ID}.automation`);
+	return automation ? automation[key] : undefined;
+}
+
+// Rewrite the summoned companion's roll formulas on the unlinked token's
+// synthetic actor. Data-driven: every embedded item carrying a
+// `automation.summonFormula` flag has its damage/healing node rewritten. Patched
+// after creation (not via the create payload) to avoid fragile array-merge
+// semantics — matches the nim-plus spirit.
+//
+//   summonFormula = { count?: 1, baseFaces, addWil?: bool, scalesWithUpcast?: bool }
+//
+// `scalesWithUpcast` items (Attack/Cure) use `steppedFaces` (the upcast die
+// step); the rest (school-command abilities like Reap 3d4+WIL) use their own
+// `baseFaces` unchanged. `addWil` bakes in the caster's WIL modifier with the
+// exact "+ <wil>" rendering (WIL 0 → "+ 0", negatives → "+ -1").
+async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod) {
+	try {
+		const synth = tokenDoc?.actor;
+		if (!synth) return;
+		const updates = [];
+		for (const item of listEmbeddedItems(synth)) {
+			const cfg = getItemAutomationFlag(item, 'summonFormula');
+			if (!cfg || typeof cfg !== 'object') continue;
+			const count = Number(cfg.count) || 1;
+			const faces = cfg.scalesWithUpcast ? steppedFaces : (Number(cfg.baseFaces) || 6);
+			let formula = `${count}d${faces}`;
+			if (cfg.addWil) formula += ` + ${wilMod}`;
+
+			const effects = foundry.utils.deepClone(item.system?.activation?.effects ?? []);
+			const node = effects.find((e) => e?.type === 'damage' || e?.type === 'healing');
+			if (!node) continue;
+			node.formula = formula;
+			updates.push({ _id: item.id ?? item._id, system: { activation: { effects } } });
+		}
+		if (updates.length) await synth.updateEmbeddedDocuments('Item', updates);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not patch Lifebinding Spirit formulas`, error);
+	}
+}
+
+// The set of spell schools a caster knows: distinct `system.school` over the
+// caster's owned spell-type items. Iterates the actor's item list (never
+// getDocuments) so it is cheap in the live client.
+function getKnownSpellSchools(actor) {
+	const schools = new Set();
+	if (!(actor instanceof Actor)) return schools;
+	for (const item of listEmbeddedItems(actor)) {
+		if (item?.type !== 'spell') continue;
+		const school = item.system?.school;
+		if (typeof school === 'string' && school) schools.add(school);
+	}
+	return schools;
+}
+
+// School-gated bonus commands (Lifebinding Spirit): the full companion template
+// carries one command per spell school; at summon time we DELETE every embedded
+// item whose `automation.requiresSchool` the caster does NOT know, leaving only
+// the granted commands. The compendium/world actor keeps the full set for
+// browsing. Returns { gated, granted: [names] } for the chat card.
+async function applySchoolGatedAbilities(tokenDoc, caster) {
+	const synth = tokenDoc?.actor;
+	if (!synth) return { gated: false, granted: [] };
+
+	const gatedItems = [];
+	for (const item of listEmbeddedItems(synth)) {
+		const req = getItemAutomationFlag(item, 'requiresSchool');
+		if (typeof req === 'string' && req) gatedItems.push({ item, req });
+	}
+	if (!gatedItems.length) return { gated: false, granted: [] };
+
+	const known = getKnownSpellSchools(caster);
+	const granted = [];
+	const toDelete = [];
+	for (const { item, req } of gatedItems) {
+		if (known.has(req)) granted.push(item.name);
+		else toDelete.push(item.id ?? item._id);
+	}
+	if (toDelete.length) {
+		try {
+			await synth.deleteEmbeddedDocuments('Item', toDelete.filter(Boolean));
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not remove unknown-school spirit abilities`, error);
+		}
+	}
+	return { gated: true, granted };
+}
+
+// Heal-charge consumption (D): a summoned healer's Cure item carries
+// `automation.consumesSummonCharge`. Each use decrements the token's charge
+// pool; at zero the spirit fades.
+async function consumeSummonCharge(item, _context) {
+	const automation =
+		item?.getFlag?.(MODULE_ID, 'automation') ?? item?.flags?.[MODULE_ID]?.automation;
+	if (automation?.consumesSummonCharge !== true) return;
+
+	// An unlinked token actor exposes its TokenDocument via actor.token
+	// (actor.isToken is true). Linked/world actors have no charge pool.
+	const actor = item?.actor;
+	if (!actor?.isToken) return;
+	const tokenDoc = actor.token;
+	if (!tokenDoc) return;
+
+	const flag = getTokenSummonFlag(tokenDoc);
+	if (!flag || typeof flag.charges !== 'number') return;
+
+	const remaining = flag.charges - 1;
+	if (remaining > 0) {
+		try {
+			await tokenDoc.setFlag(MODULE_ID, `${SUMMON_FLAG}.charges`, remaining);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not decrement summon heal charges`, error);
+		}
+		postSummonChat(
+			actor,
+			`<p>Lifebinding Spirit: <strong>${remaining}</strong> heal charge${remaining === 1 ? '' : 's'} remaining.</p>`,
+		);
+	} else {
+		await dismissSummon(tokenDoc, {
+			summonerActor: resolveSummonerFromToken(tokenDoc),
+			template: flag.template,
+			reason: '<p><em>Its power expended, the Lifebinding Spirit fades.</em></p>',
+		});
+	}
+}
+
+// Combat-end cleanup (C): remove every token whose summon flag names the combat
+// that just ended. Only one client acts (prefer the active GM).
+async function cleanupCombatSummons(combat) {
+	const combatId = combat?.id;
+	if (!combatId) return;
+
+	const hits = [];
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			if (getTokenSummonFlag(token)?.combatId === combatId) hits.push({ scene, token });
+		}
+	}
+	if (!hits.length) return;
+
+	// Clear any unique-tracking flags pointing at the doomed tokens.
+	for (const { token } of hits) {
+		const caster = resolveSummonerFromToken(token);
+		const tmpl = getTokenSummonFlag(token)?.template;
+		if (!caster || !tmpl) continue;
+		try {
+			const tracked = caster.getFlag?.(MODULE_ID, `${SUMMONS_TRACK_FLAG}.${tmpl}`);
+			if (tracked?.tokenId === token.id) {
+				await caster.unsetFlag(MODULE_ID, `${SUMMONS_TRACK_FLAG}.${tmpl}`);
+			}
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not clear summon tracking on combat end`, error);
+		}
+	}
+
+	// Batch-delete per scene.
+	const byScene = new Map();
+	for (const { scene, token } of hits) {
+		if (!byScene.has(scene)) byScene.set(scene, []);
+		byScene.get(scene).push(token.id);
+	}
+	for (const [scene, ids] of byScene) {
+		try {
+			await scene.deleteEmbeddedDocuments('Token', ids);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not delete combat-expired summons`, error);
+		}
+	}
+
+	postSummonChat(null, '<p><em>The shadow minions dissolve as combat ends.</em></p>');
+}
+
+function onDeleteCombat(combat) {
+	try {
+		// Only one client should perform the deletions. Prefer the designated
+		// active GM; fall back to any GM if that API is unavailable.
+		const shouldAct = game.users?.activeGM ? game.users.activeGM.isSelf : game.user?.isGM;
+		if (!shouldAct) return;
+		void cleanupCombatSummons(combat);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] combat-end summon cleanup failed`, error);
+	}
+}
+
+// Safe Rest (E): dismiss every lifebinding-spirit summon (all casters). Fires on
+// the resting client; no active-GM guard (that client owns/deletes the tokens).
+async function dismissAllLifebindingSpirits() {
+	const tokens = [];
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			if (getTokenSummonFlag(token)?.template === 'lifebinding-spirit') tokens.push(token);
+		}
+	}
+	if (!tokens.length) return;
+	for (const token of tokens) {
+		await dismissSummon(token, {
+			summonerActor: resolveSummonerFromToken(token),
+			template: 'lifebinding-spirit',
+		});
+	}
+	postSummonChat(null, '<p><em>The Lifebinding Spirits fade as the party takes a Safe Rest.</em></p>');
+}
+
+function onSummonRest(payload) {
+	if (payload?.restType !== 'safe') return;
+	dismissAllLifebindingSpirits().catch((error) =>
+		console.warn(`[${MODULE_ID}] Safe Rest summon dismiss failed`, error),
+	);
+}
+
+// Register the combat-end + rest hooks. The `useItem` hook (spawn + charge
+// consumption) and the `activate` wrap (pre-activate gate) are already installed
+// by installOnHitAutomation, so this only adds what that section doesn't.
+// Idempotent, mirroring `onHitAutomationInstalled`.
+let summonAutomationInstalled = false;
+function installSummonAutomation() {
+	if (summonAutomationInstalled) return;
+	Hooks.on('deleteCombat', onDeleteCombat);
+	Hooks.on(`${game.system?.id ?? 'nimble'}.rest`, onSummonRest);
+	summonAutomationInstalled = true;
+}
+
 // Combined handler: first back-fill any missing auto-grants (forms), then sync
 // subclass spell schools, then offer any owed subclass-pool choices.
 async function handleActorFeatures(actor) {
@@ -1366,6 +2616,13 @@ async function handleActorFeatures(actor) {
 		await backfillAutoGrants(actor);
 	} catch (error) {
 		console.error(`[${MODULE_ID}] auto-grant back-fill failed`, error);
+	}
+	try {
+		// Runs before the subclass swap so a Shepherd already owns its death spells
+		// (not necrotic) by the time a Luminary's school choice reads its schools.
+		await classSpellRemapSync(actor);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] class spell-school remap failed`, error);
 	}
 	try {
 		await spellSchoolSync(actor);

@@ -450,6 +450,10 @@
 			}
 		}
 	},
+	"companions": {
+		"lifebinding-spirit": "ldRzN9jHtyI7abGa",
+		"shadow-minion": "2nK0HW5EGGDAJISw"
+	},
 	"spells": {
 		"elements": {
 			"earth": {
@@ -521,6 +525,7 @@
 				"razor-wind": "WctXBT1o0McxAfGv",
 				"thousand-cuts": "0zJxdnCyxICltUgP",
 				"updraft": "DEMPotDSYhkZBNKZ",
+				"vicious-mockery": "l6xoz06l21mxFKhf",
 				"wind-barrier": "CNJgCSahi89bfI6a",
 				"wind-magick": "dbOCTjQ0CZBUQF2L"
 			}

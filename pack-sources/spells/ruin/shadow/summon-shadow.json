@@ -55,7 +55,18 @@
 		]
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"summon": {
+					"template": "shadow-minion",
+					"combatOnly": true,
+					"expireOnCombatEnd": true,
+					"maxCount": "minIntOrLevel"
+				}
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",

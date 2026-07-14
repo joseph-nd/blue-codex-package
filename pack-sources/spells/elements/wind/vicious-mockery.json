@@ -1,0 +1,134 @@
+{
+	"name": "Vicious Mockery",
+	"type": "spell",
+	"img": "modules/blue-codex-package/assets/spells/elements/wind/vicious-mockery.webp",
+	"system": {
+		"macro": "",
+		"identifier": "vicious-mockery",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "viciousMockeryDamage1",
+					"type": "damage",
+					"damageType": "psychic",
+					"formula": "1d4 + @key + floor(@level / 5) * 4",
+					"parentContext": null,
+					"parentNode": null,
+					"ignoreArmor": true,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "viciousMockeryHit1",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "viciousMockeryDamage1"
+							},
+							{
+								"id": "viciousMockeryHitNote1",
+								"type": "note",
+								"noteType": "reminder",
+								"text": "Target has disadvantage on their next attack.",
+								"parentContext": "hit",
+								"parentNode": "viciousMockeryDamage1"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "viciousMockeryDamage1Crit",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "viciousMockeryDamage1"
+							}
+						],
+						"miss": [
+							{
+								"id": "viciousMockeryDamage1Miss",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "viciousMockeryDamage1"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "range",
+				"distance": 12
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 12.</strong></p><p><strong>Damage:</strong> 1d4 + KEY Psychic. Ignores armor. On a hit, the target has disadvantage on their next attack.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +4 damage every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			]
+		},
+		"school": "wind",
+		"tier": 0,
+		"classes": [
+			"songweaver"
+		]
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"onHit": [
+					{
+						"type": "disadvantageNextAttack"
+					}
+				]
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "40c5420206f0ca7a",
+	"_id": "l6xoz06l21mxFKhf"
+}

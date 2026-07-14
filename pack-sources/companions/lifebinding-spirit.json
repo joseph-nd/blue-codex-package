@@ -1,0 +1,789 @@
+{
+	"name": "Lifebinding Spirit",
+	"type": "npc",
+	"img": "modules/blue-codex-package/assets/companions/lifebinding-spirit.webp",
+	"system": {
+		"attributes": {
+			"armor": "none",
+			"damageResistances": [],
+			"damageVulnerabilities": [],
+			"damageImmunities": [
+				"acid",
+				"bludgeoning",
+				"cold",
+				"fire",
+				"force",
+				"lightning",
+				"necrotic",
+				"piercing",
+				"poison",
+				"psychic",
+				"radiant",
+				"slashing",
+				"thunder"
+			],
+			"hp": {
+				"max": 1,
+				"temp": 0,
+				"value": 1
+			},
+			"sizeCategory": "medium",
+			"movement": {
+				"burrow": 0,
+				"climb": 0,
+				"fly": 0,
+				"swim": 0,
+				"walk": 6
+			}
+		},
+		"description": "<p><em>An Ethereal spirit companion summoned by Summon Lifebinding Spirit.</em></p><p>It moves when you do and is immune to harm. It lasts until you cast this spell again, take a Safe Rest, or its ability uses (not including Attack) are expended. Outside combat it can pass through most obstacles, and can be up to 12 spaces away before teleporting back to you.</p>",
+		"details": {
+			"creatureType": "Spirit",
+			"isFlunky": false,
+			"level": "0"
+		},
+		"savingThrows": {
+			"strength": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"dexterity": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"intelligence": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"will": {
+				"defaultRollMode": 0,
+				"mod": 0
+			}
+		}
+	},
+	"prototypeToken": {
+		"name": "Lifebinding Spirit",
+		"displayName": 50,
+		"actorLink": false,
+		"width": 1,
+		"height": 1,
+		"texture": {
+			"src": "modules/blue-codex-package/assets/companions/lifebinding-spirit.webp",
+			"anchorX": 0.5,
+			"anchorY": 0.5,
+			"offsetX": 0,
+			"offsetY": 0,
+			"fit": "contain",
+			"scaleX": 1,
+			"scaleY": 1,
+			"rotation": 0,
+			"tint": "#ffffff",
+			"alphaThreshold": 0.75
+		},
+		"lockRotation": true,
+		"rotation": 0,
+		"alpha": 1,
+		"disposition": 1,
+		"displayBars": 0,
+		"bar1": {
+			"attribute": null
+		},
+		"bar2": {
+			"attribute": null
+		},
+		"light": {
+			"negative": false,
+			"priority": 0,
+			"alpha": 0.5,
+			"angle": 360,
+			"bright": 0,
+			"color": null,
+			"coloration": 1,
+			"dim": 0,
+			"attenuation": 0.5,
+			"luminosity": 0.5,
+			"saturation": 0,
+			"contrast": 0,
+			"shadows": 0,
+			"animation": {
+				"type": null,
+				"speed": 5,
+				"intensity": 5,
+				"reverse": false
+			},
+			"darkness": {
+				"min": 0,
+				"max": 1
+			}
+		},
+		"sight": {
+			"enabled": false,
+			"range": 0,
+			"angle": 360,
+			"visionMode": "basic",
+			"color": null,
+			"attenuation": 0.1,
+			"brightness": 0,
+			"saturation": 0,
+			"contrast": 0
+		},
+		"detectionModes": [],
+		"occludable": {
+			"radius": 0
+		},
+		"ring": {
+			"enabled": false,
+			"colors": {
+				"ring": null,
+				"background": null
+			},
+			"effects": 0,
+			"subject": {
+				"scale": 1,
+				"texture": null
+			}
+		},
+		"turnMarker": {
+			"mode": 1,
+			"animation": null,
+			"src": null,
+			"disposition": false
+		},
+		"movementAction": null,
+		"flags": {},
+		"randomImg": false,
+		"appendNumber": false,
+		"prependAdjective": false
+	},
+	"items": [
+		{
+			"name": "Attack",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritAttack",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "lifebinding-spirit-attack",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "lifeSpiritAtkDmg1",
+							"type": "damage",
+							"damageType": "radiant",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null,
+							"ignoreArmor": true,
+							"canCrit": true,
+							"canMiss": true,
+							"on": {
+								"hit": [
+									{
+										"id": "lifeSpiritAtkHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "lifeSpiritAtkDmg1"
+									}
+								]
+							}
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, Reach: 1.</strong> The spirit strikes for 1d6 + WIL damage (WIL = summoner's WIL). Ignores armor. The damage type can be any from the schools the Shepherd knows. Damage die is set at summon time to the upcast die step.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 0,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"summonFormula": {
+							"baseFaces": 6,
+							"addWil": true,
+							"scalesWithUpcast": true
+						}
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Cure",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritCure00",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "lifebinding-spirit-cure",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "lifeSpiritCureEff1",
+							"type": "healing",
+							"healingType": "healing",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6.</strong> Restore 1d6 + WIL HP to a target. This consumes one of the spirit's heal charges. Healing formula is set at summon time using the Shepherd's WIL bonus and die steps.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 10,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"summonFormula": {
+							"baseFaces": 6,
+							"addWil": true,
+							"scalesWithUpcast": true
+						}
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Courage",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritCourag",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-courage",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "lifeSpiritCourageEff1",
+							"type": "healing",
+							"healingType": "tempHealing",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, Reach: 1.</strong> Target gains 1d6 + WIL Armor and temp HP until the end of the round.</p><p>[M] The temp HP (1d6 + WIL) is rolled by this command; the matching Armor bonus (1d6 + WIL until the end of the round) has no Nimble rule — apply it manually.</p><p><em>Granted while the Shepherd knows the Protection school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 20,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "protection",
+						"summonFormula": {
+							"baseFaces": 6,
+							"addWil": true,
+							"scalesWithUpcast": false
+						}
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Twist Fate",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritTwistF",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-twist-fate",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, Reach: 1.</strong> Target gains 2 instances of advantage or disadvantage.</p><p>[M] Nimble has no rule for granting advantage/disadvantage instances — apply the 2 instances manually.</p><p><em>Granted while the Shepherd knows the Divination school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 30,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "divination"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Wild Bloom",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritWildBl",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-wild-bloom",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "sphere",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, Burst: 1.</strong> The area becomes Slowed Terrain for 1 round. Creatures that enter a space take 2 damage. Ignores Armor.</p><p>[M] Nimble has no rule for terrain or enter-triggered damage — adjudicate the Slowed Terrain and the 2 armor-ignoring damage manually.</p><p><em>Granted while the Shepherd knows the Nature school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 40,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "nature"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Cloaked",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritCloakd",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-cloaked",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, then Reach: 1.</strong> The next attack against your target is considered 2 less.</p><p>[M] Nimble has no rule for reducing an incoming attack — apply the −2 manually.</p><p><em>Granted while the Shepherd knows the Shadow school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 50,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "shadow"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Reap",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritReap00",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-reap",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "lifeSpiritReapDmg1",
+							"type": "damage",
+							"damageType": "necrotic",
+							"formula": "3d4",
+							"parentContext": null,
+							"parentNode": null,
+							"canCrit": true,
+							"canMiss": true,
+							"on": {
+								"hit": [
+									{
+										"id": "lifeSpiritReapHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "lifeSpiritReapDmg1"
+									}
+								]
+							}
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, then Reach: 1, Damage: 3d4 + WIL, Vicious.</strong> On kill: you gain tier HP.</p><p>[M] Vicious and the on-kill HP gain are not automated — apply them manually.</p><p><em>Granted while the Shepherd knows the Death school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 60,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "death",
+						"summonFormula": {
+							"count": 3,
+							"baseFaces": 4,
+							"addWil": true,
+							"scalesWithUpcast": false
+						}
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Share Vitality",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritShareV",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-share-vitality",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "lifeSpiritShareEff1",
+							"type": "healing",
+							"healingType": "healing",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, then Reach: 1, Restore: 1d6 + WIL HP.</strong> You can sacrifice HP to increase the HP restored by an equal amount.</p><p>[M] The HP-sacrifice option is not automated — apply the extra restored HP manually. (The book prints \"1d6 + HP\"; ruled as 1d6 + WIL.)</p><p><em>Granted while the Shepherd knows the Blood school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 70,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "blood",
+						"summonFormula": {
+							"baseFaces": 6,
+							"addWil": true,
+							"scalesWithUpcast": false
+						}
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Misfortune",
+			"type": "monsterFeature",
+			"_id": "LifeSpiritMisfor",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+			"system": {
+				"macro": "",
+				"identifier": "spirit-misfortune",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Move: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 1
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action, Move: 6, then Reach: 1.</strong> Target's next roll fails if the Primary Die is a 3 or lower. Ends if the target takes damage.</p><p>[M] Nimble has no rule for this curse — adjudicate the failed-roll condition manually.</p><p><em>Granted while the Shepherd knows the Curse school.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 80,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"consumesSummonCharge": true,
+						"requiresSchool": "curse"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		}
+	],
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"companionTemplate": "lifebinding-spirit"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": null,
+	"_id": "ldRzN9jHtyI7abGa"
+}

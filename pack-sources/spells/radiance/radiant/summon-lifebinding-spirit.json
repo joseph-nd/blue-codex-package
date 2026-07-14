@@ -33,7 +33,7 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Tier 1 · 1 Action · Shepherd Only.</strong></p><p>Summon an Ethereal spirit companion that moves when you do and is immune to harm. It lasts until you cast this spell again, take a Safe Rest, or it uses an ability, not including Attack, a number of times equal to the mana spent summoning it. You can use 1 Action to command it to do one of the following:</p><ul><li><strong>Attack</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Damage:</strong> 1d6. Ignores armor. Damage type can be any from the schools you know.</li><li><strong>Cure</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Restore:</strong> 1d6+WIL HP.</li></ul><p><em><strong>Outside Combat.</strong> Your companion is a spirit, so it can pass through most obstacles. It can be up to 12 spaces away before teleporting back to you. Many places are aware of such spells and ward off such spirits.</em></p>",
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Shepherd Only.</strong></p><p>Summon an Ethereal spirit companion that moves when you do and is immune to harm. It lasts until you cast this spell again, take a Safe Rest, or it uses an ability, not including Attack, a number of times equal to the mana spent summoning it. You can use 1 Action to command it to do one of the following:</p><ul><li><strong>Attack</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Damage:</strong> 1d6+WIL. Ignores armor. Damage type can be any from the schools you know.</li><li><strong>Cure</strong> | <strong>Move:</strong> 6, <strong>Reach:</strong> 1, <strong>Restore:</strong> 1d6+WIL HP.</li></ul><p><em><strong>Bonus Commands.</strong> The spirit automatically gains one extra command for each of Protection, Divination, Nature, Shadow, Death, Blood, or Curse you know — Courage, Twist Fate, Wild Bloom, Cloaked, Reap, Share Vitality, and Misfortune respectively (full text on the companion). Each spends an ability use like Cure.</em></p><p><em><strong>Outside Combat.</strong> Your companion is a spirit, so it can pass through most obstacles. It can be up to 12 spaces away before teleporting back to you. Many places are aware of such spells and ward off such spirits.</em></p>",
 			"higherLevelEffect": "",
 			"upcastEffect": "<p><strong>Upcast:</strong> +1 die step (max d12) and +1 ability use. If 5+ mana is spent, 1/turn, you can command the spirit for 0 Actions.</p>"
 		},
@@ -60,7 +60,31 @@
 		}
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"summon": {
+					"template": "lifebinding-spirit",
+					"unique": true,
+					"recastDismisses": true,
+					"chargesFromMana": true,
+					"upcastDieStep": {
+						"baseFaces": 6,
+						"maxFaces": 12
+					},
+					"featureBoosts": [
+						{
+							"feature": "empowered-companion",
+							"name": "Empowered Companion",
+							"bonusMana": 1,
+							"maxFaces": 20,
+							"uncapsTierLimit": true
+						}
+					]
+				}
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",
