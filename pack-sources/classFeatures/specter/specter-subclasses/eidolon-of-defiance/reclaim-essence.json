@@ -1,0 +1,57 @@
+{
+	"name": "Reclaim Essence",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-defiance/reclaim-essence.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reclaim-essence",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you remove Soul Touched, regain STR HP.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-defiance",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "8254fe0e032ad0dd",
+	"_id": "jcRzAmHFH2CfT5ar"
+}

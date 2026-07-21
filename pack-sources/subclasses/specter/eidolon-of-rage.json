@@ -1,0 +1,25 @@
+{
+	"name": "Eidolon of Rage",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-rage/soul-of-rage.webp",
+	"system": {
+		"macro": "",
+		"identifier": "eidolon-of-rage",
+		"rules": [],
+		"description": "<p><em>An enemy’s soul is just another weapon to be turned against them.</em> The Eidolon of Rage bends the veil so that no wall, no ally, and no crowd can shield a marked foe from your wrath. You hurl fire or lightning through a Soul Touched enemy and rend them apart.</p><p><strong>LEVEL 3</strong></p><p><strong>Soul of Rage.</strong> Cast a spell at a Soul Touched target regardless of obstructions; the spell targets only that Soul Touched (ignoring AoE/multi-target) and removes Soul Touched. You learn to cast spells from either the Fire or Lightning School, and Ruin can deal Cold or Fire/Lightning damage.</p><p><strong>Rage Rites.</strong> A Rite menu (Defile, Shelter) that spends Soul Touched to sharpen your spells.</p><p><strong>LEVEL 7</strong></p><p><strong>Spirit Siphon.</strong> Soul of Rage spells are cast as if 1 tier higher (max tier 5).</p><p><strong>LEVEL 11</strong></p><p><strong>Raging Ruin.</strong> Ruin can strike the target and all adjacent enemies.</p><p><strong>LEVEL 15</strong></p><p><strong>Destruction.</strong> (1/round) Soul of Rage spells gain a bonus equal to your soul power (not HP-restoring spells).</p>",
+		"parentClass": "specter",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "f81388e890a60549",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EJNgKZPUdkdvO5yM"
+}

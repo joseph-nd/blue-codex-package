@@ -1,0 +1,61 @@
+{
+	"name": "Soul Twist",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-twist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-twist",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Reach: 8, Damage: Soul power. Deal Cold damage and inflict Soul Touched. Deal no damage when targeting an ally.</p><p>Your <strong>soul power</strong> scales as you level:</p><ul><li><p><strong>Level 1</strong> — soul power is 1d8.</p></li><li><p><strong>Level 5</strong> (Soul Twist 2) — soul power is 2d8.</p></li><li><p><strong>Level 10</strong> (Soul Twist 3) — soul power is 3d8.</p></li><li><p><strong>Level 15</strong> (Soul Twist 4) — soul power is 4d8.</p></li><li><p><strong>Level 20</strong> (Master of the Veil) — soul power is 5d8.</p></li></ul><p><em>Soul power is also the damage/temp-HP value referenced by Soul Rite and many Soul Sculpting techniques.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			1,
+			5,
+			10,
+			15,
+			20
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0evSiYYtNovBeX3C",
+	"folder": "17e1edd987ec62a3"
+}

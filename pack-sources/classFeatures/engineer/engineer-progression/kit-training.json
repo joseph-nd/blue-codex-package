@@ -1,0 +1,59 @@
+{
+	"name": "Kit Training",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/kit-training.webp",
+	"system": {
+		"macro": "",
+		"identifier": "kit-training",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You learn one Weapon Kit of your choice. Weapon Kits are considered weapons for swapping and stowing. Each kit has a basic ability and unique ones powered by Toolbelt scraps.</p><p>You learn an additional Weapon Kit at <strong>Level 5</strong> and <strong>Level 9</strong> (3 kits known total). Choose your kit from the <em>(Choose one)</em> Kit Training list.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "QrPJuRTPUJC8yJwe",
+	"folder": "e2c8675a119379ac"
+}

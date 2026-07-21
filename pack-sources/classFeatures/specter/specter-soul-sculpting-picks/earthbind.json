@@ -1,0 +1,67 @@
+{
+	"name": "Earthbind",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/soul-sculpting/earthbind.webp",
+	"system": {
+		"macro": "",
+		"identifier": "earthbind",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When a Soul Touched successfully makes a save to end Soul Touched, they are knocked Prone.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-soul-sculpting-picks",
+		"gainedAtLevels": [
+			2,
+			6,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"6": 1,
+			"9": 1,
+			"13": 1,
+			"17": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "B8rDjXYA82TH1y0S",
+	"folder": "17e1edd987ec62a3"
+}

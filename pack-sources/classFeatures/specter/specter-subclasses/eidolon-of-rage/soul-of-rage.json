@@ -1,0 +1,57 @@
+{
+	"name": "Soul of Rage",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-rage/soul-of-rage.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-of-rage",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can cast a spell targeting a Soul Touched in Range/Reach regardless of obstructions. When you do this, the spell only targets that Soul Touched regardless of AoE/multi-target and Soul Touched is removed.</p><p>Additionally, you learn how to cast spells from either the Fire or Lightning School. Ruin can deal either Cold or Fire/Lightning damage.</p><p><em>[M] Grants Blue’s Codex spells — school(s): fire or lightning (choose one).</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-rage",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "41921b271e97fe31",
+	"_id": "wo2mPsMVMFd5sL1n"
+}

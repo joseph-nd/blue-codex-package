@@ -1,0 +1,333 @@
+{
+	"name": "Rocket Turret",
+	"type": "npc",
+	"img": "modules/blue-codex-package/assets/companions/turret-rocket.webp",
+	"system": {
+		"attributes": {
+			"armor": "none",
+			"damageResistances": [],
+			"damageVulnerabilities": [],
+			"damageImmunities": [],
+			"hp": {
+				"max": 1,
+				"temp": 0,
+				"value": 1
+			},
+			"sizeCategory": "small",
+			"movement": {
+				"burrow": 0,
+				"climb": 0,
+				"fly": 0,
+				"swim": 0,
+				"walk": 0
+			}
+		},
+		"description": "<p><em>An Engineer's Rocket Turret (Offense). Deployed by the &quot;Turret Deployed!&quot; class action.</em></p><p><strong>Stat block:</strong> Range 8, Blast 3, Damage 1d12 Fire on a failed DEX save, half on save. Can't target enemies in Range 2. <strong>Toolbelt:</strong> Fire again. This ability has triple the range and deals +3 damage every space it travels (max 3x LVL). Ignores armor.</p><p><strong>Turret Rules.</strong> Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your Engineer level (destroyed). They activate when deployed and when you spend 1 Action to activate them on following turns. You can use 2 Actions and 1 Toolbelt scrap to activate a turret's special ability; the turret is destroyed afterwards. Turrets are separate entities for Rushed Attack rules.</p><p><strong>Scaling (set by the summoning Engineer):</strong> destruction threshold = Engineer level (2x level with Mechanist's Extra Plating). Overclocked (L10) adds INT to damage; Overclocked (L16) adds an additional die. Turret Fortifications (L14) makes turrets Medium and lets them provide Cover for Medium or smaller creatures.</p>",
+		"details": {
+			"creatureType": "Construct",
+			"isFlunky": false,
+			"level": "0"
+		},
+		"savingThrows": {
+			"strength": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"dexterity": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"intelligence": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"will": {
+				"defaultRollMode": 0,
+				"mod": 0
+			}
+		}
+	},
+	"prototypeToken": {
+		"name": "Rocket Turret",
+		"displayName": 50,
+		"actorLink": false,
+		"width": 1,
+		"height": 1,
+		"texture": {
+			"src": "modules/blue-codex-package/assets/companions/turret-rocket.webp",
+			"anchorX": 0.5,
+			"anchorY": 0.5,
+			"offsetX": 0,
+			"offsetY": 0,
+			"fit": "contain",
+			"scaleX": 1,
+			"scaleY": 1,
+			"rotation": 0,
+			"tint": "#ffffff",
+			"alphaThreshold": 0.75
+		},
+		"lockRotation": true,
+		"rotation": 0,
+		"alpha": 1,
+		"disposition": 1,
+		"displayBars": 0,
+		"bar1": {
+			"attribute": null
+		},
+		"bar2": {
+			"attribute": null
+		},
+		"light": {
+			"negative": false,
+			"priority": 0,
+			"alpha": 0.5,
+			"angle": 360,
+			"bright": 0,
+			"color": null,
+			"coloration": 1,
+			"dim": 0,
+			"attenuation": 0.5,
+			"luminosity": 0.5,
+			"saturation": 0,
+			"contrast": 0,
+			"shadows": 0,
+			"animation": {
+				"type": null,
+				"speed": 5,
+				"intensity": 5,
+				"reverse": false
+			},
+			"darkness": {
+				"min": 0,
+				"max": 1
+			}
+		},
+		"sight": {
+			"enabled": false,
+			"range": 0,
+			"angle": 360,
+			"visionMode": "basic",
+			"color": null,
+			"attenuation": 0.1,
+			"brightness": 0,
+			"saturation": 0,
+			"contrast": 0
+		},
+		"detectionModes": [],
+		"occludable": {
+			"radius": 0
+		},
+		"ring": {
+			"enabled": false,
+			"colors": {
+				"ring": null,
+				"background": null
+			},
+			"effects": 0,
+			"subject": {
+				"scale": 1,
+				"texture": null
+			}
+		},
+		"turnMarker": {
+			"mode": 1,
+			"animation": null,
+			"src": null,
+			"disposition": false
+		},
+		"movementAction": null,
+		"flags": {},
+		"randomImg": false,
+		"appendNumber": false,
+		"prependAdjective": false
+	},
+	"items": [
+		{
+			"name": "Fire Rocket (Rocket)",
+			"type": "monsterFeature",
+			"_id": "TurRocktBasic001",
+			"img": "modules/blue-codex-package/assets/companions/turret-rocket.webp",
+			"system": {
+				"macro": "",
+				"identifier": "rocket-turret-fire",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "Range: 8, Blast: 3",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "rocketBasicSave1",
+							"type": "savingThrow",
+							"savingThrowType": "intelligence",
+							"saveType": "dexterity",
+							"parentContext": null,
+							"parentNode": null,
+							"on": {
+								"passedSave": [
+									{
+										"id": "rocketBasicNote1",
+										"type": "note",
+										"noteType": "flavor",
+										"text": "Half damage on save.",
+										"parentContext": "passedSave",
+										"parentNode": "rocketBasicSave1"
+									}
+								],
+								"failedSave": [
+									{
+										"id": "rocketBasicDmg1",
+										"type": "damage",
+										"damageType": "fire",
+										"formula": "1d12",
+										"parentContext": "failedSave",
+										"parentNode": "rocketBasicSave1",
+										"on": {}
+									}
+								]
+							},
+							"sharedRolls": []
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 3,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action (or on deploy), Range: 8, Blast: 3.</strong> Damage 1d12 Fire on a failed DEX save, half on save. Can't target enemies in Range 2.</p><p>[M] The Range-2 minimum and half-on-save are not enforced automatically. Overclocked adds INT to damage at L10 and a second die at L16.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 0,
+			"flags": {},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Toolbelt: Long Shot",
+			"type": "monsterFeature",
+			"_id": "TurRocktSpec0001",
+			"img": "modules/blue-codex-package/assets/companions/turret-rocket.webp",
+			"system": {
+				"macro": "",
+				"identifier": "rocket-turret-toolbelt",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "2 Actions, 1 Toolbelt scrap, destroys turret",
+						"quantity": 2,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "rocketSpecSave1",
+							"type": "savingThrow",
+							"savingThrowType": "intelligence",
+							"saveType": "dexterity",
+							"parentContext": null,
+							"parentNode": null,
+							"on": {
+								"passedSave": [
+									{
+										"id": "rocketSpecNote1",
+										"type": "note",
+										"noteType": "flavor",
+										"text": "Half damage on save. Ignores armor.",
+										"parentContext": "passedSave",
+										"parentNode": "rocketSpecSave1"
+									}
+								],
+								"failedSave": [
+									{
+										"id": "rocketSpecDmg1",
+										"type": "damage",
+										"damageType": "fire",
+										"formula": "1d12",
+										"parentContext": "failedSave",
+										"parentNode": "rocketSpecSave1",
+										"ignoreArmor": true,
+										"on": {}
+									}
+								]
+							},
+							"sharedRolls": []
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 3,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap. The turret is destroyed afterwards.</strong> Fire again. This ability has <strong>triple the range</strong> (Range 24, Blast 3) and deals <strong>+3 damage every space it travels (max 3x LVL)</strong>. Ignores armor.</p><p>[M] This shows the base 1d12 Fire (armor-ignoring). Add +3 per space of travel up to a cap of 3x the Engineer's level, and use the tripled range — apply manually. Overclocked bonuses also apply.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 10,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"turretToolbelt": true
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		}
+	],
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"companionTemplate": "turret-rocket"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": null,
+	"_id": "NSPliCn6prYCW79G"
+}

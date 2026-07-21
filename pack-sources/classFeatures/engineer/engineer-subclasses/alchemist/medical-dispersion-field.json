@@ -1,0 +1,57 @@
+{
+	"name": "Medical Dispersion Field",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/alchemist/medical-dispersion-field.webp",
+	"system": {
+		"macro": "",
+		"identifier": "medical-dispersion-field",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) Free Action. For the next minute, whenever you regain HP, all allies in Burst 3 of you regain INT HP. If you are at full HP, the amount increases to 2xINT.</p><p><em>[M] 1/Safe Rest, Free Action. For 1 minute, whenever you regain HP, allies in Burst 3 regain INT HP (2xINT if you are at full HP) — track usage and echo healing manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "alchemist",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "52c19b516443f356",
+	"_id": "nvGdni7cHF00Pejv"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Destruction",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-rage/destruction.webp",
+	"system": {
+		"macro": "",
+		"identifier": "destruction",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/round) When you use Soul of Rage to target a Soul Touched, the spell gains a bonus equal to your soul power. This does not affect spells that restore HP.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-rage",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "41921b271e97fe31",
+	"_id": "qcqJOsryWyMvJJxE"
+}

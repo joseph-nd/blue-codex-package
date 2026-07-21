@@ -1,0 +1,129 @@
+{
+	"name": "Specter",
+	"type": "class",
+	"img": "modules/blue-codex-package/assets/classImages/specter.webp",
+	"system": {
+		"macro": "",
+		"identifier": "specter",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "specStartGarb",
+				"identifier": "",
+				"label": "Starting Gear - Adventurer's Garb",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": true,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.nimble.nimble-items.Item.Bdm2ynI2J7Xt9FNf"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "specStartDagger",
+				"identifier": "",
+				"label": "Starting Gear - Dagger",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": true,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.nimble.nimble-items.Item.O1sCIVQKfAqSlDT5"
+			}
+		],
+		"armorProficiencies": [
+			"cloth"
+		],
+		"classLevel": 1,
+		"complexity": 3,
+		"description": "<p>Most see the soul as a sacred mystery. You see it as a source of power. Why waste your life reading dusty scrolls or begging ancient horrors for a scrap of power? You have a direct line to the source. Every living thing carries a spark, and you know how to reach out, grab it and use it.</p><p>To be a Specter is to be the inescapable haunting in the room. You reach into the white noise of a living spirit and twist it into a shape that suits your needs. You don't just mark your enemies; you brand them. If they try to ignore your touch, they rot. If they try to fight it, they break. You thrive in that moment of desperate struggle. For a Specter, an enemy's willpower is just another weapon to be turned against them.</p><ul><li><p><strong>Soul Manipulation.</strong> Reach out and touch the inner self of those around you, leaving a mark that bends reality to your will.</p></li><li><p><strong>Inevitable Consequences.</strong> Turn their defense into your offense. Create traps that punish your enemies even when they succeed!</p></li><li><p><strong>Soul Sculpting.</strong> Select unique Soul Sculpting techniques to change how you shape a soul and claim your rightful power.</p></li></ul>",
+		"groupIdentifiers": [
+			"specter-progression",
+			"specter-soul-sculpting-picks",
+			"specter-subclasses/eidolon-of-rage",
+			"specter-subclasses/eidolon-of-iron",
+			"specter-subclasses/eidolon-of-defiance",
+			"specter-subclasses/eidolon-of-reanimation",
+			"specter-subclasses/eidolon-of-suffering"
+		],
+		"keyAbilityScores": [
+			"intelligence",
+			"strength"
+		],
+		"hitDieSize": 8,
+		"hpData": [],
+		"savingThrows": {
+			"advantage": "intelligence",
+			"disadvantage": "will"
+		},
+		"abilityScoreData": {
+			"4": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"5": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"8": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"9": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"12": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"13": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"16": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"17": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"20": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "capstone"
+			}
+		},
+		"mana": {
+			"formula": "(max(@key, 0) * 3) + @level",
+			"recovery": "safeRest"
+		},
+		"resources": [],
+		"weaponProficiencies": [
+			"Blades",
+			"Wands",
+			"Staves"
+		]
+	},
+	"effects": [],
+	"folder": null,
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "RAyTBIDLoTwcRhHY"
+}

@@ -1,0 +1,67 @@
+{
+	"name": "Ghostly Form",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/soul-sculpting/ghostly-form.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ghostly-form",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While an ally is Soul Touched, they can move through solid objects. If they end their turn inside an obstruction, they have Full Cover, are Blinded while inside, and take damage equal to your Soul Power.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-soul-sculpting-picks",
+		"gainedAtLevels": [
+			2,
+			6,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"6": 1,
+			"9": 1,
+			"13": 1,
+			"17": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EZoVzccF6CzmPya6",
+	"folder": "17e1edd987ec62a3"
+}

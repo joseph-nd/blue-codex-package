@@ -1,0 +1,57 @@
+{
+	"name": "Soul Reflection",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-iron/soul-reflection.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-reflection",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you lose temp HP from Protect or Soul of Iron, the attacker takes an equal amount of damage. Ignores armor.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-iron",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "c16c33443c34e11c",
+	"_id": "k5gqeoCvxvrdfODf"
+}

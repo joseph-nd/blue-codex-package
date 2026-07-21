@@ -1,0 +1,58 @@
+{
+	"name": "Overclocked",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/overclocked.webp",
+	"system": {
+		"macro": "",
+		"identifier": "overclocked",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Overclocked (1) — Level 10.</strong> Your turrets add INT to damage, temp HP and restored HP.</p><p><strong>Overclocked (2) — Level 16.</strong> Your turrets gain an additional die to damage, temp HP and restored HP.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			10,
+			16
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "FlIdEROFh9WDGheD",
+	"folder": "e2c8675a119379ac"
+}

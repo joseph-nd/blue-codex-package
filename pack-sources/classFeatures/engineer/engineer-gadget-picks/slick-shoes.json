@@ -1,0 +1,90 @@
+{
+	"name": "Slick Shoes",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/slick-shoes.webp",
+	"system": {
+		"macro": "",
+		"identifier": "slick-shoes",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "slick-shoesGrant",
+				"identifier": "",
+				"label": "Slick Shoes",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.BfBoF028vah7A5QO"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Leave a trail of grease that trips pursuers.</em></p><p><strong>Free Action.</strong> You leave grease in any spaces you enter this turn. Grease lasts 1 minute or until removed and is Slowed Terrain. Creatures that enter a greased space must succeed a DEX save or fall Prone.</p><p><strong>Toolbelt:</strong> Affects all spaces adjacent to you.</p><p><strong>Passive:</strong> You ignore Slowed Terrain you create.</p><hr><p><em>[M] Gadget activation costs 1 Toolbelt scrap (2 total for the Toolbelt upgrade); the passive is always active. Scrap cost and activation are tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "M4ryT6f2AoL2YfsV",
+	"folder": "e2c8675a119379ac"
+}

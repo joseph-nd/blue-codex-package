@@ -1,0 +1,60 @@
+{
+	"name": "Mechanical Mayhem",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/mechanical-mayhem.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mechanical-mayhem",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You know how to make and deploy a <strong>Rifle Turret</strong>.</p><p>At <strong>Level 7</strong> you learn a turret of your choice; at <strong>Level 11</strong> another turret of your choice; at <strong>Level 15</strong> another turret of your choice (4 turret types known total).</p><hr><p><em>[M] Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your LVL (destroyed). A turret fires its basic effect when deployed and when you spend 1 Action to activate it. You can spend 2 Actions and 1 Toolbelt scrap to activate a turret's Toolbelt special ability, after which the turret is destroyed. Which turrets you know and their deployment are tracked by the module — see the GM notes on this feature.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			3,
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "jBJOPFAem7kWmrZX",
+	"folder": "e2c8675a119379ac"
+}

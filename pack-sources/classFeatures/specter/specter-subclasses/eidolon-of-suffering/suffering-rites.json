@@ -1,0 +1,57 @@
+{
+	"name": "Suffering Rites",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/suffering-rites.webp",
+	"system": {
+		"macro": "",
+		"identifier": "suffering-rites",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Reach: 8. Remove Soul Touched from the target and choose 1 of the following effects. If Soul Touched wasn’t removed, this does nothing:</p><ul><li><strong>Meekness.</strong> Target is Dazed, 2 turns.</li><li><strong>Corrupt.</strong> Enemy is Impaired, 2 turns. Choose the condition. While Impaired this way, they lose any resistances.</li></ul>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "fd6abd5774ad2320",
+	"_id": "uKb66FszNhqovtfV"
+}

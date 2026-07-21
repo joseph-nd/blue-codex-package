@@ -1,0 +1,57 @@
+{
+	"name": "Kinetic Stabilizers",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/kinetic-stabilizers.webp",
+	"system": {
+		"macro": "",
+		"identifier": "kinetic-stabilizers",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While you wear mail armor, any Bludgeoning, Piercing and Slashing damage you take is reduced by STR and you have advantage on saves vs being moved against your will.</p><p><em>[M] While in mail armor: reduce Bludgeoning/Piercing/Slashing damage taken by STR and gain advantage on saves vs forced movement — apply manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "OegVzBjSyRNa1Tv6"
+}

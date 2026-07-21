@@ -1,0 +1,57 @@
+{
+	"name": "Turret Fortifications",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/turret-fortifications.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-fortifications",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your turrets are now Medium size and can provide Cover for Medium or smaller creatures.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "sXj28CB2WwAvKHHO",
+	"folder": "e2c8675a119379ac"
+}

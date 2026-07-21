@@ -1,0 +1,84 @@
+{
+	"name": "Med Kit",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/med-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "med-kit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Weapon Kit</strong> &middot; <em>Engineer invention. Counts as a weapon for swapping and stowing. Toolbelt options cost 2 Actions and 1 Toolbelt scrap.</em></p><hr><p><strong>Med Blaster (basic) &mdash; 1 Action.</strong> Reach 2. Target gains INT temp HP, 1 round. If they are Bloodied they regain HP instead.</p><p><strong>Toolbelt (2 Actions, 1 scrap):</strong></p><ul><li><strong>Vital Burst.</strong> Cone 2, Restore 2&times;INT HP.</li><li><strong>Cleansing Mist.</strong> Burst 2, Restore 1d4 HP. Targets heal 1 negative condition.</li><li><strong>Stim Pack.</strong> Reach 2. Ally gains +2 speed and +1 Max Actions on their next turn. They are Dazed for 1 turn at the end of the round.</li></ul><p><strong>High Levels:</strong> +2 bonus every 5 levels (Med Blaster, Vital Burst, Cleansing Mist).</p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": false,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 1,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"reach"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "h84ze8iy5Oepqith",
+	"folder": "dfe4d289fa5ed31b"
+}

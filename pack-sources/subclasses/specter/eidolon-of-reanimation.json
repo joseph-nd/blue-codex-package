@@ -1,0 +1,25 @@
+{
+	"name": "Eidolon of Reanimation",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/reanimated-soul.webp",
+	"system": {
+		"macro": "",
+		"identifier": "eidolon-of-reanimation",
+		"rules": [],
+		"description": "<p><em>Why haunt a battlefield alone?</em> The Eidolon of Reanimation raises a shambling host of Soul Touched undead, swarming foes and reaping the fallen to swell its ranks.</p><p><strong>LEVEL 3</strong></p><p><strong>Reanimated Soul.</strong> Soul Twist can instead conjure d8 undead minions (equal to your Soul Power dice, max STR or LVL); slain enemies in Range 8 rise as minions while below your cap. Command them to Move and Attack for 1 Action.</p><p><strong>LEVEL 7</strong></p><p><strong>Reanimation Rites.</strong> A Rite menu (Ravage, Feast) spending an undead minion’s Soul Touched to command the horde; consumed minions leave exploitable corpses.</p><p><strong>LEVEL 11</strong></p><p><strong>Twitchy.</strong> Enemies leaving a space adjacent to a minion take STR damage. Ignores armor.</p><p><strong>LEVEL 15</strong></p><p><strong>Death Nova.</strong> (1/Round) Free Reaction: a destroyed minion can unleash Ruin or Haunt on all adjacent enemies for free.</p>",
+		"parentClass": "specter",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "f81388e890a60549",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "v2xuCilX8WjE4Avy"
+}

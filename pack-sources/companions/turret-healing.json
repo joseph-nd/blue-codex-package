@@ -1,0 +1,291 @@
+{
+	"name": "Healing Turret",
+	"type": "npc",
+	"img": "modules/blue-codex-package/assets/companions/turret-healing.webp",
+	"system": {
+		"attributes": {
+			"armor": "none",
+			"damageResistances": [],
+			"damageVulnerabilities": [],
+			"damageImmunities": [],
+			"hp": {
+				"max": 1,
+				"temp": 0,
+				"value": 1
+			},
+			"sizeCategory": "small",
+			"movement": {
+				"burrow": 0,
+				"climb": 0,
+				"fly": 0,
+				"swim": 0,
+				"walk": 0
+			}
+		},
+		"description": "<p><em>An Engineer's Healing Turret (Utility). Deployed by the &quot;Turret Deployed!&quot; class action.</em></p><p><strong>Stat block:</strong> Burst 2. Allies gain 1d4+INT temp HP for 1 turn. <strong>Toolbelt:</strong> Restore INTd4 HP. Allies gain temp HP equal to the total.</p><p><strong>Turret Rules.</strong> Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your Engineer level (destroyed). They activate when deployed and when you spend 1 Action to activate them on following turns. You can use 2 Actions and 1 Toolbelt scrap to activate a turret's special ability; the turret is destroyed afterwards. Turrets are separate entities for Rushed Attack rules.</p><p><strong>Scaling (set by the summoning Engineer):</strong> destruction threshold = Engineer level (2x level with Mechanist's Extra Plating). Overclocked (L10) adds INT to temp HP and restored HP; Overclocked (L16) adds an additional die. Turret Fortifications (L14) makes turrets Medium and lets them provide Cover for Medium or smaller creatures.</p>",
+		"details": {
+			"creatureType": "Construct",
+			"isFlunky": false,
+			"level": "0"
+		},
+		"savingThrows": {
+			"strength": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"dexterity": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"intelligence": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"will": {
+				"defaultRollMode": 0,
+				"mod": 0
+			}
+		}
+	},
+	"prototypeToken": {
+		"name": "Healing Turret",
+		"displayName": 50,
+		"actorLink": false,
+		"width": 1,
+		"height": 1,
+		"texture": {
+			"src": "modules/blue-codex-package/assets/companions/turret-healing.webp",
+			"anchorX": 0.5,
+			"anchorY": 0.5,
+			"offsetX": 0,
+			"offsetY": 0,
+			"fit": "contain",
+			"scaleX": 1,
+			"scaleY": 1,
+			"rotation": 0,
+			"tint": "#ffffff",
+			"alphaThreshold": 0.75
+		},
+		"lockRotation": true,
+		"rotation": 0,
+		"alpha": 1,
+		"disposition": 1,
+		"displayBars": 0,
+		"bar1": {
+			"attribute": null
+		},
+		"bar2": {
+			"attribute": null
+		},
+		"light": {
+			"negative": false,
+			"priority": 0,
+			"alpha": 0.5,
+			"angle": 360,
+			"bright": 0,
+			"color": null,
+			"coloration": 1,
+			"dim": 0,
+			"attenuation": 0.5,
+			"luminosity": 0.5,
+			"saturation": 0,
+			"contrast": 0,
+			"shadows": 0,
+			"animation": {
+				"type": null,
+				"speed": 5,
+				"intensity": 5,
+				"reverse": false
+			},
+			"darkness": {
+				"min": 0,
+				"max": 1
+			}
+		},
+		"sight": {
+			"enabled": false,
+			"range": 0,
+			"angle": 360,
+			"visionMode": "basic",
+			"color": null,
+			"attenuation": 0.1,
+			"brightness": 0,
+			"saturation": 0,
+			"contrast": 0
+		},
+		"detectionModes": [],
+		"occludable": {
+			"radius": 0
+		},
+		"ring": {
+			"enabled": false,
+			"colors": {
+				"ring": null,
+				"background": null
+			},
+			"effects": 0,
+			"subject": {
+				"scale": 1,
+				"texture": null
+			}
+		},
+		"turnMarker": {
+			"mode": 1,
+			"animation": null,
+			"src": null,
+			"disposition": false
+		},
+		"movementAction": null,
+		"flags": {},
+		"randomImg": false,
+		"appendNumber": false,
+		"prependAdjective": false
+	},
+	"items": [
+		{
+			"name": "Healing Pulse (Healing)",
+			"type": "monsterFeature",
+			"_id": "TurHealBasic0001",
+			"img": "modules/blue-codex-package/assets/companions/turret-healing.webp",
+			"system": {
+				"macro": "",
+				"identifier": "healing-turret-pulse",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "Burst: 2",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "1 turn",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "healBasicEff1",
+							"type": "healing",
+							"healingType": "tempHealing",
+							"formula": "1d4",
+							"parentContext": null,
+							"parentNode": null
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "willing"
+					},
+					"template": {
+						"length": 1,
+						"radius": 2,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action (or on deploy), Burst: 2.</strong> Allies gain 1d4 + INT temp HP for 1 turn.</p><p>[M] This shows the 1d4 base; add INT (the summoning Engineer's Intelligence). Overclocked adds INT again at L10 and a second die at L16.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 0,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"addInt": true
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Toolbelt: Overflow",
+			"type": "monsterFeature",
+			"_id": "TurHealSpec00001",
+			"img": "modules/blue-codex-package/assets/companions/turret-healing.webp",
+			"system": {
+				"macro": "",
+				"identifier": "healing-turret-toolbelt",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "2 Actions, 1 Toolbelt scrap, destroys turret",
+						"quantity": 2,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "healSpecEff1",
+							"type": "healing",
+							"healingType": "healing",
+							"formula": "1d4",
+							"parentContext": null,
+							"parentNode": null
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "willing"
+					},
+					"template": {
+						"length": 1,
+						"radius": 2,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Burst: 2. The turret is destroyed afterwards.</strong> Restore <strong>INTd4</strong> HP. Allies gain temp HP equal to the total.</p><p>[M] This shows one 1d4 die; roll INT total d4 (INT = the summoning Engineer's Intelligence). Grant every ally in the burst temp HP equal to the rolled total — apply manually. Overclocked bonuses apply.</p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 10,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"turretToolbelt": true,
+						"diceCount": "intelligence"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		}
+	],
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"companionTemplate": "turret-healing"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": null,
+	"_id": "syy3M1DegUIpK2ps"
+}

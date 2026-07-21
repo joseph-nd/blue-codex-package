@@ -1,0 +1,76 @@
+{
+	"name": "Med Kit",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/med-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "med-kit",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "med-kitGrant",
+				"identifier": "",
+				"label": "Med Kit",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.h84ze8iy5Oepqith"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — A healing kit with temp HP, burst heals, cleansing and stim options.</em></p><p><strong>Med Blaster (basic) — 1 Action.</strong> Reach 2. Target gains INT temp HP, 1 round. If they are Bloodied they regain HP instead.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>Vital Burst.</strong> Cone 2, Restore: 2xINT HP.</li><li><strong>Cleansing Mist.</strong> Burst 2, Restore: 1d4 HP. Targets heal 1 negative condition.</li><li><strong>Stim Pack.</strong> Reach 2. Ally gains +2 speed and +1 Max Actions on their next turn. They are Dazed for 1 turn at the end of the round.</li></ul><p><strong>High Levels:</strong> +2 bonus every 5 levels (Med Blaster, Vital Burst, Cleansing Mist).</p><hr><p><em>[M] Weapon Kits are considered weapons for swapping and stowing. The basic ability costs 1 Action; each Toolbelt option costs 2 Actions and 1 Toolbelt scrap. Scrap cost is tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "7Qdraf4agV80llVm",
+	"folder": "e2c8675a119379ac"
+}

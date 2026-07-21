@@ -1,0 +1,82 @@
+{
+	"name": "Elixir H",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-h.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-h",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>1 Action (1 scrap):</strong> Restore 2d4+4 HP.</p><p><strong>Toolbelt (2 scraps):</strong> Restore 3d6+6 HP.</p><p><strong>Passive:</strong> You regain +INT HP when drinking healing potions or Elixir H's.</p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": false,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "i5F95O4m2mdu2g0V",
+	"folder": "679e7e3dd0184cae"
+}

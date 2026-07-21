@@ -1,0 +1,90 @@
+{
+	"name": "Hidden Pistol",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/hidden-pistol.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hidden-pistol",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "hidden-pistolGrant",
+				"identifier": "",
+				"label": "Hidden Pistol",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.khQNFcqqBiPx2TTC"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A concealed pistol shot that ignores Rushed Attack rules.</em></p><p><strong>1 Action.</strong> Reach 2. Make an attack with a pistol, ignoring Rushed Attack rules.</p><p><strong>Toolbelt:</strong> Make an attack against all enemies in Reach 2, ignoring Rushed Attack rules.</p><p><strong>Passive:</strong> Firearms have +1 Ammo.</p><hr><p><em>[M] Gadget activation costs 1 Toolbelt scrap (2 total for the Toolbelt upgrade); the passive is always active. Scrap cost and activation are tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "1pBb0wHS10QrHl2K",
+	"folder": "e2c8675a119379ac"
+}

@@ -1,0 +1,60 @@
+{
+	"name": "Pierce the Veil",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/pierce-the-veil.webp",
+	"system": {
+		"macro": "",
+		"identifier": "pierce-the-veil",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You choose Utility Spells as you level. You learn <strong>5 Utility Spells</strong> in total:</p><ul><li><p><strong>Level 3</strong> — Pierce the Veil (1): choose 2 Utility Spells.</p></li><li><p><strong>Level 6</strong> — Pierce the Veil (2): choose 1 Utility Spell.</p></li><li><p><strong>Level 9</strong> — Pierce the Veil (3): choose 1 Utility Spell.</p></li><li><p><strong>Level 11</strong> — Undead Master (4): choose 1 Utility Spell.</p></li></ul><hr><p><em>[M] Grants Blue's Codex Utility Spells (2 at L3, then 1 each at L6/L9/L11). The Utility Spell pick is wired by the module — see the GM notes on this feature.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			3,
+			6,
+			9,
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "iLx5befiXzcgbyP1",
+	"folder": "17e1edd987ec62a3"
+}

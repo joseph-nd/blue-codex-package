@@ -934,6 +934,19 @@ const SUBCLASS_SPELL_POLICY = {
 	// ── Songweaver (base auto: wind + 1 chosen) ──
 	'herald-of-disruption': { mandatory: ['domination'], cap: 3, summary: 'Learn Domination spells.' },
 	'herald-of-inspiration': { mandatory: ['inspiration'], cap: 3, summary: 'Learn Inspiration spells.' },
+	// ── Specter / Eidolon of Rage (base schools come from Dark Knowledge — 2 of
+	// shadow/death/blood/curse — granted by CLASS_SPELL_CHOICE below; Soul of Rage
+	// ADDS one element school on top, so cap = 2 Book-of-Ruin + 1 chosen element = 3.
+	// No replaceAll: the two Dark Knowledge schools are kept. Runs after the Dark
+	// Knowledge grant (see handleActorFeatures ordering) so `getActorSpellSchools`
+	// already reports the two Book-of-Ruin schools to keep). ──
+	'eidolon-of-rage': {
+		mandatory: [],
+		choose: [{ label: 'Fire or Lightning', options: ['fire', 'lightning'] }],
+		cap: 3,
+		summary:
+			'Soul of Rage: learn spells from either the Fire or Lightning School (in addition to your two Book of Ruin schools chosen with Dark Knowledge).',
+	},
 };
 
 // ── Class-level necrotic re-home ─────────────────────────────────────────────
@@ -950,6 +963,30 @@ const SUBCLASS_SPELL_POLICY = {
 const CLASS_SPELL_REMAP = {
 	shadowmancer: 'shadow',
 	shepherd: 'death',
+};
+
+// ── Class-level spell-school choice (new module classes) ─────────────────────
+// A NEW class defined entirely in this module (the Specter) has no system
+// `grantSpells` rules to rewrite/remap, so its Codex spell access is granted by
+// this class-keyed path instead. The Specter's Dark Knowledge (L1) lets it learn
+// 2 of the 4 Book of Ruin schools; the player picks them once in a dialog and the
+// module grants those schools' Codex spells one tier at a time as the caster's
+// Spellcasting levels unlock higher tiers (`maxSpellTierForLevel`). The chosen
+// schools are the Specter's BASE schools; the Eidolon of Rage subclass ADDS a
+// Fire/Lightning school on top via SUBCLASS_SPELL_POLICY (see above).
+//   pick   — how many schools the player chooses.
+//   choose — the school pool to pick from.
+// The pick is stored on the caster under `flags.<module>.classSpellChoice`
+// ({ classId, schools, grantedTier }), mirroring the `classSchools` high-water
+// mark used by classSpellRemapSync.
+const CLASS_SPELL_CHOICE = {
+	specter: {
+		pick: 2,
+		choose: ['shadow', 'death', 'blood', 'curse'],
+		title: 'Dark Knowledge',
+		summary:
+			'Choose 2 of the Book of Ruin schools (Shadow, Death, Blood, Curse). You learn those schools’ cantrips now and their higher-tier spells as you gain Spellcasting levels.',
+	},
 };
 
 // ── System class-feature spell-rule rewrites ─────────────────────────────────
@@ -1653,6 +1690,134 @@ async function classSpellRemapSync(actor) {
 	}
 }
 
+// ── Class-level spell-school choice grant (Specter / Dark Knowledge) ──────────
+// Guard against the render-storm (our own create re-fires the hooks).
+const classChoiceActive = new Set();
+
+/** Present a "pick exactly N schools" checkbox dialog; returns the chosen school
+ *  list, or null if the player dismissed the dialog (defer — re-offer later). */
+async function promptClassSchoolChoice(actor, config) {
+	const rows = config.choose
+		.map(
+			(school) => `
+			<label class="blue-codex-school-pick">
+				<input type="checkbox" name="blue-codex-school-pick" value="${escapeHtml(school)}">
+				<i class="${escapeHtml(CODEX_SPELL_SCHOOLS[school]?.icon ?? 'fa-solid fa-book')}"></i>
+				<span>${escapeHtml(SCHOOL_LABEL(school))}</span>
+			</label>`,
+		)
+		.join('');
+
+	while (true) {
+		// eslint-disable-next-line no-await-in-loop
+		const picked = await foundry.applications.api.DialogV2.wait({
+			window: { title: `${actor.name} — ${config.title}` },
+			content: `<form class="blue-codex-school-form">
+					<p>${escapeHtml(config.summary)}</p>
+					<div class="blue-codex-school-list">${rows}</div>
+				</form>
+				<style>
+					.blue-codex-school-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+					.blue-codex-school-pick i{width:18px;text-align:center}
+				</style>`,
+			buttons: [
+				{
+					action: 'confirm',
+					label: 'Confirm',
+					default: true,
+					callback: (_event, button, dialog) => {
+						const root =
+							dialog?.element ?? button?.closest?.('.application') ?? button?.form ?? document;
+						return [...root.querySelectorAll('input[name="blue-codex-school-pick"]:checked')].map(
+							(input) => input.value,
+						);
+					},
+				},
+			],
+			rejectClose: false,
+			modal: true,
+		}).catch(() => null);
+
+		if (!Array.isArray(picked)) return null; // dismissed / cancelled — defer
+		if (picked.length !== config.pick) {
+			ui.notifications?.warn(`Choose exactly ${config.pick} spell school${config.pick > 1 ? 's' : ''}.`);
+			continue;
+		}
+		return picked;
+	}
+}
+
+// Grant a new module class's chosen Codex spell schools (Specter's Dark Knowledge).
+// Structured exactly like classSpellRemapSync: one-time-per-tier via a stored
+// high-water mark so a manually removed spell is not re-added and manual adds
+// survive. On first run (no flag / class change) it prompts the school choice and
+// grants every unlocked tier; later level-ups grant only the newly unlocked tiers.
+// The Eidolon of Rage element school is layered on separately by spellSchoolSync,
+// which runs after this (see handleActorFeatures), so its prompt already sees the
+// Book-of-Ruin schools granted here.
+async function classSpellChoiceSync(actor) {
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !actor.isOwner) return;
+	if (classChoiceActive.has(actor.id)) return;
+
+	const classInfo = getPrimaryClass(actor);
+	if (!classInfo?.classId || classInfo.classLevel < 1) return;
+	const config = CLASS_SPELL_CHOICE[classInfo.classId];
+	if (!config) return;
+
+	const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+	const stored = actor.getFlag(MODULE_ID, 'classSpellChoice');
+	const isNew =
+		!stored || stored.classId !== classInfo.classId || !Array.isArray(stored.schools);
+
+	classChoiceActive.add(actor.id);
+	try {
+		let schools;
+		let fromTier;
+		if (isNew) {
+			const picked = await promptClassSchoolChoice(actor, config);
+			if (!picked) return; // deferred — re-offer on a later render
+			schools = picked;
+			fromTier = -1;
+		} else {
+			schools = stored.schools;
+			// Absent high-water flag ⇒ adopt current tier without re-granting (an
+			// upgraded flag). Present ⇒ grant only the tiers unlocked since.
+			fromTier = typeof stored.grantedTier === 'number' ? stored.grantedTier : maxTier;
+			if (fromTier >= maxTier) {
+				if (typeof stored.grantedTier !== 'number') {
+					await actor.setFlag(MODULE_ID, 'classSpellChoice', {
+						classId: classInfo.classId,
+						schools,
+						grantedTier: maxTier,
+					});
+				}
+				return; // already granted through the current tier
+			}
+		}
+
+		// Persist the chosen schools + advanced high-water mark BEFORE granting so a
+		// re-entrant render (fired by our own writes) already sees the final state.
+		await actor.setFlag(MODULE_ID, 'classSpellChoice', {
+			classId: classInfo.classId,
+			schools,
+			grantedTier: Math.max(fromTier, maxTier),
+		});
+
+		let granted = 0;
+		for (const school of schools) {
+			// eslint-disable-next-line no-await-in-loop
+			granted += await grantCodexSchoolSpells(actor, school, maxTier, fromTier);
+		}
+		if (granted) {
+			ui.notifications?.info(
+				`${actor.name}: learned ${granted} ${config.title} spell${granted > 1 ? 's' : ''}.`,
+			);
+		}
+	} finally {
+		classChoiceActive.delete(actor.id);
+	}
+}
+
 // Suppress ONLY the automated base-class grant that fires during a swapped
 // caster's level-up — this is what stops an Invoker of Ether from re-gaining Book
 // of Elements spells every level-up. It is deliberately scoped to the leveling
@@ -2212,6 +2377,19 @@ async function summonActivationBlocked(item) {
 	const actor = item?.actor;
 	if (!(actor instanceof Actor)) return false;
 
+	// Turret Deployed!: a self-contained deploy flow (picker + cap/recast + HP
+	// scaling) that runs entirely here and ALWAYS blocks the normal activation —
+	// the feature's whole job is the deploy, so no generic chat card is needed and
+	// a cancelled picker costs nothing (originalActivate never runs).
+	if (summon.turretDeploy) {
+		try {
+			await handleTurretDeploy(item, actor, summon);
+		} catch (error) {
+			console.error(`[${MODULE_ID}] turret deploy failed`, error);
+		}
+		return true;
+	}
+
 	// 1. combat-only spells cannot be cast outside combat.
 	if (summon.combatOnly && !game.combat?.started) {
 		ui.notifications?.warn(`${item.name} can only be cast during combat.`);
@@ -2237,16 +2415,21 @@ async function summonActivationBlocked(item) {
 		}
 	}
 
-	// 2. maxCount cap = min(INT mod, character level), floored at 0.
-	if (summon.maxCount === 'minIntOrLevel') {
-		const cap = Math.max(0, Math.min(getAbilityMod(actor, 'intelligence'), getCharacterLevel(actor)));
+	// 2. maxCount cap = min(<ability> mod, character level), floored at 0.
+	//    minIntOrLevel → Summon Shadow (shadow minions);
+	//    minStrOrLevel → Reanimated Soul (undead minions, count = Soul Power dice
+	//    used, itself capped at min(STR, LVL)).
+	if (summon.maxCount === 'minIntOrLevel' || summon.maxCount === 'minStrOrLevel') {
+		const ability = summon.maxCount === 'minStrOrLevel' ? 'strength' : 'intelligence';
+		const noun = summon.maxCount === 'minStrOrLevel' ? 'undead minion' : 'shadow minion';
+		const cap = Math.max(0, Math.min(getAbilityMod(actor, ability), getCharacterLevel(actor)));
 		if (cap <= 0) {
-			ui.notifications?.warn(`${actor.name} cannot summon any shadow minions right now.`);
+			ui.notifications?.warn(`${actor.name} cannot summon any ${noun}s right now.`);
 			return true;
 		}
 		const count = findLiveSummons(actor, summon.template).length;
 		if (count >= cap) {
-			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} shadow minion${cap === 1 ? '' : 's'}.`);
+			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} ${noun}${cap === 1 ? '' : 's'}.`);
 			return true;
 		}
 	}
@@ -2291,6 +2474,10 @@ async function handleSummonSpawn(item, context) {
 	};
 	if (summon.expireOnCombatEnd) tokenFlag.combatId = game.combat?.id ?? null;
 	if (summon.chargesFromMana) tokenFlag.charges = effectiveMana;
+	// Auto Deploy!'s rifle "does not count against your turret limit": tag it so
+	// the Turret Deployed! cap counting (findLiveTurrets) skips it. It still expires
+	// on combat end and remains individually dismissable.
+	if (summon.countsTowardCap === false) tokenFlag.excludeFromCap = true;
 
 	const tokenSrc = baseActor.prototypeToken.toObject();
 	const tokenData = foundry.utils.mergeObject(
@@ -2313,6 +2500,10 @@ async function handleSummonSpawn(item, context) {
 		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" token.`);
 		return;
 	}
+
+	// Level-scaled turret HP (destruction threshold cue). Used by Auto Deploy!'s
+	// fixed rifle; the Turret Deployed! picker path scales HP in handleTurretDeploy.
+	if (summon.hpFromLevel) await applyTurretHp(created, caster);
 
 	// Track unique summons on the caster so future casts can find/dismiss them.
 	if (summon.unique) {
@@ -2359,6 +2550,206 @@ async function handleSummonSpawn(item, context) {
 		content += `<p>School abilities: <strong>${names}</strong>.</p>`;
 	}
 	postSummonChat(caster, content, item?.name);
+}
+
+// ── Engineer turret deployment ───────────────────────────────────────────────
+// Turrets reuse the summon primitives (companion pack, spawn position, dismiss,
+// combat-end cleanup via the SUMMON_FLAG.combatId) but need a picker (the Engineer
+// chooses which turret to deploy) and a level-scaled HP/destruction threshold, so
+// Turret Deployed! runs this dedicated flow instead of the generic single-template
+// spawn. The six turret companions live in the companion pack tagged
+// companionTemplate "turret-<slug>". Scrap costs and the 1/turn limit stay manual
+// [M] — there is no Toolbelt-scrap resource on the actor.
+const TURRET_TEMPLATES = [
+	{ template: 'turret-rifle', label: 'Rifle Turret' },
+	{ template: 'turret-flame', label: 'Flame Turret' },
+	{ template: 'turret-rocket', label: 'Rocket Turret' },
+	{ template: 'turret-healing', label: 'Healing Turret' },
+	{ template: 'turret-electro-net', label: 'Electro-Net Turret' },
+	{ template: 'turret-thumper', label: 'Thumper Turret' },
+];
+const TURRET_TEMPLATE_SET = new Set(TURRET_TEMPLATES.map((t) => t.template));
+
+// True when the caster owns a feature with the given identifier (or exact name —
+// the identifier can be empty on some docs). Mirrors getSummonFeatureBoosts' match.
+function actorOwnsFeature(actor, identifier, name) {
+	for (const item of actor?.items ?? []) {
+		if (item?.type !== 'feature') continue;
+		if (identifier && item.system?.identifier === identifier) return true;
+		if (name && item.name === name) return true;
+	}
+	return false;
+}
+
+// A turret's destruction threshold = the summoner's level, doubled by Mechanist's
+// Extra Plating (L3). Encoded as the spawned token's HP purely as a GM cue (the
+// real rule is "one instance of damage >= threshold destroys it", not a pool).
+function turretHpForCaster(caster) {
+	const level = Math.max(1, getCharacterLevel(caster));
+	return actorOwnsFeature(caster, 'extra-plating', 'Extra Plating') ? level * 2 : level;
+}
+
+// Set a spawned turret token's synthetic-actor HP to the level-scaled threshold.
+async function applyTurretHp(tokenDoc, caster) {
+	try {
+		const hp = turretHpForCaster(caster);
+		const synth = tokenDoc?.actor;
+		if (!synth) return;
+		await synth.update({ 'system.attributes.hp.max': hp, 'system.attributes.hp.value': hp });
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not set turret HP`, error);
+	}
+}
+
+// The turret templates a caster can deploy. Mechanical Mayhem grants Rifle at L3,
+// then a chosen turret at L7/L11/L15. Individual picks aren't tracked (no turret
+// pick-pool exists), so this offers Rifle always and — from level 7 — every turret
+// ([M] over-offer: it lists all learnable turrets rather than only the three the
+// player actually chose with Mechanical Mayhem).
+function getKnownTurretTemplates(caster) {
+	if (getCharacterLevel(caster) >= 7) return TURRET_TEMPLATES;
+	return TURRET_TEMPLATES.filter((t) => t.template === 'turret-rifle');
+}
+
+// Every live turret this caster has out, across all six templates, that counts
+// toward the Turret Deployed! cap. Excludes Auto Deploy!'s free rifle (tagged
+// `excludeFromCap` at spawn) so a picker deploy never dismisses it.
+function findLiveTurrets(caster) {
+	const out = [];
+	for (const { template } of TURRET_TEMPLATES) {
+		for (const token of findLiveSummons(caster, template)) {
+			if (getTokenSummonFlag(token)?.excludeFromCap === true) continue;
+			out.push(token);
+		}
+	}
+	return out;
+}
+
+// Present the "which turret?" picker; returns the chosen template, or null if
+// cancelled. Auto-picks when only Rifle is known (L3–6).
+async function promptTurretChoice(caster, known) {
+	if (known.length === 1) return known[0].template;
+	const rows = known
+		.map(
+			(t, i) => `
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="blue-codex-turret" value="${escapeHtml(t.template)}" ${i === 0 ? 'checked' : ''}>
+				<span>${escapeHtml(t.label)}</span>
+			</label>`,
+		)
+		.join('');
+	return foundry.applications.api.DialogV2.wait({
+		window: { title: `${caster.name} — Deploy Turret` },
+		content: `<form class="blue-codex-turret-form">
+				<p>Choose which turret to deploy in an adjacent space:</p>
+				<div class="blue-codex-turret-list">${rows}</div>
+			</form>
+			<style>
+				.blue-codex-turret-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+			</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Deploy',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.closest?.('.application') ?? button?.form ?? document;
+					return root.querySelector('input[name="blue-codex-turret"]:checked')?.value ?? null;
+				},
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+}
+
+// Spawn a single turret token of `template` with level-scaled HP and provenance.
+// Mirrors handleSummonSpawn's token construction but for a caller-chosen template.
+async function spawnTurret(caster, template, summon) {
+	const scene = canvas?.scene;
+	if (!scene) {
+		console.warn(`[${MODULE_ID}] No active scene to deploy "${template}" onto.`);
+		return null;
+	}
+	const baseActor = await resolveCompanionBaseActor(template);
+	if (!baseActor) {
+		console.warn(`[${MODULE_ID}] Could not resolve turret template "${template}".`);
+		return null;
+	}
+	const casterToken = caster.getActiveTokens?.(true, true)?.[0] ?? null;
+	const { x, y } = computeSummonSpawnPosition(caster, scene);
+
+	const tokenFlag = {
+		template,
+		summonerActorUuid: caster.uuid,
+		summonerTokenId: casterToken?.id ?? null,
+	};
+	if (summon.expireOnCombatEnd) tokenFlag.combatId = game.combat?.id ?? null;
+
+	const tokenSrc = baseActor.prototypeToken.toObject();
+	const tokenData = foundry.utils.mergeObject(
+		tokenSrc,
+		{
+			name: baseActor.name,
+			x,
+			y,
+			actorId: baseActor.id,
+			actorLink: false,
+			disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY,
+			flags: { [MODULE_ID]: { [SUMMON_FLAG]: tokenFlag } },
+		},
+		{ inplace: false },
+	);
+	delete tokenData._id;
+
+	const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+	if (!created) {
+		console.warn(`[${MODULE_ID}] Failed to deploy "${template}" token.`);
+		return null;
+	}
+	await applyTurretHp(created, caster);
+	return created;
+}
+
+// Turret Deployed! flow: combat check → picker → enforce the turret cap
+// (dismissing existing turret(s) so the new one fits — "deploying another destroys
+// the previous one") → spawn. Mechanist's Master Technician (L3) raises the base
+// cap from 1 to 2. A cancelled picker deploys nothing (and costs nothing, since
+// this ran before the normal activation).
+async function handleTurretDeploy(item, caster, summon) {
+	if (summon.combatOnly && !game.combat?.started) {
+		ui.notifications?.warn(`${item.name} can only be used during combat.`);
+		return;
+	}
+	const known = getKnownTurretTemplates(caster);
+	const template = await promptTurretChoice(caster, known);
+	if (!template || !TURRET_TEMPLATE_SET.has(template)) return; // cancelled — free
+
+	// Cap: base maxCount (1), raised to 2 by Master Technician.
+	let cap = Number(summon.maxCount) || 1;
+	if (actorOwnsFeature(caster, 'master-technician', 'Master Technician')) cap = Math.max(cap, 2);
+
+	// Make room: dismiss the leading live turret(s) so the new one fits under the cap
+	// (at cap 1 this removes the existing turret; at cap 2 it removes the oldest one
+	// only when already at 2).
+	const live = findLiveTurrets(caster);
+	const overflow = live.length - (cap - 1);
+	for (let i = 0; i < overflow && i < live.length; i += 1) {
+		// eslint-disable-next-line no-await-in-loop
+		await dismissSummon(live[i], {
+			summonerActor: caster,
+			template: getTokenSummonFlag(live[i])?.template,
+		});
+	}
+
+	const created = await spawnTurret(caster, template, summon);
+	if (!created) return;
+	const label = TURRET_TEMPLATES.find((t) => t.template === template)?.label ?? 'Turret';
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} deploys a <strong>${escapeHtml(label)}</strong> (HP ${turretHpForCaster(caster)} = destruction threshold).</p>`,
+		item?.name,
+	);
 }
 
 // Every embedded item on `actorLike` as a plain array, spanning both the live
@@ -2625,6 +3016,14 @@ async function handleActorFeatures(actor) {
 		console.error(`[${MODULE_ID}] class spell-school remap failed`, error);
 	}
 	try {
+		// Runs before the subclass swap so a Specter already owns its two Dark
+		// Knowledge Book-of-Ruin schools by the time Eidolon of Rage's element
+		// choice reads the caster's current schools.
+		await classSpellChoiceSync(actor);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] class spell-school choice grant failed`, error);
+	}
+	try {
 		await spellSchoolSync(actor);
 	} catch (error) {
 		console.error(`[${MODULE_ID}] spell-school sync failed`, error);
@@ -2646,6 +3045,16 @@ api.chooseSpellSchools = async (actor) => {
 	if (!target) return;
 	await target.unsetFlag(MODULE_ID, 'spellSchools');
 	return spellSchoolSync(target);
+};
+
+// Re-open a new module class's spell-school choice (Specter's Dark Knowledge):
+// clears the stored pick so the dialog is offered again. Existing spell items are
+// left as-is; the fresh pick grants any newly chosen schools' unlocked tiers.
+api.chooseClassSpellSchools = async (actor) => {
+	const target = actor ?? game.user?.character;
+	if (!target) return;
+	await target.unsetFlag(MODULE_ID, 'classSpellChoice');
+	return classSpellChoiceSync(target);
 };
 
 // Grant/offer subclass content after any level change, subclass selection, and

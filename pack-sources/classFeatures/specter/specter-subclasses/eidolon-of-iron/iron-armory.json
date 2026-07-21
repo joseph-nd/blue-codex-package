@@ -1,0 +1,57 @@
+{
+	"name": "Iron Armory",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-iron/iron-armory.webp",
+	"system": {
+		"macro": "",
+		"identifier": "iron-armory",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain proficiency with 2 melee weapons of your choice, plate armor and shields. You can use a shield as a spellcasting focus.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-iron",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "c16c33443c34e11c",
+	"_id": "FEIWjfaXUKTd3lL0"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "Death Nova",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/death-nova.webp",
+	"system": {
+		"macro": "",
+		"identifier": "death-nova",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "reaction",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Round) <strong>Free Reaction:</strong> When an undead minion would be destroyed, you can use Ruin or Haunt on it for free at the same time, affecting all adjacent enemies.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-reanimation",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "274979a7d9ac9399",
+	"_id": "sc0y98dw261wfuuo"
+}

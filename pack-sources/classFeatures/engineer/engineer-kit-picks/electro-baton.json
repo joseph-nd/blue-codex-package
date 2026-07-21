@@ -1,0 +1,76 @@
+{
+	"name": "Electro Baton",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "electro-baton",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "electro-batonGrant",
+				"identifier": "",
+				"label": "Electro Baton",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.yuFMpfvYp12SSz36"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — A melee mace that builds Charged, with shock, arc and discharge options.</em></p><p><strong>Strike (basic) — 1 Action · Considered a mace.</strong> Reach 1, Damage: 2d6+STR Lightning. You have advantage if you are Charged. On crit: gain Charged.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>System Shock.</strong> Reach 1, Damage: 2d6+STR Lightning, lose Charged. If you lost Charged, the target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</li><li><strong>Arc Leap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, Damage: 2d6. Ignores armor.</li><li><strong>Discharge.</strong> Reach 1, Damage: 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor; can still crit or miss.</li></ul><p><strong>High Levels:</strong> +6 damage every 5 levels (Strike, System Shock). +4 damage every 5 levels (Arc Leap, Discharge).</p><hr><p><em>[M] Weapon Kits are considered weapons for swapping and stowing. The basic ability costs 1 Action; each Toolbelt option costs 2 Actions and 1 Toolbelt scrap. Scrap cost is tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WMo86X1rw8HZSZms",
+	"folder": "e2c8675a119379ac"
+}

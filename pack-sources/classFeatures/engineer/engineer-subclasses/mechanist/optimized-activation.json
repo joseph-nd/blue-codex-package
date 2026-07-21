@@ -1,0 +1,57 @@
+{
+	"name": "Optimized Activation",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/mechanist/optimized-activation.webp",
+	"system": {
+		"macro": "",
+		"identifier": "optimized-activation",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action. You can use 1 Toolbelt scrap to activate all active turrets' abilities. This does not destroy the turrets.</p><p><em>[M] 1/Safe Rest, 1 Action, 1 Toolbelt scrap: activate every active turret's special ability at once without destroying them — resolve turret abilities manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "mechanist",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "a842227b5b1c1fc4",
+	"_id": "JYGcHwwKb6A0q8Wy"
+}

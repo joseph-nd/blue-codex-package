@@ -1,0 +1,68 @@
+{
+	"name": "Reanimated Soul",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/reanimated-soul.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reanimated-soul",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can Soul Twist to conjure a number of d8 undead minions in Reach 8 equal to the number of dice used for your Soul Power instead (max STR or LVL, whichever is lower). Your minions follow all normal minion rules, are Soul Touched, and removing Soul Touched destroys it.</p><p>When a non-minion enemy in Range 8 dies, if you are below your minion cap, they instead immediately rise as an undead minion. Undead minions are separate entities for Rushed Attack rules.</p><ul><li><strong>1 Action.</strong> Command all minions to Move 6 and Attack (1d8).</li></ul><p>On death: inflict Soul Touched on the attacker.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-reanimation",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"summon": {
+					"template": "undead-minion",
+					"combatOnly": true,
+					"expireOnCombatEnd": true,
+					"maxCount": "minStrOrLevel"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "274979a7d9ac9399",
+	"_id": "FUqpSGmwjuJuQEfq"
+}

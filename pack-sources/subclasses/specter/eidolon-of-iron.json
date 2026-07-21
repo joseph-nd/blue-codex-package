@@ -1,0 +1,25 @@
+{
+	"name": "Eidolon of Iron",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-iron/soul-of-iron.webp",
+	"system": {
+		"macro": "",
+		"identifier": "eidolon-of-iron",
+		"rules": [],
+		"description": "<p><em>The haunting made manifest in steel.</em> The Eidolon of Iron marries soul manipulation to the front line, striking Soul Touched foes with blade and rite in the same breath and turning every wound they inflict back upon them.</p><p><strong>LEVEL 3</strong></p><p><strong>Iron Armory.</strong> Proficiency with 2 melee weapons, plate armor and shields; a shield can serve as a spellcasting focus.</p><p><strong>Soul of Iron.</strong> 1/turn, a melee hit on a Soul Touched target lets you use Ruin or Haunt as part of the same Action and grants KEY temp HP.</p><p><strong>LEVEL 7</strong></p><p><strong>Iron Rites.</strong> A Rite menu (Warp, Chain); using an Iron Rite or Protect lets you make a melee attack as part of the same Action.</p><p><strong>LEVEL 11</strong></p><p><strong>Soul Reflection.</strong> Temp HP lost from Protect or Soul of Iron is dealt back to the attacker. Ignores armor.</p><p><strong>LEVEL 15</strong></p><p><strong>Soul Forged.</strong> While Soul Touched, your first weapon Attack each turn deals bonus damage equal to your soul power.</p>",
+		"parentClass": "specter",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "f81388e890a60549",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ssuJFongS9nOFRWu"
+}

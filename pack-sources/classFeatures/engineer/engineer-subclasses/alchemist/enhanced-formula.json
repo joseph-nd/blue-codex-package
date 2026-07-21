@@ -1,0 +1,57 @@
+{
+	"name": "Enhanced Formula",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/alchemist/enhanced-formula.webp",
+	"system": {
+		"macro": "",
+		"identifier": "enhanced-formula",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>All damage, temp HP and HP you restore through your Med Kit, Elixir Gun, and Healing Turret and Gadgets increases by 3.</p><p><em>[M] +3 to all damage, temp HP and HP restored via your Med Kit, Elixir Gun, Healing Turret and Gadgets — add manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "alchemist",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "52c19b516443f356",
+	"_id": "tHbxTKrBkcQGzANd"
+}

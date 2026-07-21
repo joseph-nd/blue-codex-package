@@ -1,0 +1,57 @@
+{
+	"name": "Tinkering",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/tinkering.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tinkering",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can produce small single-use gadgets at a time (e.g. a noisemaker, a flare, a smoke signal, a lockpick, etc.). They break after a single use. You can make up to STR per day.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			2
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "2mVWluSeiyflpvQ9",
+	"folder": "e2c8675a119379ac"
+}

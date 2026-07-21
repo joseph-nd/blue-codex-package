@@ -1,0 +1,57 @@
+{
+	"name": "Soul Rite",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-rite.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-rite",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Reach: 8. Remove Soul Touched from the target and choose 1 of the following effects. If Soul Touched wasn't removed, this does nothing:</p><ul><li><p><strong>Ruin.</strong> Target takes Cold damage equal to your soul power. Ignores armor.</p></li><li><p><strong>Haunt.</strong> Target is Frightened of you, 1 turn.</p></li><li><p><strong>Protect.</strong> Target gains temp HP equal to your soul power, 1 round.</p></li></ul>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			1
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "itUBtlwJJgAZeQBS",
+	"folder": "17e1edd987ec62a3"
+}

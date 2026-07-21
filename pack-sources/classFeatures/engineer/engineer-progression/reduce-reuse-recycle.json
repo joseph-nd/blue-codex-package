@@ -1,0 +1,57 @@
+{
+	"name": "Reduce, Reuse & Recycle",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/reduce-reuse-recycle.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reduce-reuse-recycle",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you finish a Safe Rest or spend at least an hour tinkering, you can choose different Engineer options available to you (i.e. re-select known Kits, Gadgets, Turrets and subclass choices).</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			2
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ef1eyMNnfWsfWRXE",
+	"folder": "e2c8675a119379ac"
+}

@@ -1,0 +1,25 @@
+{
+	"name": "Eidolon of Suffering",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/soul-of-suffering.webp",
+	"system": {
+		"macro": "",
+		"identifier": "eidolon-of-suffering",
+		"rules": [],
+		"description": "<p><em>If they try to ignore your touch, they rot.</em> The Eidolon of Suffering makes every escape a punishment, stacking conditions on a Soul Touched foe and feeding on the pain it endures.</p><p><strong>LEVEL 3</strong></p><p><strong>Soul of Suffering.</strong> Choose the stat unwilling targets use to save against your Soul Touched.</p><p><strong>Suffering Rites.</strong> A Rite menu (Meekness, Corrupt) that daze and impair.</p><p><strong>LEVEL 7</strong></p><p><strong>Rotting Flesh.</strong> An enemy that saves to remove Soul Touched is Poisoned, 1 round.</p><p><strong>LEVEL 11</strong></p><p><strong>Feed the Corruption.</strong> While Soul Touched, gaining a negative condition grants STR temp HP and lets you inflict the same condition on an enemy in Reach 8.</p><p><strong>LEVEL 15</strong></p><p><strong>Poltergeist.</strong> (1/Round) Using a Soul or Suffering Rite can also use Haunt on that target for free.</p>",
+		"parentClass": "specter",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "f81388e890a60549",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EbGy1dSZwTZu9ged"
+}

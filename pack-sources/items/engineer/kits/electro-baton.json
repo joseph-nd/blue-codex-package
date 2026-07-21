@@ -1,0 +1,124 @@
+{
+	"name": "Electro Baton",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "electro-baton",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "engElectroBatonDmg",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "2d6+@strength",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "engElectroBatonDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "engElectroBatonDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "engElectroBatonDmg-c",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "engElectroBatonDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "engElectroBatonDmg-m",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "engElectroBatonDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Weapon Kit</strong> &middot; <em>Engineer invention. Counts as a weapon for swapping and stowing. Toolbelt options cost 2 Actions and 1 Toolbelt scrap.</em></p><hr><p><em>Considered a mace.</em></p><p><strong>Strike (basic) &mdash; 1 Action.</strong> Reach 1, 2d6+STR Lightning. You have advantage if you are Charged. On crit: gain Charged.</p><p><strong>Toolbelt (2 Actions, 1 scrap):</strong></p><ul><li><strong>System Shock.</strong> Reach 1, 2d6+STR Lightning, lose Charged. If you lost Charged, target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</li><li><strong>Arc Leap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, 2d6. Ignores armor.</li><li><strong>Discharge.</strong> Reach 1, 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor; can still crit or miss.</li></ul><p><strong>High Levels:</strong> +6 damage every 5 levels (Strike, System Shock); +4 damage every 5 levels (Arc Leap, Discharge).</p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": false,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 1,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 1
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "yuFMpfvYp12SSz36",
+	"folder": "dfe4d289fa5ed31b"
+}

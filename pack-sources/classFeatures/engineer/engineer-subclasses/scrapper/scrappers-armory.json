@@ -1,0 +1,57 @@
+{
+	"name": "Scrapper's Armory",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/scrappers-armory.webp",
+	"system": {
+		"macro": "",
+		"identifier": "scrappers-armory",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain proficiency with hammers, maces, and mail armor.</p><p><em>[M] Passive proficiencies with hammers, maces and mail armor — apply manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "hvycEzcfSTEoXLy1"
+}

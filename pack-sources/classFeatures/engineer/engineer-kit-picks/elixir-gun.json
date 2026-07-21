@@ -1,0 +1,76 @@
+{
+	"name": "Elixir Gun",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/elixir-gun.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-gun",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elixir-gunGrant",
+				"identifier": "",
+				"label": "Elixir Gun",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.V5WBvs4RbwYEG3WY"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — A support gun firing tranq darts, with glob, fumigate and healing options.</em></p><p><strong>Tranq Dart (basic) — 1 Action.</strong> Range 8, Damage: 1d4 Piercing. On hit: 1d4 Acid damage.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>Glob Shot.</strong> Range 8. Target is Slowed, 1 minute. It bounces to the next nearest target in Range 8. If it's an enemy they are also Slowed; if it's an ally they gain +2 speed once, 1 minute.</li><li><strong>Fumigate.</strong> Cone 3, Damage: 3d4 Acid. Allies take no damage and you heal 1 negative condition from allies in the area (not including Wounds).</li><li><strong>Super Elixir.</strong> Range 8, Blast 3, Restore: INT HP. Each ally regains the same amount at the start of their next turn.</li></ul><p><strong>High Levels:</strong> +6 Acid damage every 5 levels (Tranq Dart & Fumigate). +2 bonus every 5 levels (Super Elixir).</p><hr><p><em>[M] Weapon Kits are considered weapons for swapping and stowing. The basic ability costs 1 Action; each Toolbelt option costs 2 Actions and 1 Toolbelt scrap. Scrap cost is tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "LOACCGUpGqKqH7h2",
+	"folder": "e2c8675a119379ac"
+}

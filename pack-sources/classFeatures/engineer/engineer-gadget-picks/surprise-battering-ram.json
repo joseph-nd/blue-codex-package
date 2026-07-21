@@ -1,0 +1,90 @@
+{
+	"name": "Surprise Battering Ram",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/surprise-battering-ram.webp",
+	"system": {
+		"macro": "",
+		"identifier": "surprise-battering-ram",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "surprise-battering-ramGrant",
+				"identifier": "",
+				"label": "Surprise Battering Ram",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.jTjJ6dx9zeAMm9tM"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A spring-loaded ram that smashes and shoves enemies back.</em></p><p><strong>2 Actions.</strong> Reach 2, Damage: STRd8 Force. On hit: Large and smaller targets are pushed 2 spaces away.</p><p><strong>Toolbelt:</strong> Target is Dazed, 2 turns.</p><p><strong>Passive:</strong> You have advantage on saves to avoid being moved against your will.</p><hr><p><em>[M] Gadget activation costs 1 Toolbelt scrap (2 total for the Toolbelt upgrade); the passive is always active. Scrap cost and activation are tracked by the module.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "plXXD2LnfRj0AcNz",
+	"folder": "e2c8675a119379ac"
+}

@@ -1,0 +1,25 @@
+{
+	"name": "Scrapper",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/gyroscopics.webp",
+	"system": {
+		"macro": "",
+		"identifier": "scrapper",
+		"rules": [],
+		"description": "<p><em>Ingenious.</em> Who needs a stationary sentry when you can strap it to your back? The Scrapper turns turrets into whirring gyros that follow them into the fray, then wades in with hammer and mail to renovate the front line up close.</p><p><strong>LEVEL 3</strong></p><p><strong>Scrapper's Armory.</strong> You gain proficiency with hammers, maces, and mail armor.</p><p><strong>Gyroscopics.</strong> Your turrets become gyros that occupy your space, follow you as you move, and emanate their effects from you.</p><p><strong>LEVEL 7</strong></p><p><strong>Applied Force.</strong> Spend 1 Toolbelt scrap on a hammer or mace hit to deal LVL Force damage (ignoring armor) and shove adjacent enemies away.</p><p><strong>LEVEL 11</strong></p><p><strong>Kinetic Stabilizers.</strong> While in mail armor, reduce Bludgeoning, Piercing and Slashing damage by STR and gain advantage on saves vs forced movement.</p><p><strong>LEVEL 15</strong></p><p><strong>Bulwark Gyro.</strong> 1/Safe Rest, deploy a protective aura that reduces all damage you and nearby allies take.</p>",
+		"parentClass": "engineer",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "00bb693b48359049",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Prg8QL2hlBCfAjXC"
+}

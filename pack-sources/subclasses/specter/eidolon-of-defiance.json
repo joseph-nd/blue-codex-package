@@ -1,0 +1,25 @@
+{
+	"name": "Eidolon of Defiance",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-defiance/soul-of-defiance.webp",
+	"system": {
+		"macro": "",
+		"identifier": "eidolon-of-defiance",
+		"rules": [],
+		"description": "<p><em>The same brand that dooms your enemies can shelter your friends.</em> The Eidolon of Defiance turns the Specter’s haunting inward and outward as a shield, warding allies, healing wounds, and cleansing corruption through the bond of Soul Touched.</p><p><strong>LEVEL 3</strong></p><p><strong>Soul of Defiance.</strong> Soul Touched allies cannot be forcibly moved; remove Soul Touched from an ally to Help them as a Free Reaction at any distance.</p><p><strong>Defiance Rites.</strong> A Rite menu (Recovery, Purity) that heals and cleanses allies.</p><p><strong>LEVEL 7</strong></p><p><strong>Reclaim Essence.</strong> Whenever you remove Soul Touched, regain STR HP.</p><p><strong>LEVEL 11</strong></p><p><strong>Ghostmirror.</strong> Protect or a Defiance Rite can echo onto a second ally in Reach 8 without needing or removing their Soul Touched.</p><p><strong>LEVEL 15</strong></p><p><strong>Generosity.</strong> Helping an ally with Soul of Defiance can apply Protect or a Defiance Rite to them for free as part of the same reaction.</p>",
+		"parentClass": "specter",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "f81388e890a60549",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "OzyRRqdhXbIWgN7u"
+}

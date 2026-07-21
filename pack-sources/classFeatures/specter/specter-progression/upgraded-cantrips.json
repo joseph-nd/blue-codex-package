@@ -1,0 +1,60 @@
+{
+	"name": "Upgraded Cantrips",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/upgraded-cantrips.webp",
+	"system": {
+		"macro": "",
+		"identifier": "upgraded-cantrips",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your cantrips grow stronger. This happens at levels 5, 10, 15 and 20 (Nimble standard cantrip scaling).</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			5,
+			10,
+			15,
+			20
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "OeguasapId2UgRFK",
+	"folder": "17e1edd987ec62a3"
+}

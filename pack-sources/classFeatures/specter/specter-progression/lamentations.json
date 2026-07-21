@@ -1,0 +1,57 @@
+{
+	"name": "Lamentations",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/lamentations.webp",
+	"system": {
+		"macro": "",
+		"identifier": "lamentations",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You may choose different Specter options whenever you spend time self reflecting or talking with your lost soul companion during a Safe Rest. This includes your Soul Sculpting techniques and other choices.</p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "xe4YRxGbuXhrz089",
+	"folder": "17e1edd987ec62a3"
+}

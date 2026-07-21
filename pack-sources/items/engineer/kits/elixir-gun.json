@@ -1,0 +1,126 @@
+{
+	"name": "Elixir Gun",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/elixir-gun.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-gun",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "engElixirGunDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "1d4",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "engElixirGunDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "engElixirGunDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "engElixirGunDmg-c",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "engElixirGunDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "engElixirGunDmg-m",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "engElixirGunDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Weapon Kit</strong> &middot; <em>Engineer invention. Counts as a weapon for swapping and stowing. Toolbelt options cost 2 Actions and 1 Toolbelt scrap.</em></p><hr><p><strong>Tranq Dart (basic) &mdash; 1 Action.</strong> Range 8, 1d4 Piercing. On hit: 1d4 Acid damage.</p><p><strong>Toolbelt (2 Actions, 1 scrap):</strong></p><ul><li><strong>Glob Shot.</strong> Range 8. Target is Slowed, 1 minute. It bounces to the next nearest target in Range 8. If it's an enemy they are also Slowed; if it's an ally they gain +2 speed once, 1 minute.</li><li><strong>Fumigate.</strong> Cone 3, 3d4 Acid. Allies take no damage and you heal 1 negative condition from allies in the area (not including Wounds).</li><li><strong>Super Elixir.</strong> Range 8, Blast 3, Restore INT HP. Each ally regains the same amount at the start of their next turn.</li></ul><p><strong>High Levels:</strong> +6 Acid damage every 5 levels (Tranq Dart and Fumigate); +2 bonus every 5 levels (Super Elixir).</p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": false,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 1,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 8
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"range"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "V5WBvs4RbwYEG3WY",
+	"folder": "dfe4d289fa5ed31b"
+}

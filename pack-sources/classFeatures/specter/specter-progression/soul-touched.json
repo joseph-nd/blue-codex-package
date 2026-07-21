@@ -1,0 +1,57 @@
+{
+	"name": "Soul Touched",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-touched.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-touched",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(Condition) The target is susceptible to Specter Rites. Lasts 1 minute or until removed. Unwilling targets can make a WIL save vs your Hero DC at the end of their turns for free to remove Soul Touched.</p><hr><p><em>Soul Touched is a combat condition; outside combat it only enables your Rites. Each Specter's Soul Touched is tracked individually, as it can gain other effects (from Soul Sculpting techniques and subclass features). Constructs, Undead and \"Soulless\" creatures still have a soul the Specter can twist.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			1
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "49wQcKDs3khicVtG",
+	"folder": "17e1edd987ec62a3"
+}

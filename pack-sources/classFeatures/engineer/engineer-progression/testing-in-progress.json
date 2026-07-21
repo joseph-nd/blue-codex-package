@@ -1,0 +1,57 @@
+{
+	"name": "Testing In Progress!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/testing-in-progress.webp",
+	"system": {
+		"macro": "",
+		"identifier": "testing-in-progress",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>1/encounter.</strong> Your <strong>Turret Deployed!</strong> costs 0 Toolbelt scraps.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "uVpwmj0crudT9ea6",
+	"folder": "e2c8675a119379ac"
+}

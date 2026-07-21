@@ -1,0 +1,58 @@
+{
+	"name": "Jumpstart",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/jumpstart.webp",
+	"system": {
+		"macro": "",
+		"identifier": "jumpstart",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Jumpstart (1) — Level 13.</strong> When you roll initiative, regain 2 Toolbelt scraps.</p><p><strong>Jumpstart (2) — Level 17.</strong> When you roll initiative, regain 4 Toolbelt scraps.</p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			13,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "6ZzrKUkho87afnMO",
+	"folder": "e2c8675a119379ac"
+}

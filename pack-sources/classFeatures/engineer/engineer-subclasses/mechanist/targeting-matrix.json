@@ -1,0 +1,57 @@
+{
+	"name": "Targeting Matrix",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/mechanist/targeting-matrix.webp",
+	"system": {
+		"macro": "",
+		"identifier": "targeting-matrix",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When a turret deals damage to an enemy, the next attack against it has advantage.</p><p><em>[M] After a turret damages an enemy, the next attack against that enemy has advantage — apply manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "mechanist",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "a842227b5b1c1fc4",
+	"_id": "GnD4X5iEoj9zi6YL"
+}

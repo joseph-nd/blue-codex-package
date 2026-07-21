@@ -1,0 +1,126 @@
+{
+	"name": "Flamethrower",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/flamethrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flamethrower",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "engFlamethrowerDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "1d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "engFlamethrowerDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "engFlamethrowerDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "engFlamethrowerDmg-c",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "engFlamethrowerDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "engFlamethrowerDmg-m",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "engFlamethrowerDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Weapon Kit</strong> &middot; <em>Engineer invention. Counts as a weapon for swapping and stowing. Toolbelt options cost 2 Actions and 1 Toolbelt scrap.</em></p><hr><p><strong>Flame Jet (basic) &mdash; 1 Action.</strong> Reach 4, 1d8 Fire. Double damage if the target is Smoldering. Ignores armor. On crit: apply Smoldering.</p><p><strong>Toolbelt (2 Actions, 1 scrap):</strong></p><ul><li><strong>Flame Blast.</strong> Cone 3, 2d8 Fire. On hit: inflict Smoldering. Ignores armor.</li><li><strong>Air Blast.</strong> Reach 4, 3d8 Fire. On a failed STR save, Large and smaller targets are pushed back INT spaces. Can't miss Smoldering targets, and Smoldering targets automatically fail.</li><li><strong>Napalm.</strong> Reach 4, Wall 4. Lasts 1 minute or until dispersed. Targets that start or end a turn adjacent to it, or enter an adjacent space, take KEY Fire damage. Ignores armor.</li></ul><p><strong>High Levels:</strong> +5 damage every 5 levels (Flame Jet, Flame Blast, Air Blast); +2 damage every 5 levels (Napalm).</p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": false,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 1,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": [
+				"reach"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zcMeeh7MrXuEcKA4",
+	"folder": "dfe4d289fa5ed31b"
+}

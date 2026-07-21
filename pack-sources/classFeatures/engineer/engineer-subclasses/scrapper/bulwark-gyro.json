@@ -1,0 +1,57 @@
+{
+	"name": "Bulwark Gyro",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/bulwark-gyro.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bulwark-gyro",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action, Burst: 3. For the next minute, you and affected allies take LVL less damage from all sources.</p><p><em>[M] 1/Safe Rest, 1 Action. Burst 3 aura for 1 minute: you and affected allies take LVL less damage from all sources — track usage and damage reduction manually.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "YM1amUe1mviqRZed"
+}

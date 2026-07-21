@@ -1,0 +1,125 @@
+{
+	"name": "Rifle",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/firearms/rifle.webp",
+	"system": {
+		"macro": "",
+		"identifier": "rifle",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "engRifleDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "2d10",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "engRifleDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "engRifleDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "engRifleDmg-c",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "engRifleDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "engRifleDmg-m",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "engRifleDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Damage:</strong> 2d10 Piercing</p><p><strong>Properties:</strong> Range 12, Ammo 2, 2-Handed, Precise</p><p><strong>Cost:</strong> 150 gp</p><hr><p><strong>Firearm properties</strong></p><ul><li><strong>Ammo N.</strong> Must spend 1 Action reloading after being fired a number of times equal to its Ammo.</li><li><strong>Precise.</strong> Crits on an 8+ if the roll has advantage.</li><li><strong>Scatter.</strong> Targets farther than 1 space away take half damage.</li></ul><p><em>Engineer firearm. Only Engineers are proficient with firearms.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"quantity": 1,
+		"unidentifiedName": "Unidentified Object",
+		"objectSizeType": "slots",
+		"slotsRequired": 2,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": 12
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"range",
+				"twoHanded"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 150,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "EKSUxTq22Z7JTTa8",
+	"folder": "213dc19116dcf3c4"
+}
