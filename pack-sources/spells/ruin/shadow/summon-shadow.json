@@ -62,7 +62,15 @@
 					"template": "shadow-minion",
 					"combatOnly": true,
 					"expireOnCombatEnd": true,
-					"maxCount": "minIntOrLevel"
+					"maxCount": "minIntOrLevel",
+					"reachPerLevels": 5,
+					"featureBoosts": [
+						{
+							"name": "Shadow Magus",
+							"reachBonus": 4,
+							"formulaOverride": "1d10"
+						}
+					]
 				}
 			}
 		}

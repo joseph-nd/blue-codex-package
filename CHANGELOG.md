@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-21
+
+### Added
+
+- **Shadow Magus automation.** Casters who own the Shadowmancer Greater
+  Invocation *Shadow Magus* summon shadow minions with +4 Reach and d10
+  damage (instead of d12), patched onto each summoned token's attack and
+  sheet text. The spell's "Reach +1 every 5 levels" scaling is now applied
+  automatically as well.
+- **Swarming Shadows automation.** When a summoned shadow minion "would
+  crit" (its damage die rolls its maximum face — the system suppresses real
+  minion crits), a new shadow minion is summoned adjacent to the target,
+  with a chat notice. Works for both individual minion attacks and minion
+  group-attack cards, inherits combat-end cleanup and Shadow Magus boosts,
+  and respects the summon cap (whispers when the swarm is at its limit).
+- **Shadowmancer casting rules (Pilfered Power).**
+  - The max castable spell tier now follows the Shadowmancer's own
+    progression (tier 1 at level 2, then levels 5/7/10/13/16/19 for tiers
+    2–7) instead of the generic caster table.
+  - Tiered spells are automatically cast at the highest unlocked tier —
+    the upcast dialog is answered and skipped.
+  - Every tiered cast costs exactly 1 mana (one use of Pilfered Power),
+    regardless of tier.
+  - Overdraft: casting with 0 uses remaining still works — the patron
+    "takes notice", dealing half the caster's max HP with a chat card.
+
+### Notes
+
+- Holding Alt to skip dialogs bypasses the automatic upcast (the cast goes
+  off at base tier); the flat cost and overdraft still apply.
+- On a multi-target minion group attack, all Swarming Shadows spawns are
+  placed adjacent to the first target (the group card does not record
+  per-minion targets).
+
 ## [0.3.0] - 2026-07-14
 
 ### Added

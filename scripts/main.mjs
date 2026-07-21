@@ -478,6 +478,9 @@ Hooks.once('ready', () => {
 	// Summon automation: combat-end + Safe Rest cleanup for spawned companions
 	// (the spawn/gate/charge hooks piggyback on the on-hit install above).
 	installSummonAutomation();
+	// Shadowmancer casting rules: custom spell-tier cap table + Pilfered Power
+	// flat 1-mana cost.
+	installShadowmancerCasting();
 	// Warm the Codex coverage cache so the synchronous preCreateItem net has it.
 	ensureCodexCoverage();
 	// Warm the subclass-pool option + auto-grant indexes.
@@ -516,6 +519,11 @@ function escapeHtml(value) {
 		/[&<>"']/g,
 		(ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch],
 	);
+}
+
+// Escape a literal string for safe embedding in a RegExp source.
+function escapeRegExp(value) {
+	return String(value ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 let poolOptionsPromise = null;
@@ -1843,6 +1851,20 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] summon charge consumption failed`, error);
 	}
+	// Swarming Shadows: a shadow minion's single attack that would crit spawns
+	// another minion beside the target.
+	try {
+		await handleSwarmingShadowsUseItem(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Swarming Shadows (single attack) failed`, error);
+	}
+	// Shadowmancer Pilfered Power: enforce the flat 1-mana cost after the system's
+	// own tier-based deduction has run.
+	try {
+		await applyShadowmancerFlatCost(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] shadowmancer flat-cost correction failed`, error);
+	}
 }
 
 // Apply every declared on-hit automation to each target the primary attack hit.
@@ -1916,8 +1938,34 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] summon tier-uncap pre-activate failed`, error);
 	}
+	// Shadowmancer Pilfered Power forced max-tier: the SpellUpcastDialog is auto-
+	// answered at the cap (see onRenderUpcastDialog), but getData's applyUpcastDeltas
+	// also enforces Rule 4 (manaToSpend <= mana.current, reading the derived in-memory
+	// value). Under Pilfered Power mana.current is a use-count, not a per-tier budget,
+	// so raise it to the cap for the duration of getData; onSpellPreUse restores the
+	// real value BEFORE the system's own deduction (so the true flat cost persists),
+	// and the `finally` restores it if the cast is cancelled before preUse ever fires.
+	// Also strip fastForward so the dialog (hence the auto-answer) always runs.
 	try {
-		const result = await originalActivate.call(this, options);
+		if (this?.type === 'spell' && (Number(this.system?.tier) || 0) >= 1 && isShadowmancerActor(this?.actor)) {
+			if (options?.fastForward) options = { ...options, fastForward: false };
+			const resources = this.actor.system?.resources;
+			const realMana = Number(resources?.mana?.current) || 0;
+			const cap = Number(resources?.highestUnlockedSpellTier) || 0;
+			if (resources?.mana && realMana < cap) {
+				resources.mana.current = cap;
+				// Store only the plain value; the live `resources` object can be
+				// replaced if prepareData() re-runs during the dialog window, so the
+				// restore re-resolves the actor's mana object freshly.
+				shadowmancerManaFudge.set(this.actor.uuid, realMana);
+			}
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] shadowmancer mana pre-activate fudge failed`, error);
+	}
+	let result;
+	try {
+		result = await originalActivate.call(this, options);
 		// Consume the mark only if an attack actually resolved (dialog not cancelled).
 		if (marks.length && result) {
 			try {
@@ -1938,6 +1986,26 @@ async function runWrappedActivate(originalActivate, options = {}) {
 			} catch (error) {
 				console.warn(`[${MODULE_ID}] Could not restore spell tier cap`, error);
 			}
+		}
+		try {
+			const uuid = this?.actor?.uuid;
+			// Restore the mana fudge if onSpellPreUse never ran (the cast was
+			// cancelled/aborted before the deduction); a completed cast already
+			// restored it in preUse. Re-resolve the live mana object — the reference
+			// captured at fudge time may be stale after a mid-dialog prepareData().
+			if (uuid && shadowmancerManaFudge.has(uuid)) {
+				const realMana = shadowmancerManaFudge.get(uuid);
+				shadowmancerManaFudge.delete(uuid);
+				const mana = this?.actor?.system?.resources?.mana;
+				if (mana) mana.current = realMana;
+			}
+			// Clear a leftover cost snapshot ONLY when the cast did not complete (e.g.
+			// a later preUseItem handler blocked it after ours ran). A completed cast
+			// leaves the snapshot for the async useItem handler to consume — clearing
+			// it here would race that handler and skip the flat-cost/overdraft step.
+			if (uuid && !result) shadowmancerPreCastMana.delete(uuid);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not restore shadowmancer mana fudge`, error);
 		}
 	}
 }
@@ -2061,7 +2129,13 @@ function stepSummonDie(baseFaces, steps, maxFaces) {
 // { bonusMana, maxFacesOverride, uncapTier } (0 / null / false when the caster
 // owns none).
 function getSummonFeatureBoosts(summon, actor) {
-	const result = { bonusMana: 0, maxFacesOverride: null, uncapTier: false };
+	const result = {
+		bonusMana: 0,
+		maxFacesOverride: null,
+		uncapTier: false,
+		reachBonus: 0,
+		formulaOverride: null,
+	};
 	const boosts = summon?.featureBoosts;
 	if (!Array.isArray(boosts) || !(actor instanceof Actor)) return result;
 
@@ -2085,6 +2159,10 @@ function getSummonFeatureBoosts(summon, actor) {
 		const faces = Number(entry.maxFaces) || 0;
 		if (faces > (result.maxFacesOverride ?? 0)) result.maxFacesOverride = faces;
 		if (entry.uncapsTierLimit === true) result.uncapTier = true;
+		result.reachBonus += Number(entry.reachBonus) || 0;
+		if (typeof entry.formulaOverride === 'string' && entry.formulaOverride) {
+			result.formulaOverride = entry.formulaOverride; // last owned entry wins
+		}
 	}
 	return result;
 }
@@ -2254,6 +2332,134 @@ async function summonActivationBlocked(item) {
 	return false;
 }
 
+// Create one summoned companion token: stamps the shared provenance/expiration
+// flags every summon path relies on, then applies owned-feature reach/damage
+// boosts to the spawned token's synthetic (unlinked) actor. Shared by the
+// post-cast spawn (handleSummonSpawn) and the Swarming Shadows trigger, so a
+// swarm-spawned minion inherits the same Shadow Magus reach/die as a cast one.
+// `extraFlag` merges into the token summon flag (e.g. { charges } for healers).
+async function spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extraFlag } = {}) {
+	if (!(caster instanceof Actor) || !baseActor || !scene) return null;
+
+	const casterToken = caster.getActiveTokens?.(true, true)?.[0] ?? null;
+	const tokenFlag = {
+		template: summon.template,
+		summonerActorUuid: caster.uuid,
+		summonerTokenId: casterToken?.id ?? null,
+	};
+	if (summon.expireOnCombatEnd) tokenFlag.combatId = game.combat?.id ?? null;
+	if (extraFlag && typeof extraFlag === 'object') Object.assign(tokenFlag, extraFlag);
+
+	const tokenSrc = baseActor.prototypeToken.toObject();
+	const tokenData = foundry.utils.mergeObject(
+		tokenSrc,
+		{
+			name: baseActor.name,
+			x,
+			y,
+			actorId: baseActor.id,
+			actorLink: false,
+			disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY,
+			flags: { [MODULE_ID]: { [SUMMON_FLAG]: tokenFlag } },
+		},
+		{ inplace: false },
+	);
+	delete tokenData._id;
+
+	const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+	if (!created) return null;
+
+	await patchSummonFeatureBoosts(created, summon, caster);
+	return created;
+}
+
+// Apply owned-feature reach/damage boosts (e.g. Shadow Magus: +4 Reach, d10) and
+// the spell's "Reach +1 every N levels" scaling to a spawned token's synthetic
+// actor. Reach scaling always applies (a base spell feature); reachBonus and the
+// damage formula override only apply when the caster owns the boost feature. The
+// same technique as patchLifebindingSpiritFormulas — patch after creation on the
+// unlinked token actor, rewriting both the mechanical fields and the visible
+// attack-sequence / description text so the sheet reads correctly.
+async function patchSummonFeatureBoosts(tokenDoc, summon, caster) {
+	try {
+		const synth = tokenDoc?.actor;
+		if (!synth) return;
+
+		const boosts = getSummonFeatureBoosts(summon, caster);
+		const perLevels = Number(summon?.reachPerLevels) || 0;
+		const levelReach = perLevels > 0 ? Math.floor(getCharacterLevel(caster) / perLevels) : 0;
+		const reachBonus = (boosts.reachBonus || 0) + levelReach;
+		const formulaOverride = boosts.formulaOverride;
+		if (reachBonus <= 0 && !formulaOverride) return;
+
+		const itemUpdates = [];
+		const textReplacements = []; // { pattern: RegExp, to } applied to visible text
+
+		for (const item of listEmbeddedItems(synth)) {
+			const activation = item.system?.activation;
+			if (!activation) continue;
+			const update = { _id: item.id ?? item._id };
+			let changed = false;
+			let description = typeof item.system?.description === 'string' ? item.system.description : null;
+
+			if (reachBonus > 0 && activation.targets?.attackType === 'reach') {
+				const oldDistance = Number(activation.targets.distance) || 0;
+				const newDistance = oldDistance + reachBonus;
+				foundry.utils.setProperty(update, 'system.activation.targets.distance', newDistance);
+				changed = true;
+				const pattern = new RegExp(`(Reach:\\s*)${oldDistance}\\b`, 'g');
+				textReplacements.push({ pattern, to: `$1${newDistance}` });
+				if (description) description = description.replace(pattern, `$1${newDistance}`);
+			}
+
+			if (formulaOverride) {
+				const effects = foundry.utils.deepClone(activation.effects ?? []);
+				let effectsChanged = false;
+				for (const node of effects) {
+					if (node?.type !== 'damage' || typeof node.formula !== 'string' || !node.formula) continue;
+					const oldFormula = node.formula;
+					if (oldFormula !== formulaOverride) {
+						const pattern = new RegExp(escapeRegExp(oldFormula), 'g');
+						textReplacements.push({ pattern, to: formulaOverride });
+						if (description) description = description.replace(pattern, formulaOverride);
+					}
+					node.formula = formulaOverride;
+					effectsChanged = true;
+				}
+				if (effectsChanged) {
+					foundry.utils.setProperty(update, 'system.activation.effects', effects);
+					changed = true;
+				}
+			}
+
+			if (changed) {
+				if (description && description !== item.system?.description) {
+					foundry.utils.setProperty(update, 'system.description', description);
+				}
+				itemUpdates.push(update);
+			}
+		}
+
+		if (itemUpdates.length) await synth.updateEmbeddedDocuments('Item', itemUpdates);
+
+		// Rewrite the actor-level free-text mirror of the attack (Reach / Damage).
+		const seq = synth.system?.attackSequence;
+		if (typeof seq === 'string' && seq && textReplacements.length) {
+			let newSeq = seq;
+			for (const { pattern, to } of textReplacements) newSeq = newSeq.replace(pattern, to);
+			if (newSeq !== seq) {
+				try {
+					await synth.update({ 'system.attackSequence': newSeq });
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] Could not rewrite summon attack-sequence text`, error);
+				}
+			}
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not apply summon feature boosts`, error);
+	}
+}
+
 // Post-cast spawn (B): fires from `useItem` after the summon spell resolves.
 async function handleSummonSpawn(item, context) {
 	const summon = getItemSummonAutomation(item);
@@ -2273,7 +2479,6 @@ async function handleSummonSpawn(item, context) {
 		return;
 	}
 
-	const casterToken = caster.getActiveTokens?.(true, true)?.[0] ?? null;
 	const { x, y } = computeSummonSpawnPosition(caster, scene);
 
 	// Mana actually spent = upcast amount, else the base tier cost.
@@ -2284,31 +2489,8 @@ async function handleSummonSpawn(item, context) {
 	const boosts = getSummonFeatureBoosts(summon, caster);
 	const effectiveMana = manaSpent + boosts.bonusMana;
 
-	const tokenFlag = {
-		template: summon.template,
-		summonerActorUuid: caster.uuid,
-		summonerTokenId: casterToken?.id ?? null,
-	};
-	if (summon.expireOnCombatEnd) tokenFlag.combatId = game.combat?.id ?? null;
-	if (summon.chargesFromMana) tokenFlag.charges = effectiveMana;
-
-	const tokenSrc = baseActor.prototypeToken.toObject();
-	const tokenData = foundry.utils.mergeObject(
-		tokenSrc,
-		{
-			name: baseActor.name,
-			x,
-			y,
-			actorId: baseActor.id,
-			actorLink: false,
-			disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY,
-			flags: { [MODULE_ID]: { [SUMMON_FLAG]: tokenFlag } },
-		},
-		{ inplace: false },
-	);
-	delete tokenData._id;
-
-	const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+	const extraFlag = summon.chargesFromMana ? { charges: effectiveMana } : null;
+	const created = await spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extraFlag });
 	if (!created) {
 		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" token.`);
 		return;
@@ -2507,6 +2689,225 @@ async function consumeSummonCharge(item, _context) {
 	}
 }
 
+// ── Swarming Shadows (Feature B) ─────────────────────────────────────────────
+// A shadow minion whose attack "would crit" (its primary die rolls its max face)
+// summons another shadow minion adjacent to the target — provided its summoner
+// owns the "Swarming Shadows" boon. Minions never actually crit (the system
+// hard-suppresses isCritical on the minion attack paths), so crit is re-derived
+// from the roll's dice. Two attack paths: single-item use (nimble.useItem) and
+// group attacks (a `minionGroupAttack` chat card). The spawned minion costs
+// nothing and inherits the same provenance/expiration/feature-boost patching as
+// a cast one via spawnSummonedToken.
+const SWARMING_SHADOWS_FEATURE = 'Swarming Shadows';
+const SHADOW_MINION_TEMPLATE = 'shadow-minion';
+
+// "Would crit": an active, non-discarded result on the primary (first) die term
+// equals its faces. Works on a live DamageRoll (primaryDie accessor / .terms) and
+// on a serialized rollData JSON (damageRoll.toJSON() → .terms).
+function rollHasPrimaryMaxFace(rollLike) {
+	if (!rollLike || typeof rollLike !== 'object') return false;
+	const dieHasMaxFace = (die) => {
+		const faces = Number(die?.faces);
+		if (!(faces > 0) || !Array.isArray(die?.results)) return false;
+		return die.results.some((r) => r && r.active !== false && !r.discarded && Number(r.result) === faces);
+	};
+	// Live DamageRoll exposes its extracted primary die directly.
+	if (rollLike.primaryDie && dieHasMaxFace(rollLike.primaryDie)) return true;
+	const terms = rollLike.terms;
+	if (!Array.isArray(terms)) return false;
+	const die = terms.find((t) => Number(t?.faces) > 0 && Array.isArray(t?.results));
+	return die ? dieHasMaxFace(die) : false;
+}
+
+// True when the actor owns a `feature`-type item with this exact name.
+function actorHasFeatureNamed(actor, name) {
+	if (!(actor instanceof Actor)) return false;
+	for (const it of listEmbeddedItems(actor)) {
+		if (it?.type === 'feature' && it.name === name) return true;
+	}
+	return false;
+}
+
+// The summon config that spawns `template`, read off the caster's own spell that
+// declares it (the summoner necessarily owns Summon Shadow). Carries maxCount,
+// featureBoosts and reachPerLevels so a swarm spawn matches a cast one.
+function findSummonConfigForTemplate(actor, template) {
+	if (!(actor instanceof Actor)) return null;
+	for (const it of listEmbeddedItems(actor)) {
+		const summon = getItemSummonAutomation(it);
+		if (summon?.template === template) return summon;
+	}
+	return null;
+}
+
+// Live summon cap for `summon` on `caster` (Infinity when uncapped).
+function getSummonCap(caster, summon) {
+	if (summon?.maxCount === 'minIntOrLevel') {
+		return Math.max(0, Math.min(getAbilityMod(caster, 'intelligence'), getCharacterLevel(caster)));
+	}
+	return Infinity;
+}
+
+// First free grid square among a target token's 8 neighbours (orthogonals first),
+// else overlap to the east as a last resort.
+function findFreeAdjacentPosition(scene, targetToken) {
+	const grid = scene?.grid?.size ?? 100;
+	const tx = Number(targetToken?.x) || 0;
+	const ty = Number(targetToken?.y) || 0;
+	const occupied = new Set();
+	for (const t of scene?.tokens ?? []) occupied.add(`${Math.round(t.x)},${Math.round(t.y)}`);
+	const offsets = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+	for (const [dx, dy] of offsets) {
+		const x = tx + dx * grid;
+		const y = ty + dy * grid;
+		if (!occupied.has(`${Math.round(x)},${Math.round(y)}`)) return { x, y };
+	}
+	return { x: tx + grid, y: ty };
+}
+
+// Whisper the summoner's owner(s) that the swarm is at its limit.
+function postSwarmAtCapWhisper(caster) {
+	try {
+		const recipients = [];
+		for (const user of game.users ?? []) {
+			if (user?.isGM) continue;
+			if (caster?.testUserPermission?.(user, 'OWNER')) recipients.push(user.id);
+		}
+		const gm = game.users?.activeGM;
+		if (gm?.id && !recipients.includes(gm.id)) recipients.push(gm.id);
+		const data = {
+			content: '<p><em>Swarming Shadows:</em> the shadow swarm is already at its limit — no new minion rises.</p>',
+			whisper: recipients,
+		};
+		if (caster) data.speaker = ChatMessage.getSpeaker({ actor: caster });
+		ChatMessage.create(data);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post swarm-at-cap whisper`, error);
+	}
+}
+
+// Spawn one Swarming-Shadows minion adjacent to `targetToken` (respecting the
+// spell's cap). Returns the created token, or null when blocked/at cap.
+async function spawnSwarmingShadow(caster, summon, targetToken, scene) {
+	if (!(caster instanceof Actor) || !summon || !scene) return null;
+
+	const cap = getSummonCap(caster, summon);
+	const count = findLiveSummons(caster, summon.template).length;
+	if (count >= cap) {
+		postSwarmAtCapWhisper(caster);
+		return null;
+	}
+
+	const baseActor = await resolveCompanionBaseActor(summon.template);
+	if (!baseActor) {
+		console.warn(`[${MODULE_ID}] Swarming Shadows could not resolve template "${summon.template}".`);
+		return null;
+	}
+
+	const { x, y } = findFreeAdjacentPosition(scene, targetToken);
+	const created = await spawnSummonedToken({ caster, summon, baseActor, scene, x, y });
+	if (!created) return null;
+
+	const targetName = targetToken?.name ?? 'the target';
+	postSummonChat(
+		caster,
+		`<p><em>Swarming Shadows:</em> a new shadow minion rises beside <strong>${escapeHtml(targetName)}</strong>.</p>`,
+		SWARMING_SHADOWS_FEATURE,
+	);
+	return created;
+}
+
+// Given a shadow-minion token and its damage rolls, spawn a swarm minion iff any
+// roll "would crit" and the summoner owns Swarming Shadows. Shared by both paths.
+async function maybeSwarmFromMinionAttack(minionTokenDoc, rollLikes, targetToken, scene) {
+	const flag = getTokenSummonFlag(minionTokenDoc);
+	if (flag?.template !== SHADOW_MINION_TEMPLATE) return;
+	if (!Array.isArray(rollLikes) || !rollLikes.some(rollHasPrimaryMaxFace)) return;
+
+	const caster = resolveSummonerFromToken(minionTokenDoc);
+	if (!caster || !actorHasFeatureNamed(caster, SWARMING_SHADOWS_FEATURE)) return;
+
+	const summon = findSummonConfigForTemplate(caster, SHADOW_MINION_TEMPLATE);
+	if (!summon) return;
+
+	const spawnScene = scene ?? minionTokenDoc?.parent ?? canvas?.scene;
+	if (!spawnScene) return;
+	await spawnSwarmingShadow(caster, summon, targetToken, spawnScene);
+}
+
+// Path 1: single-item minion attack (nimble.useItem). Fires on the acting client
+// only, so no double-execution guard is needed.
+async function handleSwarmingShadowsUseItem(item, context) {
+	const actor = item?.actor;
+	if (!actor?.isToken) return;
+	const tokenDoc = actor.token;
+	if (!tokenDoc) return;
+
+	const targetPlaceable = context?.targets?.[0] ?? null;
+	const targetDoc = targetPlaceable?.document ?? targetPlaceable ?? null;
+	const scene = targetDoc?.parent ?? tokenDoc.parent ?? canvas?.scene;
+	await maybeSwarmFromMinionAttack(tokenDoc, context?.rolls ?? [], targetDoc, scene);
+}
+
+// Resolve a combatant by id across every active combat.
+function resolveCombatantById(id) {
+	if (!id) return null;
+	for (const combat of game.combats ?? []) {
+		const combatant = combat.combatants?.get?.(id);
+		if (combatant) return combatant;
+	}
+	return null;
+}
+
+// Resolve the primary target TokenDocument from a group-attack card's target
+// UUID list (system.targets; targets[0] is the primary).
+function resolveGroupAttackTargetToken(targetUuids) {
+	for (const uuid of targetUuids ?? []) {
+		try {
+			const doc = fromUuidSync?.(uuid);
+			const tokenDoc = doc?.document ?? doc;
+			if (tokenDoc) return tokenDoc;
+		} catch {
+			/* ignore and try the next */
+		}
+	}
+	return null;
+}
+
+// Path 2: group attacks post ONE `minionGroupAttack` card with a per-member row
+// (row.roll = damageRoll.toJSON()). Each would-crit shadow-minion member whose
+// summoner owns Swarming Shadows spawns one minion beside the shared target.
+async function handleSwarmingShadowsGroupAttack(message) {
+	const rows = message?.system?.rows;
+	if (!Array.isArray(rows) || !rows.length) return;
+
+	const targetDoc = resolveGroupAttackTargetToken(message.system?.targets);
+	const scene = targetDoc?.parent ?? canvas?.scene;
+
+	for (const row of rows) {
+		if (row?.isMiss) continue;
+		if (!rollHasPrimaryMaxFace(row?.roll)) continue;
+		const combatant = resolveCombatantById(row?.memberCombatantId);
+		const tokenDoc = combatant?.token;
+		if (!tokenDoc) continue;
+		// Each qualifying member spawns its own minion (cap re-checked per spawn).
+		await maybeSwarmFromMinionAttack(tokenDoc, [row.roll], targetDoc, scene);
+	}
+}
+
+// createChatMessage hook: only the client whose user authored the card executes,
+// so a group attack spawns each swarm minion exactly once regardless of GM count.
+async function onCreateChatMessage(message) {
+	try {
+		if (message?.type !== 'minionGroupAttack') return;
+		const authorId = message.author?.id ?? message.author;
+		if (authorId && game.user?.id !== authorId) return;
+		await handleSwarmingShadowsGroupAttack(message);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Swarming Shadows group-attack handler failed`, error);
+	}
+}
+
 // Combat-end cleanup (C): remove every token whose summon flag names the combat
 // that just ended. Only one client acts (prefer the active GM).
 async function cleanupCombatSummons(combat) {
@@ -2600,7 +3001,243 @@ function installSummonAutomation() {
 	if (summonAutomationInstalled) return;
 	Hooks.on('deleteCombat', onDeleteCombat);
 	Hooks.on(`${game.system?.id ?? 'nimble'}.rest`, onSummonRest);
+	// Swarming Shadows group-attack path: minion group attacks bypass `useItem`
+	// and post a single `minionGroupAttack` chat card instead.
+	Hooks.on('createChatMessage', onCreateChatMessage);
 	summonAutomationInstalled = true;
+}
+
+// ── Shadowmancer casting rules (Pilfered Power) ──────────────────────────────
+// Shadowmancer casters differ from the generic Nimble mana model in two ways:
+//   1. A custom spell-tier unlock table (steeper than the core [1,4,6,8,…]).
+//   2. "Pilfered Power": mana.max == DEX and every tiered cast costs exactly
+//      1 mana (= one of your DEX uses), regardless of the spell's tier.
+// Only actors owning a class item with identifier 'shadowmancer' are affected;
+// every other actor is untouched. Cantrips (tier 0, incl. Summon Shadow) are
+// never touched. See installShadowmancerCasting for the four seams: (1) custom
+// cap table, (2) flat 1-mana cost, (3) forced max-tier upcast (auto-answering the
+// upcast dialog), and (4) 0-mana overdraft damage.
+const SHADOWMANCER_TIER_THRESHOLDS = [2, 5, 7, 10, 13, 16, 19];
+
+// Highest castable spell tier for a shadowmancer at `level` (0 below level 2).
+function shadowmancerHighestTier(level) {
+	for (let i = SHADOWMANCER_TIER_THRESHOLDS.length - 1; i >= 0; i -= 1) {
+		if (level >= SHADOWMANCER_TIER_THRESHOLDS[i]) return i + 1;
+	}
+	return 0;
+}
+
+// True when the actor owns a shadowmancer class item (any multiclass slot).
+function isShadowmancerActor(actor) {
+	if (!(actor instanceof Actor)) return false;
+	for (const item of actor.items ?? []) {
+		if (item.type !== 'class') continue;
+		const id = item.system?.identifier || item.name?.slugify?.({ strict: true }) || '';
+		if (id === 'shadowmancer') return true;
+	}
+	return false;
+}
+
+// Pre-cast mana snapshot per caster (uuid → mana.current before the system's own
+// deduction), written in preUseItem and consumed in useItem. Single-user casting
+// means one live entry at a time; keyed by uuid to stay safe across actors.
+const shadowmancerPreCastMana = new Map();
+
+// Active forced-upcast mana fudge per caster (uuid → { resources, realMana }); set
+// in runWrappedActivate, cleared/restored in onSpellPreUse (on cast) or the
+// activate `finally` (on cancel). See runWrappedActivate for the rationale.
+const shadowmancerManaFudge = new Map();
+
+// Auto-answer the SpellUpcastDialog for a shadowmancer tiered cast: submit at the
+// effective cap (forced max-tier, no player choice) and close before the player
+// interacts. Bypasses the Svelte component's `manaToSpend > currentMana` block
+// (SpellUpcastDialog.svelte:249); getData's applyUpcastDeltas Rule 4 is satisfied
+// by the in-memory mana fudge set in runWrappedActivate. Only injects `upcast`
+// for scaling spells (else applyUpcastDeltas Rule 2 would throw); non-scaling /
+// already-at-cap casts are auto-submitted at base tier (still skips the UI and
+// enables 0-mana overdraft). The dialog instance exposes actor/item/spell and
+// submitActivation() (resolves its awaited promise, then closes).
+function onRenderUpcastDialog(app) {
+	try {
+		const actor = app?.actor;
+		const item = app?.item;
+		if (!isShadowmancerActor(actor)) return;
+		const tier = Number(item?.system?.tier) || 0;
+		if (tier < 1) return;
+		if (app.__blueCodexAutoSubmitted) return;
+		app.__blueCodexAutoSubmitted = true;
+
+		const cap = Number(actor.system?.resources?.highestUnlockedSpellTier) || 0;
+		const scaling = item.system?.scaling;
+		const canScale = !!scaling && scaling.mode && scaling.mode !== 'none';
+		const doUpcast = canScale && cap > tier;
+
+		let rollHidden = false;
+		try {
+			rollHidden = !!game.settings.get(game.system?.id ?? 'nimble', 'hideRolls');
+		} catch {
+			rollHidden = false;
+		}
+		let rollMode = Number(app.data?.rollMode) || 0;
+		if (typeof Math?.clamp === 'function') rollMode = Math.clamp(rollMode, -6, 6);
+
+		app.submitActivation({
+			rollMode,
+			situationalModifiers: '',
+			primaryDieValue: undefined,
+			primaryDieModifier: undefined,
+			rollHidden,
+			upcast: doUpcast
+				? { manaToSpend: cap, choiceIndex: scaling.mode === 'upcastChoice' ? 0 : undefined }
+				: undefined,
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] shadowmancer upcast auto-answer failed`, error);
+	}
+}
+
+// preUseItem (fires before the system deducts mana, upcast passed by reference).
+// For a shadowmancer tiered cast: restore any active mana fudge to the real value
+// (so the deduction persists the true flat cost), snapshot the real pre-cast mana,
+// and tell the system to deduct exactly 1 when an upcast result exists. Never
+// blocks (always returns true).
+function onSpellPreUse(item, context) {
+	try {
+		if (item?.type !== 'spell') return true;
+		const actor = item.actor;
+		if (!isShadowmancerActor(actor)) return true;
+		if ((Number(item.system?.tier) || 0) < 1) return true; // cantrips are free/untouched
+		const fudge = shadowmancerManaFudge.get(actor.uuid);
+		let realMana;
+		if (fudge) {
+			shadowmancerManaFudge.delete(actor.uuid);
+			if (fudge.resources?.mana) fudge.resources.mana.current = fudge.realMana;
+			realMana = fudge.realMana;
+		} else {
+			realMana = Number(actor.system?.resources?.mana?.current) || 0;
+		}
+		shadowmancerPreCastMana.set(actor.uuid, realMana);
+		// Flat Pilfered Power cost: make the system's deduction exactly 1 mana when
+		// an upcast object is present (the useItem correction is the real backstop).
+		if (context?.upcast && typeof context.upcast === 'object') context.upcast.manaSpent = 1;
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] shadowmancer preUse cost hook failed`, error);
+	}
+	return true;
+}
+
+// Overdraft (Pilfered Power): a tiered cast made with no remaining uses draws the
+// patron's notice — take floor(maxHP/2) damage via the system's own applyDamage
+// (temp-then-value), with a plain HP update as a fallback.
+async function applyPatronBacklash(actor) {
+	try {
+		const maxHp = Number(actor.system?.attributes?.hp?.max) || 0;
+		const damage = Math.floor(maxHp / 2);
+		if (damage > 0) {
+			if (typeof actor.applyDamage === 'function') {
+				await actor.applyDamage(damage);
+			} else {
+				const hp = actor.system?.attributes?.hp ?? {};
+				const temp = Number(hp.temp) || 0;
+				const value = Number(hp.value) || 0;
+				const absorbed = Math.min(temp, damage);
+				await actor.update({
+					'system.attributes.hp.temp': temp - absorbed,
+					'system.attributes.hp.value': Math.max(0, value - (damage - absorbed)),
+				});
+			}
+		}
+		postSummonChat(
+			actor,
+			`<p><em>Your patron takes notice.</em> ${escapeHtml(actor.name)} suffers <strong>${damage}</strong> damage (half max HP) for casting beyond Pilfered Power's limit.</p>`,
+			'Pilfered Power',
+		);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] patron backlash failed`, error);
+	}
+}
+
+// useItem correction: enforce the flat 1-mana cost regardless of the tier the
+// system deducted for, and apply overdraft damage when the caster had no uses
+// left. Authoritative — covers the base-tier (no-upcast) and upcast paths alike.
+// No-ops for any actor without a snapshot (so it only fires on a completed cast).
+async function applyShadowmancerFlatCost(item, _context) {
+	if (item?.type !== 'spell') return;
+	// Tier gate: a tier-0 cantrip must never consume a snapshot (defence in depth
+	// against a snapshot leaked by a tiered cast that aborted after onSpellPreUse).
+	if ((Number(item.system?.tier) || 0) < 1) return;
+	const actor = item.actor;
+	if (!actor || !shadowmancerPreCastMana.has(actor.uuid)) return;
+	const preMana = shadowmancerPreCastMana.get(actor.uuid);
+	shadowmancerPreCastMana.delete(actor.uuid);
+	const desired = Math.max(0, preMana - 1);
+	const current = Number(actor.system?.resources?.mana?.current) || 0;
+	if (current !== desired) {
+		await actor.update({ 'system.resources.mana.current': desired });
+	}
+	if (preMana <= 0) await applyPatronBacklash(actor);
+}
+
+// Install: (1) custom cap table via a prepareDerivedData wrap on the character
+// document class, and (2) the flat-cost hooks. Idempotent.
+let shadowmancerCastingInstalled = false;
+function installShadowmancerCasting() {
+	if (shadowmancerCastingInstalled) return;
+
+	// (1) Custom casting-cap table. Core assigns highestUnlockedSpellTier with `??=`
+	// (a manually-set value sticks), so we override AFTER the original prep runs —
+	// a straight assignment for shadowmancers. This intentionally supersedes the
+	// manual +/- tier UI for shadowmancers, and reads the total character level
+	// (exact for a pure shadowmancer; approximate for a multiclass).
+	const charClass = CONFIG?.NIMBLE?.Actor?.documentClasses?.character;
+	const proto = charClass?.prototype;
+	if (proto && typeof proto.prepareDerivedData === 'function') {
+		if (!Object.prototype.hasOwnProperty.call(proto, '__blueCodexPrepDerivedWrapped')) {
+			const original = proto.prepareDerivedData;
+			proto.prepareDerivedData = function blueCodexPrepareDerivedData(...args) {
+				const result = original.apply(this, args);
+				try {
+					if (isShadowmancerActor(this)) {
+						const resources = this.system?.resources;
+						// Only for spellcasters (mana.max > 0), matching core semantics.
+						if (resources && (Number(resources.mana?.max) || 0) > 0) {
+							resources.highestUnlockedSpellTier = shadowmancerHighestTier(getCharacterLevel(this));
+						}
+					}
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] shadowmancer cap override failed`, error);
+				}
+				return result;
+			};
+			proto.__blueCodexPrepDerivedWrapped = true;
+			// Refresh any already-prepared shadowmancer characters so the cap applies
+			// without a reload.
+			for (const actor of game.actors ?? []) {
+				if (actor?.type === 'character' && isShadowmancerActor(actor)) {
+					try {
+						actor.prepareData();
+					} catch (error) {
+						console.warn(`[${MODULE_ID}] Could not refresh shadowmancer prep`, error);
+					}
+				}
+			}
+		}
+	} else {
+		console.warn(`[${MODULE_ID}] character document class missing; shadowmancer cap table not installed.`);
+	}
+
+	// (2) Flat Pilfered Power cost. useItem is already handled by onItemUsed (which
+	// calls applyShadowmancerFlatCost); here we only add the preUseItem snapshot.
+	Hooks.on(`${game.system?.id ?? 'nimble'}.preUseItem`, onSpellPreUse);
+
+	// (3) Forced max-tier upcast: auto-answer the SpellUpcastDialog. It is a
+	// SvelteApplicationMixin(ApplicationV2) whose render lifecycle emits the
+	// standard `render<ClassName>` hook (same pattern nim-plus uses for
+	// renderCharacterCreationDialog / renderGenericDialog); keepNames keeps the
+	// class name `SpellUpcastDialog` intact in the dist bundle.
+	Hooks.on('renderSpellUpcastDialog', onRenderUpcastDialog);
+
+	shadowmancerCastingInstalled = true;
 }
 
 // Combined handler: first back-fill any missing auto-grants (forms), then sync

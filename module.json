@@ -2,7 +2,7 @@
 	"id": "blue-codex-package",
 	"title": "Blue Codex Package",
 	"description": "Adds Blue's Codex content to the Nimble system: the Engineer and Specter classes, additional subclasses for every core class, the elemental / ether / radiance / ruin spell books, Guild Wars–inspired ancestries and backgrounds (Traveler's Guide to Tyria), and a bestiary.",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"authors": [
 		{
 			"name": "Joseph Nunez",
