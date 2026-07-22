@@ -969,13 +969,23 @@ const CLASS_SPELL_REMAP = {
 //   swap        — replace these school names wherever they appear in a grantSpells
 //                 rule's `schools` (Shadowmancer/Shepherd necrotic → shadow/death;
 //                 Songweaver's necrotic *choice* → death).
-//   uuidTo      — convert a uuid-only grant (Shadowmancer's conduit-of-shadow patron
-//                 cantrips, which are official necrotic) into a tier-0 school grant
-//                 so the level-1 caster previews/learns the Codex school instead.
+//   uuidMap     — remap the specific spell UUIDs of a uuid-only grant 1:1
+//                 (Shadowmancer's conduit-of-shadow patron cantrips: official necrotic
+//                 Shadow Blast/Summon Shadow → their Codex-shadow equivalents), so the
+//                 level-1 caster previews/learns exactly those two Codex spells rather
+//                 than the whole school.
 //   addSchools  — extend a `selectSchool` rule's option list (Songweaver gains the
 //                 Book of Ether + Divination + Curse as choosable additional schools).
 const CLASS_FEATURE_SPELL_REWRITES = {
-	shadowmancer: { swap: { necrotic: 'shadow' }, uuidTo: 'shadow' },
+	shadowmancer: {
+		swap: { necrotic: 'shadow' },
+		uuidMap: {
+			'Compendium.nimble.nimble-spells.Item.9TNPdOXlCcGgxw6r':
+				'Compendium.blue-codex-package.blue-codex-spells.Item.enkqIepuxNVpUsCh',
+			'Compendium.nimble.nimble-spells.Item.ho2KADcmQWWTeYR0':
+				'Compendium.blue-codex-package.blue-codex-spells.Item.nrDkGygSyNE6JR7n',
+		},
+	},
 	shepherd: { swap: { necrotic: 'death' } },
 	songweaver: {
 		swap: { necrotic: 'death' },
@@ -998,10 +1008,15 @@ function rewriteFeatureSpellRules(rules, cfg) {
 	const out = rules.map((rule) => {
 		if (rule?.type !== 'grantSpells') return rule;
 
-		// A uuid-only grant (no schools) → a tier-0 grant of the Codex school.
-		if (cfg.uuidTo && Array.isArray(rule.uuids) && rule.uuids.length && !rule.schools?.length) {
-			changed = true;
-			return { id: rule.id, type: 'grantSpells', mode: 'auto', schools: [cfg.uuidTo], tiers: [0] };
+		// A uuid-only grant (no schools) → remap those specific spell UUIDs 1:1 to
+		// their Codex equivalents, preserving the precise (2-spell) grant.
+		if (cfg.uuidMap && Array.isArray(rule.uuids) && rule.uuids.length && !rule.schools?.length) {
+			const mapped = rule.uuids.map((u) => cfg.uuidMap[u] ?? u);
+			if (mapped.join(',') !== rule.uuids.join(',')) {
+				changed = true;
+				return { ...rule, uuids: mapped };
+			}
+			return rule;
 		}
 
 		if (Array.isArray(rule.schools) && rule.schools.length) {
@@ -1172,18 +1187,29 @@ async function createSwapGrantCarrier(actor, subclassId) {
  * level-up). Skips the actor currently leveling — that carrier is live and owned
  * by the triggerLevelUp wrapper's own cleanup.
  */
+const carrierSweepInFlight = new Set();
+
 async function sweepStaleGrantCarriers(actor) {
 	if (levelUpContext?.actorId === actor.id) return;
-	const stale = (actor.items ?? [])
-		.filter((item) =>
-			foundry.utils.getProperty(item, `flags.${MODULE_ID}.${SWAP_GRANT_CARRIER_FLAG}`),
-		)
-		.map((item) => item.id);
-	if (stale.length === 0) return;
+	if (carrierSweepInFlight.has(actor.id)) return;
+	carrierSweepInFlight.add(actor.id);
 	try {
+		const stale = (actor.items ?? [])
+			.filter((item) =>
+				foundry.utils.getProperty(item, `flags.${MODULE_ID}.${SWAP_GRANT_CARRIER_FLAG}`),
+			)
+			.map((item) => item.id)
+			.filter((id) => actor.items.get(id));
+		if (stale.length === 0) return;
 		await actor.deleteEmbeddedDocuments('Item', stale);
 	} catch (error) {
-		console.error(`[${MODULE_ID}] Failed to sweep stale spell-grant carrier`, error);
+		// A carrier can vanish mid-flight (the level-up wrapper's own cleanup owns
+		// the live one); losing that race is harmless — stay quiet about it.
+		if (!/does not exist/i.test(error?.message ?? '')) {
+			console.error(`[${MODULE_ID}] Failed to sweep stale spell-grant carrier`, error);
+		}
+	} finally {
+		carrierSweepInFlight.delete(actor.id);
 	}
 }
 
@@ -1603,7 +1629,11 @@ async function classSpellRemapSync(actor) {
 		const ownsTargetSchool = (actor.items ?? []).some(
 			(item) => item.type === 'spell' && item.system?.school === target,
 		);
-		if (isNew && ownsTargetSchool) {
+		// maxTier === 0: at level 1 the class feature (via the fromUuid rewrite) is the
+		// sole authority on cantrips. During creation the sheet renders after the class
+		// item lands but BEFORE the granted spells do, so ownsTargetSchool is briefly
+		// false — blanket-granting here would hand out the whole tier-0 school.
+		if (isNew && (ownsTargetSchool || maxTier === 0)) {
 			// Still prune any official necrotic this class replaces that leaked through.
 			const necroticIds = (actor.items ?? [])
 				.filter((item) => item.type === 'spell' && item.system?.school === 'necrotic')
@@ -1732,7 +1762,10 @@ function wrapTriggerLevelUp(actor) {
 			carrierId = await createSwapGrantCarrier(this, subclassId);
 			return await originalTriggerLevelUp.apply(this, args);
 		} finally {
-			levelUpContext = previous;
+			// Delete the carrier BEFORE clearing levelUpContext: the grant-triggered
+			// sheet re-renders run sweepStaleGrantCarriers, which only skips this
+			// actor while the context still names it — clearing first lets the sweep
+			// race this delete for the same id ("Item does not exist").
 			if (carrierId) {
 				try {
 					await this.deleteEmbeddedDocuments('Item', [carrierId]);
@@ -1740,6 +1773,7 @@ function wrapTriggerLevelUp(actor) {
 					console.error(`[${MODULE_ID}] Failed to remove transient spell-grant carrier`, error);
 				}
 			}
+			levelUpContext = previous;
 		}
 	};
 	proto.__blueCodexLevelUpWrapped = true;
@@ -3240,6 +3274,124 @@ function installShadowmancerCasting() {
 	shadowmancerCastingInstalled = true;
 }
 
+// ── Shadowmancer "Fiendish Boon" invocation ──────────────────────────────────
+// The core Nimble Greater Invocation "Fiendish Boon" (system feature
+// YkmdeKqEaGwhcKz1) reads "Increase your DEX or INT by 1. You have 1 fewer
+// maximum Hit Dice." but ships with `system.rules: []` — pure text, no
+// automation. It can be picked multiple times (gainedAtLevels [4,6,9,14,18]);
+// each pick is a separate embedded feature and should independently apply its
+// chosen +1 ability and −1 max Hit Die. When a pick lands (createItem) — or, for
+// characters who took it before this automation existed, on the reconciler sweep
+// — we prompt the owner for DEX vs INT and write two rules onto that feature
+// instance: `maxHitDice -1` (dieSize 0 → the class hit-die size, self-restoring
+// each prepare cycle via HitDiceManager) and `abilityBonus +1` on the chosen
+// ability (added to `abilities.<ability>.bonus`). Both are permanent and derived,
+// so nothing is mutated directly on the actor.
+const FIENDISH_BOON_SOURCE_ID = 'YkmdeKqEaGwhcKz1';
+const FIENDISH_BOON_FLAG = 'fiendishBoon';
+
+/** True for an embedded Fiendish Boon feature (by name or compendium source). */
+function isFiendishBoonItem(item) {
+	if (!item || item.type !== 'feature') return false;
+	if (item.name === 'Fiendish Boon') return true;
+	const source = item._stats?.compendiumSource ?? '';
+	return typeof source === 'string' && source.includes(FIENDISH_BOON_SOURCE_ID);
+}
+
+/** True once a Fiendish Boon instance already carries our flag or bonus rule. */
+function isFiendishBoonAutomated(item) {
+	if (foundry.utils.getProperty(item, `flags.${MODULE_ID}.${FIENDISH_BOON_FLAG}`)) return true;
+	const rules = item.system?.rules;
+	return Array.isArray(rules) && rules.some((rule) => rule?.type === 'abilityBonus');
+}
+
+/** Small DEX-vs-INT chooser; returns 'dexterity' / 'intelligence', or null if dismissed. */
+async function promptFiendishBoonAbility(actor) {
+	const result = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — Fiendish Boon` },
+		content: `<form class="blue-codex-boon-form">
+				<p>Increase an ability score by <strong>1</strong>. Your maximum Hit Dice is reduced by 1.</p>
+				<div class="blue-codex-boon-list">
+					<label class="blue-codex-boon-pick"><input type="radio" name="blue-codex-boon" value="dexterity" checked> Dexterity (DEX)</label>
+					<label class="blue-codex-boon-pick"><input type="radio" name="blue-codex-boon" value="intelligence"> Intelligence (INT)</label>
+				</div>
+			</form>
+			<style>
+				.blue-codex-boon-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+				.blue-codex-boon-list{margin-top:4px}
+			</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Confirm',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="blue-codex-boon"]:checked')?.value ?? null;
+				},
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return result === 'dexterity' || result === 'intelligence' ? result : null;
+}
+
+/** Write the two derived rules + our flag onto a Fiendish Boon instance. */
+async function applyFiendishBoon(item, ability) {
+	const existingRules = Array.isArray(item.system?.rules) ? item.system.rules : [];
+	await item.update({
+		'system.rules': [
+			...existingRules,
+			{ id: foundry.utils.randomID(), type: 'maxHitDice', value: '-1', dieSize: 0, label: 'Fiendish Boon' },
+			{ id: foundry.utils.randomID(), type: 'abilityBonus', value: '1', abilities: [ability], label: 'Fiendish Boon' },
+		],
+	});
+	await item.setFlag(MODULE_ID, FIENDISH_BOON_FLAG, { ability });
+}
+
+// In-flight prompts keyed by item.uuid (render-storm / duplicate-hook guard) and
+// session-scoped declines so a dismissed prompt isn't reopened every re-render.
+const fiendishBoonActive = new Set();
+const fiendishBoonDeclined = new Set();
+
+/** Prompt for + apply one Fiendish Boon instance (owner-only, idempotent). */
+async function automateFiendishBoon(item) {
+	const actor = item?.parent;
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !actor.isOwner) return;
+	if (!isFiendishBoonItem(item) || isFiendishBoonAutomated(item)) return;
+	if (fiendishBoonActive.has(item.uuid) || fiendishBoonDeclined.has(item.uuid)) return;
+
+	fiendishBoonActive.add(item.uuid);
+	try {
+		const ability = await promptFiendishBoonAbility(actor);
+		if (!ability) {
+			// Dismissed — don't nag on every render; the sweep re-offers next session.
+			fiendishBoonDeclined.add(item.uuid);
+			return;
+		}
+		await applyFiendishBoon(item, ability);
+		ui.notifications?.info(
+			`Fiendish Boon: +1 ${ability === 'dexterity' ? 'DEX' : 'INT'}, −1 max Hit Die.`,
+		);
+	} finally {
+		fiendishBoonActive.delete(item.uuid);
+	}
+}
+
+/** Back-fill: automate any owned Fiendish Boon instances missing our rules (one at a time). */
+async function backfillFiendishBoons(actor) {
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !actor.isOwner) return;
+	const pending = (actor.items ?? []).filter(
+		(item) => isFiendishBoonItem(item) && !isFiendishBoonAutomated(item),
+	);
+	for (const item of pending) {
+		if (fiendishBoonActive.has(item.uuid) || fiendishBoonDeclined.has(item.uuid)) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await automateFiendishBoon(item);
+	}
+}
+
 // Combined handler: first back-fill any missing auto-grants (forms), then sync
 // subclass spell schools, then offer any owed subclass-pool choices.
 async function handleActorFeatures(actor) {
@@ -3253,6 +3405,11 @@ async function handleActorFeatures(actor) {
 		await backfillAutoGrants(actor);
 	} catch (error) {
 		console.error(`[${MODULE_ID}] auto-grant back-fill failed`, error);
+	}
+	try {
+		await backfillFiendishBoons(actor);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Fiendish Boon back-fill failed`, error);
 	}
 	try {
 		// Runs before the subclass swap so a Shepherd already owns its death spells
@@ -3299,10 +3456,112 @@ Hooks.on('updateItem', (item, changes) => {
 });
 
 Hooks.on('createItem', (item) => {
-	if (item?.type !== 'subclass') return;
-	const actor = item.parent;
-	if (actor) handleActorFeatures(actor);
+	if (item?.type === 'subclass') {
+		const actor = item.parent;
+		if (actor) handleActorFeatures(actor);
+		return;
+	}
+	// A freshly-picked Fiendish Boon invocation → prompt the owner for the ability
+	// it raises and write its derived rules (owner-only guard lives in automateFiendishBoon).
+	if (item?.type === 'feature' && item.parent?.type === 'character' && isFiendishBoonItem(item)) {
+		automateFiendishBoon(item);
+	}
 });
+
+// ── Shadowmancer sheet reskin: "Pilfered Power" ──────────────────────────────
+// Purely presentational. The Shadowmancer's casting resource is the same
+// `system.resources.mana` field every Nimble caster uses, but themed as
+// "Pilfered Power" (mana.max == DEX, flat 1-per-cast; see installShadowmancerCasting).
+// On a shadowmancer's sheet only, we relabel the "Mana ✦" heading, swap the
+// sparkles glyph for the shadow-school moon (matching SPELL_SCHOOLS.shadow above,
+// `fa-solid fa-moon`), and recolor the mana bar shadow-violet.
+//
+// The label is a hardcoded text node in the system's PlayerCharacterSheet.svelte
+// (h3.nimble-heading--mana) and the bar colors are Svelte-scoped in ManaBar.svelte,
+// so the CSS overrides need an ancestor scope class (`.bcx-shadowmancer` on the
+// sheet root) plus `!important`. Svelte 5 re-renders reactively without re-firing
+// the Foundry render hook, so a MutationObserver keeps the patch alive; the sync
+// is idempotent (no DOM writes once patched) so the observer never loops.
+
+const PILFERED_POWER_STYLE_ID = 'bcx-pilfered-power';
+const PILFERED_POWER_CSS = `
+	.bcx-shadowmancer .nimble-mana-bar__bar::before {
+		background: linear-gradient(to right, hsl(270 45% 18%) 0%, hsl(275 55% 42%) 100%) !important;
+	}
+	.bcx-shadowmancer .nimble-mana-bar {
+		border-color: hsl(275 40% 45%) !important;
+	}
+	.bcx-shadowmancer h3.nimble-heading--mana i.fa-moon {
+		color: hsl(275 60% 60%);
+	}
+`;
+
+/** Inject the Pilfered Power stylesheet once (guarded by id). */
+function ensurePilferedPowerStyles() {
+	if (document.getElementById(PILFERED_POWER_STYLE_ID)) return;
+	const style = document.createElement('style');
+	style.id = PILFERED_POWER_STYLE_ID;
+	style.textContent = PILFERED_POWER_CSS;
+	document.head.append(style);
+}
+
+/**
+ * Idempotently reskin a shadowmancer's mana resource as "Pilfered Power".
+ * On non-shadowmancer character sheets it strips the scope class and returns.
+ * Every branch is a no-op once already applied, so the MutationObserver that
+ * drives it never enters a mutation loop.
+ */
+function syncPilferedPower(app) {
+	const actor = app?.document ?? app?.actor;
+	const root = app?.element instanceof HTMLElement ? app.element : app?.element?.[0];
+	if (!(root instanceof HTMLElement)) return;
+	if (!(actor instanceof Actor) || actor.type !== 'character') return;
+
+	if (!isShadowmancerActor(actor)) {
+		root.classList.remove('bcx-shadowmancer');
+		return;
+	}
+
+	ensurePilferedPowerStyles();
+	root.classList.add('bcx-shadowmancer');
+
+	const heading = root.querySelector('h3.nimble-heading--mana');
+	if (!heading) return;
+
+	// Relabel the hardcoded text node (first TEXT_NODE reading "Mana").
+	for (const node of heading.childNodes) {
+		if (node.nodeType !== Node.TEXT_NODE) continue;
+		const trimmed = (node.nodeValue ?? '').trim();
+		if (trimmed === 'Pilfered Power') break; // already patched
+		if (trimmed === 'Mana') {
+			node.nodeValue = (node.nodeValue ?? '').replace('Mana', 'Pilfered Power');
+			break;
+		}
+	}
+
+	// Swap the ✦ sparkles glyph for the shadow-school moon.
+	const icon = heading.querySelector('i.fa-sparkles');
+	if (icon) icon.classList.replace('fa-sparkles', 'fa-moon');
+}
+
+/**
+ * Watch the sheet for reactive Svelte re-renders (which don't fire a Foundry
+ * render hook) and keep the Pilfered Power reskin applied. Mirrors nim-plus's
+ * setupFeatsTabObserver lifecycle.
+ */
+function setupPilferedPowerObserver(app) {
+	const root = app?.element instanceof HTMLElement ? app.element : app?.element?.[0];
+	if (!(root instanceof HTMLElement)) return;
+	try {
+		app.__bcxPilferedObserver?.disconnect();
+	} catch (_error) {
+		/* previous observer already gone */
+	}
+	const observer = new MutationObserver(() => syncPilferedPower(app));
+	observer.observe(root, { childList: true, subtree: true });
+	app.__bcxPilferedObserver = observer;
+	syncPilferedPower(app);
+}
 
 Hooks.on('renderPlayerCharacterSheet', (app) => {
 	const actor = app?.document ?? app?.actor;
@@ -3310,6 +3569,16 @@ Hooks.on('renderPlayerCharacterSheet', (app) => {
 		wrapTriggerLevelUp(actor);
 		handleActorFeatures(actor);
 	}
+	setupPilferedPowerObserver(app);
+});
+
+Hooks.on('closePlayerCharacterSheet', (app) => {
+	try {
+		app.__bcxPilferedObserver?.disconnect();
+	} catch (_error) {
+		/* nothing to disconnect */
+	}
+	delete app.__bcxPilferedObserver;
 });
 
 // ── Compendium level badges for class features ───────────────────────────────

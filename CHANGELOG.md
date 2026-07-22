@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-22
+
+### Added
+
+- **Fiendish Boon automation.** Picking the Shadowmancer Greater Invocation
+  *Fiendish Boon* now prompts for DEX or INT, applies the +1 ability bonus
+  and the −1 maximum Hit Die as native rules on the feature (so they follow
+  the character automatically, including across level-ups), and works
+  retroactively for characters who already own an un-automated copy the
+  next time their sheet opens. Each additional copy taken prompts again.
+- **Pilfered Power character sheet.** The Shadowmancer's sheet no longer
+  says "Mana": the resource is relabeled **Pilfered Power** with a crescent
+  moon icon and a shadow-violet bar, matching the class's own casting
+  identity. Presentation only — the underlying resource is unchanged, so
+  all casting automation still works, and other classes' sheets are
+  untouched.
+
+### Fixed
+
+- **Level-1 Shadowmancers no longer receive every shadow cantrip.** Two
+  stacked bugs granted all five: the level-1 feature's two spell grants
+  (Shadow Blast, Summon Shadow) were being widened into a whole-school
+  grant, and the character-creation flow could re-grant the full cantrip
+  school in the window between the class landing on the sheet and its
+  spells arriving. A fresh Shadowmancer now starts with exactly Shadow
+  Blast and Summon Shadow; the remaining cantrips and tier-1 spells still
+  arrive at level 2 as before. (Characters created while the bug was live
+  keep the extra cantrips — delete them or recreate the character.)
+- **"Item does not exist" errors when leveling a school-swap caster.** The
+  temporary spell-grant carrier used during a swap subclass's level-up
+  could be deleted twice (the level-up's own cleanup racing the stale-item
+  sweep), throwing red error toasts. The cleanup is now ordered and
+  guarded, and a harmlessly lost race no longer reports an error.
+
 ## [0.4.0] - 2026-07-21
 
 ### Added
