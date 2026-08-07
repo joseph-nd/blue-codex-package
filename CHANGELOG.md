@@ -5,6 +5,72 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-08-07
+
+**The cast dialog, made usable for the Shadowmancer and honest about upcasts.**
+A class that always casts at its highest tier was having its whole dialog
+answered for it, and 57 spells described an upcast the dialog had no way to
+offer. Plus one deliberate balance change to *Grasping Shadows*.
+
+### Changed
+
+- **Grasping Shadows deals 2d12 instead of 3d12** (shadow, tier 1). This is
+  the module's first deliberate departure from the published text, made on a
+  GM's call rather than to correct a porting error: at 3d12 that can't miss,
+  a tier-1 spell available at level 2 dealt 75% of the damage of *Writhing
+  Dark* — the tier-6 shadow spell — for one action instead of two and no
+  concentration, on top of Restraining the target. At 2d12 it averages 13,
+  which still leads every other 1-action tier-1 spell that can't miss
+  (*Seiche*, 2d10) and sits alongside the 2-action *Arc Lightning* (3d8).
+  Everything else about the spell is untouched, including the upcast.
+- **Every spell that describes an upcast now offers it in the cast dialog.**
+  The system draws upcast options as radio buttons only for spells whose
+  `scaling.mode` is `upcastChoice` with a populated `choices` array; 57 spells
+  described their upcast in prose only, so the player saw a mana slider with
+  nothing to say what spending the mana would do. All 57 were converted, and
+  every tier-1-and-up spell carrying upcast text — 122 of them — now names its
+  options. Labels are drawn from the zine's own wording.
+  - Options are only split apart where the text says "or". A clause joined by
+    "and" stays one option, because splitting it would let the player take half
+    an upcast; a conditional rider ("if 5+ mana is spent, …") is not an option
+    at all, since it happens on its own.
+  - **No mechanics were added or removed.** In `upcastChoice` mode the system
+    applies the selected choice's deltas and ignores the spell's top-level
+    ones, so each of the 31 spells that already automated its upcast had that
+    delta moved into the option it implements — verified against the previous
+    revision, with none dropped. Options with no existing automation are
+    labels only for now, which is most of them: flat `+N HP` healing, Armor,
+    speed and multiplier bonuses have no operation in the system's vocabulary
+    to express them.
+
+### Fixed
+
+- **A Shadowmancer's cast dialog no longer closes before it can be used.** The
+  class always casts at its highest available tier, and that rule was being
+  enforced by answering the whole dialog on the player's behalf the instant it
+  rendered — so the window vanished, taking with it every other decision it
+  carries: advantage and disadvantage, situational modifiers, the primary-die
+  fields, and which upcast option to take. The dialog now opens and waits. Only
+  the tier is still forced, by intercepting the player's own submission on its
+  way past, so everything else they chose survives. In place of the system's
+  mana slider — which offers a choice this class does not have, and whose
+  option radios only appear once it has been dragged — the dialog shows the
+  tier being cast at and, when the spell's upcast has real alternatives, the
+  radio group to pick one. If the system's markup ever moves, nothing is
+  injected and the cast still works.
+
+### Known issues
+
+- **If the upcast section is missing entirely, check the character, not the
+  spell.** The system only draws it when
+  `min(mana.current, highestUnlockedSpellTier) > spell.tier`. That tier cap is
+  a *stored* field assigned with `??=`, so once anything writes a number to it
+  — including one click of the +/- stepper on the sheet's Settings tab — it is
+  pinned there and never recomputed on level-up. A character showing a cap of 1
+  cannot upcast anything, with no warning. Fix it with **Settings tab → Reset
+  spell tier**. This is system behaviour, not something this module sets:
+  the module's own cap override is gated to Shadowmancers.
+
 ## [0.5.0] - 2026-07-22
 
 ### Added

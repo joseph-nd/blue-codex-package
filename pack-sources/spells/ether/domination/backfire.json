@@ -70,21 +70,26 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addDice",
-					"value": null,
-					"dice": {
-						"count": 1,
-						"faces": 8
-					},
-					"condition": null,
-					"targetEffectId": "backfireDamage1",
-					"durationType": null
+					"label": "+1d8 damage",
+					"deltas": [
+						{
+							"operation": "addDice",
+							"value": null,
+							"dice": {
+								"count": 1,
+								"faces": 8
+							},
+							"condition": null,
+							"targetEffectId": "backfireDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

@@ -87,9 +87,14 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 word",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

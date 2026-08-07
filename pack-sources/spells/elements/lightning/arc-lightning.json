@@ -98,18 +98,23 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addFlatDamage",
-					"value": 6,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": "arcLightningDamage1",
-					"durationType": null
+					"label": "+6 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 6,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "arcLightningDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

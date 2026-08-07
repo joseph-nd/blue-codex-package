@@ -55,26 +55,31 @@
 		"tier": 8,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addDuration",
-					"value": 1,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": null,
-					"durationType": "minute"
-				},
-				{
-					"operation": "addAreaSize",
-					"value": 4,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": null,
-					"durationType": null
+					"label": "+1 min duration, Blast +4",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "minute"
+						},
+						{
+							"operation": "addAreaSize",
+							"value": 4,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

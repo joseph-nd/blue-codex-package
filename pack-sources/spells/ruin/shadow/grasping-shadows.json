@@ -24,7 +24,7 @@
 					"id": "graspingShadowsDamage1",
 					"type": "damage",
 					"damageType": "necrotic",
-					"formula": "3d12",
+					"formula": "2d12",
 					"parentContext": null,
 					"parentNode": null,
 					"canCrit": true,
@@ -65,7 +65,7 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Tier 1 · 1 Action · Reach 6 · Reaction: When a target moves.</strong></p><p><strong>Damage:</strong> 3d12. Can't miss. Medium or smaller targets are Restrained, 1 round or until they succeed on a save on their turn.</p>",
+			"baseEffect": "<p><strong>Tier 1 · 1 Action · Reach 6 · Reaction: When a target moves.</strong></p><p><strong>Damage:</strong> 2d12. Can't miss. Medium or smaller targets are Restrained, 1 round or until they succeed on a save on their turn.</p>",
 			"higherLevelEffect": "",
 			"upcastEffect": "<p><strong>Upcast:</strong> +6 damage or +1 size (max Huge). If 5+ mana is spent, Restrained targets are Blinded.</p>"
 		},

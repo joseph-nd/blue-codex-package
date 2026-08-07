@@ -55,9 +55,18 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "Blast +1",
+					"deltas": []
+				},
+				{
+					"label": "+10 minute duration",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

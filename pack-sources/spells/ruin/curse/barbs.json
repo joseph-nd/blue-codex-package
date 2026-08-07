@@ -57,9 +57,14 @@
 		"tier": 5,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1d8 damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

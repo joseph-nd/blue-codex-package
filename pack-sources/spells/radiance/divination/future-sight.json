@@ -77,18 +77,23 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addFlatDamage",
-					"value": 5,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": "futureSightDamage1",
-					"durationType": null
+					"label": "+5 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 5,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "futureSightDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

@@ -54,9 +54,14 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 multiplier",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

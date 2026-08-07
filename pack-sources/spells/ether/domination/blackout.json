@@ -68,18 +68,23 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addFlatDamage",
-					"value": 1,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": "blackoutDamage1",
-					"durationType": null
+					"label": "+1 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "blackoutDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

@@ -87,18 +87,23 @@
 		"tier": 8,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addFlatDamage",
-					"value": 7,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": "goutOfFireDamage1",
-					"durationType": null
+					"label": "+7 damage & 2d10 burn",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 7,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "goutOfFireDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

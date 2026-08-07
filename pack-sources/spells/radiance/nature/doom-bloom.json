@@ -94,9 +94,14 @@
 		"tier": 8,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+10 secondary damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

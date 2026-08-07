@@ -105,9 +105,14 @@
 		"tier": 7,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+15 crit damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

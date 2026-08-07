@@ -56,18 +56,23 @@
 		"tier": 2,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addDuration",
-					"value": 1,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": null,
-					"durationType": "round"
+					"label": "+1 round",
+					"deltas": [
+						{
+							"operation": "addDuration",
+							"value": 1,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": null,
+							"durationType": "round"
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

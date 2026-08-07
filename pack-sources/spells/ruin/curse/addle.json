@@ -98,18 +98,23 @@
 		"tier": 1,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
-			"deltas": [
+			"mode": "upcastChoice",
+			"deltas": [],
+			"choices": [
 				{
-					"operation": "addFlatDamage",
-					"value": 8,
-					"dice": null,
-					"condition": null,
-					"targetEffectId": "addleDamage1",
-					"durationType": null
+					"label": "+8 damage",
+					"deltas": [
+						{
+							"operation": "addFlatDamage",
+							"value": 8,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "addleDamage1",
+							"durationType": null
+						}
+					]
 				}
-			],
-			"choices": null
+			]
 		}
 	},
 	"effects": [],

@@ -57,9 +57,14 @@
 		"tier": 6,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+1 shrink, +KEY less damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

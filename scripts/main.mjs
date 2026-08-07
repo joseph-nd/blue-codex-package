@@ -3082,15 +3082,30 @@ const shadowmancerPreCastMana = new Map();
 // activate `finally` (on cancel). See runWrappedActivate for the rationale.
 const shadowmancerManaFudge = new Map();
 
-// Auto-answer the SpellUpcastDialog for a shadowmancer tiered cast: submit at the
-// effective cap (forced max-tier, no player choice) and close before the player
-// interacts. Bypasses the Svelte component's `manaToSpend > currentMana` block
-// (SpellUpcastDialog.svelte:249); getData's applyUpcastDeltas Rule 4 is satisfied
-// by the in-memory mana fudge set in runWrappedActivate. Only injects `upcast`
-// for scaling spells (else applyUpcastDeltas Rule 2 would throw); non-scaling /
-// already-at-cap casts are auto-submitted at base tier (still skips the UI and
-// enables 0-mana overdraft). The dialog instance exposes actor/item/spell and
-// submitActivation() (resolves its awaited promise, then closes).
+/* ── The cast dialog, kept open ──────────────────────────────────────────────
+ *
+ * A shadowmancer does not choose a tier: Pilfered Power always casts at the
+ * highest tier they can reach. That is a rule about mana, and it used to be
+ * enforced by answering the entire dialog on the player's behalf from inside
+ * this render hook — `submitActivation` resolves the promise that
+ * `ItemActivationManager` is awaiting, so the window closed before it could be
+ * seen. Everything else the dialog decides went with it: advantage and
+ * disadvantage, situational modifiers, the primary-die fields, and — for a
+ * spell whose upcast offers alternatives — which one.
+ *
+ * The dialog now renders and waits. Only the part the class actually fixes is
+ * forced, by wrapping `submitActivation` so the player's own submission passes
+ * through with `upcast` overwritten on the way past. Whatever they chose
+ * everywhere else survives untouched.
+ *
+ * The mana fudge in `runWrappedActivate` therefore has to stand for as long as
+ * the dialog is open: the Svelte component refuses to submit when
+ * `manaToSpend > currentMana` (SpellUpcastDialog.svelte:248), which under
+ * Pilfered Power — where mana is a use-count, not a per-tier budget — would
+ * block the 0-mana overdraft cast the class is built around. It is an in-memory
+ * write that triggers no re-render, and `onSpellPreUse` still restores the true
+ * value before the system's own deduction.
+ */
 function onRenderUpcastDialog(app) {
 	try {
 		const actor = app?.actor;
@@ -3098,36 +3113,92 @@ function onRenderUpcastDialog(app) {
 		if (!isShadowmancerActor(actor)) return;
 		const tier = Number(item?.system?.tier) || 0;
 		if (tier < 1) return;
-		if (app.__blueCodexAutoSubmitted) return;
-		app.__blueCodexAutoSubmitted = true;
+		if (app.__blueCodexUpcastPrepared) return;
+		app.__blueCodexUpcastPrepared = true;
 
 		const cap = Number(actor.system?.resources?.highestUnlockedSpellTier) || 0;
 		const scaling = item.system?.scaling;
 		const canScale = !!scaling && scaling.mode && scaling.mode !== 'none';
 		const doUpcast = canScale && cap > tier;
+		const choices =
+			doUpcast && scaling.mode === 'upcastChoice' && Array.isArray(scaling.choices)
+				? scaling.choices
+				: [];
 
-		let rollHidden = false;
-		try {
-			rollHidden = !!game.settings.get(game.system?.id ?? 'nimble', 'hideRolls');
-		} catch {
-			rollHidden = false;
-		}
-		let rollMode = Number(app.data?.rollMode) || 0;
-		if (typeof Math?.clamp === 'function') rollMode = Math.clamp(rollMode, -6, 6);
+		// Read at submit time, not captured now: the player may change it while
+		// the dialog is open.
+		const pick = { index: 0 };
 
-		app.submitActivation({
-			rollMode,
-			situationalModifiers: '',
-			primaryDieValue: undefined,
-			primaryDieModifier: undefined,
-			rollHidden,
-			upcast: doUpcast
-				? { manaToSpend: cap, choiceIndex: scaling.mode === 'upcastChoice' ? 0 : undefined }
-				: undefined,
-		});
+		const submit = app.submitActivation.bind(app);
+		app.submitActivation = (results = {}) =>
+			submit({
+				...results,
+				upcast: doUpcast
+					? { manaToSpend: cap, choiceIndex: choices.length ? pick.index : undefined }
+					: undefined,
+			});
+
+		injectForcedUpcastSection(app, { cap, doUpcast, choices, pick });
 	} catch (error) {
-		console.warn(`[${MODULE_ID}] shadowmancer upcast auto-answer failed`, error);
+		console.warn(`[${MODULE_ID}] shadowmancer upcast dialog setup failed`, error);
 	}
+}
+
+/**
+ * Stand in for the system's upcast controls on a shadowmancer's cast dialog.
+ *
+ * The native section is hidden rather than reused: its mana slider offers a
+ * choice this class does not have, and its choice radios are only drawn once
+ * that slider has been dragged past the base tier — which, for a cast that is
+ * forced to the cap, never happens. In its place goes a plain statement of the
+ * tier being cast at, plus the radio group when the spell's upcast has genuine
+ * alternatives.
+ *
+ * Every anchor is optional. If the system's markup moves, nothing is injected
+ * and the dialog is left exactly as the system drew it — the cast still works,
+ * it just loses the explanatory row.
+ */
+function injectForcedUpcastSection(app, { cap, doUpcast, choices, pick }) {
+	if (!doUpcast) return;
+	const root = app?.element instanceof HTMLElement ? app.element : app?.element?.[0];
+	if (!(root instanceof HTMLElement)) return;
+
+	ensurePilferedPowerStyles();
+
+	const native = root.querySelector('.nimble-upcast-section');
+	if (native instanceof HTMLElement) native.style.display = 'none';
+
+	const section = document.createElement('div');
+	section.className = 'bcx-forced-upcast';
+
+	const rows = [
+		'<h3 class="bcx-forced-upcast__heading"><i class="fa-solid fa-moon"></i> Pilfered Power</h3>',
+		`<p class="bcx-forced-upcast__note">Cast at <strong>tier ${cap}</strong> — a shadowmancer always casts at the highest tier they can reach.</p>`,
+	];
+	if (choices.length) {
+		rows.push('<fieldset class="bcx-forced-upcast__choices">');
+		rows.push('<legend>Choose an enhancement</legend>');
+		choices.forEach((choice, index) => {
+			const label = escapeHtml(choice?.label ?? `Option ${index + 1}`);
+			rows.push(
+				`<label class="bcx-forced-upcast__option"><input type="radio" name="bcx-upcast-choice" value="${index}"${
+					index === 0 ? ' checked' : ''
+				}><span>${label}</span></label>`,
+			);
+		});
+		rows.push('</fieldset>');
+	}
+	section.innerHTML = rows.join('');
+
+	for (const input of section.querySelectorAll('input[type="radio"]')) {
+		input.addEventListener('change', (event) => {
+			const value = Number(event.currentTarget?.value);
+			if (Number.isInteger(value)) pick.index = value;
+		});
+	}
+
+	if (native instanceof HTMLElement) native.after(section);
+	else (root.querySelector('.nimble-sheet__body') ?? root).append(section);
 }
 
 // preUseItem (fires before the system deducts mana, upcast passed by reference).
@@ -3493,6 +3564,47 @@ const PILFERED_POWER_CSS = `
 	}
 	.bcx-shadowmancer h3.nimble-heading--mana i.fa-moon {
 		color: hsl(275 60% 60%);
+	}
+	/* The forced-tier row that stands in for the system's upcast controls on a
+	   shadowmancer's cast dialog. */
+	.bcx-forced-upcast {
+		border-top: 1px solid hsl(275 30% 40% / 0.5);
+		margin-block-start: 0.5rem;
+		padding-block-start: 0.5rem;
+	}
+	.bcx-forced-upcast__heading {
+		align-items: center;
+		display: flex;
+		font-size: var(--font-size-14, 0.875rem);
+		gap: 0.375rem;
+		margin: 0 0 0.25rem;
+	}
+	.bcx-forced-upcast__heading i.fa-moon {
+		color: hsl(275 60% 60%);
+	}
+	.bcx-forced-upcast__note {
+		font-size: var(--font-size-12, 0.75rem);
+		margin: 0 0 0.5rem;
+		opacity: 0.85;
+	}
+	.bcx-forced-upcast__choices {
+		border: 1px solid hsl(275 30% 40% / 0.5);
+		border-radius: 4px;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		margin: 0;
+		padding: 0.375rem 0.5rem 0.5rem;
+	}
+	.bcx-forced-upcast__choices legend {
+		font-size: var(--font-size-12, 0.75rem);
+		padding-inline: 0.25rem;
+	}
+	.bcx-forced-upcast__option {
+		align-items: center;
+		cursor: pointer;
+		display: flex;
+		gap: 0.375rem;
 	}
 `;
 

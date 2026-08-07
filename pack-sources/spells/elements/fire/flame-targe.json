@@ -56,9 +56,14 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+KEY damage",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],

@@ -54,9 +54,14 @@
 		"tier": 3,
 		"classes": [],
 		"scaling": {
-			"mode": "upcast",
+			"mode": "upcastChoice",
 			"deltas": [],
-			"choices": null
+			"choices": [
+				{
+					"label": "+2 HP and +1 use",
+					"deltas": []
+				}
+			]
 		}
 	},
 	"effects": [],
