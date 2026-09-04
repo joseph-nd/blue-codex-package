@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-09-04
+
+**Foundry VTT v14.** The Nimble system moved to Foundry v14 in 0.9.0 (and now requires it), so this module follows. Verified live on Foundry 14.367 + Nimble 0.9.0: every pack loads with no validation errors, the spell-tier badges render, spells cast, and the Shadowmancer's forced-upcast cast dialog still finds the system's dialog and hides the native mana slider.
+
+### Changed
+- **Requires Foundry VTT v14 and Nimble ≥ 0.9.0.** The manifest's compatibility block now reads minimum 14 / verified 14.367 with no maximum; Foundry v14 refused the old `maximum: 13` manifest and left the module disabled without an error.
+
 ## [0.6.0] - 2026-08-07
 
 **The cast dialog, made usable for the Shadowmancer and honest about upcasts.**

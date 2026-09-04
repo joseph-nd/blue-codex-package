@@ -4,6 +4,8 @@ A [Foundry VTT](https://foundryvtt.com/) module that brings the content of
 **Blue's Codex** (a third-party Nimble supplement, v1.3) to the
 [Nimble system](https://github.com/nimble-co/FoundryVTT-Nimble).
 
+Requires Foundry VTT v14 and the Nimble system ≥ 0.9.0.
+
 ## Planned scope
 
 Blue's Codex contains:
