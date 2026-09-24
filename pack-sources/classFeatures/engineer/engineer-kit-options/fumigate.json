@@ -1,0 +1,91 @@
+{
+	"name": "Elixir Gun: Fumigate",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/elixir-gun.webp",
+	"system": {
+		"macro": "",
+		"identifier": "fumigate",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "fumigate-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Cone 3",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "fuDmg",
+					"type": "damage",
+					"damageType": "acid",
+					"formula": "3d4 + floor(@level / 5) * 6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreAllies": true,
+					"on": {
+						"hit": [
+							{
+								"id": "fuDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "fuDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 3,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Elixir Gun — Toolbelt option.</em></p><p><strong>Fumigate — 2 Actions, 1 Toolbelt scrap.</strong> Cone 3, Damage: 3d4 Acid. Allies take no damage and you heal 1 negative condition from allies in the area (not including Wounds).</p><p><strong>High Levels:</strong> +6 Acid damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d4 Acid (+6 per 5 levels); allies in the cone take no damage.</em></p><p><em>[M] Remove 1 negative condition (not Wounds) from each ally in the area.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "zHh5bXneI0T08uwW",
+	"folder": "e2c8675a119379ac"
+}

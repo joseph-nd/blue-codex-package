@@ -1,0 +1,97 @@
+{
+	"name": "Grenade Kit: Flame Grenade",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/grenade-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flame-grenade",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "flame-grenade-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Range 6, Blast 3",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "fgDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "2d6 + floor(@level / 5) * 5",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "fgDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "fgDmg"
+							},
+							{
+								"id": "fgSmold",
+								"type": "condition",
+								"condition": "smoldering",
+								"parentContext": "hit",
+								"parentNode": "fgDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 5,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Grenade Kit — Toolbelt option.</em></p><p><strong>Flame Grenade — 2 Actions, 1 Toolbelt scrap.</strong> Range 6, Blast 3, Damage: 2d6 Fire. On hit: applies Smoldering. Can still crit or miss. The area burns for 1 round; targets take INT Fire damage for each space they enter on a turn. This ignores armor.</p><p><strong>High Levels:</strong> +5 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6 Fire (+5 per 5 levels) against each target — it can crit or miss — and applies Smoldering on a hit.</em></p><p><em>[M] The burning area (INT Fire per space entered, ignores armor) lasts 1 round — apply it as creatures move.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "62ndJplrPh6gO2B3",
+	"folder": "e2c8675a119379ac"
+}

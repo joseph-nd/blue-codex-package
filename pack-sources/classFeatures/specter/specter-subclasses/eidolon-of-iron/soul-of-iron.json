@@ -1,0 +1,57 @@
+{
+	"name": "Soul of Iron",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-iron/soul-of-iron.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-of-iron",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1/turn, when you hit a Soul Touched target with a melee attack, you can use Ruin or Haunt on them as part of the same Action and you gain KEY temp HP, 1 round.</p><hr><p><em>[M] Once per turn after a melee hit on a Soul Touched target, use Ruin or Haunt as part of the same Action and add KEY temp HP (1 round) by hand.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-iron",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "c16c33443c34e11c",
+	"_id": "0nTT8cqPB2qpcrHH"
+}

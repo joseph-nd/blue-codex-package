@@ -22,8 +22,8 @@ export default class Pack {
 
 	// New classes shipped by this module — sort priority for class-feature folders.
 	static #CLASS_FEATURE_CLASS_SORT_ORDER = new Map([
-		['hexbinder', 0],
-		['artificer', 1],
+		['engineer', 0],
+		['specter', 1],
 	]);
 
 	constructor(dirName, data) {
@@ -378,6 +378,9 @@ export default class Pack {
 		['vol4/mystic-michaels', "Vol IV — Mystic Michael's Machinations"],
 		['vol1/starting-kits', 'Vol I — Variant Starting Equipment'],
 		['vol1/gear', 'Vol I — Adventuring Gear'],
+		['engineer/gadgets', 'Engineer — Gadgets'],
+		['engineer/kits', 'Engineer — Weapon Kits'],
+		['engineer/firearms', 'Engineer — Firearms'],
 	]);
 
 	#prepareItemFolderAssignments() {

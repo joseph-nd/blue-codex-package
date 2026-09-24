@@ -1,0 +1,65 @@
+{
+	"name": "Reanimation Rite: Feast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/reanimation-rites.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reanimation-rite-feast",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Reanimation Rite — Feast.</strong> 1 Action, Reach: 8. Remove Soul Touched from an undead minion: command all remaining minions to Move 6 and Attack (1d8). On hit: restore 2 HP for each damage die. If Soul Touched wasn’t removed, this does nothing. The consumed minion leaves an exploitable corpse (dissolves after 1 hour).</p><hr><p><em>[A] Using this Rite checks the target for your Soul Touched and removes it (the module warns but lets you proceed if the target isn’t marked).</em></p><p><em>[M] Move the minions, roll their 1d8 attacks and apply the 2 HP per damage die healing by hand; remove the consumed minion’s token and leave a corpse marker.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-reanimation",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"rite": {
+					"consumesMark": "soul-touched"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "OK06yRRPT1CBlngH",
+	"folder": "274979a7d9ac9399"
+}

@@ -1,0 +1,81 @@
+{
+	"name": "Med Kit: Stim Pack",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/med-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "stim-pack",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "stim-pack-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			},
+			{
+				"type": "actionDelta",
+				"disabled": false,
+				"id": "stim-pack-action",
+				"identifier": "",
+				"label": "Stim Pack: +1 Action next turn",
+				"predicate": {},
+				"priority": 3,
+				"value": "1",
+				"timing": "nextTurn",
+				"target": "targeted",
+				"borrowFromNextTurn": false
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 2",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Med Kit — Toolbelt option.</em></p><p><strong>Stim Pack — 2 Actions, 1 Toolbelt scrap.</strong> Reach 2. Ally gains +2 speed and +1 Max Actions on their next turn. They are Dazed for 1 turn at the end of the round.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The targeted ally gets +1 Action on their next turn.</em></p><p><em>[M] +2 speed on their next turn; Dazed for 1 turn at the end of the round (not with Potent Concoction).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "CULmTU4CXdB1k81f",
+	"folder": "e2c8675a119379ac"
+}

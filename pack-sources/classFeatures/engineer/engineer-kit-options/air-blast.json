@@ -1,0 +1,111 @@
+{
+	"name": "Flamethrower: Air Blast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/flamethrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "air-blast",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "air-blast-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 4",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "abDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "3d8 + floor(@level / 5) * 5",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "abDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "abDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "abSave",
+					"type": "savingThrow",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "abPush",
+								"type": "note",
+								"noteType": "reminder",
+								"text": "Large or smaller: pushed back INT spaces.",
+								"parentContext": "failedSave",
+								"parentNode": "abSave"
+							}
+						],
+						"passedSave": []
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Flamethrower — Toolbelt option.</em></p><p><strong>Air Blast — 2 Actions, 1 Toolbelt scrap.</strong> Reach 4, Damage: 3d8 Fire. On a failed STR save, Large and smaller targets are pushed back INT spaces. Can't miss Smoldering targets and Smoldering targets automatically fail.</p><p><strong>High Levels:</strong> +5 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d8 Fire (+5 per 5 levels) and posts the STR save.</em></p><p><em>[M] Push a Large or smaller target INT spaces on a failed save. A Smoldering target can't be missed (treat a miss as a hit) and automatically fails the save.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "PEKnGE8Uzmn8FrLT",
+	"folder": "e2c8675a119379ac"
+}

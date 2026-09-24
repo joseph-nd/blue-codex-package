@@ -1,0 +1,112 @@
+{
+	"name": "Electro Baton",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "electro-baton",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "electro-batonGrant",
+				"identifier": "",
+				"label": "Electro Baton",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.yuFMpfvYp12SSz36"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "system-shockGrant",
+				"identifier": "",
+				"label": "Electro Baton: System Shock",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.0MapufZDLyl8ogxl"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "arc-leapGrant",
+				"identifier": "",
+				"label": "Electro Baton: Arc Leap",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.48J9wTGDHPv8Zpob"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "dischargeGrant",
+				"identifier": "",
+				"label": "Electro Baton: Discharge",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.Yg8a09sAYt3yKyWx"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — A melee mace that builds Charged, with shock, arc and discharge options.</em></p><p><strong>Strike (basic) — 1 Action · Considered a mace.</strong> Reach 1, Damage: 2d6+STR Lightning. You have advantage if you are Charged. On crit: gain Charged.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>System Shock.</strong> Reach 1, Damage: 2d6+STR Lightning, lose Charged. If you lost Charged, the target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</li><li><strong>Arc Leap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, Damage: 2d6. Ignores armor.</li><li><strong>Discharge.</strong> Reach 1, Damage: 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor; can still crit or miss.</li></ul><p><strong>High Levels:</strong> +6 damage every 5 levels (Strike, System Shock). +4 damage every 5 levels (Arc Leap, Discharge).</p><hr><p><em>[A] Grants the Electro Baton item (basic ability, 1 Action, no scrap) and one feature per Toolbelt option (2 Actions, 1 Toolbelt scrap each, spent natively). Scraps are tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] High-level damage/healing bonuses are built into the formulas.</em></p><p><em>[M] Weapon Kits count as weapons for swapping and stowing.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WMo86X1rw8HZSZms",
+	"folder": "e2c8675a119379ac"
+}

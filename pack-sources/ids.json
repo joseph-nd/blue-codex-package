@@ -84,6 +84,134 @@
 				}
 			}
 		},
+		"engineer": {
+			"engineer-gadget-picks": {
+				"acid-shell": "Qjky50uOH3hONVKM",
+				"aed": "TTPbp2QSCNPxFjce",
+				"amp-armor": "KArhnnfjnS0Dq9fI",
+				"deployable-shield": "jgPV2IOWXM0dambg",
+				"elemental-munition": "MKZOKJ1ErQYsq9e6",
+				"elixir-b": "NAC4nQKzhYifTja3",
+				"elixir-c": "VryTRHF3QbOgSMDC",
+				"elixir-h": "yw6cubh32NKH1rkp",
+				"elixir-r": "uDrx8D3d5pqOYMwD",
+				"elixir-s": "cDxD9MeyctaQTyEG",
+				"elixir-u": "pT7LuiijYVp8EJOA",
+				"endothermic-shell": "TpwoOuvoePOPQdAG",
+				"ether-capacitator": "BpUeauCHfPGZfZA1",
+				"glue-shell": "urrLWIY05AfAgIkL",
+				"hidden-mine": "yvMRuZKLJbRLscXk",
+				"hidden-pistol": "1pBb0wHS10QrHl2K",
+				"mechanical-familiar": "TIryNGEthijlRkLO",
+				"mist-cloak": "Z9V5bQRhRj23sDQ6",
+				"omni-tool": "qUqBn4NHoSpiGiN3",
+				"repulsion-armor": "cDYvWnq37nOLfPD6",
+				"rocket-boots": "VNDxdP6g1bDCsOR5",
+				"slick-shoes": "M4ryT6f2AoL2YfsV",
+				"smoke-screen": "2als9AAySunV8I9e",
+				"surprise-battering-ram": "plXXD2LnfRj0AcNz",
+				"tool-wrench": "YALMenQT7o5Y96tc",
+				"utility-goggles": "ANMUcjKuRKKeqxyY"
+			},
+			"engineer-gadget-toolbelt": {
+				"acid-shell": "aOj7PvrmUdTxXtaz",
+				"aed": "4EFNfnYFo451SXDJ",
+				"amp-armor": "AynHgtRKUfcUwqiI",
+				"deployable-shield": "xrVE1j6u1u7krgFO",
+				"elemental-munition": "KZuFbixlpfqTskCr",
+				"elixir-b": "wJFLykmFx1hisTpc",
+				"elixir-c": "53PFTGamLRKztShb",
+				"elixir-h": "eSoKfW4svXAcAg39",
+				"elixir-r": "i58UBcREPtwGIjtE",
+				"elixir-s": "HkzBKSqGbpYr2KRv",
+				"elixir-u": "gGAZTD36Rr9pZUz7",
+				"endothermic-shell": "vjPTLDBVZX1alZlo",
+				"ether-capacitator": "kkQcCuavUSwuAw04",
+				"glue-shell": "lvuaKKHvFpXY6CRu",
+				"hidden-mine": "V8wKZRflcidHi1Gk",
+				"hidden-pistol": "aEoocLORxMl5UNCb",
+				"mechanical-familiar": "Dr93QcAw0khvPsod",
+				"mist-cloak": "DT1TdQQ9yjY7k9MT",
+				"omni-tool": "LEkAa0v288YyPlUP",
+				"repulsion-armor": "U0JHbZWbpCIcOko9",
+				"rocket-boots": "eQsdkP3Y17CitSaA",
+				"slick-shoes": "WLLn1dPPfIO23RaX",
+				"smoke-screen": "J61Enlly3bSnpCwQ",
+				"surprise-battering-ram": "Wit9DUTfTcTnvYIh",
+				"tool-wrench": "wXanMtdS5gX7RX83",
+				"utility-goggles": "pUm3mvMQ6oeJ57Je"
+			},
+			"engineer-kit-options": {
+				"air-blast": "PEKnGE8Uzmn8FrLT",
+				"arc-leap": "48J9wTGDHPv8Zpob",
+				"cleansing-mist": "MF83gKjYvciylTFj",
+				"concussion-grenade": "4wDf6QR5VDbca3OL",
+				"discharge": "Yg8a09sAYt3yKyWx",
+				"flame-blast": "byf7IamDGJJNVLf9",
+				"flame-grenade": "62ndJplrPh6gO2B3",
+				"fumigate": "zHh5bXneI0T08uwW",
+				"glob-shot": "YDvwd9vIgySeuXhw",
+				"napalm": "XSRyNpm7iq5k7Nf9",
+				"smoke-grenade": "vaQxubZEA5R7WBke",
+				"stim-pack": "CULmTU4CXdB1k81f",
+				"super-elixir": "bMVr0uwSwwWvqb1J",
+				"system-shock": "0MapufZDLyl8ogxl",
+				"vital-burst": "A5OdgCL0d6YLyF8f"
+			},
+			"engineer-kit-picks": {
+				"electro-baton": "WMo86X1rw8HZSZms",
+				"elixir-gun": "LOACCGUpGqKqH7h2",
+				"flamethrower": "YpiUMhqyAkTFma3l",
+				"grenade-kit": "jkXer2RbYDxhwxsO",
+				"med-kit": "7Qdraf4agV80llVm"
+			},
+			"engineer-progression": {
+				"auto-deploy": "NC0PbP6EkgvIIvFR",
+				"epic-boon": "UqCU2OLwSCkVhLK3",
+				"gadgeteer": "T7sRpEUkJVnaL8b5",
+				"jumpstart": "6ZzrKUkho87afnMO",
+				"kit-training": "QrPJuRTPUJC8yJwe",
+				"mechanical-mayhem": "jBJOPFAem7kWmrZX",
+				"mechanical-prodigy": "UQQYAIxNJFIG8woC",
+				"overclocked": "FlIdEROFh9WDGheD",
+				"reduce-reuse-recycle": "ef1eyMNnfWsfWRXE",
+				"testing-in-progress": "uVpwmj0crudT9ea6",
+				"tinkering": "2mVWluSeiyflpvQ9",
+				"toolbelt": "AQnnTLwI4zrh0wG9",
+				"turret-deployed": "g7ebFakflQz4FqQb",
+				"turret-fortifications": "sXj28CB2WwAvKHHO"
+			},
+			"engineer-subclasses": {
+				"alchemist": {
+					"elixir-savant": "EeuEr4WX53dHOSSI",
+					"enhanced-formula": "tHbxTKrBkcQGzANd",
+					"medical-dispersion-field": "nvGdni7cHF00Pejv",
+					"potent-concoction": "koLHUP9uRfL5Vdrd",
+					"shared-elixirs": "50UXY4uxjncbFqUk"
+				},
+				"mechanist": {
+					"coordinated-assault": "luhlGTb7Rw8vzncK",
+					"extra-plating": "eIsrP9ZvkyrZmGzf",
+					"master-technician": "claeQ8BW3w2dKjWZ",
+					"optimized-activation": "JYGcHwwKb6A0q8Wy",
+					"targeting-matrix": "GnD4X5iEoj9zi6YL"
+				},
+				"scrapper": {
+					"applied-force": "eBf45IgXX4uwCVKO",
+					"bulwark-gyro": "YM1amUe1mviqRZed",
+					"gyroscopics": "JodwbMBTgZUI6Rtg",
+					"kinetic-stabilizers": "OegVzBjSyRNa1Tv6",
+					"scrappers-armory": "hvycEzcfSTEoXLy1"
+				}
+			},
+			"engineer-turret-picks": {
+				"electro-net": "nvk4dfxyUxPUGGcv",
+				"flame": "GCxXlUZNuLR1qdVD",
+				"healing": "527Dlm4NtSia5MDf",
+				"rocket": "XVWUmtgir6TnHjw1",
+				"thumper": "sC3HURpbfzZROJ7X"
+			}
+		},
 		"hunter": {
 			"hunter-subclasses": {
 				"keeper-of-the-frozen-north": {
@@ -316,6 +444,98 @@
 				}
 			}
 		},
+		"specter": {
+			"specter-progression": {
+				"dark-knowledge": "FomVwjWFCie6kAIn",
+				"epic-boon": "z4uNmO1OAfozaUlI",
+				"ghostly-sight": "c5FsHkar5hkYS4GJ",
+				"lamentations": "xe4YRxGbuXhrz089",
+				"master-of-the-veil": "ZTKzycRZHILGWQHm",
+				"oblivion": "wVygolxgSdsvr07M",
+				"pierce-the-veil": "iLx5befiXzcgbyP1",
+				"soul-rite": "itUBtlwJJgAZeQBS",
+				"soul-taker": "wGGR7ZelZBYMo5vs",
+				"soul-touched": "49wQcKDs3khicVtG",
+				"soul-twist": "0evSiYYtNovBeX3C",
+				"spellcasting": "ahCpyyup1NXfVTT1",
+				"upgraded-cantrips": "OeguasapId2UgRFK"
+			},
+			"specter-rites": {
+				"haunt": "oW2raHp0HwYovwkq",
+				"protect": "j3MjFIDP24PTTTSp",
+				"ruin": "YQscUojjFTwDqtw3"
+			},
+			"specter-soul-sculpting-picks": {
+				"agony": "L9feRx8VihBQjnNj",
+				"armor-of-unfeeling": "CZoNyOWBHd9dgAL5",
+				"bloodsong": "hZKaOfy1GJ6xYuni",
+				"corpsesong": "Zy0zS04jUEW8DeR8",
+				"dissonance": "VkcNvei4RPCMSvkO",
+				"dying-surge": "i4PDNLqna4UfbPO7",
+				"earthbind": "B8rDjXYA82TH1y0S",
+				"frozen-touch": "kbZttvB3HQL6YiaX",
+				"gaze-beyond": "ymx5SvydWL2kD8mN",
+				"ghostly-form": "EZoVzccF6CzmPya6",
+				"jinxed": "yOUpBTipmiJx4dej",
+				"lingering": "sPBKY34tSQLXySYe",
+				"overflowing-essence": "Ne4J4m0S2avzKCxB",
+				"painful-bond": "gcwJ5QcoC1tVEp4j",
+				"rupture": "JVH4xkrPtXyli4vq",
+				"shared-anguish": "zXU1tIODLfi1iU5i",
+				"soothing": "ddkzLLSyFOybDibv",
+				"soul-channeling": "fZrgAOBXTuYJWdhA",
+				"splinter": "pqjnlhJkJyZE4Ij4",
+				"warmonger": "7g09f3mI5WiOBiOK"
+			},
+			"specter-subclasses": {
+				"eidolon-of-defiance": {
+					"defiance-rites": "TJHhZAApazCt81yv",
+					"generosity": "8OG7gYjYcYn1RvN8",
+					"ghostmirror": "Zziw44mo71DkkjDr",
+					"purity": "AiCbLfTRUUcBzD0S",
+					"reclaim-essence": "jcRzAmHFH2CfT5ar",
+					"recovery": "kRqyhj2sLBDmzA1Z",
+					"soul-of-defiance": "dPJ5sHVUjw0JGxAg"
+				},
+				"eidolon-of-iron": {
+					"chain": "dd6nD6sAZQUqV7sL",
+					"iron-armory": "FEIWjfaXUKTd3lL0",
+					"iron-rites": "JwkrS5yaQYeo03rE",
+					"soul-forged": "YcnXMUHeom1ahAP2",
+					"soul-of-iron": "0nTT8cqPB2qpcrHH",
+					"soul-reflection": "k5gqeoCvxvrdfODf",
+					"warp": "3z2EX9uq5Dq3KQLq"
+				},
+				"eidolon-of-rage": {
+					"defile": "g8c5ErKzciJKrfeb",
+					"destruction": "qcqJOsryWyMvJJxE",
+					"rage-rites": "JJvsyHr0P1dm7OXa",
+					"raging-ruin": "duYsSuTkcxPdC7CA",
+					"ruin-fire": "fVpZS1D4AQWkw4S8",
+					"ruin-lightning": "imhFBPwU98VylGNK",
+					"shelter": "dFvPVlX2KlEqFfWk",
+					"soul-of-rage": "wo2mPsMVMFd5sL1n",
+					"spirit-siphon": "tDbQE74rIGTThdsh"
+				},
+				"eidolon-of-reanimation": {
+					"death-nova": "sc0y98dw261wfuuo",
+					"feast": "OK06yRRPT1CBlngH",
+					"ravage": "fG9oh1JxF8rxE2VB",
+					"reanimated-soul": "FUqpSGmwjuJuQEfq",
+					"reanimation-rites": "ZfUAUv3AEXKELsFg",
+					"twitchy": "8wYmqcHOg8nGEGfT"
+				},
+				"eidolon-of-suffering": {
+					"corrupt": "TgDFgLSOs1ZUnhjE",
+					"feed-the-corruption": "V72qgI7V41WpI8Kl",
+					"meekness": "hP1zYYpTIDJitPxO",
+					"poltergeist": "DML0ot5WKJbEdfwq",
+					"rotting-flesh": "iL3yyoDw6llYObTU",
+					"soul-of-suffering": "B0UytAdY3clrrn95",
+					"suffering-rites": "uKb66FszNhqovtfV"
+				}
+			}
+		},
 		"stormshifter": {
 			"stormshifter-subclasses": {
 				"circle-of-earth": {
@@ -450,9 +670,64 @@
 			}
 		}
 	},
+	"classes": {
+		"engineer": "azzdf9MpYaExK5am",
+		"specter": "RAyTBIDLoTwcRhHY"
+	},
 	"companions": {
 		"lifebinding-spirit": "ldRzN9jHtyI7abGa",
-		"shadow-minion": "2nK0HW5EGGDAJISw"
+		"shadow-minion": "2nK0HW5EGGDAJISw",
+		"turret-electro-net": "AYpwy53tuPyyAc3Q",
+		"turret-flame": "6rqhRTk8WmCVrHz4",
+		"turret-healing": "syy3M1DegUIpK2ps",
+		"turret-rifle": "tWBnMgdl8Tf7cDeb",
+		"turret-rocket": "NSPliCn6prYCW79G",
+		"turret-thumper": "G8jb3hFe1WjYC6bP",
+		"undead-minion": "17I60M02tj3gnnrf"
+	},
+	"items": {
+		"engineer": {
+			"firearms": {
+				"blunderbuss": "OiVh0x13puqHpjwx",
+				"pistol": "V8L7EsiEIvF6x5qm",
+				"rifle": "EKSUxTq22Z7JTTa8"
+			},
+			"gadgets": {
+				"acid-shell": "SPIbAhBUh0MpQ2SD",
+				"aed": "PAqNlguDKrDFkVHe",
+				"amp-armor": "BlFvupJfmbFxFYq3",
+				"deployable-shield": "5haoUMbe5sY4Hlv5",
+				"elemental-munition": "VGQGvLg2srIXSlHy",
+				"elixir-b": "jS46A6BxQNAmbHQ8",
+				"elixir-c": "h1ePKY6mp417iBMs",
+				"elixir-h": "i5F95O4m2mdu2g0V",
+				"elixir-r": "wQOhXuzRe6A3I5xz",
+				"elixir-s": "VY1wtKLsWp9VEILV",
+				"elixir-u": "KR8hRAnJsM3YC3Gj",
+				"endothermic-shell": "UWMO0rdHmN6C8xdo",
+				"ether-capacitator": "ob24JkOqWyh2FXRj",
+				"glue-shell": "jTnoBQ7DpJWLEkoi",
+				"hidden-mine": "4rgtHOz0aOLIS8Hy",
+				"hidden-pistol": "khQNFcqqBiPx2TTC",
+				"mechanical-familiar": "pJHJh69i0rMeu58T",
+				"mist-cloak": "pOZxkteGObyWPDTV",
+				"omni-tool": "IDHrAQRmEWzB4u5S",
+				"repulsion-armor": "Lq3l8KZ44wnYxBcF",
+				"rocket-boots": "UH1Ur0ohKXKWXE7w",
+				"slick-shoes": "BfBoF028vah7A5QO",
+				"smoke-screen": "xd2SkTT5n4lqTCkT",
+				"surprise-battering-ram": "jTjJ6dx9zeAMm9tM",
+				"tool-wrench": "V1wZJlJKmz5W0Wpi",
+				"utility-goggles": "QfwB8k7wEwBSqROj"
+			},
+			"kits": {
+				"electro-baton": "yuFMpfvYp12SSz36",
+				"elixir-gun": "V5WBvs4RbwYEG3WY",
+				"flamethrower": "zcMeeh7MrXuEcKA4",
+				"grenade-kit": "vajujw6n55Q3gs5J",
+				"med-kit": "h84ze8iy5Oepqith"
+			}
+		}
 	},
 	"spells": {
 		"elements": {
@@ -743,6 +1018,11 @@
 			"champion-of-the-broken": "DG3hNSUBRt1ArZGJ",
 			"champion-of-the-watch": "fd0sB1IhevZwGov2"
 		},
+		"engineer": {
+			"alchemist": "gkdH1mov8HsHlYqm",
+			"mechanist": "BhOmSIvWHT8nHQLa",
+			"scrapper": "Prg8QL2hlBCfAjXC"
+		},
 		"hunter": {
 			"keeper-of-the-frozen-north": "NOaqRD5MmauMuutw",
 			"keeper-of-the-swarm": "3ZwSukcUMocbNJBo",
@@ -772,6 +1052,13 @@
 			"herald-of-disruption": "RoxGIrjUDAQZEoDm",
 			"herald-of-inspiration": "bmdSqvEWVPxR2etN",
 			"herald-of-swords": "Jz1wtxPRSfOJhFcO"
+		},
+		"specter": {
+			"eidolon-of-defiance": "OzyRRqdhXbIWgN7u",
+			"eidolon-of-iron": "ssuJFongS9nOFRWu",
+			"eidolon-of-rage": "EJNgKZPUdkdvO5yM",
+			"eidolon-of-reanimation": "v2xuCilX8WjE4Avy",
+			"eidolon-of-suffering": "EbGy1dSZwTZu9ged"
 		},
 		"stormshifter": {
 			"circle-of-earth": "MLzFwirPqvlL3Y07",

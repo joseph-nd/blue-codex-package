@@ -1,0 +1,68 @@
+{
+	"name": "Turret Deployed!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/turret-deployed.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-deployed",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>1/turn · 1 Action · Costs: 1 Toolbelt scrap.</strong></p><p>You deploy a turret in an adjacent space.</p><hr><p><em>[A] Pick one of your known turrets (Rifle plus your Mechanical Mayhem picks); the module places it in an adjacent space and spends 1 Toolbelt scrap — or the Testing In Progress! free deploy — with an Undo chat card.</em></p><p><em>[A] The 1/turn limit is enforced (shift-click to override); Master Technician lifts it and allows 2 active turrets.</em></p><p><em>[A] The spawned turret gets its destruction threshold (LVL, 2xLVL with Extra Plating), INT scaling, Overclocked bonuses and your save DC automatically.</em></p><p><em>[M] Mechanical Prodigy (level 20): drag the turret anywhere within Reach 8 after it is placed.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"summon": {
+					"turretDeploy": true,
+					"combatOnly": true,
+					"expireOnCombatEnd": true,
+					"maxCount": 1
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "g7ebFakflQz4FqQb",
+	"folder": "e2c8675a119379ac"
+}

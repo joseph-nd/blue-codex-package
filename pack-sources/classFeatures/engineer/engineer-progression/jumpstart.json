@@ -1,0 +1,111 @@
+{
+	"name": "Jumpstart",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/jumpstart.webp",
+	"system": {
+		"macro": "",
+		"identifier": "jumpstart",
+		"rules": [
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "jumpstart-1",
+				"identifier": "",
+				"label": "Jumpstart (1): +2 scraps on initiative",
+				"predicate": {
+					"level": {
+						"max": 16
+					}
+				},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "toolbelt",
+				"dieSize": null,
+				"maxDelta": null,
+				"minFace": null,
+				"addRefills": [
+					{
+						"trigger": "onInitiativeRolled",
+						"mode": "add",
+						"value": "2",
+						"predicate": {}
+					}
+				]
+			},
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "jumpstart-2",
+				"identifier": "",
+				"label": "Jumpstart (2): +4 scraps on initiative",
+				"predicate": {
+					"level": {
+						"min": 17
+					}
+				},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "toolbelt",
+				"dieSize": null,
+				"maxDelta": null,
+				"minFace": null,
+				"addRefills": [
+					{
+						"trigger": "onInitiativeRolled",
+						"mode": "add",
+						"value": "4",
+						"predicate": {}
+					}
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Jumpstart (1) — Level 13.</strong> When you roll initiative, regain 2 Toolbelt scraps.</p><p><strong>Jumpstart (2) — Level 17.</strong> When you roll initiative, regain 4 Toolbelt scraps.</p><hr><p><em>[A] When you roll initiative your Toolbelt pool regains 2 scraps (4 from level 17) — native pool refill, shown on the sheet counter.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			13,
+			17
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "6ZzrKUkho87afnMO",
+	"folder": "e2c8675a119379ac"
+}

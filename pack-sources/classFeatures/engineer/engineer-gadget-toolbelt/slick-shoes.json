@@ -1,0 +1,89 @@
+{
+	"name": "Slick Shoes (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/slick-shoes.webp",
+	"system": {
+		"macro": "",
+		"identifier": "slick-shoes-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "slick-shoes-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Free Action",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "ssTbSave",
+					"type": "savingThrow",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "ssTbProne",
+								"type": "condition",
+								"condition": "prone",
+								"parentContext": "failedSave",
+								"parentNode": "ssTbSave"
+							}
+						],
+						"passedSave": []
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Slick Shoes</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Leave a trail of grease that trips pursuers.</em></p><p><strong>Free Action.</strong> You leave grease in any spaces you enter this turn. Grease lasts 1 minute or until removed and is Slowed Terrain. Creatures that enter a greased space must succeed a DEX save or fall Prone.</p><p><strong>Toolbelt:</strong> Affects all spaces adjacent to you.</p><p><strong>Passive:</strong> You ignore Slowed Terrain you create.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Posts the same DEX save (fail: Prone).</em></p><p><em>[M] Also grease every space adjacent to you.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "WLLn1dPPfIO23RaX",
+	"folder": "e2c8675a119379ac"
+}

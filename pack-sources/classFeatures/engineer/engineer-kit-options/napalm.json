@@ -1,0 +1,92 @@
+{
+	"name": "Flamethrower: Napalm",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/flamethrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "napalm",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "napalm-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 4, Wall 4",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "npDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "@key + floor(@level / 5) * 2",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"deferredRoll": true,
+					"on": {
+						"hit": [
+							{
+								"id": "npDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "npDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 4,
+				"radius": 1,
+				"shape": "line",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Flamethrower — Toolbelt option.</em></p><p><strong>Napalm — 2 Actions, 1 Toolbelt scrap.</strong> Reach 4, Wall 4. Lasts 1 minute or until dispersed. Targets that start or end a turn adjacent to it or enter an adjacent space take KEY Fire damage. Ignores armor.</p><p><strong>High Levels:</strong> +2 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The KEY Fire damage (+2 per 5 levels, ignores armor) is posted unrolled — press Roll Damage when a creature triggers the wall.</em></p><p><em>[M] Place the wall yourself; it lasts 1 minute or until dispersed.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XSRyNpm7iq5k7Nf9",
+	"folder": "e2c8675a119379ac"
+}

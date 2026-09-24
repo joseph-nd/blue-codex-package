@@ -1,0 +1,77 @@
+{
+	"name": "Med Kit: Vital Burst",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/med-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "vital-burst",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "vital-burst-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Cone 2",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "vbHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "2 * @intelligence + floor(@level / 5) * 2",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 2,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Med Kit — Toolbelt option.</em></p><p><strong>Vital Burst — 2 Actions, 1 Toolbelt scrap.</strong> Cone 2, Restore: 2xINT HP.</p><p><strong>High Levels:</strong> +2 bonus every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Restores 2xINT HP (+2 per 5 levels) to the targets.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "A5OdgCL0d6YLyF8f",
+	"folder": "e2c8675a119379ac"
+}

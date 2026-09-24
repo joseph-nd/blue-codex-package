@@ -1,0 +1,97 @@
+{
+	"name": "Tool Wrench (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/tool-wrench.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tool-wrench-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "tool-wrench-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 1",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "twTbDmg",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "1d6+@strength",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "twTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "twTbDmg"
+							},
+							{
+								"id": "twTbDazed",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "hit",
+								"parentNode": "twTbDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Tool Wrench</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — A trusty wrench that doubles as a turret recall tool.</em></p><p><strong>1 Action · Considered a mace.</strong> Reach 1, Damage: 1d6+STR Bludgeoning. If you target your turret, you undeploy it and regain its Toolbelt scrap.</p><p><strong>Toolbelt:</strong> Target is Dazed, 3 turns, or the turret lasts +3 rounds.</p><p><strong>Passive:</strong> Turrets can be Tiny.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 1d6+STR Bludgeoning; on hit the target is Dazed.</em></p><p><em>[M] Dazed lasts 3 turns. If you target your turret instead, it lasts +3 rounds (no damage — ignore the roll).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wXanMtdS5gX7RX83",
+	"folder": "e2c8675a119379ac"
+}

@@ -1,0 +1,163 @@
+{
+	"name": "Blunderbuss",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/firearms/blunderbuss.webp",
+	"system": {
+		"macro": "",
+		"identifier": "blunderbuss",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "blunderbuss-ammo-pool",
+				"identifier": "blunderbuss-ammo",
+				"label": "Blunderbuss Ammo",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterEnd",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "blunderbuss-ammo-shot",
+				"identifier": "",
+				"label": "Ammo",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "blunderbuss-ammo",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "engBlunderDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "2d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "engBlunderDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "engBlunderDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "engBlunderDmg-c",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "engBlunderDmg"
+							}
+						],
+						"miss": [
+							{
+								"id": "engBlunderDmg-m",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "engBlunderDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 3,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Damage:</strong> 2d8 Piercing</p><p><strong>Properties:</strong> Cone 3, Ammo 1, 2-Handed, Scatter</p><p><strong>Cost:</strong> 120 gp</p><hr><p><strong>Firearm properties</strong></p><ul><li><strong>Ammo N.</strong> Must spend 1 Action reloading after being fired a number of times equal to its Ammo.</li><li><strong>Precise.</strong> Crits on an 8+ if the roll has advantage.</li><li><strong>Scatter.</strong> Targets farther than 1 space away take half damage.</li></ul><p><em>Engineer firearm. Only Engineers are proficient with firearms.</em></p><hr><p><em>[A] Ammo is a counter on this firearm, tracked on the sheet (click the counter to correct mistakes): each attack spends 1 and is refused when it is empty. It refills after combat and on a Safe Rest; Hidden Pistol and Elemental Munition each add +1 max Ammo, and Elemental Munition reloads it.</em></p><p><em>[A] The firearm must be equipped for its Ammo counter to exist (Nimble switches off an unequipped object's rules).</em></p><p><em>[M] Reloading costs 1 Action: spend it, then refill the counter from the sheet (click it → set to max).</em></p><p><em>[M] Precise / Scatter are not automated: Precise crits on 8+ with advantage; Scatter halves damage beyond 1 space.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"quantity": 1,
+		"unidentifiedName": "Unidentified Object",
+		"objectSizeType": "slots",
+		"slotsRequired": 2,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 2
+			},
+			"selected": [
+				"twoHanded"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 120,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "OiVh0x13puqHpjwx",
+	"folder": "213dc19116dcf3c4"
+}

@@ -1,0 +1,98 @@
+{
+	"name": "Flamethrower: Flame Blast",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/flamethrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flame-blast",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "flame-blast-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Cone 3",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "fbDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "2d8 + floor(@level / 5) * 5",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "fbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "fbDmg"
+							},
+							{
+								"id": "fbSmold",
+								"type": "condition",
+								"condition": "smoldering",
+								"parentContext": "hit",
+								"parentNode": "fbDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 3,
+				"radius": 1,
+				"shape": "cone",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Flamethrower — Toolbelt option.</em></p><p><strong>Flame Blast — 2 Actions, 1 Toolbelt scrap.</strong> Cone 3, Damage: 2d8 Fire. On hit: inflict Smoldering. Ignores armor.</p><p><strong>High Levels:</strong> +5 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d8 Fire (+5 per 5 levels), ignoring armor, and applies Smoldering.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "byf7IamDGJJNVLf9",
+	"folder": "e2c8675a119379ac"
+}

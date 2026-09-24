@@ -1,0 +1,57 @@
+{
+	"name": "Shared Elixirs",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/alchemist/shared-elixirs.webp",
+	"system": {
+		"macro": "",
+		"identifier": "shared-elixirs",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>All Elixir Gadgets you know gain Reach 6. You can use 1 Action to throw them at an ally. That ally gains the benefits of the elixir (not including the passive) for the duration.</p><hr><p><em>[M] Your Elixir gadgets gain Reach 6: spend 1 Action to throw one to an ally, target them, and apply the elixir's active effect to them (not the passive; Elixir H's formula includes your passive INT — subtract it).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "alchemist",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "52c19b516443f356",
+	"_id": "50UXY4uxjncbFqUk"
+}

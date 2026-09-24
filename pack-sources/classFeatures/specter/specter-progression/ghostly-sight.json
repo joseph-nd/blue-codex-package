@@ -1,0 +1,57 @@
+{
+	"name": "Ghostly Sight",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/ghostly-sight.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ghostly-sight",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can passively see and converse with Invisible spirits and wandering souls. They are not compelled to be truthful or helpful, though most treat you as an acquaintance.</p><hr><p><em>[M] Narrative ability — no automation.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "c5FsHkar5hkYS4GJ",
+	"folder": "17e1edd987ec62a3"
+}

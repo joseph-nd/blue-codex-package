@@ -1,0 +1,102 @@
+{
+	"name": "Elixir H",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-h.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-h",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elixir-hGrant",
+				"identifier": "",
+				"label": "Elixir H",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.i5F95O4m2mdu2g0V"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elixir-hToolbeltGrant",
+				"identifier": "",
+				"label": "Elixir H (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.eSoKfW4svXAcAg39"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A potent healing draught.</em></p><p><strong>1 Action.</strong> Restore: 2d4+4 HP.</p><p><strong>Toolbelt:</strong> Restore: 3d6+6 HP.</p><p><strong>Passive:</strong> You regain +INT HP when drinking healing potions or Elixir H's.</p><hr><p><em>[A] Grants the Elixir H gadget item (activation, 1 scrap) and the \"Elixir H (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: +INT HP when you drink a healing potion — add it yourself (Nimble's healingPotionBonus adds dice, not a flat amount).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "yw6cubh32NKH1rkp",
+	"folder": "e2c8675a119379ac"
+}

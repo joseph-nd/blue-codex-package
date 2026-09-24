@@ -1,0 +1,73 @@
+{
+	"name": "Iron Rite: Chain",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-iron/iron-rites.webp",
+	"system": {
+		"macro": "",
+		"identifier": "iron-rite-chain",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "IronRiteChainCnd",
+					"type": "condition",
+					"condition": "restrained",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 6
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Iron Rite — Chain.</strong> 1 Action, Reach: 6. Remove Soul Touched from the target: a Huge or smaller target is Restrained, 1 turn. If Soul Touched wasn’t removed, this does nothing.</p><hr><p><em>[A] Using this Rite checks the target for your Soul Touched and removes it (the module warns but lets you proceed if the target isn’t marked).</em></p><p><em>[A] The chat card applies Restrained. [M] Only Huge or smaller targets; remove it after 1 turn. [M] You may make a melee weapon attack as part of the same Action (ignore Rushed Attack).</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-iron",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"rite": {
+					"consumesMark": "soul-touched"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "dd6nD6sAZQUqV7sL",
+	"folder": "c16c33443c34e11c"
+}

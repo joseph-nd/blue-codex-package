@@ -1,0 +1,85 @@
+{
+	"name": "Scrapper's Armory",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/scrappers-armory.webp",
+	"system": {
+		"macro": "",
+		"identifier": "scrappers-armory",
+		"rules": [
+			{
+				"type": "grantProficiency",
+				"disabled": false,
+				"id": "scrappers-armory-armor",
+				"identifier": "",
+				"label": "Scrapper's Armory: mail armor",
+				"predicate": {},
+				"priority": 1,
+				"proficiencyType": "armor",
+				"values": [
+					"mail"
+				]
+			},
+			{
+				"type": "grantProficiency",
+				"disabled": false,
+				"id": "scrappers-armory-weapons",
+				"identifier": "",
+				"label": "Scrapper's Armory: hammers & maces",
+				"predicate": {},
+				"priority": 1,
+				"proficiencyType": "weapons",
+				"values": [
+					"Hammers",
+					"Maces"
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You gain proficiency with hammers, maces, and mail armor.</p><hr><p><em>[A] Grants mail armor proficiency and hammer/mace weapon proficiency.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "hvycEzcfSTEoXLy1"
+}

@@ -1,0 +1,90 @@
+{
+	"name": "Elixir U (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-u.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-u-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "elixir-u-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			},
+			{
+				"type": "actionDelta",
+				"disabled": false,
+				"id": "elixir-u-tb-action",
+				"identifier": "",
+				"label": "Elixir U: +1 Action",
+				"predicate": {},
+				"priority": 3,
+				"value": "1",
+				"timing": "now",
+				"target": "self",
+				"borrowFromNextTurn": false
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Free Action",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "euTbN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "The +1 max Actions lasts 1+STR turns; you are Stunned for 1 round when it ends.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Elixir U</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — An elixir that grants an extra Action.</em></p><p><strong>Free Action.</strong> Gain +1 max Actions for 1 turn.</p><p><strong>Toolbelt:</strong> Lasts 1 + STR turns; you are Stunned for 1 round after the effect ends.</p><p><strong>Passive:</strong> +2 to Initiative rolls.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Grants +1 Action now.</em></p><p><em>[M] Repeat the +1 Action on each of the next STR turns, then Stunned for 1 round.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "gGAZTD36Rr9pZUz7",
+	"folder": "e2c8675a119379ac"
+}

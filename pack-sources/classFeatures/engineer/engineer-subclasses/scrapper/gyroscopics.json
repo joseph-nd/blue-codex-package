@@ -1,0 +1,57 @@
+{
+	"name": "Gyroscopics",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/gyroscopics.webp",
+	"system": {
+		"macro": "",
+		"identifier": "gyroscopics",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your turrets are now gyros. Gyros occupy your space, follow you as you move, and their effects emanate from you.</p><hr><p><em>[M] Place deployed turrets on your own space and move them with you; their effects emanate from you.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "JodwbMBTgZUI6Rtg"
+}

@@ -1,0 +1,82 @@
+{
+	"name": "Reanimation Rites",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/reanimation-rites.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reanimation-rites",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "reanimation-rites-grant-ravage",
+				"identifier": "",
+				"label": "Rite option: Ravage",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.fG9oh1JxF8rxE2VB"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "reanimation-rites-grant-feast",
+				"identifier": "",
+				"label": "Rite option: Feast",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.OK06yRRPT1CBlngH"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>1 Action, Reach: 8. Remove Soul Touched from an undead minion and choose 1 of the following effects. If Soul Touched wasn’t removed, this does nothing:</p><ul><li><strong>Ravage.</strong> Command all remaining minions to Move 12 and Attack (1d12). Ignores armor.</li><li><strong>Feast.</strong> Command all remaining minions to Move 6 and Attack (1d8). On hit: restore 2 HP for each damage die.</li></ul><p>When you would remove Soul Touched from an undead minion, it leaves behind an exploitable corpse. All corpses created this way dissolve after 1 hour.</p><hr><p><em>[A] Grants two separate Rite features — Reanimation Rite: Ravage and Reanimation Rite: Feast. Each checks and removes your Soul Touched on the target minion.</em></p><p><em>[M] Characters created before this update: delete and re-add Reanimation Rites to receive them.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-reanimation",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "274979a7d9ac9399",
+	"_id": "ZfUAUv3AEXKELsFg"
+}

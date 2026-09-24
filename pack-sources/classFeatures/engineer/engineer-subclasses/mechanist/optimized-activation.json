@@ -1,0 +1,88 @@
+{
+	"name": "Optimized Activation",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/mechanist/optimized-activation.webp",
+	"system": {
+		"macro": "",
+		"identifier": "optimized-activation",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "optimized-activation-pool",
+				"identifier": "uses",
+				"label": "Optimized Activation (1/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "oaN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Activate every active turret's special ability via its Toolbelt action and choose \"Optimized Activation\".",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action. You can use 1 Toolbelt scrap to activate all active turrets' abilities. This does not destroy the turrets.</p><hr><p><em>[A] The 1/Safe Rest use is a counter on this feature, tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Use a turret's Toolbelt special and pick \"Optimized Activation\" in its dialog: the module spends this use and 1 Toolbelt scrap (Undo cards) and keeps the turret; in combat, other turrets' specials used the same turn ride along free and are not destroyed (outside combat, activate each turret with its own Optimized Activation or by hand).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "mechanist",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "a842227b5b1c1fc4",
+	"_id": "JYGcHwwKb6A0q8Wy"
+}

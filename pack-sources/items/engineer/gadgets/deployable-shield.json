@@ -1,0 +1,104 @@
+{
+	"name": "Deployable Shield",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/deployable-shield.webp",
+	"system": {
+		"macro": "",
+		"identifier": "deployable-shield",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "deployable-shield-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Free Reaction: when you Defend (requires a shield)",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "dsBaseN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Gain +INT Armor against this attack.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>Free Reaction (1 scrap):</strong> Requires a shield. When you Defend, gain +INT Armor.</p><p><strong>Toolbelt (2 scraps):</strong> Gain 2&times;INT Armor instead.</p><p><strong>Passive:</strong> Shields no longer require a free hand.</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Deployable Shield (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Deployable Shield\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p><p><em>[M] Add INT to your Armor for the triggering attack.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "5haoUMbe5sY4Hlv5",
+	"folder": "679e7e3dd0184cae"
+}

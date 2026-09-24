@@ -1,0 +1,138 @@
+{
+	"name": "Hidden Mine",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/hidden-mine.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hidden-mine",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "hidden-mine-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Reaction: when an enemy enters a space in Range 6",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "hmBaseSave",
+					"type": "savingThrow",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [],
+						"passedSave": []
+					},
+					"sharedRolls": [
+						{
+							"id": "hmBaseDmg",
+							"type": "damage",
+							"damageType": "force",
+							"formula": "(@strength)d8",
+							"parentContext": "sharedRolls",
+							"parentNode": "hmBaseSave",
+							"ignoreArmor": true,
+							"on": {
+								"failedSave": [
+									{
+										"id": "hmBaseDmg-f",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "failedSave",
+										"parentNode": "hmBaseDmg"
+									}
+								],
+								"passedSave": [
+									{
+										"id": "hmBaseDmg-p",
+										"type": "damageOutcome",
+										"outcome": "halfDamage",
+										"parentContext": "passedSave",
+										"parentNode": "hmBaseDmg"
+									}
+								]
+							}
+						}
+					]
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>Reaction (1 scrap):</strong> Range 6, Reaction: when an enemy enters a space in Range. Damage STRd8 Force on a failed DEX save, half damage on success. Adjacent enemies take equal damage. Ignores armor.</p><p><strong>Toolbelt (2 scraps):</strong> The first target is launched back INT spaces on a failed save if they are Large or smaller.</p><p><strong>Passive:</strong> You take half damage from your own explosives.</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] DEX save: STRd8 Force on a fail, half on a save (ignores armor); the Burst 1 template covers the adjacent enemies.</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Hidden Mine (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Hidden Mine\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4rgtHOz0aOLIS8Hy",
+	"folder": "679e7e3dd0184cae"
+}

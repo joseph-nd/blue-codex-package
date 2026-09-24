@@ -1,0 +1,57 @@
+{
+	"name": "Coordinated Assault",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/mechanist/coordinated-assault.webp",
+	"system": {
+		"macro": "",
+		"identifier": "coordinated-assault",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/turn) Whenever you attack with a firearm, all Rifle Turrets in range of the target fire as well. Rifle Turret attacks hit if your attack hits, crit if your attack crits, or miss if your attack misses.</p><hr><p><em>[M] 1/turn, on a firearm attack: activate each Rifle Turret in range of the target and give it your hit/crit/miss result.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "mechanist",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "a842227b5b1c1fc4",
+	"_id": "luhlGTb7Rw8vzncK"
+}

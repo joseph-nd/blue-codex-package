@@ -1,0 +1,77 @@
+{
+	"name": "Elixir B (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-b.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-b-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "elixir-b-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "ebTbN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "+1 to a stat of your choice for 1 minute; you are Stunned for 1 turn when it ends.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Elixir B</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — A stat-boosting elixir.</em></p><p><strong>1 Action.</strong> Gain +1 to a stat of your choice for 2 turns.</p><p><strong>Toolbelt:</strong> Lasts 1 minute; you are Stunned for 1 turn after the effect ends.</p><p><strong>Passive:</strong> Temp HP you receive increases by 1.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Apply the +1 stat bonus for 1 minute, then Stunned for 1 turn.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wJFLykmFx1hisTpc",
+	"folder": "e2c8675a119379ac"
+}

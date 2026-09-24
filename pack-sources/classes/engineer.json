@@ -1,0 +1,130 @@
+{
+	"name": "Engineer",
+	"type": "class",
+	"img": "modules/blue-codex-package/assets/classImages/engineer.webp",
+	"system": {
+		"macro": "",
+		"identifier": "engineer",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "engStartHides",
+				"identifier": "",
+				"label": "Starting Gear - Cheap Hides",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": true,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.nimble.nimble-items.Item.zA3N93almf9RSt34"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "engStartPistol",
+				"identifier": "",
+				"label": "Starting Gear - Pistol",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": true,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.V8L7EsiEIvF6x5qm"
+			}
+		],
+		"armorProficiencies": [
+			"leather",
+			"shields"
+		],
+		"classLevel": 1,
+		"complexity": 3,
+		"description": "<p>Rusty scrap and a pile of junk is useless to most, but you see an opportunity. While others spend years perfecting their footwork or praying to silent gods, you're busy with a wrench and a bucket of gears. Why wait for a miracle when you can build one yourself?</p><p>To be an Engineer is to look at a problem and realize you have exactly three different ways to blow it up in your pocket. You don't just participate in a fight. You renovate the battlefield. Your power isn't a gift or a secret. It is something you forged with your own two hands. You are the master of the \"what-if.\" You are the person who brought a gun to a sword fight, then decided to add a self-firing turret just to be safe.</p><ul><li><p><strong>Turrets.</strong> Deploy specialized turrets to automate the destruction of your enemies and provide cover for your team.</p></li><li><p><strong>Gadgets.</strong> Spend Toolbelt scraps to activate custom inventions, giving you the perfect tool for every disaster.</p></li><li><p><strong>Weapon Kits.</strong> Use specialized \"kits\" designed by you to outplay your opponents and keep them guessing!</p></li></ul>",
+		"groupIdentifiers": [
+			"engineer-progression",
+			"engineer-gadget-picks",
+			"engineer-kit-picks",
+			"engineer-turret-picks",
+			"engineer-subclasses/scrapper",
+			"engineer-subclasses/mechanist",
+			"engineer-subclasses/alchemist"
+		],
+		"keyAbilityScores": [
+			"intelligence",
+			"strength"
+		],
+		"hitDieSize": 8,
+		"hpData": [],
+		"savingThrows": {
+			"advantage": "intelligence",
+			"disadvantage": "will"
+		},
+		"abilityScoreData": {
+			"4": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"5": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"8": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"9": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"12": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"13": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"16": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "primary"
+			},
+			"17": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "secondary"
+			},
+			"20": {
+				"value": "",
+				"type": "statIncrease",
+				"statIncreaseType": "capstone"
+			}
+		},
+		"mana": {
+			"formula": "",
+			"recovery": "safeRest"
+		},
+		"resources": [],
+		"weaponProficiencies": [
+			"Firearms",
+			"Kits",
+			"Gadgets"
+		]
+	},
+	"effects": [],
+	"folder": null,
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "azzdf9MpYaExK5am"
+}

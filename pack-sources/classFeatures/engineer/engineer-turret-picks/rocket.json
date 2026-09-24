@@ -1,0 +1,67 @@
+{
+	"name": "Rocket Turret",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/companions/turret-rocket.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-rocket",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Mechanical Mayhem turret — learned at level 7, 11 or 15.</em></p><p><strong>Rocket Turret.</strong> Offense. Range 8, Blast 3, Damage: 1d12 Fire on a failed DEX save, half on a save. Can't target enemies in Range 2. <strong>Toolbelt:</strong> Fire again with triple the range, +3 damage for every space it travels (max 3xLVL). Ignores armor.</p><hr><p><em>[A] Once picked, Turret Deployed! offers the Rocket Turret alongside the Rifle Turret.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-turret-picks",
+		"gainedAtLevels": [
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {
+			"7": 1,
+			"11": 1,
+			"15": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"turretTemplate": "turret-rocket"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "XVWUmtgir6TnHjw1",
+	"folder": "e2c8675a119379ac"
+}

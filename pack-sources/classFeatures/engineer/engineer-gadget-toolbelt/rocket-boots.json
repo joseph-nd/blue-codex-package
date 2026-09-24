@@ -1,0 +1,98 @@
+{
+	"name": "Rocket Boots (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/rocket-boots.webp",
+	"system": {
+		"macro": "",
+		"identifier": "rocket-boots-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "rocket-boots-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "rbTbDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "5+@level",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "rbTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "rbTbDmg"
+							},
+							{
+								"id": "rbTbSmold",
+								"type": "condition",
+								"condition": "smoldering",
+								"parentContext": "hit",
+								"parentNode": "rbTbDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Rocket Boots</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Leap 8 spaces free of Restrained/Grappled with no fall damage.</em></p><p><strong>1 Action.</strong> Lose Restrained/Grappled and leap 8 spaces. You take no fall damage.</p><p><strong>Toolbelt:</strong> Burst 1, Damage: 5+LVL around your starting space and on landing. On hit: inflict Smoldering. Ignores armor.</p><p><strong>Passive:</strong> Take half damage from falling.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls Burst 1, 5+LVL damage (ignores armor) and applies Smoldering to the targets.</em></p><p><em>[M] The book gives no damage type; Fire is assumed (it inflicts Smoldering).</em></p><p><em>[M] The burst goes off around your starting space AND on landing — target the first group, then apply the same roll to the second.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "eQsdkP3Y17CitSaA",
+	"folder": "e2c8675a119379ac"
+}

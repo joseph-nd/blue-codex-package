@@ -1,0 +1,57 @@
+{
+	"name": "Poltergeist",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/poltergeist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "poltergeist",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Round) When you use a Soul or Suffering Rite, you can use Haunt on that same target at the same time for free.</p><hr><p><em>[M] Once per round, use Soul Rite: Haunt on the same target for free (refund its action) after a Soul or Suffering Rite.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "fd6abd5774ad2320",
+	"_id": "DML0ot5WKJbEdfwq"
+}

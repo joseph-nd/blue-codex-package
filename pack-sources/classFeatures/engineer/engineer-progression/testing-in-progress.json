@@ -1,0 +1,84 @@
+{
+	"name": "Testing In Progress!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/testing-in-progress.webp",
+	"system": {
+		"macro": "",
+		"identifier": "testing-in-progress",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "testing-in-progress-pool",
+				"identifier": "testing-in-progress",
+				"label": "Testing In Progress! (free deploy)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "actor",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "onInitiativeRolled",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "encounterEnd",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>1/encounter.</strong> Your <strong>Turret Deployed!</strong> costs 0 Toolbelt scraps.</p><hr><p><em>[A] The 1/encounter free deploy is a native counter, tracked on the sheet (click the counter to correct mistakes); it refills when you roll initiative and when combat ends.</em></p><p><em>[A] Turret Deployed! offers the free deploy in its turret picker while the counter has a charge, and spends it instead of a scrap (chat card with Undo).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			5
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "uVpwmj0crudT9ea6",
+	"folder": "e2c8675a119379ac"
+}

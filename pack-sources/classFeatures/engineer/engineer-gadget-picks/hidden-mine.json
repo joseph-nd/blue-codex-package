@@ -1,0 +1,102 @@
+{
+	"name": "Hidden Mine",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/hidden-mine.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hidden-mine",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "hidden-mineGrant",
+				"identifier": "",
+				"label": "Hidden Mine",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.4rgtHOz0aOLIS8Hy"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "hidden-mineToolbeltGrant",
+				"identifier": "",
+				"label": "Hidden Mine (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.V8wKZRflcidHi1Gk"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A concealed mine that detonates when an enemy steps near.</em></p><p><strong>Reaction:</strong> When an enemy enters a space in Range 6. Damage: STRd8 Force on a failed DEX save, half on success. Adjacent enemies take equal damage. Ignores armor.</p><p><strong>Toolbelt:</strong> The first target is launched back INT spaces on a failed save if they are Large or smaller.</p><p><strong>Passive:</strong> You take half damage from your own explosives.</p><hr><p><em>[A] Grants the Hidden Mine gadget item (activation, 1 scrap) and the \"Hidden Mine (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: You take half damage from your own explosives — halve it when applying.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "yvMRuZKLJbRLscXk",
+	"folder": "e2c8675a119379ac"
+}

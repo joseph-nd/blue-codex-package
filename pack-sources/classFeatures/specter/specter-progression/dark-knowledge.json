@@ -1,0 +1,57 @@
+{
+	"name": "Dark Knowledge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/dark-knowledge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dark-knowledge",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Choose 2 spell schools from the Book of Ruin (shadow, death, blood, curse). You know cantrips from those schools.</p><hr><p><em>[A] The module asks you to choose 2 of shadow, death, blood and curse and grants their cantrips (higher tiers arrive through Spellcasting). Re-open the choice with <code>blueCodex.chooseClassSpellSchools()</code>.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			1
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "FomVwjWFCie6kAIn",
+	"folder": "17e1edd987ec62a3"
+}

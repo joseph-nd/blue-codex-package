@@ -1,0 +1,90 @@
+{
+	"name": "Mechanical Familiar (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/mechanical-familiar.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mechanical-familiar-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "mechanical-familiar-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "mfTbDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "(@strength)d6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "mfTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "mfTbDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Mechanical Familiar</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Build a clockwork familiar that lasts a day.</em></p><p><strong>Cast Time: 1 minute.</strong> You create a familiar per Magical Familiar, though it's mechanical in nature and lasts 24 hours.</p><p><strong>Toolbelt:</strong> 1 Action, Burst, Damage: STRd6 Fire; the familiar is destroyed.</p><p><strong>Passive:</strong> You have advantage on Perception (WIL) while the familiar is active.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls STRd6 Fire in a burst around the familiar.</em></p><p><em>[M] The book omits the Burst size; Burst 1 is assumed. Delete the familiar token afterwards (it is destroyed).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Dr93QcAw0khvPsod",
+	"folder": "e2c8675a119379ac"
+}

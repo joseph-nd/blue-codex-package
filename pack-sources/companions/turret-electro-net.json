@@ -1,0 +1,347 @@
+{
+	"name": "Electro-Net Turret",
+	"type": "npc",
+	"img": "modules/blue-codex-package/assets/companions/turret-electro-net.webp",
+	"system": {
+		"attributes": {
+			"armor": "none",
+			"damageResistances": [],
+			"damageVulnerabilities": [],
+			"damageImmunities": [],
+			"hp": {
+				"max": 1,
+				"temp": 0,
+				"value": 1
+			},
+			"sizeCategory": "small",
+			"movement": {
+				"burrow": 0,
+				"climb": 0,
+				"fly": 0,
+				"swim": 0,
+				"walk": 0
+			}
+		},
+		"description": "<p><em>An Engineer's Electro-Net Turret (Utility). Deployed by the &quot;Turret Deployed!&quot; class action.</em></p><p><strong>Stat block:</strong> Reach 6, Damage 1d6 Lightning. On hit: target is Slowed, 1 turn. <strong>Toolbelt:</strong> Reach 6, Blast 2, Damage INTd6. The area becomes Slowed Terrain for 2 rounds. Creatures that start or end their turn on a space, or enter a space on a turn, take INT Lightning damage (ignoring armor) and must make a STR save; on a fail they are Restrained and Dazed for 1 turn.</p><p><strong>Turret Rules.</strong> Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your Engineer level (destroyed). They activate when deployed and when you spend 1 Action to activate them on following turns. You can use 2 Actions and 1 Toolbelt scrap to activate a turret's special ability; the turret is destroyed afterwards. Turrets are separate entities for Rushed Attack rules.</p><p><strong>Scaling</strong> <em>[A] applied by the module to each deployed turret:</em> destruction threshold = the Engineer's level (2x with Mechanist's Extra Plating); INT dice / INT repeats on the Toolbelt specials; Overclocked (L10) adds INT to damage, temp HP and restored HP and Overclocked (L16) adds an additional die; saves use the Engineer's DC. Using a Toolbelt special spends 1 of the Engineer's Toolbelt scraps (Undo card) and asks before destroying the turret.</p><p><em>[M] Turret Fortifications (L14): resize the token to Medium; it provides Cover for Medium or smaller creatures.</em></p>",
+		"details": {
+			"creatureType": "Construct",
+			"isFlunky": false,
+			"level": "0"
+		},
+		"savingThrows": {
+			"strength": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"dexterity": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"intelligence": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"will": {
+				"defaultRollMode": 0,
+				"mod": 0
+			}
+		}
+	},
+	"prototypeToken": {
+		"name": "Electro-Net Turret",
+		"displayName": 50,
+		"actorLink": false,
+		"width": 1,
+		"height": 1,
+		"texture": {
+			"src": "modules/blue-codex-package/assets/companions/turret-electro-net.webp",
+			"anchorX": 0.5,
+			"anchorY": 0.5,
+			"offsetX": 0,
+			"offsetY": 0,
+			"fit": "contain",
+			"scaleX": 1,
+			"scaleY": 1,
+			"rotation": 0,
+			"tint": "#ffffff",
+			"alphaThreshold": 0.75
+		},
+		"lockRotation": true,
+		"rotation": 0,
+		"alpha": 1,
+		"disposition": 1,
+		"displayBars": 0,
+		"bar1": {
+			"attribute": null
+		},
+		"bar2": {
+			"attribute": null
+		},
+		"light": {
+			"negative": false,
+			"priority": 0,
+			"alpha": 0.5,
+			"angle": 360,
+			"bright": 0,
+			"color": null,
+			"coloration": 1,
+			"dim": 0,
+			"attenuation": 0.5,
+			"luminosity": 0.5,
+			"saturation": 0,
+			"contrast": 0,
+			"shadows": 0,
+			"animation": {
+				"type": null,
+				"speed": 5,
+				"intensity": 5,
+				"reverse": false
+			},
+			"darkness": {
+				"min": 0,
+				"max": 1
+			}
+		},
+		"sight": {
+			"enabled": false,
+			"range": 0,
+			"angle": 360,
+			"visionMode": "basic",
+			"color": null,
+			"attenuation": 0.1,
+			"brightness": 0,
+			"saturation": 0,
+			"contrast": 0
+		},
+		"detectionModes": [],
+		"occludable": {
+			"radius": 0
+		},
+		"ring": {
+			"enabled": false,
+			"colors": {
+				"ring": null,
+				"background": null
+			},
+			"effects": 0,
+			"subject": {
+				"scale": 1,
+				"texture": null
+			}
+		},
+		"turnMarker": {
+			"mode": 1,
+			"animation": null,
+			"src": null,
+			"disposition": false
+		},
+		"movementAction": null,
+		"flags": {},
+		"randomImg": false,
+		"appendNumber": false,
+		"prependAdjective": false
+	},
+	"items": [
+		{
+			"name": "Shock (Electro-Net)",
+			"type": "monsterFeature",
+			"_id": "TurElnetBasic001",
+			"img": "modules/blue-codex-package/assets/companions/turret-electro-net.webp",
+			"system": {
+				"macro": "",
+				"identifier": "electro-net-turret-shock",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": false,
+					"cost": {
+						"details": "Reach: 6",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "elnetBasicDmg1",
+							"type": "damage",
+							"damageType": "lightning",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null,
+							"canCrit": true,
+							"canMiss": true,
+							"on": {
+								"hit": [
+									{
+										"id": "elnetBasicHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "elnetBasicDmg1"
+									},
+									{
+										"id": "elnetBasicSlow1",
+										"type": "condition",
+										"condition": "slowed",
+										"parentContext": "hit",
+										"parentNode": "elnetBasicDmg1"
+									}
+								]
+							}
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": "",
+						"attackType": "reach",
+						"distance": 6
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action (or on deploy), Reach: 6.</strong> Damage 1d6 Lightning. On hit: target is Slowed, 1 turn.</p><hr><p><em>[A] Applies Slowed on a hit.</em></p><p><em>[A] Overclocked bonuses are added by the module.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 0,
+			"flags": {},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Toolbelt: Tesla Field",
+			"type": "monsterFeature",
+			"_id": "TurElnetSpec0001",
+			"img": "modules/blue-codex-package/assets/companions/turret-electro-net.webp",
+			"system": {
+				"macro": "",
+				"identifier": "electro-net-turret-toolbelt",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "2 Actions, 1 Toolbelt scrap, destroys turret",
+						"quantity": 2,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "2 rounds",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "elnetSpecDmg1",
+							"type": "damage",
+							"damageType": "lightning",
+							"formula": "1d6",
+							"parentContext": null,
+							"parentNode": null,
+							"canCrit": false,
+							"canMiss": false,
+							"on": {
+								"hit": [
+									{
+										"id": "elnetSpecHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "elnetSpecDmg1"
+									}
+								]
+							}
+						},
+						{
+							"id": "elnetSpecSave1",
+							"type": "savingThrow",
+							"saveType": "strength",
+							"parentContext": null,
+							"parentNode": null,
+							"on": {
+								"failedSave": [
+									{
+										"id": "elnetSpecRestr1",
+										"type": "condition",
+										"condition": "restrained",
+										"parentContext": "failedSave",
+										"parentNode": "elnetSpecSave1"
+									},
+									{
+										"id": "elnetSpecDazed1",
+										"type": "condition",
+										"condition": "dazed",
+										"parentContext": "failedSave",
+										"parentNode": "elnetSpecSave1"
+									}
+								],
+								"passedSave": []
+							},
+							"sharedRolls": []
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 2,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Reach: 6, Blast: 2. The turret is destroyed afterwards.</strong> Damage <strong>INTd6</strong>. The area becomes Slowed Terrain for 2 rounds. Creatures that start or end their turn on a space, or enter a space on a turn, take INT Lightning damage (ignoring armor) and must make a STR save; on a fail they are Restrained and Dazed for 1 turn.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d6 (plus Overclocked) and posts the STR save (fail: Restrained + Dazed) — reuse its save button whenever a creature triggers the area.</em></p><p><em>[M] Mark the Slowed Terrain and apply the INT Lightning (ignores armor) as creatures trigger it.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 10,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"turretToolbelt": true,
+						"diceCount": "int"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		}
+	],
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"companionTemplate": "turret-electro-net"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": null,
+	"_id": "AYpwy53tuPyyAc3Q"
+}

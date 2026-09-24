@@ -1,0 +1,57 @@
+{
+	"name": "Mechanical Mayhem",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/mechanical-mayhem.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mechanical-mayhem",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You know how to make and deploy a <strong>Rifle Turret</strong>.</p><p><strong>Mechanical Mayhem (2–4) — Levels 7, 11 and 15.</strong> Each time, you learn another turret of your choice (Flame, Rocket, Healing, Electro-Net or Thumper) — 4 turret types known at level 15. Choose it from the <em>(Choose one)</em> Mechanical Mayhem turret list when you level up.</p><p><strong>Turret Rules.</strong> Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your LVL, which destroys them. Turrets activate when deployed and when you spend 1 Action to activate them on following turns. You can use 2 Actions and 1 Toolbelt scrap to activate a turret's special (Toolbelt) ability; the turret is destroyed afterwards. Turrets are separate entities for Rushed Attack rules.</p><hr><p><em>[A] Turret Deployed! offers the Rifle Turret plus every turret you picked from the Mechanical Mayhem turret list.</em></p><p><em>[A] Using a turret's Toolbelt special spends 1 Toolbelt scrap from you (Undo card) and asks before destroying the turret.</em></p><p><em>[A] A single hit of at least your LVL destroys the turret (the module removes the token, with an Undo card).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "jBJOPFAem7kWmrZX",
+	"folder": "e2c8675a119379ac"
+}

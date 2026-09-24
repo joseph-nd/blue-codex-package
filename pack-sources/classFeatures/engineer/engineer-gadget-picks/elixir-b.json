@@ -1,0 +1,102 @@
+{
+	"name": "Elixir B",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-b.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-b",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elixir-bGrant",
+				"identifier": "",
+				"label": "Elixir B",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.jS46A6BxQNAmbHQ8"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elixir-bToolbeltGrant",
+				"identifier": "",
+				"label": "Elixir B (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.wJFLykmFx1hisTpc"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A stat-boosting elixir.</em></p><p><strong>1 Action.</strong> Gain +1 to a stat of your choice for 2 turns.</p><p><strong>Toolbelt:</strong> Lasts 1 minute; you are Stunned for 1 turn after the effect ends.</p><p><strong>Passive:</strong> Temp HP you receive increases by 1.</p><hr><p><em>[A] Grants the Elixir B gadget item (activation, 1 scrap) and the \"Elixir B (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: Temp HP you receive increases by 1.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NAC4nQKzhYifTja3",
+	"folder": "e2c8675a119379ac"
+}

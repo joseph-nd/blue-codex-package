@@ -1,0 +1,57 @@
+{
+	"name": "Elixir Savant",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/alchemist/elixir-savant.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-savant",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You learn either the Med Kit or the Elixir Gun, whichever you don't already know. This does not count against the number of kits you can normally learn.</p><hr><p><em>[M] Drag the Med Kit or Elixir Gun kit feature (whichever you lack) from the Kit Training list onto your sheet; it doesn't count against your kits known.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "alchemist",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "52c19b516443f356",
+	"_id": "EeuEr4WX53dHOSSI"
+}

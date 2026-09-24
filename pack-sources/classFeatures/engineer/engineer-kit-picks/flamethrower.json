@@ -1,0 +1,112 @@
+{
+	"name": "Flamethrower",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/flamethrower.webp",
+	"system": {
+		"macro": "",
+		"identifier": "flamethrower",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "flamethrowerGrant",
+				"identifier": "",
+				"label": "Flamethrower",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.zcMeeh7MrXuEcKA4"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "flame-blastGrant",
+				"identifier": "",
+				"label": "Flamethrower: Flame Blast",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.byf7IamDGJJNVLf9"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "air-blastGrant",
+				"identifier": "",
+				"label": "Flamethrower: Air Blast",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.PEKnGE8Uzmn8FrLT"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "napalmGrant",
+				"identifier": "",
+				"label": "Flamethrower: Napalm",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.XSRyNpm7iq5k7Nf9"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — Close-range fire that punishes Smoldering foes, with blast, air and napalm options.</em></p><p><strong>Flame Jet (basic) — 1 Action.</strong> Reach 4, Damage: 1d8 Fire. Double damage if the target is Smoldering. Ignores armor. On crit: apply Smoldering.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>Flame Blast.</strong> Cone 3, Damage: 2d8 Fire. On hit: inflict Smoldering. Ignores armor.</li><li><strong>Air Blast.</strong> Reach 4, Damage: 3d8 Fire. On a failed STR save, Large and smaller targets are pushed back INT spaces. Can't miss Smoldering targets, and Smoldering targets automatically fail.</li><li><strong>Napalm.</strong> Reach 4, Wall 4. Lasts 1 minute or until dispersed. Targets that start or end a turn adjacent to it or enter an adjacent space take KEY Fire damage. Ignores armor.</li></ul><p><strong>High Levels:</strong> +5 damage every 5 levels (Flame Jet, Flame Blast, Air Blast). +2 damage every 5 levels (Napalm).</p><hr><p><em>[A] Grants the Flamethrower item (basic ability, 1 Action, no scrap) and one feature per Toolbelt option (2 Actions, 1 Toolbelt scrap each, spent natively). Scraps are tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] High-level damage/healing bonuses are built into the formulas.</em></p><p><em>[M] Weapon Kits count as weapons for swapping and stowing.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "YpiUMhqyAkTFma3l",
+	"folder": "e2c8675a119379ac"
+}

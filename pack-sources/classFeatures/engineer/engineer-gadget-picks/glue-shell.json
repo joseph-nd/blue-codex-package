@@ -1,0 +1,118 @@
+{
+	"name": "Glue Shell",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/glue-shell.webp",
+	"system": {
+		"macro": "",
+		"identifier": "glue-shell",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "glue-shellGrant",
+				"identifier": "",
+				"label": "Glue Shell",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.jTnoBQ7DpJWLEkoi"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "glue-shellToolbeltGrant",
+				"identifier": "",
+				"label": "Glue Shell (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.lvuaKKHvFpXY6CRu"
+			},
+			{
+				"type": "situationalRollMode",
+				"disabled": false,
+				"id": "glue-shell-grapple",
+				"identifier": "",
+				"label": "Glue Shell: Grapple saves",
+				"predicate": {},
+				"priority": 1,
+				"value": 1,
+				"checkType": "savingThrow",
+				"saves": [
+					"strength"
+				],
+				"abilities": [],
+				"skills": []
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A sticky firearm round that mires an area.</em></p><p><strong>2 Actions · Requires Firearm.</strong> Range 6, Blast 3. The area becomes Slowed Terrain for 1 minute or until dispersed. Creatures that start or end their turn in the area must make a STR save or be Restrained.</p><p><strong>Toolbelt:</strong> Targets that leave the area are still Slowed, 2 turns.</p><p><strong>Passive:</strong> You have advantage on Grapple (STR) saves.</p><hr><p><em>[A] Grants the Glue Shell gadget item (activation, 1 scrap) and the \"Glue Shell (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: Offers advantage on Grapple (STR) saves (tick it in the save dialog).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "urrLWIY05AfAgIkL",
+	"folder": "e2c8675a119379ac"
+}

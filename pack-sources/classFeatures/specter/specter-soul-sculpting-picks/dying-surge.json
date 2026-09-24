@@ -1,0 +1,87 @@
+{
+	"name": "Dying Surge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/soul-sculpting/dying-surge.webp",
+	"system": {
+		"macro": "",
+		"identifier": "dying-surge",
+		"rules": [
+			{
+				"type": "actionCost",
+				"disabled": false,
+				"id": "dying-surge-free-twist",
+				"identifier": "",
+				"label": "Dying Surge",
+				"predicate": {
+					"$and": [
+						"self:dying"
+					]
+				},
+				"priority": 1,
+				"applies": "item",
+				"mode": "set",
+				"value": "0",
+				"itemTypes": [],
+				"itemIdentifier": "soul-twist",
+				"reactions": []
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Your first Soul Twist each turn while dying costs 0 Actions.</p><hr><p><em>[A] While you are Dying, Soul Twist costs 0 Actions.</em></p><p><em>[M] Only the first Soul Twist each turn is free — spend an action by hand for any further Soul Twist that turn.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-soul-sculpting-picks",
+		"gainedAtLevels": [
+			2,
+			6,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"6": 1,
+			"9": 1,
+			"13": 1,
+			"17": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "i4PDNLqna4UfbPO7",
+	"folder": "17e1edd987ec62a3"
+}

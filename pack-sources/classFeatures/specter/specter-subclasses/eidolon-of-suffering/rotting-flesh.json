@@ -1,0 +1,57 @@
+{
+	"name": "Rotting Flesh",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/rotting-flesh.webp",
+	"system": {
+		"macro": "",
+		"identifier": "rotting-flesh",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When an enemy successfully saves to remove Soul Touched, they are Poisoned, 1 round.</p><hr><p><em>[A] The end-of-turn Soul Touched save button applies Poisoned (1 round) to an enemy that succeeds. [M] Remove Poisoned after 1 round.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "fd6abd5774ad2320",
+	"_id": "iL3yyoDw6llYObTU"
+}

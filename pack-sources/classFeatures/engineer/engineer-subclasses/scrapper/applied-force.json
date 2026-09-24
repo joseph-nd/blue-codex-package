@@ -1,0 +1,93 @@
+{
+	"name": "Applied Force",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/applied-force.webp",
+	"system": {
+		"macro": "",
+		"identifier": "applied-force",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "applied-force-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "When you hit with a hammer or mace",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "afDmg",
+					"type": "damage",
+					"damageType": "force",
+					"formula": "@level",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "afDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "afDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you hit with a hammer or mace, you can spend 1 Toolbelt scrap to deal LVL Force damage to the target, ignoring armor. All adjacent enemies are pushed 1 space away if they are Large or smaller.</p><hr><p><em>[A] Activate after a hammer or mace hit: spends 1 Toolbelt scrap and rolls LVL Force damage that ignores armor.</em></p><p><em>[M] Push adjacent Large or smaller enemies 1 space away.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "eBf45IgXX4uwCVKO"
+}

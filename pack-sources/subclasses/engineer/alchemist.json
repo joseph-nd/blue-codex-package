@@ -1,0 +1,25 @@
+{
+	"name": "Alchemist",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/subclassImages/engineer/alchemist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "alchemist",
+		"rules": [],
+		"description": "<p><em>Ingenious.</em> Chemistry is just healing with extra steps. The Alchemist trades explosions for elixirs, sharing potent brews with the whole party and keeping everyone standing through the ugliest of fights.</p><p><strong>Weapon Kit Requirement.</strong> Engineers gain their first weapon kit at level 3. To take this subclass, an Engineer must learn either the Med Kit or the Elixir Gun.</p><p><strong>LEVEL 3</strong></p><p><strong>Elixir Savant.</strong> You learn whichever of the Med Kit or Elixir Gun you don't already know, for free.</p><p><strong>Shared Elixirs.</strong> Your Elixir Gadgets gain Reach 6 and can be thrown to grant an ally the elixir's benefit.</p><p><strong>LEVEL 7</strong></p><p><strong>Enhanced Formula.</strong> All damage, temp HP and HP restored through your Med Kit, Elixir Gun, Healing Turret and Gadgets increases by 3.</p><p><strong>LEVEL 11</strong></p><p><strong>Potent Concoction.</strong> Allies you grant temp HP also gain +INT Armor for its duration, and Stim Pack no longer applies Dazed.</p><p><strong>LEVEL 15</strong></p><p><strong>Medical Dispersion Field.</strong> 1/Safe Rest, share your healing with all nearby allies for a minute.</p>",
+		"parentClass": "engineer",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "00bb693b48359049",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "gkdH1mov8HsHlYqm"
+}

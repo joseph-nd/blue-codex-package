@@ -1,0 +1,69 @@
+{
+	"name": "Auto Deploy!",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/auto-deploy.webp",
+	"system": {
+		"macro": "",
+		"identifier": "auto-deploy",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you roll initiative, you automatically deploy a <strong>Rifle Turret</strong>. This does not count against your turret limit and does not cost a Toolbelt scrap.</p><hr><p><em>[A] When combat starts (or you join a running combat) the module deploys a free Rifle Turret: it does not count against your turret limit and costs no scrap. Activating this feature deploys it by hand if it has not been deployed this combat.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"summon": {
+					"template": "turret-rifle",
+					"combatOnly": true,
+					"expireOnCombatEnd": true,
+					"hpFromLevel": true,
+					"countsTowardCap": false
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "NC0PbP6EkgvIIvFR",
+	"folder": "e2c8675a119379ac"
+}

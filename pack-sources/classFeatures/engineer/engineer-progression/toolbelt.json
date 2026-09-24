@@ -1,0 +1,79 @@
+{
+	"name": "Toolbelt",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/progression/toolbelt.webp",
+	"system": {
+		"macro": "",
+		"identifier": "toolbelt",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "toolbelt-pool",
+				"identifier": "toolbelt",
+				"label": "Toolbelt Scraps",
+				"predicate": {},
+				"priority": 1,
+				"scope": "actor",
+				"max": "max(0, (@intelligence + @strength) * 2)",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You carry a maximum of (INT + STR) x2 Toolbelt scraps used to power your inventions. You regain all spent scraps when you complete a Safe Rest.</p><hr><p><em>[A] Toolbelt scraps are a native pool, tracked on the sheet (click the counter to correct mistakes): max (INT+STR)x2, refilled on a Safe Rest.</em></p><p><em>[A] Gadgets and Weapon Kit Toolbelt options spend scraps natively when used. Turret deploys, turret Toolbelt specials and the Tool Wrench recall spend/refund them through the module, which posts a chat card with an Undo button.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-progression",
+		"gainedAtLevels": [
+			1
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "AQnnTLwI4zrh0wG9",
+	"folder": "e2c8675a119379ac"
+}

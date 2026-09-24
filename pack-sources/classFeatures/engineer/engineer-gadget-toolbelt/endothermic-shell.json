@@ -1,0 +1,118 @@
+{
+	"name": "Endothermic Shell (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/endothermic-shell.webp",
+	"system": {
+		"macro": "",
+		"identifier": "endothermic-shell-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "endothermic-shell-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Requires a firearm. Range 6, Blast 3",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "esTbDmg",
+					"type": "damage",
+					"damageType": "cold",
+					"formula": "(@strength)d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "esTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "esTbDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "esTbSave",
+					"type": "savingThrow",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "esTbRestr",
+								"type": "condition",
+								"condition": "restrained",
+								"parentContext": "failedSave",
+								"parentNode": "esTbSave"
+							}
+						],
+						"passedSave": [
+							{
+								"id": "esTbSlow",
+								"type": "condition",
+								"condition": "slowed",
+								"parentContext": "passedSave",
+								"parentNode": "esTbSave"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Endothermic Shell</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — A freezing firearm round that restrains foes.</em></p><p><strong>2 Actions · Requires Firearm.</strong> Range 6, Blast 3, Damage: STRd8 Cold. Targets must make a STR save. On a fail, they are Restrained. On a save, they are Slowed 1 round.</p><p><strong>Toolbelt:</strong> The area remains for 1 minute, becoming Slowed Terrain.</p><p><strong>Passive:</strong> Slowed you apply lasts +1 turn.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Same damage and STR save as the base activation.</em></p><p><em>[M] The area stays as Slowed Terrain for 1 minute.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vjPTLDBVZX1alZlo",
+	"folder": "e2c8675a119379ac"
+}

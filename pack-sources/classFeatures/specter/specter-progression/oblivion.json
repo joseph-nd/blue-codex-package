@@ -1,0 +1,57 @@
+{
+	"name": "Oblivion",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/oblivion.webp",
+	"system": {
+		"macro": "",
+		"identifier": "oblivion",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can choose to maintain Concentration on a Soul Touched target. While concentrating, it lasts as long as you maintain Concentration and is reapplied at the start of each of your turns if removed.</p><hr><p><em>Enemies that save to remove Soul Touched still remove the condition for the purposes of Rupture, Agony, Dissonance, Earthbind and Rotting Flesh — those \"on successful save\" triggers still fire even while Oblivion re-applies the condition.</em></p><p><em>[M] Toggle Concentration on yourself and re-apply the Soul Touched mark (Soul Twist or the Lingering button) at the start of your turn if it was removed.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			14
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wVygolxgSdsvr07M",
+	"folder": "17e1edd987ec62a3"
+}

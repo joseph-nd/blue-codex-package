@@ -1,0 +1,57 @@
+{
+	"name": "Twitchy",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-reanimation/twitchy.webp",
+	"system": {
+		"macro": "",
+		"identifier": "twitchy",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>Enemies that willingly leave a space adjacent to a minion take STR damage. Ignores armor.</p><hr><p><em>[M] Apply STR damage (ignores armor) to enemies leaving a space adjacent to a minion by hand.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-reanimation",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "274979a7d9ac9399",
+	"_id": "8wYmqcHOg8nGEGfT"
+}

@@ -1,0 +1,67 @@
+{
+	"name": "Agony",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/soul-sculpting/agony.webp",
+	"system": {
+		"macro": "",
+		"identifier": "agony",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When a Soul Touched successfully makes a save to end Soul Touched, they take STR + LVL damage. Ignores armor.</p><hr><p><em>[A] Rolled by the end-of-turn Soul Touched save button when the save succeeds (STR + LVL damage, ignores armor).</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-soul-sculpting-picks",
+		"gainedAtLevels": [
+			2,
+			6,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"6": 1,
+			"9": 1,
+			"13": 1,
+			"17": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "L9feRx8VihBQjnNj",
+	"folder": "17e1edd987ec62a3"
+}

@@ -1,0 +1,67 @@
+{
+	"name": "Thumper Turret",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/companions/turret-thumper.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-thumper",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Mechanical Mayhem turret — learned at level 7, 11 or 15.</em></p><p><strong>Thumper Turret.</strong> Utility. Burst 1, Damage: 1d8 Force. On a failed DEX save, Large and smaller enemies are knocked Prone; on a save they are Slowed, 1 turn. <strong>Toolbelt:</strong> Burst 2, Damage: INTd8 Force. On a failed DEX save, Large or smaller enemies are pushed INT spaces away (Prone if pushed the full distance), or Slowed, 1 minute, on a save.</p><hr><p><em>[A] Once picked, Turret Deployed! offers the Thumper Turret alongside the Rifle Turret.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-turret-picks",
+		"gainedAtLevels": [
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {
+			"7": 1,
+			"11": 1,
+			"15": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"turretTemplate": "turret-thumper"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "sC3HURpbfzZROJ7X",
+	"folder": "e2c8675a119379ac"
+}

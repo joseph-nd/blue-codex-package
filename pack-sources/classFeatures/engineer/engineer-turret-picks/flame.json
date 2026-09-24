@@ -1,0 +1,67 @@
+{
+	"name": "Flame Turret",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/companions/turret-flame.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-flame",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Mechanical Mayhem turret — learned at level 7, 11 or 15.</em></p><p><strong>Flame Turret.</strong> Offense. Line 4, Damage: 1d8 Fire. If it would crit, targets gain Smoldering. <strong>Toolbelt:</strong> Burst 1, Damage: INTd8 Fire; the area fills with thick smoke that obstructs vision for 1 minute or until dispersed.</p><hr><p><em>[A] Once picked, Turret Deployed! offers the Flame Turret alongside the Rifle Turret.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-turret-picks",
+		"gainedAtLevels": [
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {
+			"7": 1,
+			"11": 1,
+			"15": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"turretTemplate": "turret-flame"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "GCxXlUZNuLR1qdVD",
+	"folder": "e2c8675a119379ac"
+}

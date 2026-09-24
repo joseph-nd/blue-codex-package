@@ -1,0 +1,67 @@
+{
+	"name": "Splinter",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/soul-sculpting/splinter.webp",
+	"system": {
+		"macro": "",
+		"identifier": "splinter",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While an enemy is Soul Touched, they take STR damage for each space they willingly move. Ignores armor.</p><hr><p><em>[M] Apply STR damage (ignores armor) per space a Soul Touched enemy willingly moves, by hand.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-soul-sculpting-picks",
+		"gainedAtLevels": [
+			2,
+			6,
+			9,
+			13,
+			17
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"6": 1,
+			"9": 1,
+			"13": 1,
+			"17": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "pqjnlhJkJyZE4Ij4",
+	"folder": "17e1edd987ec62a3"
+}

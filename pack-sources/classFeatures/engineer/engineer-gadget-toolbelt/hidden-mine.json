@@ -1,0 +1,120 @@
+{
+	"name": "Hidden Mine (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/hidden-mine.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hidden-mine-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "hidden-mine-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Reaction: when an enemy enters a space in Range 6",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "hmTbSave",
+					"type": "savingThrow",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "hmTbLaunch",
+								"type": "note",
+								"noteType": "reminder",
+								"text": "First target (Large or smaller): launched back INT spaces.",
+								"parentContext": "failedSave",
+								"parentNode": "hmTbSave"
+							}
+						],
+						"passedSave": []
+					},
+					"sharedRolls": [
+						{
+							"id": "hmTbDmg",
+							"type": "damage",
+							"damageType": "force",
+							"formula": "(@strength)d8",
+							"parentContext": "sharedRolls",
+							"parentNode": "hmTbSave",
+							"ignoreArmor": true,
+							"on": {
+								"failedSave": [
+									{
+										"id": "hmTbDmg-f",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "failedSave",
+										"parentNode": "hmTbDmg"
+									}
+								],
+								"passedSave": [
+									{
+										"id": "hmTbDmg-p",
+										"type": "damageOutcome",
+										"outcome": "halfDamage",
+										"parentContext": "passedSave",
+										"parentNode": "hmTbDmg"
+									}
+								]
+							}
+						}
+					]
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Hidden Mine</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — A concealed mine that detonates when an enemy steps near.</em></p><p><strong>Reaction:</strong> When an enemy enters a space in Range 6. Damage: STRd8 Force on a failed DEX save, half on success. Adjacent enemies take equal damage. Ignores armor.</p><p><strong>Toolbelt:</strong> The first target is launched back INT spaces on a failed save if they are Large or smaller.</p><p><strong>Passive:</strong> You take half damage from your own explosives.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Same DEX save / STRd8 Force (half on save) as the base activation.</em></p><p><em>[M] On a failed save, launch the first target (Large or smaller) INT spaces away.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "V8wKZRflcidHi1Gk",
+	"folder": "e2c8675a119379ac"
+}

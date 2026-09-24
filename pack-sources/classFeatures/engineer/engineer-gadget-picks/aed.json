@@ -1,0 +1,133 @@
+{
+	"name": "AED",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/aed.webp",
+	"system": {
+		"macro": "",
+		"identifier": "aed",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "aedGrant",
+				"identifier": "",
+				"label": "AED",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.PAqNlguDKrDFkVHe"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "aedToolbeltGrant",
+				"identifier": "",
+				"label": "AED (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.4EFNfnYFo451SXDJ"
+			},
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "aed-uses-pool",
+				"identifier": "aed-uses",
+				"label": "AED (1/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "maxWounds",
+				"disabled": false,
+				"id": "aed-wounds",
+				"identifier": "",
+				"label": "AED: +1 Max Wounds",
+				"predicate": {},
+				"priority": 1,
+				"value": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — When you'd drop to 0 HP, drop to 1 instead and shock the area.</em></p><p><strong>1/Safe Rest · Free Reaction.</strong> When you would drop to 0 HP, you instead drop to 1, then Burst 1, Damage: LVL Lightning and gain Charged. Ignores armor.</p><p><strong>Toolbelt:</strong> Restore: INT+LVL HP.</p><p><strong>Passive:</strong> Max Wounds increase by 1.</p><hr><p><em>[A] Grants the AED gadget item (activation, 1 scrap) and the \"AED (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The 1/Safe Rest use is a counter on this feature, tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: Max Wounds +1.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "TTPbp2QSCNPxFjce",
+	"folder": "e2c8675a119379ac"
+}

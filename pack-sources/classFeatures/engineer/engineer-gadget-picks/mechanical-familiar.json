@@ -1,0 +1,118 @@
+{
+	"name": "Mechanical Familiar",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/mechanical-familiar.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mechanical-familiar",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "mechanical-familiarGrant",
+				"identifier": "",
+				"label": "Mechanical Familiar",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.pJHJh69i0rMeu58T"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "mechanical-familiarToolbeltGrant",
+				"identifier": "",
+				"label": "Mechanical Familiar (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.Dr93QcAw0khvPsod"
+			},
+			{
+				"type": "situationalRollMode",
+				"disabled": false,
+				"id": "mechanical-familiar-perception",
+				"identifier": "",
+				"label": "Mechanical Familiar: while your familiar is active",
+				"predicate": {},
+				"priority": 1,
+				"value": 1,
+				"checkType": "skillCheck",
+				"saves": [],
+				"abilities": [],
+				"skills": [
+					"perception"
+				]
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Build a clockwork familiar that lasts a day.</em></p><p><strong>Cast Time: 1 minute.</strong> You create a familiar per Magical Familiar, though it's mechanical in nature and lasts 24 hours.</p><p><strong>Toolbelt:</strong> 1 Action, Burst, Damage: STRd6 Fire; the familiar is destroyed.</p><p><strong>Passive:</strong> You have advantage on Perception (WIL) while the familiar is active.</p><hr><p><em>[A] Grants the Mechanical Familiar gadget item (activation, 1 scrap) and the \"Mechanical Familiar (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: Offers advantage on Perception (WIL) checks while the familiar is active (tick it in the check dialog).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "TIryNGEthijlRkLO",
+	"folder": "e2c8675a119379ac"
+}

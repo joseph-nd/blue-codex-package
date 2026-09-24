@@ -1,0 +1,104 @@
+{
+	"name": "Elixir S",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-s.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-s",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "elixir-s-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reaction: when attacked",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "esxBaseN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Become Tiny for 1 round. All attacks against you miss. You can't deal damage or heal allies.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>Reaction (1 scrap):</strong> When attacked, become Tiny, 1 round. All attacks against you miss. You can't deal damage or heal allies.</p><p><strong>Toolbelt (2 scraps):</strong> You have advantage on non-STR saves while Tiny.</p><p><strong>Passive:</strong> You can choose to be your size or 1 size smaller (this choice lasts until your next Safe Rest).</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Elixir S (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Elixir S\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p><p><em>[M] Resolve the triggering attack as a miss and track Tiny for 1 round.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "VY1wtKLsWp9VEILV",
+	"folder": "679e7e3dd0184cae"
+}

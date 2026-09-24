@@ -1,0 +1,57 @@
+{
+	"name": "Feed the Corruption",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/feed-the-corruption.webp",
+	"system": {
+		"macro": "",
+		"identifier": "feed-the-corruption",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While you are Soul Touched, whenever you gain a negative condition (not including Dying or Bloodied), you gain STR temp HP and can inflict the same condition for the same duration on an enemy in Reach 8.</p><hr><p><em>[M] While Soul Touched, add STR temp HP and copy each new negative condition onto an enemy in Reach 8 by hand.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "fd6abd5774ad2320",
+	"_id": "V72qgI7V41WpI8Kl"
+}

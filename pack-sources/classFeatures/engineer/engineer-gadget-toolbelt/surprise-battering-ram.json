@@ -1,0 +1,97 @@
+{
+	"name": "Surprise Battering Ram (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/surprise-battering-ram.webp",
+	"system": {
+		"macro": "",
+		"identifier": "surprise-battering-ram-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "surprise-battering-ram-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 2",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "sbrTbDmg",
+					"type": "damage",
+					"damageType": "force",
+					"formula": "(@strength)d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "sbrTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "sbrTbDmg"
+							},
+							{
+								"id": "sbrTbDazed",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "hit",
+								"parentNode": "sbrTbDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Surprise Battering Ram</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — A spring-loaded ram that smashes and shoves enemies back.</em></p><p><strong>2 Actions.</strong> Reach 2, Damage: STRd8 Force. On hit: Large and smaller targets are pushed 2 spaces away.</p><p><strong>Toolbelt:</strong> Target is Dazed, 2 turns.</p><p><strong>Passive:</strong> You have advantage on saves to avoid being moved against your will.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls STRd8 Force; on hit the target is Dazed.</em></p><p><em>[M] Dazed lasts 2 turns; push a Large or smaller target 2 spaces.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Wit9DUTfTcTnvYIh",
+	"folder": "e2c8675a119379ac"
+}

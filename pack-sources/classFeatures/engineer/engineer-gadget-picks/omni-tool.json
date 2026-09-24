@@ -1,0 +1,102 @@
+{
+	"name": "Omni-Tool",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/omni-tool.webp",
+	"system": {
+		"macro": "",
+		"identifier": "omni-tool",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "omni-toolGrant",
+				"identifier": "",
+				"label": "Omni-Tool",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.IDHrAQRmEWzB4u5S"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "omni-toolToolbeltGrant",
+				"identifier": "",
+				"label": "Omni-Tool (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.LEkAa0v288YyPlUP"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Reconfigure your tools into any set you need.</em></p><p><strong>Cast Time: 1 minute.</strong> You transform your tool set into a different one.</p><p><strong>Toolbelt:</strong> The first check you make with these new tools has a +5 bonus.</p><p><strong>Passive:</strong> You always have the last tool set you created.</p><hr><p><em>[A] Grants the Omni-Tool gadget item (activation, 1 scrap) and the \"Omni-Tool (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: You always have the last tool set you created.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "qUqBn4NHoSpiGiN3",
+	"folder": "e2c8675a119379ac"
+}

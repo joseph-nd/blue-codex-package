@@ -1,0 +1,87 @@
+{
+	"name": "Ether Capacitator (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/ether-capacitator.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ether-capacitator-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "ether-capacitator-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reaction: when you take magical damage",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "ecTbFill",
+					"type": "pool",
+					"poolType": "charge",
+					"action": "fillCount",
+					"poolIdentifier": "actor:toolbelt",
+					"value": 2,
+					"parentContext": null,
+					"parentNode": null
+				},
+				{
+					"id": "ecTbN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Halve the incoming magical damage.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>Ether Capacitator</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Harvests magical damage into Toolbelt scraps.</em></p><p><strong>Reaction:</strong> When you take magical damage. Regain 2 Toolbelt scraps.</p><p><strong>Toolbelt:</strong> Reduce the incoming damage by half.</p><p><strong>Passive:</strong> +2 maximum Toolbelt scraps.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Regains 2 Toolbelt scraps.</em></p><p><em>[M] Halve the triggering damage when it is applied.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "kkQcCuavUSwuAw04",
+	"folder": "e2c8675a119379ac"
+}

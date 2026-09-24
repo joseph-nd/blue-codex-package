@@ -1,0 +1,104 @@
+{
+	"name": "Elixir C",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elixir-c.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elixir-c",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "elixir-c-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reaction: when you gain a negative condition",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "ecBaseN2",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Heal 1 negative condition (not Wounds). If you were Dazed, regain 1 Action.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>Reaction (1 scrap):</strong> When you gain a negative condition, heal 1 negative condition (not including Wounds). If you were Dazed, regain 1 Action.</p><p><strong>Toolbelt (2 scraps):</strong> Heal all negative conditions (not including Wounds).</p><p><strong>Passive:</strong> Advantage on saves vs being Poisoned.</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Elixir C (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Elixir C\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p><p><em>[M] Remove the condition yourself; if it was Dazed, add 1 Action.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "h1ePKY6mp417iBMs",
+	"folder": "679e7e3dd0184cae"
+}

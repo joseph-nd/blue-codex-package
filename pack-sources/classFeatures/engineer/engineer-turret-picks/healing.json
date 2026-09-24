@@ -1,0 +1,67 @@
+{
+	"name": "Healing Turret",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/companions/turret-healing.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-healing",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Mechanical Mayhem turret — learned at level 7, 11 or 15.</em></p><p><strong>Healing Turret.</strong> Utility. Burst 2. Allies gain 1d4+INT temp HP for 1 turn. <strong>Toolbelt:</strong> Restore INTd4 HP; allies gain temp HP equal to the total.</p><hr><p><em>[A] Once picked, Turret Deployed! offers the Healing Turret alongside the Rifle Turret.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-turret-picks",
+		"gainedAtLevels": [
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {
+			"7": 1,
+			"11": 1,
+			"15": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"turretTemplate": "turret-healing"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "527Dlm4NtSia5MDf",
+	"folder": "e2c8675a119379ac"
+}

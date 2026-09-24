@@ -1,0 +1,77 @@
+{
+	"name": "Soul Rite: Ruin (Lightning)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-rite.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-rite-ruin-lightning",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "RageRuinLighDmg1",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "(floor(@level/5)+1)d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Soul Rite — Ruin (Lightning).</strong> 1 Action, Reach: 8. Remove Soul Touched from the target: it takes Lightning damage equal to your soul power. Ignores armor. If Soul Touched wasn’t removed, this does nothing. (Soul of Rage lets your Ruin deal Cold or Fire/Lightning damage.)</p><hr><p><em>[A] Using this Rite checks the target for your Soul Touched and removes it (the module warns but lets you proceed if the target isn’t marked).</em></p><p><em>[A] Rolls your soul power as Lightning damage that ignores armor and cannot miss or crit.</em></p><p><em>[M] Raging Ruin (L11): also apply the damage to every enemy adjacent to the target.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-rage",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"rite": {
+					"consumesMark": "soul-touched"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "imhFBPwU98VylGNK",
+	"folder": "41921b271e97fe31"
+}

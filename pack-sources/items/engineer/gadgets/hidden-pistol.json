@@ -1,0 +1,117 @@
+{
+	"name": "Hidden Pistol",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/hidden-pistol.webp",
+	"system": {
+		"macro": "",
+		"identifier": "hidden-pistol",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "hidden-pistol-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 2",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "hpBaseDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "2d6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "hpBaseDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "hpBaseDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><strong>1 Action (1 scrap):</strong> Reach 2. Make an attack with a pistol, ignoring Rushed Attack rules.</p><p><strong>Toolbelt (2 scraps):</strong> Make an attack against all enemies in Reach 2, ignoring Rushed Attack rules.</p><p><strong>Passive:</strong> Firearms have +1 Ammo.</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls a pistol attack (2d6 Piercing).</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Hidden Pistol (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Hidden Pistol\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p><p><em>[M] Ignores Rushed Attack rules — don't apply the Rushed Attack penalty.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "khQNFcqqBiPx2TTC",
+	"folder": "679e7e3dd0184cae"
+}

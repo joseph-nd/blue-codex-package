@@ -1,0 +1,77 @@
+{
+	"name": "Med Kit: Cleansing Mist",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/med-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "cleansing-mist",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "cleansing-mist-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Burst 2",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "cmHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "1d4 + floor(@level / 5) * 2",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Med Kit — Toolbelt option.</em></p><p><strong>Cleansing Mist — 2 Actions, 1 Toolbelt scrap.</strong> Burst 2, Restore: 1d4 HP. Targets heal 1 negative condition.</p><p><strong>High Levels:</strong> +2 bonus every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Restores 1d4 HP (+2 per 5 levels) to the targets.</em></p><p><em>[M] Remove 1 negative condition from each target.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MF83gKjYvciylTFj",
+	"folder": "e2c8675a119379ac"
+}

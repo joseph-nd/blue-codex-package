@@ -1,0 +1,91 @@
+{
+	"name": "Electro Baton: Arc Leap",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "arc-leap",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "arc-leap-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Range 6, then Burst 1",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "alDmg",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "2d6 + floor(@level / 5) * 4",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "alDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "alDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Arc Leap — 2 Actions, 1 Toolbelt scrap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, Damage: 2d6. Ignores armor.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls the Burst 1, 2d6 damage (+4 per 5 levels), ignoring armor. Lightning is assumed (the book omits the type).</em></p><p><em>[M] Teleport your token and give yourself Charged.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "48J9wTGDHPv8Zpob",
+	"folder": "e2c8675a119379ac"
+}

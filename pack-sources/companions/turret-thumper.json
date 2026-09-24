@@ -1,0 +1,368 @@
+{
+	"name": "Thumper Turret",
+	"type": "npc",
+	"img": "modules/blue-codex-package/assets/companions/turret-thumper.webp",
+	"system": {
+		"attributes": {
+			"armor": "none",
+			"damageResistances": [],
+			"damageVulnerabilities": [],
+			"damageImmunities": [],
+			"hp": {
+				"max": 1,
+				"temp": 0,
+				"value": 1
+			},
+			"sizeCategory": "small",
+			"movement": {
+				"burrow": 0,
+				"climb": 0,
+				"fly": 0,
+				"swim": 0,
+				"walk": 0
+			}
+		},
+		"description": "<p><em>An Engineer's Thumper Turret (Utility). Deployed by the &quot;Turret Deployed!&quot; class action.</em></p><p><strong>Stat block:</strong> Burst 1, Damage 1d8 Force. On a failed DEX save, Large and smaller enemies are knocked Prone. On a save, they are Slowed, 1 turn, instead. <strong>Toolbelt:</strong> Burst 2, +Damage INTd8 Force. On a failed DEX save, Large or smaller enemies are pushed INT spaces away, or Slowed, 1 minute, on a save. Targets pushed the full distance are also knocked Prone.</p><p><strong>Turret Rules.</strong> Turrets are Small, stationary objects that last until the end of initiative, until you deploy another one, or until they take one instance of damage equal to your Engineer level (destroyed). They activate when deployed and when you spend 1 Action to activate them on following turns. You can use 2 Actions and 1 Toolbelt scrap to activate a turret's special ability; the turret is destroyed afterwards. Turrets are separate entities for Rushed Attack rules.</p><p><strong>Scaling</strong> <em>[A] applied by the module to each deployed turret:</em> destruction threshold = the Engineer's level (2x with Mechanist's Extra Plating); INT dice / INT repeats on the Toolbelt specials; Overclocked (L10) adds INT to damage, temp HP and restored HP and Overclocked (L16) adds an additional die; saves use the Engineer's DC. Using a Toolbelt special spends 1 of the Engineer's Toolbelt scraps (Undo card) and asks before destroying the turret.</p><p><em>[M] Turret Fortifications (L14): resize the token to Medium; it provides Cover for Medium or smaller creatures.</em></p>",
+		"details": {
+			"creatureType": "Construct",
+			"isFlunky": false,
+			"level": "0"
+		},
+		"savingThrows": {
+			"strength": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"dexterity": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"intelligence": {
+				"defaultRollMode": 0,
+				"mod": 0
+			},
+			"will": {
+				"defaultRollMode": 0,
+				"mod": 0
+			}
+		}
+	},
+	"prototypeToken": {
+		"name": "Thumper Turret",
+		"displayName": 50,
+		"actorLink": false,
+		"width": 1,
+		"height": 1,
+		"texture": {
+			"src": "modules/blue-codex-package/assets/companions/turret-thumper.webp",
+			"anchorX": 0.5,
+			"anchorY": 0.5,
+			"offsetX": 0,
+			"offsetY": 0,
+			"fit": "contain",
+			"scaleX": 1,
+			"scaleY": 1,
+			"rotation": 0,
+			"tint": "#ffffff",
+			"alphaThreshold": 0.75
+		},
+		"lockRotation": true,
+		"rotation": 0,
+		"alpha": 1,
+		"disposition": 1,
+		"displayBars": 0,
+		"bar1": {
+			"attribute": null
+		},
+		"bar2": {
+			"attribute": null
+		},
+		"light": {
+			"negative": false,
+			"priority": 0,
+			"alpha": 0.5,
+			"angle": 360,
+			"bright": 0,
+			"color": null,
+			"coloration": 1,
+			"dim": 0,
+			"attenuation": 0.5,
+			"luminosity": 0.5,
+			"saturation": 0,
+			"contrast": 0,
+			"shadows": 0,
+			"animation": {
+				"type": null,
+				"speed": 5,
+				"intensity": 5,
+				"reverse": false
+			},
+			"darkness": {
+				"min": 0,
+				"max": 1
+			}
+		},
+		"sight": {
+			"enabled": false,
+			"range": 0,
+			"angle": 360,
+			"visionMode": "basic",
+			"color": null,
+			"attenuation": 0.1,
+			"brightness": 0,
+			"saturation": 0,
+			"contrast": 0
+		},
+		"detectionModes": [],
+		"occludable": {
+			"radius": 0
+		},
+		"ring": {
+			"enabled": false,
+			"colors": {
+				"ring": null,
+				"background": null
+			},
+			"effects": 0,
+			"subject": {
+				"scale": 1,
+				"texture": null
+			}
+		},
+		"turnMarker": {
+			"mode": 1,
+			"animation": null,
+			"src": null,
+			"disposition": false
+		},
+		"movementAction": null,
+		"flags": {},
+		"randomImg": false,
+		"appendNumber": false,
+		"prependAdjective": false
+	},
+	"items": [
+		{
+			"name": "Ground Pound (Thumper)",
+			"type": "monsterFeature",
+			"_id": "TurThumpBasic001",
+			"img": "modules/blue-codex-package/assets/companions/turret-thumper.webp",
+			"system": {
+				"macro": "",
+				"identifier": "thumper-turret-pound",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "Burst: 1",
+						"quantity": 1,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "thumpBasicDmg1",
+							"type": "damage",
+							"damageType": "force",
+							"formula": "1d8",
+							"parentContext": null,
+							"parentNode": null,
+							"canCrit": false,
+							"canMiss": false,
+							"on": {
+								"hit": [
+									{
+										"id": "thumpBasicHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "thumpBasicDmg1"
+									}
+								]
+							}
+						},
+						{
+							"id": "thumpBasicSave1",
+							"type": "savingThrow",
+							"saveType": "dexterity",
+							"parentContext": null,
+							"parentNode": null,
+							"on": {
+								"failedSave": [
+									{
+										"id": "thumpBasicProne1",
+										"type": "condition",
+										"condition": "prone",
+										"parentContext": "failedSave",
+										"parentNode": "thumpBasicSave1"
+									}
+								],
+								"passedSave": [
+									{
+										"id": "thumpBasicSlow1",
+										"type": "condition",
+										"condition": "slowed",
+										"parentContext": "passedSave",
+										"parentNode": "thumpBasicSave1"
+									}
+								]
+							},
+							"sharedRolls": []
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 1,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>1 Action (or on deploy), Burst: 1.</strong> Damage 1d8 Force. On a failed DEX save, Large and smaller enemies are knocked Prone. On a save, they are Slowed, 1 turn, instead.</p><hr><p><em>[A] DEX save: Prone on a fail, Slowed on a save.</em></p><p><em>[A] Overclocked bonuses are added by the module.</em></p><p><em>[M] Huge or larger enemies are not knocked Prone.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 0,
+			"flags": {},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		},
+		{
+			"name": "Toolbelt: Seismic Slam",
+			"type": "monsterFeature",
+			"_id": "TurThumpSpec0001",
+			"img": "modules/blue-codex-package/assets/companions/turret-thumper.webp",
+			"system": {
+				"macro": "",
+				"identifier": "thumper-turret-toolbelt",
+				"rules": [],
+				"activation": {
+					"acquireTargetsFromTemplate": true,
+					"cost": {
+						"details": "2 Actions, 1 Toolbelt scrap, destroys turret",
+						"quantity": 2,
+						"type": "action",
+						"isReaction": false
+					},
+					"duration": {
+						"details": "",
+						"quantity": 1,
+						"type": "none"
+					},
+					"effects": [
+						{
+							"id": "thumpSpecDmg1",
+							"type": "damage",
+							"damageType": "force",
+							"formula": "1d8",
+							"parentContext": null,
+							"parentNode": null,
+							"canCrit": false,
+							"canMiss": false,
+							"on": {
+								"hit": [
+									{
+										"id": "thumpSpecHit1",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "hit",
+										"parentNode": "thumpSpecDmg1"
+									}
+								]
+							}
+						},
+						{
+							"id": "thumpSpecSave1",
+							"type": "savingThrow",
+							"saveType": "dexterity",
+							"parentContext": null,
+							"parentNode": null,
+							"on": {
+								"failedSave": [
+									{
+										"id": "thumpSpecPush1",
+										"type": "note",
+										"noteType": "reminder",
+										"text": "Large or smaller: pushed INT spaces away; Prone if pushed the full distance.",
+										"parentContext": "failedSave",
+										"parentNode": "thumpSpecSave1"
+									}
+								],
+								"passedSave": [
+									{
+										"id": "thumpSpecSlow1",
+										"type": "condition",
+										"condition": "slowed",
+										"parentContext": "passedSave",
+										"parentNode": "thumpSpecSave1"
+									}
+								]
+							},
+							"sharedRolls": []
+						}
+					],
+					"showDescription": true,
+					"targets": {
+						"count": 1,
+						"restrictions": ""
+					},
+					"template": {
+						"length": 1,
+						"radius": 2,
+						"shape": "circle",
+						"width": 1
+					}
+				},
+				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Burst: 2. The turret is destroyed afterwards.</strong> +Damage <strong>INTd8</strong> Force. On a failed DEX save, Large or smaller enemies are pushed INT spaces away, or Slowed, 1 minute, on a save. Targets pushed the full distance are also knocked Prone.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d8 (plus Overclocked) and posts the DEX save (Slowed on a save).</em></p><p><em>[M] On a failed save push Large or smaller enemies INT spaces (Prone if pushed the full distance); Slowed lasts 1 minute.</em></p>",
+				"subtype": "action"
+			},
+			"effects": [],
+			"folder": null,
+			"sort": 10,
+			"flags": {
+				"blue-codex-package": {
+					"automation": {
+						"turretToolbelt": true,
+						"diceCount": "int"
+					}
+				}
+			},
+			"_stats": {
+				"coreVersion": "13",
+				"systemId": "nimble",
+				"systemVersion": "0.8.4",
+				"lastModifiedBy": null
+			}
+		}
+	],
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"companionTemplate": "turret-thumper"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": null,
+	"_id": "G8jb3hFe1WjYC6bP"
+}

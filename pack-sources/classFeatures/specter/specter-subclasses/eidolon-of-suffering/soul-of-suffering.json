@@ -1,0 +1,57 @@
+{
+	"name": "Soul of Suffering",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/soul-of-suffering.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-of-suffering",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When you use Soul Twist, you can choose the stat unwilling targets use when they make a save to remove Soul Touched.</p><hr><p><em>[A] Activate this feature to choose the save stat; the module remembers it. The GM can also change it on the end-of-turn Soul Touched save card.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "fd6abd5774ad2320",
+	"_id": "B0UytAdY3clrrn95"
+}

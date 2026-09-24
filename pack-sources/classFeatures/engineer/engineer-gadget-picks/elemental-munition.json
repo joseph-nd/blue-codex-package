@@ -1,0 +1,147 @@
+{
+	"name": "Elemental Munition",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/elemental-munition.webp",
+	"system": {
+		"macro": "",
+		"identifier": "elemental-munition",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elemental-munitionGrant",
+				"identifier": "",
+				"label": "Elemental Munition",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.VGQGvLg2srIXSlHy"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "elemental-munitionToolbeltGrant",
+				"identifier": "",
+				"label": "Elemental Munition (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.KZuFbixlpfqTskCr"
+			},
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "elemental-munition-pistol-ammo-bonus",
+				"identifier": "",
+				"label": "pistol +1 Ammo",
+				"predicate": {},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "pistol-ammo",
+				"dieSize": null,
+				"maxDelta": "1",
+				"minFace": null,
+				"addRefills": []
+			},
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "elemental-munition-rifle-ammo-bonus",
+				"identifier": "",
+				"label": "rifle +1 Ammo",
+				"predicate": {},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "rifle-ammo",
+				"dieSize": null,
+				"maxDelta": "1",
+				"minFace": null,
+				"addRefills": []
+			},
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "elemental-munition-blunderbuss-ammo-bonus",
+				"identifier": "",
+				"label": "blunderbuss +1 Ammo",
+				"predicate": {},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "blunderbuss-ammo",
+				"dieSize": null,
+				"maxDelta": "1",
+				"minFace": null,
+				"addRefills": []
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Reload with elemental rounds of your chosen damage type.</em></p><p><strong>Free Action.</strong> Reload your firearms. Until their next reload, they deal your choice of Acid, Cold, Fire, or Lightning damage.</p><p><strong>Toolbelt:</strong> Attacks deal +STR damage of the same type, ignoring armor.</p><p><strong>Passive:</strong> Firearms have +1 Ammo.</p><hr><p><em>[A] Grants the Elemental Munition gadget item (activation, 1 scrap) and the \"Elemental Munition (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: Firearms have +1 Ammo (raises each firearm's Ammo counter).</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "MKZOKJ1ErQYsq9e6",
+	"folder": "e2c8675a119379ac"
+}

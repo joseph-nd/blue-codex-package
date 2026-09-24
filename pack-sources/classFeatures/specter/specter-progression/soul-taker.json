@@ -1,0 +1,57 @@
+{
+	"name": "Soul Taker",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-taker.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-taker",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>When an enemy in Range 8 dies, your next Soul Twist this encounter is free.</p><hr><p><em>[A] In combat, when an enemy within Range 8 of your token (on the same scene) drops to 0 HP, you gain a visible “Free Soul Twist” effect; your next Soul Twist costs 0 Actions and consumes it. Delete the effect by hand to undo.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			7
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "wGGR7ZelZBYMo5vs",
+	"folder": "17e1edd987ec62a3"
+}

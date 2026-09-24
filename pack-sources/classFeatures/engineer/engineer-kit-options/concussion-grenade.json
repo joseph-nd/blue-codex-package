@@ -1,0 +1,111 @@
+{
+	"name": "Grenade Kit: Concussion Grenade",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/grenade-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "concussion-grenade",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "concussion-grenade-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Range 6, Blast 2",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "cgSave",
+					"type": "savingThrow",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "cgBlind",
+								"type": "condition",
+								"condition": "blinded",
+								"parentContext": "failedSave",
+								"parentNode": "cgSave"
+							},
+							{
+								"id": "cgDazeF",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "failedSave",
+								"parentNode": "cgSave"
+							},
+							{
+								"id": "cgSlow",
+								"type": "condition",
+								"condition": "slowed",
+								"parentContext": "failedSave",
+								"parentNode": "cgSave"
+							}
+						],
+						"passedSave": [
+							{
+								"id": "cgDazeP",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "passedSave",
+								"parentNode": "cgSave"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Grenade Kit — Toolbelt option.</em></p><p><strong>Concussion Grenade — 2 Actions, 1 Toolbelt scrap.</strong> Range 6, Blast 2. On a failed STR save, targets are Blinded, Dazed, and Slowed, 1 turn. On a save, they are only Dazed.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] STR save: Blinded, Dazed and Slowed on a fail; Dazed on a save.</em></p><p><em>[M] The conditions last 1 turn.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4wDf6QR5VDbca3OL",
+	"folder": "e2c8675a119379ac"
+}

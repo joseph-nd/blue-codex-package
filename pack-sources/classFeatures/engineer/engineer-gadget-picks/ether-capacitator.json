@@ -1,0 +1,117 @@
+{
+	"name": "Ether Capacitator",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/ether-capacitator.webp",
+	"system": {
+		"macro": "",
+		"identifier": "ether-capacitator",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "ether-capacitatorGrant",
+				"identifier": "",
+				"label": "Ether Capacitator",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.ob24JkOqWyh2FXRj"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "ether-capacitatorToolbeltGrant",
+				"identifier": "",
+				"label": "Ether Capacitator (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.kkQcCuavUSwuAw04"
+			},
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "ether-capacitator-max",
+				"identifier": "",
+				"label": "Ether Capacitator: +2 Toolbelt scraps",
+				"predicate": {},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "toolbelt",
+				"dieSize": null,
+				"maxDelta": "2",
+				"minFace": null,
+				"addRefills": []
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Harvests magical damage into Toolbelt scraps.</em></p><p><strong>Reaction:</strong> When you take magical damage. Regain 2 Toolbelt scraps.</p><p><strong>Toolbelt:</strong> Reduce the incoming damage by half.</p><p><strong>Passive:</strong> +2 maximum Toolbelt scraps.</p><hr><p><em>[A] Grants the Ether Capacitator gadget item (activation, 1 scrap) and the \"Ether Capacitator (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: +2 maximum Toolbelt scraps.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "BpUeauCHfPGZfZA1",
+	"folder": "e2c8675a119379ac"
+}

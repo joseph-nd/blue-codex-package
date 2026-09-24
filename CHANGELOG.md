@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-09-24
+
+**Heroes.** The two Blue's Codex classes, ported with as much automation as the Nimble system reliably supports. Ancestries, backgrounds and the bestiary are still to come.
+
+### Added
+- **Engineer** class (levels 1–20) with the **Alchemist**, **Mechanist** and **Scrapper** subclasses, 34 equipment items (firearms, weapon kits, gadgets) and 6 turret companion actors. Kit Training (levels 1/5/9) and Gadgeteer (even levels 2–20) open pick dialogs that grant the chosen kit or gadget as an owned item.
+- **Turret automation.** *Turret Deployed!* asks which known turret to place (the rifle, plus one turret picked at each of levels 7/11/15), spends 1 Toolbelt scrap (or the free *Testing In Progress!* deploy), enforces 1 deploy per turn (shift-click overrides; *Master Technician* removes the limit) and the turret cap (1, or 2 with *Master Technician*) by dismissing the oldest, and expires turrets when combat ends. Turrets scale from the Engineer at spawn (INT dice, +INT, *Overclocked*, the Engineer's save DC; the rifle's Rapid Fire rolls INT attacks), are destroyed only by a single hit of at least LVL (2×LVL with *Extra Plating*), and their Toolbelt specials spend scrap and destroy the turret after a confirmation (*Optimized Activation* keeps it). *Targeting Matrix* gives the next attack against a creature a turret damaged advantage; the *Tool Wrench* recalls a turret and refunds its scrap. *Auto Deploy!* places a free rifle turret automatically when combat starts (or when the Engineer joins a running combat), once per combat, not counting toward the cap.
+- **Specter** class (levels 1–20) with the **Eidolon of Defiance / Iron / Rage / Reanimation / Suffering** subclasses. Soul Sculpting (levels 2/6/9/13/17) grants picks from a 20-feature pool; *Dark Knowledge* lets the Specter choose 2 of shadow/death/blood/curse as their spell schools, and the Eidolon of Rage adds a choice of fire or lightning (max 3 schools).
+- **Engineer resources on the sheet.** Toolbelt scrap ((INT+STR)×2, refilled on Safe Rest; *Jumpstart* and *Ether Capacitator* refill/extend it), firearm ammo, and every once-per-rest/per-day feature are native charge counters. Gadgets, kit Toolbelt options and gadget Toolbelt upgrades spend scrap automatically and carry their real effects (damage, saves, conditions, healing); kits scale with level.
+- **Soul Touched workflow.** Soul Twist rolls its soul-power cold damage and marks the target; each Rite is its own item (Ruin, Haunt, Protect and every subclass Rite option) that checks for the mark (warns, never blocks) and removes it afterwards (1 target, 2 with *Master of the Veil*). At the end of a marked enemy's turn the GM gets a save card (WIL or the *Soul of Suffering* stat, *Soothing* disadvantage) that applies Agony, Dissonance, Earthbind and Rotting Flesh on a success. *Frozen Touch* / *Jinxed* add their condition while marked, *Reclaim Essence* heals, *Lingering* re-marks for 1 mana, *Soul Taker* / *Bloodsong* grant a Free Soul Twist, *Dying Surge* makes Soul Twist free while dying. *Pierce the Veil* grants its Utility spells, *Iron Armory* its proficiencies.
+- **Reanimated Soul** (Eidolon of Reanimation) is a 1-action Soul Twist that summons one Undead Minion per soul-power die, capped at min(STR, level); minions arrive Soul Touched.
+- **Undo for every automatic spend.** Whenever the module spends or grants a resource, removes a mark, heals, or destroys a turret, it posts a chat card with an **Undo** button (for the GM and the character's owners; a player's click is relayed to the GM). Every counter can also be corrected by clicking it on the sheet. Destructive steps (turret specials, recalls, minion removal, dropping spells on a school re-pick) ask first.
+- **Refresh class content** for characters created before the automation pass: `blueCodex.refreshClassContent(game.user.character)` (a GM can use `blueCodex.refreshClassContent(canvas.tokens.controlled[0].actor)`; add `{ dryRun: true }` to preview without writing), or the Engineer/Specter character sheet's header menu entry *Refresh Codex class content*. It re-copies rules, activation, description and icon from the packs onto owned Engineer/Specter features, gadgets, kits and firearms, and adds granted items the character is missing (Rite options, kit Toolbelt options, gadget Toolbelt features). Charge-pool counters, quantities, equipped state and choices are kept; gadgets are set equipped. It shows a preview first, posts a chat summary, and is safe to run twice. On load the GM gets a whispered list of characters that need it, with a Refresh button for each.
+- Custom icons for every class, feature, item and companion listed above, plus emblem badges for all 8 subclasses (brass cog-plate for the Engineer, pewter soul-disc for the Specter).
+
+### Fixed
+- Specter mana uses INT (was the higher of INT/STR).
+- Dark Knowledge schools can no longer be dropped by the Eidolon of Rage school prompt, and a dismissed Dark Knowledge dialog no longer loses spell grants.
+- The Codex spell schools survive a GM saving the system's custom spell schools.
+
+### Notes
+- Positional effects (pushes, terrain, adjacency), ally-side buffs and spell-targeting rewrites stay manual (`[M]` lines in the descriptions).
+
 ## [0.7.0] - 2026-09-04
 
 **Foundry VTT v14.** The Nimble system moved to Foundry v14 in 0.9.0 (and now requires it), so this module follows. Verified live on Foundry 14.367 + Nimble 0.9.0: every pack loads with no validation errors, the spell-tier badges render, spells cast, and the Shadowmancer's forced-upcast cast dialog still finds the system's dialog and hides the native mana slider.

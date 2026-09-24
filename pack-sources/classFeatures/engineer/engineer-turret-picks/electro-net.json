@@ -1,0 +1,67 @@
+{
+	"name": "Electro-Net Turret",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/companions/turret-electro-net.webp",
+	"system": {
+		"macro": "",
+		"identifier": "turret-electro-net",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Mechanical Mayhem turret — learned at level 7, 11 or 15.</em></p><p><strong>Electro-Net Turret.</strong> Utility. Reach 6, Damage: 1d6 Lightning. On hit: target is Slowed, 1 turn. <strong>Toolbelt:</strong> Reach 6, Blast 2, Damage: INTd6. The area becomes Slowed Terrain for 2 rounds; creatures that start or end their turn there, or enter it, take INT Lightning damage (ignoring armor) and must make a STR save or be Restrained and Dazed for 1 turn.</p><hr><p><em>[A] Once picked, Turret Deployed! offers the Electro-Net Turret alongside the Rifle Turret.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-turret-picks",
+		"gainedAtLevels": [
+			7,
+			11,
+			15
+		],
+		"selectionCountByLevel": {
+			"7": 1,
+			"11": 1,
+			"15": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"turretTemplate": "turret-electro-net"
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "nvk4dfxyUxPUGGcv",
+	"folder": "e2c8675a119379ac"
+}

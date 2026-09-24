@@ -1,0 +1,74 @@
+{
+	"name": "Soul Rite: Protect",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/soul-rite.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-rite-protect",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "round"
+			},
+			"effects": [
+				{
+					"id": "SoulRiteProtTmp1",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "(floor(@level/5)+1)d8",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Soul Rite — Protect.</strong> 1 Action, Reach: 8. Remove Soul Touched from the target: it gains temp HP equal to your soul power, 1 round. If Soul Touched wasn’t removed, this does nothing.</p><hr><p><em>[A] Using this Rite checks the target for your Soul Touched and removes it (the module warns but lets you proceed if the target isn’t marked).</em></p><p><em>[A] Rolls your soul power as temp HP. [M] Remove the temp HP after 1 round.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-rites",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"rite": {
+					"consumesMark": "soul-touched"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "j3MjFIDP24PTTTSp",
+	"folder": "17e1edd987ec62a3"
+}

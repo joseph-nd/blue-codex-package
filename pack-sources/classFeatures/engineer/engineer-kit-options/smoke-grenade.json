@@ -1,0 +1,77 @@
+{
+	"name": "Grenade Kit: Smoke Grenade",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/grenade-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "smoke-grenade",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "smoke-grenade-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Range 6, Blast 3",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "sgN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Thick smoke fills the area for 1 minute or until dispersed.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Grenade Kit — Toolbelt option.</em></p><p><strong>Smoke Grenade — 2 Actions, 1 Toolbelt scrap.</strong> Range 6, Blast 3. The area becomes filled with thick smoke for 1 minute or until dispersed. Smoke obstructs view and can't be seen through.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Place the smoke area yourself.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "vaQxubZEA5R7WBke",
+	"folder": "e2c8675a119379ac"
+}

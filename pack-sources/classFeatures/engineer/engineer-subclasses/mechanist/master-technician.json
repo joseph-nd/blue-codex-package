@@ -1,0 +1,57 @@
+{
+	"name": "Master Technician",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/mechanist/master-technician.webp",
+	"system": {
+		"macro": "",
+		"identifier": "master-technician",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can now have up to two active turrets at the same time. They can be the same or different turrets. Turret Deployed! is no longer limited to 1/turn.</p><hr><p><em>[A] Turret Deployed! allows two active turrets and is no longer limited to 1/turn.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "mechanist",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "a842227b5b1c1fc4",
+	"_id": "claeQ8BW3w2dKjWZ"
+}

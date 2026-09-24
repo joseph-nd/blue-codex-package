@@ -1,0 +1,117 @@
+{
+	"name": "Tool Wrench",
+	"type": "object",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/tool-wrench.webp",
+	"system": {
+		"macro": "",
+		"identifier": "tool-wrench",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "tool-wrench-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 1",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "twBaseDmg",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "1d6+@strength",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "twBaseDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "twBaseDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Gadget</strong> &middot; <em>Engineer invention powered by Toolbelt scraps. Activate for 1 scrap; spend a 2nd scrap for the Toolbelt effect. Only Engineers gain the active benefit &mdash; an ally given this gadget gains only the Passive.</em></p><hr><p><em>Considered a mace.</em></p><p><strong>1 Action (1 scrap):</strong> Reach 1, Damage 1d6+STR Bludgeoning. If you target your turret, you undeploy it and regain its Toolbelt scrap.</p><p><strong>Toolbelt (2 scraps):</strong> Target is Dazed, 3 turns, or the turret lasts +3 rounds.</p><p><strong>Passive:</strong> Turrets can be Tiny.</p><hr><p><em>[A] Using the gadget spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 1d6+STR Bludgeoning.</em></p><p><em>[A] Target your own turret: the module asks to recall it, removes the token and refunds its 1 Toolbelt scrap (chat card with Undo) — net 0 scrap, as the rules intend. If Nimble did not charge the scrap for this use (item unequipped or resource spending turned off), nothing is refunded and the card says so.</em></p><p><em>[A] The Toolbelt upgrade is the separate \"Tool Wrench (Toolbelt)\" feature (2 scraps total); the passive lives on the \"Tool Wrench\" gadget feature, so it works even if this item is unequipped.</em></p><p><em>[A] Keep the gadget equipped: Nimble switches off an unequipped object's rules, so its scrap cost would not be charged.</em></p><p><em>[M] \"Considered a mace\" (for Scrapper's Applied Force): Nimble has no weapon-group field here, so it is left untyped to keep crits working for every Engineer.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "misc",
+		"weaponType": "",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Invention",
+		"objectSizeType": "slots",
+		"slotsRequired": 0.5,
+		"stackSize": 2,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": 1
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "V1wZJlJKmz5W0Wpi",
+	"folder": "679e7e3dd0184cae"
+}

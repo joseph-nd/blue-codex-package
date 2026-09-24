@@ -1,0 +1,102 @@
+{
+	"name": "Smoke Screen",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/smoke-screen.webp",
+	"system": {
+		"macro": "",
+		"identifier": "smoke-screen",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "smoke-screenGrant",
+				"identifier": "",
+				"label": "Smoke Screen",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.xd2SkTT5n4lqTCkT"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "smoke-screenToolbeltGrant",
+				"identifier": "",
+				"label": "Smoke Screen (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.J61Enlly3bSnpCwQ"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Blanket an area in vision-blocking smoke.</em></p><p><strong>2 Actions.</strong> Range 6, Line 6 or Blast 4. The area fills with thick smoke for 1 minute or until dispersed. It obscures vision and can't be seen through.</p><p><strong>Toolbelt:</strong> Affects all adjacent spaces as well.</p><p><strong>Passive:</strong> You can see through smoke and other gases.</p><hr><p><em>[A] Grants the Smoke Screen gadget item (activation, 1 scrap) and the \"Smoke Screen (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: You can see through smoke and other gases.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "2als9AAySunV8I9e",
+	"folder": "e2c8675a119379ac"
+}

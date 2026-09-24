@@ -1,0 +1,76 @@
+{
+	"name": "Elixir Gun: Glob Shot",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/elixir-gun.webp",
+	"system": {
+		"macro": "",
+		"identifier": "glob-shot",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "glob-shot-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Range 8",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "gbSlow",
+					"type": "condition",
+					"condition": "slowed",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Elixir Gun — Toolbelt option.</em></p><p><strong>Glob Shot — 2 Actions, 1 Toolbelt scrap.</strong> Range 8. Target is Slowed, 1 minute. It bounces to the next nearest target in Range 8. If it's an enemy they are also Slowed. If it's an ally they gain +2 speed once, 1 minute.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Applies Slowed to the target.</em></p><p><em>[M] Bounce to the next nearest target in Range 8: Slowed if an enemy, +2 speed (once, 1 minute) if an ally.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "YDvwd9vIgySeuXhw",
+	"folder": "e2c8675a119379ac"
+}

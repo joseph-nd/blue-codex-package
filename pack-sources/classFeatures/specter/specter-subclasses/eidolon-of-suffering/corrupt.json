@@ -1,0 +1,65 @@
+{
+	"name": "Suffering Rite: Corrupt",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-suffering/suffering-rites.webp",
+	"system": {
+		"macro": "",
+		"identifier": "suffering-rite-corrupt",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach",
+				"distance": 8
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>Suffering Rite — Corrupt.</strong> 1 Action, Reach: 8. Remove Soul Touched from the target: the enemy is Impaired, 2 turns (you choose the condition). While Impaired this way, it loses any resistances. If Soul Touched wasn’t removed, this does nothing.</p><hr><p><em>[A] Using this Rite checks the target for your Soul Touched and removes it (the module warns but lets you proceed if the target isn’t marked).</em></p><p><em>[M] Apply your chosen Impaired condition for 2 turns and ignore the target’s resistances by hand.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-suffering",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"rite": {
+					"consumesMark": "soul-touched"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "TgDFgLSOs1ZUnhjE",
+	"folder": "fd6abd5774ad2320"
+}

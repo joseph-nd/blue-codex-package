@@ -1,0 +1,118 @@
+{
+	"name": "Electro Baton: System Shock",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "system-shock",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "system-shock-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 1",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "ssDmg",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "2d6 + @strength + floor(@level / 5) * 6",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"hit": [
+							{
+								"id": "ssDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "ssDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "ssSave",
+					"type": "savingThrow",
+					"saveType": "strength",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "ssStun",
+								"type": "condition",
+								"condition": "stunned",
+								"parentContext": "failedSave",
+								"parentNode": "ssSave"
+							}
+						],
+						"passedSave": [
+							{
+								"id": "ssDaze",
+								"type": "condition",
+								"condition": "dazed",
+								"parentContext": "passedSave",
+								"parentNode": "ssSave"
+							}
+						]
+					},
+					"sharedRolls": []
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>System Shock — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6+STR Lightning, lose Charged. If you lost Charged, target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</p><p><strong>High Levels:</strong> +6 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6+STR Lightning (+6 per 5 levels) and posts the STR save: Stunned on a fail, Dazed on a save.</em></p><p><em>[M] Remove your Charged. Only use the save if you actually lost Charged; Dazed lasts 1 turn.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "0MapufZDLyl8ogxl",
+	"folder": "e2c8675a119379ac"
+}

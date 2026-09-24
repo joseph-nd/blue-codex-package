@@ -1,0 +1,82 @@
+{
+	"name": "Soul of Rage",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/eidolon-of-rage/soul-of-rage.webp",
+	"system": {
+		"macro": "",
+		"identifier": "soul-of-rage",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "soul-of-rage-grant-ruin-fire",
+				"identifier": "",
+				"label": "Rite option: Ruin (Fire)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.fVpZS1D4AQWkw4S8"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "soul-of-rage-grant-ruin-lightning",
+				"identifier": "",
+				"label": "Rite option: Ruin (Lightning)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.imhFBPwU98VylGNK"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>You can cast a spell targeting a Soul Touched in Range/Reach regardless of obstructions. When you do this, the spell only targets that Soul Touched regardless of AoE/multi-target and Soul Touched is removed.</p><p>Additionally, you learn how to cast spells from either the Fire or Lightning School. Ruin can deal either Cold or Fire/Lightning damage.</p><hr><p><em>[A] The module asks you to choose the Fire or Lightning school and grants its spells as tiers unlock.</em></p><p><em>[A] Grants Soul Rite: Ruin (Fire) and Soul Rite: Ruin (Lightning) — use one instead of the Cold Ruin when you want fire/lightning damage.</em></p><p><em>[M] Casting through a Soul Touched ignoring obstructions and single-targeting AoE is resolved by hand; remove the target’s mark afterwards.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "eidolon-of-rage",
+		"gainedAtLevels": [
+			3
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "41921b271e97fe31",
+	"_id": "wo2mPsMVMFd5sL1n"
+}

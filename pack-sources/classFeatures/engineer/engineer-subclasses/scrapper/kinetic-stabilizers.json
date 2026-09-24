@@ -1,0 +1,94 @@
+{
+	"name": "Kinetic Stabilizers",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/kinetic-stabilizers.webp",
+	"system": {
+		"macro": "",
+		"identifier": "kinetic-stabilizers",
+		"rules": [
+			{
+				"type": "damageReduction",
+				"disabled": false,
+				"id": "kinetic-stabilizers-dr",
+				"identifier": "",
+				"label": "Kinetic Stabilizers",
+				"predicate": {
+					"armor": "equipped"
+				},
+				"priority": 1,
+				"mode": "flat",
+				"value": "@strength",
+				"damageTypes": [
+					"bludgeoning",
+					"piercing",
+					"slashing"
+				]
+			},
+			{
+				"type": "situationalRollMode",
+				"disabled": false,
+				"id": "kinetic-stabilizers-move",
+				"identifier": "",
+				"label": "Kinetic Stabilizers: vs being moved against your will (mail armor)",
+				"predicate": {
+					"armor": "equipped"
+				},
+				"priority": 1,
+				"value": 1,
+				"checkType": "savingThrow",
+				"saves": [
+					"all"
+				],
+				"abilities": [],
+				"skills": []
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>While you wear mail armor, any Bludgeoning, Piercing and Slashing damage you take is reduced by STR and you have advantage on saves vs being moved against your will.</p><hr><p><em>[A] Reduces Bludgeoning, Piercing and Slashing damage by STR while you wear armor (approximation: the check is \"armor equipped\", Nimble can't test for mail specifically).</em></p><p><em>[A] Offers advantage on saves vs being moved against your will (tick it in the save dialog).</em></p><p><em>[M] If you wear non-mail armor, ignore the reduction.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			11
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "OegVzBjSyRNa1Tv6"
+}

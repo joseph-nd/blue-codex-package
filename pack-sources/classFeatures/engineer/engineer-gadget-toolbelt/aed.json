@@ -1,0 +1,111 @@
+{
+	"name": "AED (Toolbelt)",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/aed.webp",
+	"system": {
+		"macro": "",
+		"identifier": "aed-toolbelt",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "aed-tb-scrap",
+				"identifier": "",
+				"label": "Toolbelt scraps (activation + upgrade)",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "2"
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "aed-tb-use",
+				"identifier": "",
+				"label": "AED use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "aed-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Free Reaction: when you would drop to 0 HP",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": true
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "aedTbDmg",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "@level",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "aedTbDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "aedTbDmg"
+							}
+						]
+					}
+				},
+				{
+					"id": "aedTbHeal",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "@intelligence+@level",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Toolbelt upgrade of your <strong>AED</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — When you'd drop to 0 HP, drop to 1 instead and shock the area.</em></p><p><strong>1/Safe Rest · Free Reaction.</strong> When you would drop to 0 HP, you instead drop to 1, then Burst 1, Damage: LVL Lightning and gain Charged. Ignores armor.</p><p><strong>Toolbelt:</strong> Restore: INT+LVL HP.</p><p><strong>Passive:</strong> Max Wounds increase by 1.</p><hr><p><em>[A] Spends 2 Toolbelt scraps and the gadget's 1/Safe Rest use — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Spends the AED's 1/Safe Rest use, rolls the LVL Lightning burst and the INT+LVL healing.</em></p><p><em>[M] Set your HP to 1 first, then apply the healing to yourself; give yourself Charged.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-toolbelt",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "4EFNfnYFo451SXDJ",
+	"folder": "e2c8675a119379ac"
+}

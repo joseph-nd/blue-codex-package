@@ -1,0 +1,91 @@
+{
+	"name": "Electro Baton: Discharge",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/electro-baton.webp",
+	"system": {
+		"macro": "",
+		"identifier": "discharge",
+		"rules": [
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "discharge-scrap",
+				"identifier": "",
+				"label": "Toolbelt scrap",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "toolbelt",
+				"poolScope": "actor",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Reach 1 (Burst 2 if you lose Charged)",
+				"quantity": 2,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "dcDmg",
+					"type": "damage",
+					"damageType": "lightning",
+					"formula": "2d6 + floor(@level / 5) * 4",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "dcDmg-h",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "dcDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 2,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Discharge — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor, can still crit or miss.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6 Lightning (+4 per 5 levels), ignoring armor; it can crit or miss against each target.</em></p><p><em>[M] Remove your Charged. Target everything in Burst 2 only if you lost Charged; otherwise a single target in Reach 1.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-options",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "Yg8a09sAYt3yKyWx",
+	"folder": "e2c8675a119379ac"
+}

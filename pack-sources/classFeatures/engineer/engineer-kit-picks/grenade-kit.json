@@ -1,0 +1,112 @@
+{
+	"name": "Grenade Kit",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/kits/grenade-kit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "grenade-kit",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "grenade-kitGrant",
+				"identifier": "",
+				"label": "Grenade Kit",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.vajujw6n55Q3gs5J"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "flame-grenadeGrant",
+				"identifier": "",
+				"label": "Grenade Kit: Flame Grenade",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.62ndJplrPh6gO2B3"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "smoke-grenadeGrant",
+				"identifier": "",
+				"label": "Grenade Kit: Smoke Grenade",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.vaQxubZEA5R7WBke"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "concussion-grenadeGrant",
+				"identifier": "",
+				"label": "Grenade Kit: Concussion Grenade",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.4wDf6QR5VDbca3OL"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Weapon Kit — Lob elemental grenades — cryo by default, with fire, smoke and concussion options.</em></p><p><strong>Cryo Grenade (basic) — 1 Action.</strong> Range 6, Damage: 2d6 Cold. Targets adjacent to the space take half damage.</p><p><strong>Toolbelt (2 Actions):</strong></p><ul><li><strong>Flame Grenade.</strong> Range 6, Blast 3, Damage: 2d6 Fire. On hit: applies Smoldering. Can still crit or miss. The area burns for 1 round; targets take INT Fire damage for each space they enter on a turn. Ignores armor.</li><li><strong>Smoke Grenade.</strong> Range 6, Blast 3. The area fills with thick smoke for 1 minute or until dispersed. Smoke obstructs view and can't be seen through.</li><li><strong>Concussion Grenade.</strong> Range 6, Blast 2. On a failed STR save, targets are Blinded, Dazed and Slowed, 1 turn. On a save, they are only Dazed.</li></ul><p><strong>High Levels:</strong> +5 damage every 5 levels (Cryo Grenade & Flame Grenade).</p><hr><p><em>[A] Grants the Grenade Kit item (basic ability, 1 Action, no scrap) and one feature per Toolbelt option (2 Actions, 1 Toolbelt scrap each, spent natively). Scraps are tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] High-level damage/healing bonuses are built into the formulas.</em></p><p><em>[M] Weapon Kits count as weapons for swapping and stowing.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-kit-picks",
+		"gainedAtLevels": [
+			1,
+			5,
+			9
+		],
+		"selectionCountByLevel": {
+			"1": 1,
+			"5": 1,
+			"9": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "jkXer2RbYDxhwxsO",
+	"folder": "e2c8675a119379ac"
+}

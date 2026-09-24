@@ -1,0 +1,102 @@
+{
+	"name": "Deployable Shield",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/deployable-shield.webp",
+	"system": {
+		"macro": "",
+		"identifier": "deployable-shield",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "deployable-shieldGrant",
+				"identifier": "",
+				"label": "Deployable Shield",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.5haoUMbe5sY4Hlv5"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "deployable-shieldToolbeltGrant",
+				"identifier": "",
+				"label": "Deployable Shield (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.xrVE1j6u1u7krgFO"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — A pop-out shield that hardens your defense.</em></p><p><strong>Free Reaction · Requires a shield.</strong> When you Defend, gain +INT Armor.</p><p><strong>Toolbelt:</strong> Gain 2xINT instead.</p><p><strong>Passive:</strong> Shields no longer require a free hand.</p><hr><p><em>[A] Grants the Deployable Shield gadget item (activation, 1 scrap) and the \"Deployable Shield (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[M] Passive: Shields no longer require a free hand.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "jgPV2IOWXM0dambg",
+	"folder": "e2c8675a119379ac"
+}

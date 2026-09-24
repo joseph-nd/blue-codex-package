@@ -1,0 +1,100 @@
+{
+	"name": "Bulwark Gyro",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/engineer/scrapper/bulwark-gyro.webp",
+	"system": {
+		"macro": "",
+		"identifier": "bulwark-gyro",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "bulwark-gyro-pool",
+				"identifier": "bulwark-gyro-uses",
+				"label": "Bulwark Gyro (1/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "bulwark-gyro-use",
+				"identifier": "",
+				"label": "Bulwark Gyro use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "bulwark-gyro-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": true,
+			"cost": {
+				"details": "Burst 3",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "bgN",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "For the next minute, you and affected allies take LVL less damage from all sources.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 3,
+				"shape": "circle",
+				"width": 1
+			}
+		},
+		"description": "<p>(1/Safe Rest) 1 Action, Burst: 3. For the next minute, you and affected allies take LVL less damage from all sources.</p><hr><p><em>[A] The 1/Safe Rest use is a counter on this feature, tracked on the sheet (click the counter to correct mistakes); activating the feature spends it.</em></p><p><em>[M] For 1 minute, you and the allies in the Burst 3 reduce all damage they take by your LVL — subtract it when applying damage.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "scrapper",
+		"gainedAtLevels": [
+			15
+		],
+		"selectionCountByLevel": {},
+		"subclass": true
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "4e5e1ce1622f4740",
+	"_id": "YM1amUe1mviqRZed"
+}

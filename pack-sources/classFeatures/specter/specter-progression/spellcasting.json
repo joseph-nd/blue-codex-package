@@ -1,0 +1,65 @@
+{
+	"name": "Spellcasting",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/features/specter/progression/spellcasting.webp",
+	"system": {
+		"macro": "",
+		"identifier": "spellcasting",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p>At <strong>Level 2</strong> you unlock tier 1 spells in the schools you know and gain a mana pool. Your mana pool is equal to (INT×3) + LVL and recharges on a Safe Rest.</p><p>You unlock a new spell tier every even level, and may upcast spells at each unlocked tier:</p><ul><li><p>Tier 1 — Level 2</p></li><li><p>Tier 2 — Level 4</p></li><li><p>Tier 3 — Level 6</p></li><li><p>Tier 4 — Level 8</p></li><li><p>Tier 5 — Level 10</p></li><li><p>Tier 6 — Level 12</p></li><li><p>Tier 7 — Level 14</p></li><li><p>Tier 8 — Level 16</p></li><li><p>Tier 9 — Level 18</p></li></ul><hr><p><em>[A] The mana pool ((INT×3) + LVL, refilled on a Safe Rest) is the class mana bar on your sheet. Spells of your Dark Knowledge schools are granted by the module as each tier unlocks.</em></p>",
+		"featureType": "class",
+		"class": "specter",
+		"group": "specter-progression",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18
+		],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "ahCpyyup1NXfVTT1",
+	"folder": "17e1edd987ec62a3"
+}

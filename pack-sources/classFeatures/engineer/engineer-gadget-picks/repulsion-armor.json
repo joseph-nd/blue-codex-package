@@ -1,0 +1,113 @@
+{
+	"name": "Repulsion Armor",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/gadgets/repulsion-armor.webp",
+	"system": {
+		"macro": "",
+		"identifier": "repulsion-armor",
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "repulsion-armorGrant",
+				"identifier": "",
+				"label": "Repulsion Armor",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.Lq3l8KZ44wnYxBcF"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "repulsion-armorToolbeltGrant",
+				"identifier": "",
+				"label": "Repulsion Armor (Toolbelt)",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.U0JHbZWbpCIcOko9"
+			},
+			{
+				"type": "armorClass",
+				"disabled": false,
+				"id": "repulsion-armor-armor",
+				"identifier": "",
+				"label": "Repulsion Armor: +1 Armor",
+				"predicate": {},
+				"priority": 1,
+				"formula": "1",
+				"mode": "add"
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "none",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><em>Gadget — Armor that lashes back at melee attackers.</em></p><p><strong>Free Reaction.</strong> When you Defend, a Melee attacker takes STRd8 Force damage.</p><p><strong>Toolbelt:</strong> A Huge or smaller attacker is pushed away STR spaces.</p><p><strong>Passive:</strong> +1 Armor.</p><hr><p><em>[A] Grants the Repulsion Armor gadget item (activation, 1 scrap) and the \"Repulsion Armor (Toolbelt)\" feature (upgrade, 2 scraps); both spend from your Toolbelt pool — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Passive: +1 Armor.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-gadget-picks",
+		"gainedAtLevels": [
+			2,
+			4,
+			6,
+			8,
+			10,
+			12,
+			14,
+			16,
+			18,
+			20
+		],
+		"selectionCountByLevel": {
+			"2": 1,
+			"4": 1,
+			"6": 1,
+			"8": 1,
+			"10": 1,
+			"12": 1,
+			"14": 1,
+			"16": 1,
+			"18": 1,
+			"20": 1
+		},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "cDYvWnq37nOLfPD6",
+	"folder": "e2c8675a119379ac"
+}

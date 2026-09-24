@@ -14,6 +14,410 @@
 
 const MODULE_ID = 'blue-codex-package';
 
+// ── Resource undo cards ──────────────────────────────────────────────────────
+// Players misclick. Every resource the MODULE spends or grants (Toolbelt scrap,
+// once-per-rest uses, free deploys, …) lives in a native Nimble charge pool — so
+// the sheet's charge indicator shows it and its dialog corrects it by hand — and
+// every module-side spend/grant posts a chat card carrying an Undo button.
+//
+// Usage (any section of this file, or a feature macro via the module api):
+//
+//   // Deduct 1 from the actor-scoped Toolbelt pool. Returns false (and warns)
+//   // when the pool is missing or short; nothing is spent then.
+//   await spendPoolWithUndo(actor, 'toolbelt', 1, { label: 'Toolbelt scrap', reason: 'Turret Deployed!' });
+//   // Item-scoped pool (e.g. identifier `uses` on one specific feature):
+//   await spendPoolWithUndo(actor, 'uses', 1, { item, label: 'Optimized Activation' });
+//   await grantPoolWithUndo(actor, 'toolbelt', 1, { reason: 'Tool Wrench recall' });
+//
+//   // Any other reversible action: register a handler ONCE (top level), then post.
+//   registerUndoHandler('restoreMark', async (data, { message, user }) => {
+//     …; return 'Mark restored.'; // string = note shown on the card; false = failed
+//   });
+//   await postUndoCard({ actor, text: '<p>…</p>', undoAction: { type: 'restoreMark', data: { … } } });
+//
+// Undo handlers receive only the serialisable `data` stored on the card and run
+// on a client that can write: the GM runs them directly; a player's click is
+// relayed to the active GM (runAsGM — a hidden whispered relay message, since the
+// manifest declares no socket). A card undoes at most once (flag `undo.done`) and
+// only the GM or an owner of the card's `actor` sees the button.
+const UNDO_FLAG = 'undo';
+const GM_RELAY_FLAG = 'gmRelay';
+const UNDO_HANDLERS = new Map();
+const GM_RELAY_OPS = new Map();
+const UNDO_IN_FLIGHT = new Set();
+
+function chargePoolScope() {
+	return game.system?.id ?? 'nimble';
+}
+
+// Register the function that reverts an undo card of `type`. It receives
+// (data, { message, user }) and returns a note string, true, or false (= failed,
+// card stays undoable).
+function registerUndoHandler(type, handler) {
+	if (typeof type === 'string' && typeof handler === 'function') UNDO_HANDLERS.set(type, handler);
+}
+
+// Register an operation a player may ask the active GM to run on their behalf.
+function registerGMRelayOp(op, handler) {
+	if (typeof op === 'string' && typeof handler === 'function') GM_RELAY_OPS.set(op, handler);
+}
+
+// Run a registered relay op with GM authority: directly when this client is a GM
+// (or no GM is online — best effort), otherwise via a hidden whispered message the
+// active GM's client executes and deletes. Fire-and-forget on the relay path
+// (resolves undefined); resolves the op's own result on the direct path.
+async function runAsGM(op, payload = {}) {
+	const handler = GM_RELAY_OPS.get(op);
+	if (!handler) throw new Error(`[${MODULE_ID}] unknown GM relay op "${op}"`);
+	const activeGM = game.users?.activeGM ?? null;
+	if (game.user?.isGM || !activeGM) return handler(payload, { user: game.user });
+	const whisper = (game.users?.filter?.((u) => u.isGM) ?? []).map((u) => u.id);
+	await ChatMessage.create({
+		content: '<p><em>Blue Codex: relaying an action to the GM…</em></p>',
+		whisper,
+		flags: { [MODULE_ID]: { [GM_RELAY_FLAG]: { op, payload } } },
+	});
+	return undefined;
+}
+
+// Relay permission checks: a relayed op runs with GM authority, so each op
+// verifies the requesting `user` may act for the document it touches — the GM,
+// an owner of the actor, or an owner of a summon (turret / minion token) that
+// this actor deployed (the summon's player drives its actions).
+function userOwnsSummonOf(user, actor) {
+	if (!user || !actor?.uuid) return false;
+	for (const scene of game.scenes ?? []) {
+		for (const tokenDoc of scene.tokens ?? []) {
+			if (getTokenSummonFlag(tokenDoc)?.summonerActorUuid !== actor.uuid) continue;
+			if (tokenDoc.actor?.testUserPermission?.(user, 'OWNER')) return true;
+		}
+	}
+	return false;
+}
+
+function userMayActFor(user, actor) {
+	if (!user || !actor) return false;
+	if (user.isGM) return true;
+	if (actor.testUserPermission?.(user, 'OWNER')) return true;
+	return userOwnsSummonOf(user, actor);
+}
+
+// A summoned token may be driven by an owner of its own actor or of its summoner.
+function userMayActForSummon(user, tokenDoc) {
+	if (!user || !tokenDoc) return false;
+	if (user.isGM) return true;
+	if (tokenDoc.actor?.testUserPermission?.(user, 'OWNER')) return true;
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	return !!summoner && summoner.testUserPermission?.(user, 'OWNER');
+}
+
+function relayDenied(op, user, what) {
+	console.warn(`[${MODULE_ID}] GM relay "${op}" refused: ${user?.name ?? 'unknown user'} may not act for ${what}.`);
+	return false;
+}
+
+// The active GM executes relay messages, then deletes them.
+Hooks.on('createChatMessage', (message) => {
+	const relay = message?.flags?.[MODULE_ID]?.[GM_RELAY_FLAG];
+	if (!relay || !isActingGM()) return;
+	void (async () => {
+		try {
+			const handler = GM_RELAY_OPS.get(relay.op);
+			if (handler) await handler(relay.payload ?? {}, { user: message.author ?? null });
+			else console.warn(`[${MODULE_ID}] unknown GM relay op "${relay.op}"`);
+		} catch (error) {
+			console.error(`[${MODULE_ID}] GM relay op "${relay.op}" failed`, error);
+		} finally {
+			try {
+				await message.delete();
+			} catch {
+				/* already gone */
+			}
+		}
+	})();
+});
+
+// Resolve a charge pool to { document, key, identifier, label, current, max }.
+// `poolKey` is the pool identifier ('toolbelt') or its actor-scoped storage key
+// ('actor:toolbelt'). With `item` (Item or id) the item-scoped pool of that item
+// is read; otherwise the actor-scoped pool wins, then the first owned item that
+// stores a pool under that identifier. Storage mirrors Nimble's
+// src/utils/chargePool/helpers.ts: actor pools at
+// actor.flags.<sys>.chargePools["actor:<id>"], item pools at
+// item.flags.<sys>.chargePools["<id>"].
+function getChargePoolEntry(actor, poolKey, { item } = {}) {
+	if (!actor || typeof poolKey !== 'string' || !poolKey) return null;
+	const scope = chargePoolScope();
+	const identifier = poolKey.startsWith('actor:') ? poolKey.slice(6) : poolKey;
+	const build = (document, key, raw, fallbackLabel) => {
+		if (!raw || typeof raw !== 'object') return null;
+		const max = Math.max(0, Math.floor(Number(raw.max) || 0));
+		const current = Math.max(0, Math.min(Math.floor(Number(raw.current) || 0), max));
+		return { document, key, identifier, label: raw.label || fallbackLabel || identifier, current, max };
+	};
+	const itemPool = (it) => build(it, identifier, it?.flags?.[scope]?.chargePools?.[identifier], it?.name);
+	if (item) {
+		const owned = typeof item === 'string' ? actor.items?.get?.(item) : item;
+		return owned ? itemPool(owned) : null;
+	}
+	const actorKey = `actor:${identifier}`;
+	const actorEntry = build(actor, actorKey, actor.flags?.[scope]?.chargePools?.[actorKey], identifier);
+	if (actorEntry || poolKey.startsWith('actor:')) return actorEntry;
+	for (const it of actor.items ?? []) {
+		const entry = itemPool(it);
+		if (entry) return entry;
+	}
+	return null;
+}
+
+// Write a pool's `current` (clamped to [0, max]) into the same flag storage the
+// sheet's ChargeIndicator reads. Returns the value actually written.
+async function setChargePoolCurrent(entry, next) {
+	const clamped = Math.max(0, Math.min(Math.round(Number(next) || 0), entry.max));
+	if (clamped !== entry.current) {
+		await entry.document.update({
+			flags: { [chargePoolScope()]: { chargePools: { [entry.key]: { current: clamped } } } },
+		});
+	}
+	return clamped;
+}
+
+function resolveActorByUuid(uuid) {
+	try {
+		const doc = uuid ? fromUuidSync(uuid) : null;
+		if (doc instanceof Actor) return doc;
+		return doc?.actor instanceof Actor ? doc.actor : null;
+	} catch {
+		return null;
+	}
+}
+
+// Post a chat card whose Undo button runs `undoAction.type`'s registered handler
+// with `undoAction.data`. `text` is trusted HTML (escape interpolated names).
+async function postUndoCard({ actor, text, undoAction, flavor } = {}) {
+	try {
+		const data = {
+			content: `<div class="bcx-undo-card">${text ?? ''}<button type="button" class="bcx-undo-button" data-bcx-undo><i class="fa-solid fa-rotate-left"></i> Undo</button></div>`,
+			flags: {
+				[MODULE_ID]: {
+					[UNDO_FLAG]: {
+						type: undoAction?.type ?? '',
+						data: undoAction?.data ?? {},
+						actorUuid: actor?.uuid ?? null,
+						done: false,
+					},
+				},
+			},
+		};
+		if (actor) data.speaker = ChatMessage.getSpeaker({ actor });
+		if (flavor) data.flavor = `<strong>${escapeHtml(flavor)}</strong>`;
+		return await ChatMessage.create(data);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post undo card`, error);
+		return null;
+	}
+}
+
+// Run a card's undo once. Called on a writer client (GM, or best effort when no
+// GM is online). `user` is the clicker, for the permission check and the note.
+async function performUndo(messageId, user) {
+	const message = game.messages?.get(messageId);
+	const undo = message?.flags?.[MODULE_ID]?.[UNDO_FLAG];
+	if (!undo || undo.done || UNDO_IN_FLIGHT.has(messageId)) return false;
+	const actor = resolveActorByUuid(undo.actorUuid);
+	if (user && !user.isGM && actor && !actor.testUserPermission(user, 'OWNER')) {
+		console.warn(`[${MODULE_ID}] ${user.name} may not undo "${undo.type}" for ${actor.name}.`);
+		return false;
+	}
+	const handler = UNDO_HANDLERS.get(undo.type);
+	if (!handler) {
+		ui.notifications?.warn(`Blue Codex: no undo handler for "${undo.type}".`);
+		return false;
+	}
+	UNDO_IN_FLIGHT.add(messageId);
+	try {
+		const result = await handler(undo.data ?? {}, { message, user });
+		if (result === false) {
+			ui.notifications?.warn('Blue Codex: the undo could not be applied — fix it by hand on the sheet.');
+			return false;
+		}
+		await message.update({
+			[`flags.${MODULE_ID}.${UNDO_FLAG}.done`]: true,
+			[`flags.${MODULE_ID}.${UNDO_FLAG}.undoneBy`]: user?.name ?? game.user?.name ?? '',
+			[`flags.${MODULE_ID}.${UNDO_FLAG}.note`]: typeof result === 'string' ? result : '',
+		});
+		return true;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] undo "${undo.type}" failed`, error);
+		return false;
+	} finally {
+		UNDO_IN_FLIGHT.delete(messageId);
+	}
+}
+
+registerGMRelayOp('undo', ({ messageId }, { user }) => performUndo(messageId, user));
+
+// Deduct `amount` from a pool and post an undo card. False (+ warning) when the
+// pool is missing or holds less than `amount`; nothing is spent then. When this
+// client cannot write the pool's document, the whole spend (and its card) is
+// relayed to the GM after the local sufficiency check. Opts: { label, reason,
+// item, flavor }.
+async function spendPoolWithUndo(actor, poolKey, amount = 1, { label, reason, item, flavor } = {}) {
+	const entry = getChargePoolEntry(actor, poolKey, { item });
+	const name = label ?? entry?.label ?? poolKey;
+	if (!entry) {
+		ui.notifications?.warn(`${actor?.name ?? 'Actor'} has no "${name}" counter on the sheet — adjust it by hand.`);
+		return false;
+	}
+	const cost = Math.max(0, Math.floor(Number(amount) || 0));
+	if (entry.current < cost) {
+		ui.notifications?.warn(
+			`${actor.name} has only ${entry.current} ${name} left (needs ${cost}). If that is wrong, click the counter on the sheet to fix it.`,
+		);
+		return false;
+	}
+	if (!entry.document.isOwner && !game.user?.isGM) {
+		await runAsGM('spendPoolWithUndo', {
+			actorUuid: actor.uuid,
+			poolKey,
+			itemId: entry.document === actor ? null : entry.document.id,
+			amount: cost,
+			label,
+			reason,
+			flavor,
+		});
+		return true;
+	}
+	const after = await setChargePoolCurrent(entry, entry.current - cost);
+	await postUndoCard({
+		actor,
+		flavor,
+		text: `<p>${escapeHtml(actor.name)} spent <strong>${cost} ${escapeHtml(name)}</strong>${reason ? ` (${escapeHtml(reason)})` : ''}. Remaining: <strong>${after}/${entry.max}</strong>.</p>`,
+		undoAction: {
+			type: 'poolDelta',
+			data: {
+				actorUuid: actor.uuid,
+				poolKey,
+				itemId: entry.document === actor ? null : entry.document.id,
+				delta: entry.current - after,
+				label: name,
+			},
+		},
+	});
+	return true;
+}
+
+// Add `amount` to a pool (clamped to max) and post an undo card. False (+ note)
+// when the pool is missing or already full. Same opts/relay as spendPoolWithUndo.
+async function grantPoolWithUndo(actor, poolKey, amount = 1, { label, reason, item, flavor } = {}) {
+	const entry = getChargePoolEntry(actor, poolKey, { item });
+	const name = label ?? entry?.label ?? poolKey;
+	if (!entry) {
+		ui.notifications?.warn(`${actor?.name ?? 'Actor'} has no "${name}" counter on the sheet — adjust it by hand.`);
+		return false;
+	}
+	if (entry.current >= entry.max) {
+		ui.notifications?.info(`${actor.name}'s ${name} is already full (${entry.current}/${entry.max}).`);
+		return false;
+	}
+	if (!entry.document.isOwner && !game.user?.isGM) {
+		await runAsGM('grantPoolWithUndo', {
+			actorUuid: actor.uuid,
+			poolKey,
+			itemId: entry.document === actor ? null : entry.document.id,
+			amount,
+			label,
+			reason,
+			flavor,
+		});
+		return true;
+	}
+	const after = await setChargePoolCurrent(entry, entry.current + Math.max(0, Math.floor(Number(amount) || 0)));
+	await postUndoCard({
+		actor,
+		flavor,
+		text: `<p>${escapeHtml(actor.name)} regained <strong>${after - entry.current} ${escapeHtml(name)}</strong>${reason ? ` (${escapeHtml(reason)})` : ''}. Now: <strong>${after}/${entry.max}</strong>.</p>`,
+		undoAction: {
+			type: 'poolDelta',
+			data: {
+				actorUuid: actor.uuid,
+				poolKey,
+				itemId: entry.document === actor ? null : entry.document.id,
+				delta: entry.current - after,
+				label: name,
+			},
+		},
+	});
+	return true;
+}
+
+registerGMRelayOp('spendPoolWithUndo', ({ actorUuid, poolKey, itemId, amount, label, reason, flavor }, { user } = {}) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('spendPoolWithUndo', user, actor?.name ?? actorUuid);
+	return spendPoolWithUndo(actor, poolKey, amount, { item: itemId ?? undefined, label, reason, flavor });
+});
+registerGMRelayOp('grantPoolWithUndo', ({ actorUuid, poolKey, itemId, amount, label, reason, flavor }, { user } = {}) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('grantPoolWithUndo', user, actor?.name ?? actorUuid);
+	return grantPoolWithUndo(actor, poolKey, amount, { item: itemId ?? undefined, label, reason, flavor });
+});
+
+// Undo of a pool spend/grant: apply `delta` back (clamped to the pool bounds).
+registerUndoHandler('poolDelta', async ({ actorUuid, poolKey, itemId, delta, label }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const entry = getChargePoolEntry(actor, poolKey, { item: itemId ?? undefined });
+	if (!entry) return false;
+	const after = await setChargePoolCurrent(entry, entry.current + (Number(delta) || 0));
+	return `${label ?? entry.label}: ${entry.current} → ${after}.`;
+});
+
+// Wire the Undo buttons; hide relay messages; show "Undone by …" once used.
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		const flags = message?.flags?.[MODULE_ID];
+		if (flags?.[GM_RELAY_FLAG]) {
+			html.style.display = 'none';
+			return;
+		}
+		const undo = flags?.[UNDO_FLAG];
+		const button = undo ? html.querySelector?.('[data-bcx-undo]') : null;
+		if (!button) return;
+		if (undo.done) {
+			const note = document.createElement('p');
+			note.className = 'bcx-undo-done';
+			note.innerHTML = `<em>Undone by ${escapeHtml(undo.undoneBy || 'someone')}.${undo.note ? ` ${escapeHtml(undo.note)}` : ''}</em>`;
+			button.replaceWith(note);
+			return;
+		}
+		const actor = resolveActorByUuid(undo.actorUuid);
+		if (!game.user?.isGM && !actor?.isOwner) {
+			button.remove();
+			return;
+		}
+		button.addEventListener('click', (event) => {
+			event.preventDefault();
+			button.disabled = true;
+			void runAsGM('undo', { messageId: message.id }).catch((error) =>
+				console.error(`[${MODULE_ID}] undo request failed`, error),
+			);
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not wire undo card`, error);
+	}
+});
+
+Hooks.once('ready', () => {
+	Object.assign(api, {
+		spendPoolWithUndo,
+		grantPoolWithUndo,
+		postUndoCard,
+		registerUndoHandler,
+		registerGMRelayOp,
+		runAsGM,
+		getChargePoolEntry,
+	});
+});
+
 // ── Default magic system ─────────────────────────────────────────────────────
 // Blue's Codex re-authors (and rebalances) the whole spell list. When a
 // spellcasting class levels up, Nimble's `grantSpells` rules grant *every*
@@ -427,6 +831,13 @@ const CODEX_SPELL_SCHOOLS = {
 	death: { label: 'Death', icon: 'fa-solid fa-skull-crossbones' },
 	blood: { label: 'Blood', icon: 'fa-solid fa-droplet' },
 	curse: { label: 'Curse', icon: 'fa-solid fa-spider' },
+	// Blue's Codex utility spells carry `system.school: "utility"` (school-agnostic
+	// spells). Registering it makes native `grantSpells` rules with
+	// `schools: ["utility"]` (Specter's Pierce the Veil) validate — the rule's
+	// `schools` field only accepts keys of CONFIG.NIMBLE.spellSchools. It is NOT a
+	// managed school (MANAGED_SPELL_SCHOOLS excludes it), so no swap/grant path
+	// auto-grants it; only rules that name it (with `utilityOnly`) pick from it.
+	utility: { label: 'Utility', icon: 'fa-solid fa-wand-magic-sparkles' },
 };
 
 function registerSpellSchoolIcons() {
@@ -463,6 +874,19 @@ Hooks.once('setup', () => {
 	registerSpellSchoolIcons();
 });
 
+// Nimble rebuilds CONFIG.NIMBLE.spellSchools from its init-time snapshot (built-in
+// schools only) whenever the GM edits the system's custom-spell-schools setting,
+// which would silently drop the Codex schools (and `utility`, breaking Pierce the
+// Veil's grantSpells validation). Re-inject after that rebuild.
+// A world that never saved the setting creates it on the first edit
+// (createSetting, not updateSetting), so listen to both.
+function onSpellSchoolSettingChanged(setting) {
+	if (!String(setting?.key ?? '').endsWith('.customSpellSchools')) return;
+	setTimeout(() => registerSpellSchoolIcons(), 0);
+}
+Hooks.on('updateSetting', onSpellSchoolSettingChanged);
+Hooks.on('createSetting', onSpellSchoolSettingChanged);
+
 Hooks.once('ready', () => {
 	const module = game.modules.get(MODULE_ID);
 	if (module) module.api = api;
@@ -478,6 +902,8 @@ Hooks.once('ready', () => {
 	// Summon automation: combat-end + Safe Rest cleanup for spawned companions
 	// (the spawn/gate/charge hooks piggyback on the on-hit install above).
 	installSummonAutomation();
+	// Specter: Soul Touched effects/saves, Rite mark removal, Free Soul Twist.
+	installSpecterAutomation();
 	// Shadowmancer casting rules: custom spell-tier cap table + Pilfered Power
 	// flat 1-mana cost.
 	installShadowmancerCasting();
@@ -942,6 +1368,19 @@ const SUBCLASS_SPELL_POLICY = {
 	// ── Songweaver (base auto: wind + 1 chosen) ──
 	'herald-of-disruption': { mandatory: ['domination'], cap: 3, summary: 'Learn Domination spells.' },
 	'herald-of-inspiration': { mandatory: ['inspiration'], cap: 3, summary: 'Learn Inspiration spells.' },
+	// ── Specter / Eidolon of Rage (base schools come from Dark Knowledge — 2 of
+	// shadow/death/blood/curse — granted by CLASS_SPELL_CHOICE below; Soul of Rage
+	// ADDS one element school on top, so cap = 2 Book-of-Ruin + 1 chosen element = 3.
+	// No replaceAll: the two Dark Knowledge schools are kept. Runs after the Dark
+	// Knowledge grant (see handleActorFeatures ordering) so `getActorSpellSchools`
+	// already reports the two Book-of-Ruin schools to keep). ──
+	'eidolon-of-rage': {
+		mandatory: [],
+		choose: [{ label: 'Fire or Lightning', options: ['fire', 'lightning'] }],
+		cap: 3,
+		summary:
+			'Soul of Rage: learn spells from either the Fire or Lightning School (in addition to your two Book of Ruin schools chosen with Dark Knowledge).',
+	},
 };
 
 // ── Class-level necrotic re-home ─────────────────────────────────────────────
@@ -958,6 +1397,30 @@ const SUBCLASS_SPELL_POLICY = {
 const CLASS_SPELL_REMAP = {
 	shadowmancer: 'shadow',
 	shepherd: 'death',
+};
+
+// ── Class-level spell-school choice (new module classes) ─────────────────────
+// A NEW class defined entirely in this module (the Specter) has no system
+// `grantSpells` rules to rewrite/remap, so its Codex spell access is granted by
+// this class-keyed path instead. The Specter's Dark Knowledge (L1) lets it learn
+// 2 of the 4 Book of Ruin schools; the player picks them once in a dialog and the
+// module grants those schools' Codex spells one tier at a time as the caster's
+// Spellcasting levels unlock higher tiers (`maxSpellTierForLevel`). The chosen
+// schools are the Specter's BASE schools; the Eidolon of Rage subclass ADDS a
+// Fire/Lightning school on top via SUBCLASS_SPELL_POLICY (see above).
+//   pick   — how many schools the player chooses.
+//   choose — the school pool to pick from.
+// The pick is stored on the caster under `flags.<module>.classSpellChoice`
+// ({ classId, schools, grantedTier }), mirroring the `classSchools` high-water
+// mark used by classSpellRemapSync.
+const CLASS_SPELL_CHOICE = {
+	specter: {
+		pick: 2,
+		choose: ['shadow', 'death', 'blood', 'curse'],
+		title: 'Dark Knowledge',
+		summary:
+			'Choose 2 of the Book of Ruin schools (Shadow, Death, Blood, Curse). You learn those schools’ cantrips now and their higher-tier spells as you gain Spellcasting levels.',
+	},
 };
 
 // ── System class-feature spell-rule rewrites ─────────────────────────────────
@@ -1269,6 +1732,14 @@ async function promptSchoolChoice(actor, policy) {
 	const mandatory = [...policy.mandatory];
 	const choosePairs = policy.choose ?? [];
 	const current = getActorSpellSchools(actor);
+	// A class-level school pick (Specter's Dark Knowledge) is a mandatory KEEP for
+	// any additive subclass policy (Eidolon of Rage): it is never offered as a
+	// droppable "keep N" candidate and always survives into the final set.
+	if (!policy.replaceAll) {
+		for (const school of getClassChoiceSchools(actor)) {
+			if (!mandatory.includes(school)) mandatory.push(school);
+		}
+	}
 	// Slots left for keeping base schools once mandatory + one-per-choose are set.
 	const slots = Math.max(0, policy.cap - mandatory.length - choosePairs.length);
 	const keepCandidates = policy.replaceAll
@@ -1277,7 +1748,7 @@ async function promptSchoolChoice(actor, policy) {
 	const mustPickKeep = slots > 0 && keepCandidates.length > slots;
 
 	const mandatoryLine = mandatory.length
-		? `<p>You gain: <strong>${mandatory.map(SCHOOL_LABEL).join(', ')}</strong>.</p>`
+		? `<p>You ${policy.mandatory.length ? 'gain' : 'keep'}: <strong>${mandatory.map(SCHOOL_LABEL).join(', ')}</strong>.</p>`
 		: '';
 	const chooseRows = choosePairs
 		.map(
@@ -1355,7 +1826,7 @@ async function promptSchoolChoice(actor, policy) {
 				continue;
 			}
 			for (const school of keep) final.add(school);
-		} else {
+		} else if (slots > 0) {
 			for (const school of keepCandidates) final.add(school); // room for all
 		}
 		return final;
@@ -1454,6 +1925,12 @@ async function spellSchoolSync(actor) {
 		if (stored) await actor.unsetFlag(MODULE_ID, 'spellSchools');
 		return;
 	}
+	// A class whose BASE schools come from a class-level pick (Specter / Dark
+	// Knowledge) must make that pick first: recording the subclass set (Eidolon of
+	// Rage) without it would lock in an element-only school list, prune nothing
+	// useful, and make the level-up filter below block the Book-of-Ruin grants.
+	// Defer until classSpellChoiceSync has stored the pick (re-offered next render).
+	if (CLASS_SPELL_CHOICE[classInfo.classId] && getClassChoiceSchools(actor).length === 0) return;
 	// Hold the guard continuously across prompt + setFlag + apply so our own
 	// document writes (which re-fire the sheet-render hook) can't re-enter.
 	spellSyncActive.add(actor.id);
@@ -1470,6 +1947,9 @@ async function spellSchoolSync(actor) {
 		let pruneDropped = false;
 		if (stored && stored.subclass === subclassId && Array.isArray(stored.schools)) {
 			finalSchools = new Set(stored.schools);
+			// Self-heal a set recorded before the class-level pick existed (or after a
+			// Dark Knowledge respec): the class schools always belong in an additive set.
+			if (!policy.replaceAll) for (const school of getClassChoiceSchools(actor)) finalSchools.add(school);
 			// Existing pick. `grantedTier` is the high-water mark. When it is absent
 			// the flag pre-dates this field: the previous back-fill-every-render
 			// behavior already granted every unlocked tier, so adopt the current tier
@@ -1517,7 +1997,7 @@ async function spellSchoolSync(actor) {
 // the actor doesn't already own. Same one-time-per-tier discipline as
 // applySpellSchools, so a manually removed spell isn't re-added and manual adds of
 // any school survive. Returns the count created.
-async function grantCodexSchoolSpells(actor, school, maxTier, fromTier) {
+async function grantCodexSchoolSpells(actor, school, maxTier, fromTier, stats = null) {
 	const bySchool = await loadCodexSpellsBySchool();
 	const list = bySchool.get(school);
 	if (!list || list.length === 0) return 0;
@@ -1553,8 +2033,16 @@ async function grantCodexSchoolSpells(actor, school, maxTier, fromTier) {
 		obj._stats.compendiumSource = doc.uuid;
 		toCreate.push(obj);
 	}
-	if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
-	return toCreate.length;
+	// Count what was ACTUALLY created: a preCreateItem hook can veto some of the
+	// batch, and callers (classSpellChoiceSync) must not advance their high-water
+	// mark past spells that never landed. `stats` (optional) accumulates both.
+	let created = 0;
+	if (toCreate.length) created = (await actor.createEmbeddedDocuments('Item', toCreate))?.length ?? 0;
+	if (stats) {
+		stats.expected = (stats.expected ?? 0) + toCreate.length;
+		stats.created = (stats.created ?? 0) + created;
+	}
+	return created;
 }
 
 // Self-heal: collapse accidental duplicate Codex spells down to one copy. A spell is
@@ -1691,6 +2179,171 @@ async function classSpellRemapSync(actor) {
 	}
 }
 
+// ── Class-level spell-school choice grant (Specter / Dark Knowledge) ──────────
+// Guard against the render-storm (our own create re-fires the hooks).
+const classChoiceActive = new Set();
+
+/** The actor's stored class-level school pick (Dark Knowledge) for its CURRENT
+ *  primary class, or [] when none is recorded (or it belongs to another class). */
+function getClassChoiceSchools(actor) {
+	const stored = actor?.getFlag?.(MODULE_ID, 'classSpellChoice');
+	if (!stored || !Array.isArray(stored.schools)) return [];
+	const classId = getPrimaryClass(actor)?.classId;
+	if (!classId || stored.classId !== classId) return [];
+	return [...stored.schools];
+}
+
+/** Present a "pick exactly N schools" checkbox dialog; returns the chosen school
+ *  list, or null if the player dismissed the dialog (defer — re-offer later). */
+async function promptClassSchoolChoice(actor, config) {
+	const rows = config.choose
+		.map(
+			(school) => `
+			<label class="blue-codex-school-pick">
+				<input type="checkbox" name="blue-codex-school-pick" value="${escapeHtml(school)}">
+				<i class="${escapeHtml(CODEX_SPELL_SCHOOLS[school]?.icon ?? 'fa-solid fa-book')}"></i>
+				<span>${escapeHtml(SCHOOL_LABEL(school))}</span>
+			</label>`,
+		)
+		.join('');
+
+	while (true) {
+		// eslint-disable-next-line no-await-in-loop
+		const picked = await foundry.applications.api.DialogV2.wait({
+			window: { title: `${actor.name} — ${config.title}` },
+			content: `<form class="blue-codex-school-form">
+					<p>${escapeHtml(config.summary)}</p>
+					<div class="blue-codex-school-list">${rows}</div>
+				</form>
+				<style>
+					.blue-codex-school-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+					.blue-codex-school-pick i{width:18px;text-align:center}
+				</style>`,
+			buttons: [
+				{
+					action: 'confirm',
+					label: 'Confirm',
+					default: true,
+					callback: (_event, button, dialog) => {
+						const root =
+							dialog?.element ?? button?.closest?.('.application') ?? button?.form ?? document;
+						return [...root.querySelectorAll('input[name="blue-codex-school-pick"]:checked')].map(
+							(input) => input.value,
+						);
+					},
+				},
+			],
+			rejectClose: false,
+			modal: true,
+		}).catch(() => null);
+
+		if (!Array.isArray(picked)) return null; // dismissed / cancelled — defer
+		if (picked.length !== config.pick) {
+			ui.notifications?.warn(`Choose exactly ${config.pick} spell school${config.pick > 1 ? 's' : ''}.`);
+			continue;
+		}
+		return picked;
+	}
+}
+
+// Grant a new module class's chosen Codex spell schools (Specter's Dark Knowledge).
+// Structured exactly like classSpellRemapSync: one-time-per-tier via a stored
+// high-water mark so a manually removed spell is not re-added and manual adds
+// survive. On first run (no flag / class change) it prompts the school choice and
+// grants every unlocked tier; later level-ups grant only the newly unlocked tiers.
+// The Eidolon of Rage element school is layered on separately by spellSchoolSync,
+// which runs after this (see handleActorFeatures), so its prompt already sees the
+// Book-of-Ruin schools granted here.
+// Failed-grant retries per actor/class/tier this session: a grant vetoed every
+// time (e.g. by another module) would otherwise retry on every sheet render.
+const CLASS_SPELL_CHOICE_MAX_RETRIES = 3;
+const classSpellChoiceRetries = new Map(); // `${actorId}:${classId}:${tier}` → failed attempts
+
+async function classSpellChoiceSync(actor) {
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !actor.isOwner) return;
+	if (classChoiceActive.has(actor.id)) return;
+
+	const classInfo = getPrimaryClass(actor);
+	if (!classInfo?.classId || classInfo.classLevel < 1) return;
+	const config = CLASS_SPELL_CHOICE[classInfo.classId];
+	if (!config) return;
+
+	const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+	const retryKey = `${actor.id}:${classInfo.classId}:${maxTier}`;
+	if ((classSpellChoiceRetries.get(retryKey) ?? 0) >= CLASS_SPELL_CHOICE_MAX_RETRIES) return;
+	const stored = actor.getFlag(MODULE_ID, 'classSpellChoice');
+	const isNew =
+		!stored || stored.classId !== classInfo.classId || !Array.isArray(stored.schools);
+
+	classChoiceActive.add(actor.id);
+	try {
+		let schools;
+		let fromTier;
+		if (isNew) {
+			const picked = await promptClassSchoolChoice(actor, config);
+			if (!picked) return; // deferred — re-offer on a later render
+			schools = picked;
+			fromTier = -1;
+		} else {
+			schools = stored.schools;
+			// Absent high-water flag ⇒ adopt current tier without re-granting (an
+			// upgraded flag). Present ⇒ grant only the tiers unlocked since.
+			fromTier = typeof stored.grantedTier === 'number' ? stored.grantedTier : maxTier;
+			if (fromTier >= maxTier) {
+				if (typeof stored.grantedTier !== 'number') {
+					await actor.setFlag(MODULE_ID, 'classSpellChoice', {
+						classId: classInfo.classId,
+						schools,
+						grantedTier: maxTier,
+					});
+				}
+				return; // already granted through the current tier
+			}
+		}
+
+		// Persist the chosen schools BEFORE granting (so spellSchoolSync / the
+		// level-up school filter already see them), but keep the high-water mark at
+		// its previous value: it only advances once the grants have actually landed.
+		// If any create is vetoed (e.g. a level-up filter) the tier band is retried on
+		// the next render instead of being skipped forever. Re-entry from our own
+		// writes is blocked by classChoiceActive.
+		await actor.setFlag(MODULE_ID, 'classSpellChoice', {
+			classId: classInfo.classId,
+			schools,
+			grantedTier: fromTier,
+		});
+
+		const stats = { expected: 0, created: 0 };
+		let granted = 0;
+		for (const school of schools) {
+			// eslint-disable-next-line no-await-in-loop
+			granted += await grantCodexSchoolSpells(actor, school, maxTier, fromTier, stats);
+		}
+		if (stats.created >= stats.expected) {
+			await actor.setFlag(MODULE_ID, 'classSpellChoice', {
+				classId: classInfo.classId,
+				schools,
+				grantedTier: Math.max(fromTier, maxTier),
+			});
+		} else {
+			const attempts = (classSpellChoiceRetries.get(retryKey) ?? 0) + 1;
+			classSpellChoiceRetries.set(retryKey, attempts);
+			console.warn(
+				attempts >= CLASS_SPELL_CHOICE_MAX_RETRIES
+					? `[${MODULE_ID}] ${config.title}: ${stats.expected - stats.created} spell grant(s) for ${actor.name} still did not land after ${attempts} attempts; giving up for this session (add the missing spells by hand, or reload to retry).`
+					: `[${MODULE_ID}] ${config.title}: ${stats.expected - stats.created} spell grant(s) did not land; will retry on the next sheet render.`,
+			);
+		}
+		if (granted) {
+			ui.notifications?.info(
+				`${actor.name}: learned ${granted} ${config.title} spell${granted > 1 ? 's' : ''}.`,
+			);
+		}
+	} finally {
+		classChoiceActive.delete(actor.id);
+	}
+}
+
 // Suppress ONLY the automated base-class grant that fires during a swapped
 // caster's level-up — this is what stops an Invoker of Ether from re-gaining Book
 // of Elements spells every level-up. It is deliberately scoped to the leveling
@@ -1712,6 +2365,10 @@ Hooks.on('preCreateItem', (item, data) => {
 		if (!stored || !Array.isArray(stored.schools)) return true;
 
 		const school = item?.system?.school ?? data?.system?.school;
+		// The class-level pick (Dark Knowledge) is always allowed, even if the stored
+		// subclass set pre-dates it — blocking it here would permanently lose the
+		// grant once classSpellChoiceSync advanced its high-water mark.
+		if (getClassChoiceSchools(actor).includes(school)) return true;
 		if (school && MANAGED_SPELL_SCHOOLS.has(school) && !stored.schools.includes(school)) {
 			console.log(
 				`[${MODULE_ID}] Blocked ${school} spell "${item.name}" during level-up — not among this subclass's chosen schools (${stored.schools.join(', ')}).`,
@@ -1899,6 +2556,15 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] shadowmancer flat-cost correction failed`, error);
 	}
+	// Specter: Rites remove Soul Touched (Undo card, Reclaim Essence, Lingering);
+	// Soul of Suffering asks for the save stat.
+	try {
+		await handleSpecterItemUsed(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Specter item automation failed`, error);
+	}
+	// Engineer turrets: Targeting Matrix marks + Tool Wrench recall.
+	await handleTurretUseItem(item, context);
 }
 
 // Apply every declared on-hit automation to each target the primary attack hit.
@@ -1934,6 +2600,23 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.error(`[${MODULE_ID}] summon pre-activate gate failed`, error);
 	}
+	// Specter Rites: warn (proceed / cancel) when a target isn't Soul Touched by
+	// this Specter. Cancelling here costs nothing (originalActivate never runs).
+	try {
+		if (await riteActivationBlocked(this)) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Rite pre-activate check failed`, error);
+	}
+	// Turret Toolbelt special: confirm (scrap + turret destruction) before the
+	// roll; cancel = no activation. Paid/destroyed after it resolves (see
+	// prepareTurretToolbelt in the Engineer turret section).
+	let turretToolbelt = null;
+	try {
+		turretToolbelt = await prepareTurretToolbelt(this);
+		if (turretToolbelt?.blocked) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] turret toolbelt pre-activate failed`, error);
+	}
 	let marks = [];
 	try {
 		if (this?.actor && isAttackItem(this)) {
@@ -1942,6 +2625,14 @@ async function runWrappedActivate(originalActivate, options = {}) {
 		}
 	} catch (error) {
 		console.error(`[${MODULE_ID}] disadvantage pre-activate failed`, error);
+	}
+	// Targeting Matrix: an attack at a marked target starts at advantage.
+	let matrixMarks = [];
+	try {
+		matrixMarks = collectTargetingMatrixMarks(this);
+		if (matrixMarks.length) options = { ...options, rollMode: (options.rollMode ?? 0) + 1 };
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Targeting Matrix pre-activate failed`, error);
 	}
 	// Tier-cap lift: a summon boost with `uncapsTierLimit` (Empowered Companion —
 	// "ignoring the typical spell tier restrictions") lets the upcast slider run
@@ -2009,6 +2700,38 @@ async function runWrappedActivate(originalActivate, options = {}) {
 				);
 			} catch (error) {
 				console.warn(`[${MODULE_ID}] Could not clear disadvantage mark`, error);
+			}
+		}
+		if (result && matrixMarks.length) {
+			try {
+				await consumeTargetingMatrixMarks(matrixMarks);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not clear Targeting Matrix mark`, error);
+			}
+		}
+		// Rapid Fire (automation.repeatsTimes "int"): each extra shot is its own full
+		// Nimble attack (own roll, hit/miss/crit, target choice) — Nimble only gives
+		// crit/miss to an activation's first damage node, so cloned nodes would roll
+		// flat. Runs the unwrapped activate so no extra confirm/scrap is taken; the
+		// turret is only paid for / destroyed after the last shot. Cancelling a
+		// shot's dialog stops the volley. NPC turrets spend no combatant actions.
+		if (result && turretToolbelt?.shots > 1) {
+			for (let shot = 2; shot <= turretToolbelt.shots; shot += 1) {
+				let again = null;
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					again = await originalActivate.call(this, options);
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] Rapid Fire shot ${shot} failed`, error);
+				}
+				if (!again) break;
+			}
+		}
+		if (result && turretToolbelt?.complete) {
+			try {
+				await turretToolbelt.complete();
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] turret toolbelt completion failed`, error);
 			}
 		}
 		return result;
@@ -2109,6 +2832,25 @@ const COMPANION_PACK = `${MODULE_ID}.blue-codex-companions`;
 const COMPANION_TEMPLATE_FLAG = 'companionTemplate';
 const SUMMON_FLAG = 'summon'; // token flag: provenance of a spawned companion
 const SUMMONS_TRACK_FLAG = 'summons'; // caster-actor flag namespace for unique summons
+
+// Named `maxCount` modes → the ability whose modifier caps the number of live
+// summons (cap = min(<ability> mod, character level), floored at 0). Shared by the
+// pre-activation gate (summonActivationBlocked) and the trigger-spawn cap check
+// (spawnSwarmingShadow) so a new mode only has to be declared once.
+//   minIntOrLevel → Summon Shadow (shadow minions);
+//   minStrOrLevel → Reanimated Soul (undead minions, count = Soul Power dice used,
+//                   itself capped at min(STR, LVL)).
+const SUMMON_COUNT_MODES = {
+	minIntOrLevel: { ability: 'intelligence', noun: 'shadow minion' },
+	minStrOrLevel: { ability: 'strength', noun: 'undead minion' },
+};
+
+// Live summon cap for `summon` on `caster` (Infinity when the flag names no mode).
+function summonCountCap(caster, summon) {
+	const mode = SUMMON_COUNT_MODES[summon?.maxCount];
+	if (!mode) return Infinity;
+	return Math.max(0, Math.min(getAbilityMod(caster, mode.ability), getCharacterLevel(caster)));
+}
 
 // Read a spell's declared summon automation (or null).
 function getItemSummonAutomation(item) {
@@ -2271,9 +3013,25 @@ async function resolveCompanionBaseActor(template) {
 	return Actor.implementation.create(source.toObject(), { keepId: false });
 }
 
+// The actor's token document on `scene` (any scene when omitted: the viewed
+// one first, then the active one, then any). getActiveTokens only sees the
+// viewed canvas, which may not be the scene the actor is on.
+function findActorTokenDoc(actor, scene) {
+	if (!actor) return null;
+	if (actor.token && (!scene || actor.token.parent?.id === scene.id)) return actor.token;
+	const onScene = (sc) => sc?.tokens?.find?.((t) => t.actorId === actor.id && (t.actorLink || t.actor === actor)) ?? null;
+	if (scene) return onScene(scene);
+	const scenes = [canvas?.scene, game.scenes?.active, ...(game.scenes ?? [])].filter(Boolean);
+	for (const sc of scenes) {
+		const found = onScene(sc);
+		if (found) return found;
+	}
+	return null;
+}
+
 // Adjacent to the caster's token, else the scene centre.
 function computeSummonSpawnPosition(actor, scene) {
-	const ownToken = actor?.getActiveTokens?.(true, true)?.[0];
+	const ownToken = findActorTokenDoc(actor, scene);
 	const grid = scene?.grid?.size ?? 100;
 	if (ownToken) return { x: ownToken.x + grid, y: ownToken.y };
 	return {
@@ -2324,10 +3082,37 @@ async function summonActivationBlocked(item) {
 	const actor = item?.actor;
 	if (!(actor instanceof Actor)) return false;
 
+	// Turret Deployed!: a self-contained deploy flow (picker + cap/recast + HP
+	// scaling) that runs entirely here and ALWAYS blocks the normal activation —
+	// the feature's whole job is the deploy, so no generic chat card is needed and
+	// a cancelled picker costs nothing (originalActivate never runs).
+	if (summon.turretDeploy) {
+		try {
+			await handleTurretDeploy(item, actor, summon);
+		} catch (error) {
+			console.error(`[${MODULE_ID}] turret deploy failed`, error);
+		}
+		return true;
+	}
+
 	// 1. combat-only spells cannot be cast outside combat.
 	if (summon.combatOnly && !game.combat?.started) {
 		ui.notifications?.warn(`${item.name} can only be cast during combat.`);
 		return true;
+	}
+
+	// 1b. Auto Deploy!'s free turret (countsTowardCap: false + expireOnCombatEnd)
+	// is deployed automatically on combat start; a manual activation is only the
+	// fallback for when it hasn't gone out yet, so block a second one in the same
+	// combat rather than letting the Engineer stack free turrets.
+	if (summon.countsTowardCap === false && summon.expireOnCombatEnd) {
+		const free = findFreeAutoDeployTurret(actor, summon.template, game.combat?.id ?? null);
+		if (free) {
+			ui.notifications?.warn(
+				`${actor.name} already deployed ${free.name ?? 'the free turret'} this combat.`,
+			);
+			return true;
+		}
 	}
 
 	// 3. recast dismisses: if a live summon of this template exists, remove it
@@ -2349,16 +3134,19 @@ async function summonActivationBlocked(item) {
 		}
 	}
 
-	// 2. maxCount cap = min(INT mod, character level), floored at 0.
-	if (summon.maxCount === 'minIntOrLevel') {
-		const cap = Math.max(0, Math.min(getAbilityMod(actor, 'intelligence'), getCharacterLevel(actor)));
+	// 2. maxCount cap = min(<ability> mod, character level), floored at 0 — see
+	//    SUMMON_COUNT_MODES for the per-mode ability.
+	const countMode = SUMMON_COUNT_MODES[summon.maxCount];
+	if (countMode) {
+		const { noun } = countMode;
+		const cap = summonCountCap(actor, summon);
 		if (cap <= 0) {
-			ui.notifications?.warn(`${actor.name} cannot summon any shadow minions right now.`);
+			ui.notifications?.warn(`${actor.name} cannot summon any ${noun}s right now.`);
 			return true;
 		}
 		const count = findLiveSummons(actor, summon.template).length;
 		if (count >= cap) {
-			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} shadow minion${cap === 1 ? '' : 's'}.`);
+			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} ${noun}${cap === 1 ? '' : 's'}.`);
 			return true;
 		}
 	}
@@ -2513,6 +3301,12 @@ async function handleSummonSpawn(item, context) {
 		return;
 	}
 
+	// Reanimated Soul: several minions at once (one per Soul Power die).
+	if (summon.spawnCount === 'soulPowerDice') {
+		await spawnSoulPowerMinions(item, caster, summon, baseActor, scene);
+		return;
+	}
+
 	const { x, y } = computeSummonSpawnPosition(caster, scene);
 
 	// Mana actually spent = upcast amount, else the base tier cost.
@@ -2523,12 +3317,21 @@ async function handleSummonSpawn(item, context) {
 	const boosts = getSummonFeatureBoosts(summon, caster);
 	const effectiveMana = manaSpent + boosts.bonusMana;
 
-	const extraFlag = summon.chargesFromMana ? { charges: effectiveMana } : null;
+	const extraFlag = {};
+	if (summon.chargesFromMana) extraFlag.charges = effectiveMana;
+	// Auto Deploy!'s rifle "does not count against your turret limit": tag it so
+	// the Turret Deployed! cap counting (findLiveTurrets) skips it. It still expires
+	// on combat end and remains individually dismissable.
+	if (summon.countsTowardCap === false) extraFlag.excludeFromCap = true;
 	const created = await spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extraFlag });
 	if (!created) {
 		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" token.`);
 		return;
 	}
+
+	// Turret threshold/HP + Engineer scaling. Used by Auto Deploy!'s manual
+	// fallback; the Turret Deployed! picker path runs it in spawnTurret.
+	if (summon.hpFromLevel || TURRET_TEMPLATE_SET.has(summon.template)) await applyTurretHp(created, caster);
 
 	// Track unique summons on the caster so future casts can find/dismiss them.
 	if (summon.unique) {
@@ -2575,6 +3378,936 @@ async function handleSummonSpawn(item, context) {
 		content += `<p>School abilities: <strong>${names}</strong>.</p>`;
 	}
 	postSummonChat(caster, content, item?.name);
+}
+
+// ── Engineer turret deployment ───────────────────────────────────────────────
+// Turrets reuse the summon primitives (companion pack, spawn position, dismiss,
+// combat-end cleanup via the SUMMON_FLAG.combatId) but need a picker (the Engineer
+// chooses which known turret to deploy), a cost, a 1/turn limit, level-scaled
+// stats and a damage threshold, so Turret Deployed! runs this dedicated flow
+// instead of the generic single-template spawn. The six turret companions live in
+// the companion pack tagged companionTemplate "turret-<slug>".
+//
+// Resources (all native charge pools, corrected by hand from the sheet):
+//   • Toolbelt scrap — actor pool `toolbelt` (toolbelt.json). Every module spend /
+//     refund goes through spendPoolWithUndo / grantPoolWithUndo (undo card).
+//   • Testing In Progress! — actor pool `testing-in-progress` (1/encounter free
+//     deploy), offered in the picker when it has a charge.
+//   • Optimized Activation — item pool `uses` on the Mechanist feature.
+// The 1/turn limit is a per-combat-turn marker on the Engineer (not a resource);
+// shift-click Turret Deployed! to override it. Master Technician lifts it.
+//
+// Turret token flag (SUMMON_FLAG) extras: threshold (destruction threshold),
+// deployedAt (creation time → "oldest turret" when making room).
+const TURRET_TEMPLATES = [
+	{ template: 'turret-rifle', label: 'Rifle Turret' },
+	{ template: 'turret-flame', label: 'Flame Turret' },
+	{ template: 'turret-rocket', label: 'Rocket Turret' },
+	{ template: 'turret-healing', label: 'Healing Turret' },
+	{ template: 'turret-electro-net', label: 'Electro-Net Turret' },
+	{ template: 'turret-thumper', label: 'Thumper Turret' },
+];
+const TURRET_TEMPLATE_SET = new Set(TURRET_TEMPLATES.map((t) => t.template));
+const TURRET_TEMPLATE_FLAG = 'turretTemplate'; // turret pick features: flags.<module>.turretTemplate
+const TOOLBELT_POOL = 'toolbelt';
+const TESTING_IN_PROGRESS_POOL = 'testing-in-progress';
+const TURRET_DEPLOY_TURN_FLAG = 'turretDeployTurn';
+const TARGETING_MATRIX_FLAG = 'targetingMatrix';
+
+function turretLabel(template) {
+	return TURRET_TEMPLATES.find((t) => t.template === template)?.label ?? 'Turret';
+}
+
+// True when the caster owns a feature with the given identifier (or exact name —
+// the identifier can be empty on some docs). Mirrors getSummonFeatureBoosts' match.
+// Iterates via listEmbeddedItems so it also works on a spawned token's synthetic
+// actor (same discipline as every other item scan in this file).
+function actorOwnsFeature(actor, identifier, name) {
+	return findOwnedFeature(actor, identifier, name) !== null;
+}
+
+// Same match as actorOwnsFeature, but hands back the owned Item so callers can
+// read its automation flags — the feature JSON stays the single source of truth
+// (e.g. Auto Deploy! declares which turret template it deploys).
+function findOwnedFeature(actor, identifier, name) {
+	for (const item of listEmbeddedItems(actor)) {
+		if (item?.type !== 'feature') continue;
+		if (identifier && item.system?.identifier === identifier) return item;
+		if (name && item.name === name) return item;
+	}
+	return null;
+}
+
+// A turret's destruction threshold = the summoner's level, doubled by Mechanist's
+// Extra Plating (L3). Also used as the token's HP so the sheet reads sensibly:
+// the damage guard below keeps HP full on smaller hits and drops it to 0 (and
+// destroys the turret) on a single hit >= threshold.
+function turretHpForCaster(caster) {
+	const level = Math.max(1, getCharacterLevel(caster));
+	return actorOwnsFeature(caster, 'extra-plating', 'Extra Plating') ? level * 2 : level;
+}
+
+// The TokenDocument of a spawned turret, given its (synthetic) actor — null for
+// anything else (world base actors, other summons, characters).
+function getTurretTokenDoc(actor) {
+	const tokenDoc = actor?.token ?? null;
+	const flag = getTokenSummonFlag(tokenDoc);
+	return flag && TURRET_TEMPLATE_SET.has(flag.template) ? tokenDoc : null;
+}
+
+// The Engineer's save DC (10 + KEY, KEY = highest class key stat — Nimble's own
+// `@key` roll-data value). Falls back to INT when roll data is unavailable.
+function engineerSaveDC(caster) {
+	const key = Number(caster?.getRollData?.()?.key);
+	return 10 + (Number.isFinite(key) ? key : getAbilityMod(caster, 'intelligence'));
+}
+
+// Overclocked tier: 1 from level 10 (+INT), 2 from level 16 (+1 die as well).
+function overclockedTier(caster) {
+	if (!actorOwnsFeature(caster, 'overclocked', 'Overclocked')) return 0;
+	const level = getCharacterLevel(caster);
+	if (level >= 16) return 2;
+	return level >= 10 ? 1 : 0;
+}
+
+// Turret automation flags name the stat as "int" (contract) or "intelligence".
+function isIntScaling(value) {
+	return value === 'int' || value === 'intelligence';
+}
+
+// Rewrite a leading "NdF…" formula: replace the die count (diceCount), add dice
+// (extraDice) and append a flat bonus. Non-dice formulas only get the bonus.
+function scaleTurretFormula(formula, { diceCount = null, extraDice = 0, flatBonus = 0 } = {}) {
+	const bonus = flatBonus ? ` ${flatBonus < 0 ? '-' : '+'} ${Math.abs(flatBonus)}` : '';
+	const match = /^\s*(\d*)d(\d+)(.*)$/i.exec(formula);
+	if (!match) return `${formula}${bonus}`;
+	const count = Math.max(1, (diceCount ?? (Number(match[1]) || 1)) + extraDice);
+	return `${count}d${match[2]}${match[3]}${bonus}`;
+}
+
+// Bake the summoning Engineer's numbers into a spawned turret's actions (the
+// turret's own roll data is the NPC's, so @int etc. would read the turret):
+//   automation.diceCount "int" → INT dice; automation.addInt → +INT;
+//   Overclocked (1) → +INT, Overclocked (2) → +1 die, on every damage/healing node;
+//   savingThrow nodes → saveDC = Engineer's DC;
+//   automation.repeatsTimes "int" → name "(×INT)" + text; the shots themselves
+//   are repeated activations in runWrappedActivate (see prepareTurretToolbelt).
+// Same patch-after-creation technique as patchSummonFeatureBoosts. Each patched
+// action gets a one-line "[A] Scaled to …" summary prepended to its description.
+async function patchTurretScaling(tokenDoc, caster) {
+	try {
+		const synth = tokenDoc?.actor;
+		if (!synth || !(caster instanceof Actor)) return;
+		const int = getAbilityMod(caster, 'intelligence');
+		const intCount = Math.max(1, int);
+		const tier = overclockedTier(caster);
+		const dc = engineerSaveDC(caster);
+		const updates = [];
+		for (const item of listEmbeddedItems(synth)) {
+			const activation = item.system?.activation;
+			if (!activation) continue;
+			const auto = {
+				diceCount: getItemAutomationFlag(item, 'diceCount'),
+				addInt: getItemAutomationFlag(item, 'addInt'),
+				repeatsTimes: getItemAutomationFlag(item, 'repeatsTimes'),
+			};
+			const effects = foundry.utils.deepClone(activation.effects ?? []);
+			let changed = false;
+			let shownFormula = null;
+			let hasSave = false;
+			const visit = (nodes) => {
+				for (const node of Array.isArray(nodes) ? nodes : []) {
+					if (!node || typeof node !== 'object') continue;
+					if ((node.type === 'damage' || node.type === 'healing') && typeof node.formula === 'string' && node.formula) {
+						const next = scaleTurretFormula(node.formula, {
+							diceCount: isIntScaling(auto.diceCount) ? intCount : null,
+							extraDice: tier >= 2 ? 1 : 0,
+							flatBonus: (auto.addInt === true ? int : 0) + (tier >= 1 ? int : 0),
+						});
+						if (next !== node.formula) {
+							node.formula = next;
+							changed = true;
+						}
+						shownFormula ??= node.formula;
+					}
+					if (node.type === 'savingThrow') {
+						node.saveDC = dc;
+						hasSave = true;
+						changed = true;
+					}
+					for (const children of Object.values(node.on ?? {})) visit(children);
+					visit(node.sharedRolls);
+				}
+			};
+			visit(effects);
+			const repeats = isIntScaling(auto.repeatsTimes) ? intCount : 0;
+			if (!changed && !repeats) continue;
+			const bits = [];
+			if (shownFormula) bits.push(escapeHtml(shownFormula));
+			if (hasSave) bits.push(`save DC ${dc}`);
+			if (repeats) bits.push(`fires ${repeats} times (one attack roll each)`);
+			const update = { _id: item.id ?? item._id, 'system.activation.effects': effects };
+			update['system.description'] =
+				`<p><em>[A] Scaled to ${escapeHtml(caster.name)} (INT ${int}${tier ? `, Overclocked ${tier}` : ''}): ${bits.join(' · ')}.</em></p>` +
+				(item.system?.description ?? '');
+			if (repeats) update.name = `${item.name} (×${repeats})`;
+			updates.push(update);
+		}
+		if (updates.length) await synth.updateEmbeddedDocuments('Item', updates);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not scale turret actions`, error);
+	}
+}
+
+// Finalise a freshly spawned turret token: record its destruction threshold and
+// deploy time on the token flag, set HP = threshold (sheet cue for the damage
+// guard) and bake in the Engineer's scaling. Called by every turret spawn path
+// (picker deploy, Auto Deploy! trigger, manual Auto Deploy! via handleSummonSpawn).
+async function applyTurretHp(tokenDoc, caster) {
+	try {
+		const hp = turretHpForCaster(caster);
+		const prior = getTokenSummonFlag(tokenDoc) ?? {};
+		await tokenDoc.update({
+			[`flags.${MODULE_ID}.${SUMMON_FLAG}.threshold`]: hp,
+			[`flags.${MODULE_ID}.${SUMMON_FLAG}.deployedAt`]: prior.deployedAt ?? Date.now(),
+		});
+		const synth = tokenDoc?.actor;
+		if (synth) {
+			await synth.update(
+				{ 'system.attributes.hp.max': hp, 'system.attributes.hp.value': hp },
+				{ [MODULE_ID]: { turretSetup: true } },
+			);
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not set turret HP`, error);
+	}
+	await patchTurretScaling(tokenDoc, caster);
+}
+
+// The turret templates a caster can deploy: Rifle (Mechanical Mayhem 1) plus one
+// per owned turret-pick feature (flags.<module>.turretTemplate, picked at
+// L7/L11/L15). Characters from before the pick group existed own no picks: from
+// level 7 they are offered every turret, with a one-time notice.
+const turretFallbackNoticed = new Set();
+function getKnownTurretTemplates(caster) {
+	const known = new Set(['turret-rifle']);
+	for (const item of listEmbeddedItems(caster)) {
+		const template = item?.flags?.[MODULE_ID]?.[TURRET_TEMPLATE_FLAG];
+		if (typeof template === 'string' && TURRET_TEMPLATE_SET.has(template)) known.add(template);
+	}
+	if (known.size === 1 && getCharacterLevel(caster) >= 7) {
+		if (!turretFallbackNoticed.has(caster.uuid)) {
+			turretFallbackNoticed.add(caster.uuid);
+			const text = `${caster.name} has no turret picks on the sheet (Mechanical Mayhem 2–4) — offering every turret. Add the chosen turret features from the class-features compendium to narrow the list.`;
+			console.info(`[${MODULE_ID}] ${text}`);
+			ui.notifications?.info(text);
+		}
+		return TURRET_TEMPLATES;
+	}
+	return TURRET_TEMPLATES.filter((t) => known.has(t.template));
+}
+
+// Every live turret this caster has out, across all six templates, that counts
+// toward the Turret Deployed! cap, OLDEST FIRST (deployedAt). Excludes Auto
+// Deploy!'s free rifle (tagged `excludeFromCap` at spawn) so a picker deploy never
+// dismisses it.
+function findLiveTurrets(caster) {
+	const out = [];
+	for (const { template } of TURRET_TEMPLATES) {
+		for (const token of findLiveSummons(caster, template)) {
+			if (getTokenSummonFlag(token)?.excludeFromCap === true) continue;
+			out.push(token);
+		}
+	}
+	const deployedAt = (token) => Number(getTokenSummonFlag(token)?.deployedAt) || 0;
+	return out.sort((a, b) => deployedAt(a) - deployedAt(b));
+}
+
+// "combatId:round:turn" of a started combat, else null (no 1/turn limit outside
+// combat).
+function combatTurnKey(combat) {
+	return combat?.started ? `${combat.id}:${combat.round}:${combat.turn}` : null;
+}
+
+function isShiftHeld() {
+	try {
+		return Boolean(game.keyboard?.isModifierActive?.('Shift'));
+	} catch {
+		return false;
+	}
+}
+
+// Present the "which turret / how to pay" picker; returns { template, useFree }
+// or null if cancelled. Skipped (auto-answer) when only Rifle is known and no
+// free deploy is available.
+async function promptTurretChoice(caster, known, { scrap = null, freeAvailable = false } = {}) {
+	if (known.length === 1 && !freeAvailable) return { template: known[0].template, useFree: false };
+	const rows = known
+		.map(
+			(t, i) => `
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="blue-codex-turret" value="${escapeHtml(t.template)}" ${i === 0 ? 'checked' : ''}>
+				<span>${escapeHtml(t.label)}</span>
+			</label>`,
+		)
+		.join('');
+	const scrapText = scrap ? `1 Toolbelt scrap (${scrap.current}/${scrap.max} left)` : '1 Toolbelt scrap (no counter found — deduct by hand)';
+	const costRows = freeAvailable
+		? `<p><strong>Cost:</strong></p>
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="blue-codex-turret-cost" value="free" checked>
+				<span>Testing In Progress! — free (1/encounter)</span>
+			</label>
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="blue-codex-turret-cost" value="scrap" ${scrap && scrap.current > 0 ? '' : 'disabled'}>
+				<span>${escapeHtml(scrapText)}</span>
+			</label>`
+		: `<p><strong>Cost:</strong> ${escapeHtml(scrapText)}</p>`;
+	return foundry.applications.api.DialogV2.wait({
+		window: { title: `${caster.name} — Deploy Turret` },
+		content: `<form class="blue-codex-turret-form">
+				<p>Choose which turret to deploy in an adjacent space:</p>
+				<div class="blue-codex-turret-list">${rows}</div>
+				${costRows}
+			</form>
+			<style>
+				.blue-codex-turret-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+			</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Deploy',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.closest?.('.application') ?? button?.form ?? document;
+					const template = root.querySelector('input[name="blue-codex-turret"]:checked')?.value ?? null;
+					const cost = root.querySelector('input[name="blue-codex-turret-cost"]:checked')?.value ?? 'scrap';
+					return template ? { template, useFree: cost === 'free' } : null;
+				},
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+}
+
+// Spawn a single turret token of `template` with level-scaled HP/stats and
+// provenance. Mirrors handleSummonSpawn's token construction but for a
+// caller-chosen template.
+async function spawnTurret(caster, template, summon) {
+	// The Engineer's own scene (the viewing client may be looking elsewhere).
+	const scene = findActorTokenDoc(caster)?.parent ?? canvas?.scene;
+	if (!scene) {
+		console.warn(`[${MODULE_ID}] No active scene to deploy "${template}" onto.`);
+		return null;
+	}
+	const baseActor = await resolveCompanionBaseActor(template);
+	if (!baseActor) {
+		console.warn(`[${MODULE_ID}] Could not resolve turret template "${template}".`);
+		return null;
+	}
+	const { x, y } = computeSummonSpawnPosition(caster, scene);
+	const created = await spawnSummonedToken({
+		caster,
+		summon: { ...summon, template },
+		baseActor,
+		scene,
+		x,
+		y,
+		extraFlag: { deployedAt: Date.now() },
+	});
+	if (!created) {
+		console.warn(`[${MODULE_ID}] Failed to deploy "${template}" token.`);
+		return null;
+	}
+	await applyTurretHp(created, caster);
+	return created;
+}
+
+// Turret Deployed! flow: combat check → 1/turn check (shift-click overrides;
+// Master Technician lifts it) → picker (+ free-deploy choice) → pay (undo card) →
+// make room under the cap (oldest first; "deploying another destroys the previous
+// one") → spawn. Mechanist's Master Technician raises the cap from 1 to 2. A
+// cancelled picker deploys nothing and costs nothing.
+async function handleTurretDeploy(item, caster, summon) {
+	if (summon.combatOnly && !game.combat?.started) {
+		ui.notifications?.warn(`${item.name} can only be used during combat.`);
+		return;
+	}
+	const masterTechnician = actorOwnsFeature(caster, 'master-technician', 'Master Technician');
+	const turnKey = combatTurnKey(game.combat);
+	if (!masterTechnician && turnKey && !isShiftHeld() && caster.getFlag?.(MODULE_ID, TURRET_DEPLOY_TURN_FLAG) === turnKey) {
+		ui.notifications?.warn(
+			`${caster.name} already deployed a turret this turn (Turret Deployed! is 1/turn). Shift-click the action to deploy anyway.`,
+		);
+		return;
+	}
+
+	const scrap = getChargePoolEntry(caster, TOOLBELT_POOL);
+	const freeAvailable = (getChargePoolEntry(caster, TESTING_IN_PROGRESS_POOL)?.current ?? 0) > 0;
+	if (scrap && scrap.current < 1 && !freeAvailable) {
+		ui.notifications?.warn(
+			`${caster.name} has no Toolbelt scrap left. If that is wrong, click the Toolbelt counter on the sheet to fix it.`,
+		);
+		return;
+	}
+
+	const known = getKnownTurretTemplates(caster);
+	const choice = await promptTurretChoice(caster, known, { scrap, freeAvailable });
+	const template = choice?.template;
+	if (!template || !TURRET_TEMPLATE_SET.has(template)) return; // cancelled — free
+	const label = turretLabel(template);
+
+	// Pay first (each spend posts its own undo card); a refused spend deploys nothing.
+	if (choice.useFree) {
+		const paid = await spendPoolWithUndo(caster, TESTING_IN_PROGRESS_POOL, 1, {
+			label: 'Testing In Progress! free deploy',
+			reason: `deploying a ${label}`,
+		});
+		if (!paid) return;
+	} else if (scrap) {
+		const paid = await spendPoolWithUndo(caster, TOOLBELT_POOL, 1, {
+			label: 'Toolbelt scrap',
+			reason: `Turret Deployed!: ${label}`,
+		});
+		if (!paid) return;
+	} else {
+		ui.notifications?.warn(`${caster.name} has no Toolbelt counter on the sheet — deduct the scrap by hand.`);
+	}
+
+	// Cap: base maxCount (1), raised to 2 by Master Technician. Make room by
+	// dismissing the OLDEST live turret(s) so the new one fits under the cap.
+	let cap = Number(summon.maxCount) || 1;
+	if (masterTechnician) cap = Math.max(cap, 2);
+	const live = findLiveTurrets(caster);
+	const overflow = live.length - (cap - 1);
+	for (let i = 0; i < overflow && i < live.length; i += 1) {
+		// eslint-disable-next-line no-await-in-loop
+		await removeTurretToken(live[i], caster);
+	}
+
+	const created = await spawnTurret(caster, template, summon);
+	if (!created) {
+		ui.notifications?.warn(`Deploying the ${label} failed — use Undo on the cost card to get the resource back.`);
+		return;
+	}
+	if (turnKey) {
+		try {
+			await caster.setFlag(MODULE_ID, TURRET_DEPLOY_TURN_FLAG, turnKey);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not record the turret 1/turn marker`, error);
+		}
+	}
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} deploys a <strong>${escapeHtml(label)}</strong>. It is destroyed by a single hit of <strong>${turretHpForCaster(caster)}+</strong> damage.</p>`,
+		item?.name,
+	);
+}
+
+// Delete a turret token with GM authority (players normally lack TOKEN_DELETE).
+async function removeTurretToken(tokenDoc, caster, reason) {
+	if (!tokenDoc) return;
+	if (game.user?.isGM) {
+		await dismissSummon(tokenDoc, { summonerActor: caster, template: getTokenSummonFlag(tokenDoc)?.template, reason });
+		return;
+	}
+	await runAsGM('dismissTurret', { tokenUuid: tokenDoc.uuid, reason: reason ?? '' });
+}
+
+// Also used for Reanimated Soul minions: any summoned token (turret or not)
+// whose owner or summoner's owner asked for its removal.
+registerGMRelayOp('dismissTurret', async ({ tokenUuid, reason }, { user } = {}) => {
+	const tokenDoc = tokenUuid ? fromUuidSync(tokenUuid) : null;
+	if (!tokenDoc) return;
+	if (!getTokenSummonFlag(tokenDoc)) return relayDenied('dismissTurret', user, `${tokenDoc.name} (not a summon)`);
+	if (!userMayActForSummon(user, tokenDoc)) return relayDenied('dismissTurret', user, tokenDoc.name);
+	await dismissSummon(tokenDoc, { reason: reason || undefined });
+});
+
+// Undo of a destroyed turret: recreate the token exactly as it was.
+registerUndoHandler('restoreTurretToken', async ({ sceneId, tokenData }) => {
+	const scene = game.scenes?.get(sceneId);
+	if (!scene || !tokenData) return false;
+	if (tokenData._id && scene.tokens?.get(tokenData._id)) return 'The turret is still on the scene.';
+	await scene.createEmbeddedDocuments('Token', [tokenData], { keepId: true });
+	return 'Turret restored.';
+});
+
+// ── Turret Toolbelt specials (turret NPC items with automation.turretToolbelt) ─
+// "2 Actions and 1 Toolbelt scrap … The turret is destroyed afterwards." Runs in
+// the activate wrap: a confirm dialog BEFORE the roll (cancel = no activation),
+// then, once the activation resolved, the scrap spend (undo card on the
+// Engineer) and the turret's removal. Mechanist's Optimized Activation (item pool
+// `uses`) keeps the turret; further turrets activated in the same combat turn
+// ride along for free ("activate all active turrets' abilities").
+const optimizedActivationTurns = new Map(); // summoner uuid → turn key of the last Optimized Activation
+
+async function prepareTurretToolbelt(item) {
+	if (getItemAutomationFlag(item, 'turretToolbelt') !== true) return null;
+	const tokenDoc = getTurretTokenDoc(item?.actor);
+	if (!tokenDoc) return null; // world base actor / not a spawned turret — no automation
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	if (!summoner) {
+		ui.notifications?.warn(
+			`Could not find the Engineer who deployed ${tokenDoc.name} — spend the scrap and remove the turret by hand.`,
+		);
+		return null;
+	}
+	const scrap = getChargePoolEntry(summoner, TOOLBELT_POOL);
+	// Ride-along is scoped to one combat turn; outside combat there is no turn to
+	// share, so every activation pays (and Optimized Activation arms nothing).
+	const turnKey = combatTurnKey(game.combat);
+	const rideAlong = !!turnKey && optimizedActivationTurns.get(summoner.uuid) === turnKey;
+	const oaFeature = findOwnedFeature(summoner, 'optimized-activation', 'Optimized Activation');
+	const oaUses = oaFeature ? getChargePoolEntry(summoner, 'uses', { item: oaFeature }) : null;
+	const hasScrap = !scrap || scrap.current >= 1;
+
+	const buttons = [];
+	if (hasScrap) buttons.push({ action: 'destroy', label: 'Spend 1 scrap, destroy turret', default: true });
+	if (hasScrap && oaUses && oaUses.current > 0) {
+		buttons.push({ action: 'optimized', label: 'Optimized Activation (1 scrap + 1/Safe Rest use, turret stays)' });
+	}
+	if (rideAlong) buttons.push({ action: 'rideAlong', label: "Part of this turn's Optimized Activation (free, turret stays)" });
+	if (!buttons.length) {
+		ui.notifications?.warn(
+			`${summoner.name} has no Toolbelt scrap left. If that is wrong, click the Toolbelt counter on the sheet to fix it.`,
+		);
+		return { blocked: true };
+	}
+	buttons.push({ action: 'cancel', label: 'Cancel' });
+	const scrapText = scrap ? `${scrap.current}/${scrap.max} left` : 'no counter found — deduct it by hand';
+	const mode = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${tokenDoc.name} — ${item.name}` },
+		content: `<p>Using <strong>${escapeHtml(item.name)}</strong> spends <strong>1 Toolbelt scrap</strong> from <strong>${escapeHtml(summoner.name)}</strong> (${escapeHtml(scrapText)}) and destroys <strong>${escapeHtml(tokenDoc.name)}</strong> afterwards.</p>`,
+		buttons,
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	if (!mode || mode === 'cancel') return { blocked: true };
+
+	const shots = isIntScaling(getItemAutomationFlag(item, 'repeatsTimes'))
+		? Math.max(1, getAbilityMod(summoner, 'intelligence'))
+		: 1;
+	return {
+		blocked: false,
+		shots,
+		complete: async () => {
+			const reason = `${item.name} (${tokenDoc.name})`;
+			if (mode === 'rideAlong') return;
+			if (mode === 'optimized') {
+				await spendPoolWithUndo(summoner, 'uses', 1, { item: oaFeature, label: 'Optimized Activation use', reason });
+				if (turnKey) optimizedActivationTurns.set(summoner.uuid, turnKey);
+			}
+			if (scrap) await spendPoolWithUndo(summoner, TOOLBELT_POOL, 1, { label: 'Toolbelt scrap', reason });
+			if (mode === 'destroy') {
+				await removeTurretToken(
+					tokenDoc,
+					summoner,
+					`<p><strong>${escapeHtml(tokenDoc.name)}</strong> is destroyed after its Toolbelt special.</p>`,
+				);
+			}
+		},
+	};
+}
+
+// ── Turret damage threshold ──────────────────────────────────────────────────
+// "Destroyed when it takes one instance of damage equal to LVL" (2×LVL with Extra
+// Plating). HP is kept at the threshold: a smaller hit is ignored (HP stays
+// full), a big enough hit drops HP to 0 and removes the token afterwards, with an
+// Undo card that recreates it. preUpdateActor only fires on the client that
+// applies the damage, so this runs there (removal is GM-relayed).
+const pendingTurretDestroy = new Map(); // token uuid → { damage, threshold, tokenData }
+
+Hooks.on('preUpdateActor', (actor, changes, options) => {
+	try {
+		if (options?.[MODULE_ID]?.turretSetup) return;
+		const tokenDoc = getTurretTokenDoc(actor);
+		if (!tokenDoc) return;
+		const threshold = Number(getTokenSummonFlag(tokenDoc)?.threshold) || 0;
+		if (threshold <= 0) return;
+		// One hit = the HP drop plus whatever temp HP absorbed of it.
+		const next = foundry.utils.getProperty(changes, 'system.attributes.hp.value');
+		const nextTemp = foundry.utils.getProperty(changes, 'system.attributes.hp.temp');
+		if (typeof next !== 'number' && typeof nextTemp !== 'number') return;
+		const current = Number(actor.system?.attributes?.hp?.value) || 0;
+		const currentTemp = Number(actor.system?.attributes?.hp?.temp) || 0;
+		const hpDrop = typeof next === 'number' ? Math.max(0, current - next) : 0;
+		const tempDrop = typeof nextTemp === 'number' ? Math.max(0, currentTemp - nextTemp) : 0;
+		const damage = hpDrop + tempDrop;
+		if (damage <= 0) return; // healing / manual raise
+		if (damage >= threshold) {
+			foundry.utils.setProperty(changes, 'system.attributes.hp.value', 0);
+			pendingTurretDestroy.set(tokenDoc.uuid, { damage, threshold, tokenData: tokenDoc.toObject() });
+			return;
+		}
+		// Too small: the hit is ignored entirely (HP and temp HP stay).
+		if (typeof next === 'number') foundry.utils.setProperty(changes, 'system.attributes.hp.value', current);
+		if (typeof nextTemp === 'number') foundry.utils.setProperty(changes, 'system.attributes.hp.temp', currentTemp);
+		postSummonChat(
+			resolveSummonerFromToken(tokenDoc),
+			`<p><strong>${escapeHtml(tokenDoc.name)}</strong> shrugs off ${damage} damage — only a single hit of <strong>${threshold}+</strong> destroys it.</p>`,
+		);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] turret damage guard failed`, error);
+	}
+});
+
+Hooks.on('updateActor', (actor, _changes, _options, userId) => {
+	if (userId !== game.user?.id) return;
+	const tokenDoc = getTurretTokenDoc(actor);
+	const pending = tokenDoc ? pendingTurretDestroy.get(tokenDoc.uuid) : null;
+	if (!pending) return;
+	pendingTurretDestroy.delete(tokenDoc.uuid);
+	void (async () => {
+		const summoner = resolveSummonerFromToken(tokenDoc);
+		const sceneId = tokenDoc.parent?.id ?? null;
+		await removeTurretToken(tokenDoc, summoner);
+		await postUndoCard({
+			actor: summoner,
+			text: `<p><strong>${escapeHtml(tokenDoc.name)}</strong> takes ${pending.damage} damage (threshold ${pending.threshold}) and is destroyed.</p>`,
+			undoAction: { type: 'restoreTurretToken', data: { sceneId, tokenData: pending.tokenData } },
+		});
+	})().catch((error) => console.warn(`[${MODULE_ID}] turret destruction failed`, error));
+});
+
+// ── Targeting Matrix (Mechanist L7) & Tool Wrench recall ─────────────────────
+// Targeting Matrix: "When a turret deals damage to an enemy, the next attack
+// against it has advantage." A turret's damaging action that doesn't miss drops
+// a visible, deletable "Targeting Matrix" ActiveEffect on each non-friendly
+// target; the next attack roll (by anyone) targeting a marked creature is
+// pre-set to advantage in the roll dialog and consumes the mark(s).
+// Tool Wrench: using it while targeting your own turret offers to undeploy the
+// turret and regain its Toolbelt scrap (undo card).
+function itemDealsDamage(item) {
+	const hasDamage = (nodes) =>
+		(Array.isArray(nodes) ? nodes : []).some(
+			(node) =>
+				node?.type === 'damage' ||
+				Object.values(node?.on ?? {}).some(hasDamage) ||
+				hasDamage(node?.sharedRolls),
+		);
+	return hasDamage(item?.system?.activation?.effects);
+}
+
+function getTargetingMatrixMarks(actor) {
+	return [...(actor?.effects ?? [])].filter((effect) => effect?.getFlag?.(MODULE_ID, TARGETING_MATRIX_FLAG) === true);
+}
+
+async function createTargetingMatrixMark(actor, sourceName) {
+	if (!actor || getTargetingMatrixMarks(actor).length) return;
+	await actor.createEmbeddedDocuments('ActiveEffect', [
+		{
+			name: 'Targeting Matrix',
+			img: 'icons/svg/target.svg',
+			description: `<p>The next attack against this creature has advantage (Targeting Matrix${sourceName ? `, from ${escapeHtml(sourceName)}` : ''}). Consumed by the next attack roll that targets it; delete it by hand if it was not used.</p>`,
+			disabled: false,
+			transfer: false,
+			flags: { [MODULE_ID]: { [TARGETING_MATRIX_FLAG]: true } },
+		},
+	]);
+}
+
+// Only an owner of the turret (or of its Engineer) may mark on its behalf.
+registerGMRelayOp('targetingMatrixMark', async ({ actorUuid, sourceName, turretTokenUuid }, { user } = {}) => {
+	const turretToken = turretTokenUuid ? fromUuidSync(turretTokenUuid) : null;
+	if (!getTurretTokenDoc(turretToken?.actor) || !userMayActForSummon(user, turretToken)) {
+		return relayDenied('targetingMatrixMark', user, turretToken?.name ?? 'an unknown turret');
+	}
+	return createTargetingMatrixMark(resolveActorByUuid(actorUuid), sourceName);
+});
+// Anyone's attack consumes a Targeting Matrix mark, so the relay deletes only
+// effects that ARE such marks (or that the requester owns anyway).
+registerGMRelayOp('deleteEffects', async ({ effectUuids }, { user } = {}) => {
+	for (const uuid of effectUuids ?? []) {
+		try {
+			const effect = fromUuidSync(uuid);
+			if (!effect) continue;
+			const allowed =
+				user?.isGM ||
+				effect.getFlag?.(MODULE_ID, TARGETING_MATRIX_FLAG) === true ||
+				effect.testUserPermission?.(user, 'OWNER');
+			if (!allowed) {
+				relayDenied('deleteEffects', user, effect.name);
+				continue;
+			}
+			// eslint-disable-next-line no-await-in-loop
+			await effect.delete();
+		} catch {
+			/* already gone */
+		}
+	}
+});
+
+async function applyTargetingMatrix(item, context) {
+	const tokenDoc = getTurretTokenDoc(item?.actor);
+	if (!tokenDoc || context?.isMiss === true || !itemDealsDamage(item)) return;
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	if (!summoner || !actorOwnsFeature(summoner, 'targeting-matrix', 'Targeting Matrix')) return;
+	for (const token of context?.targets ?? []) {
+		const target = token?.actor ?? token?.document?.actor;
+		const disposition = token?.document?.disposition ?? token?.disposition;
+		if (!target || target === summoner || disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) continue;
+		if (getTargetingMatrixMarks(target).length) continue;
+		// eslint-disable-next-line no-await-in-loop
+		if (target.isOwner) await createTargetingMatrixMark(target, tokenDoc.name);
+		else {
+			// eslint-disable-next-line no-await-in-loop
+			await runAsGM('targetingMatrixMark', {
+				actorUuid: target.uuid,
+				sourceName: tokenDoc.name,
+				turretTokenUuid: tokenDoc.uuid,
+			});
+		}
+	}
+}
+
+// activate-wrap helper: the Targeting Matrix marks on this user's current
+// targets when `item` is a to-hit attack (empty otherwise).
+function collectTargetingMatrixMarks(item) {
+	if (!item?.actor || !isAttackItem(item)) return [];
+	const marks = [];
+	for (const token of game.user?.targets ?? []) marks.push(...getTargetingMatrixMarks(token?.actor));
+	return marks;
+}
+
+async function consumeTargetingMatrixMarks(marks) {
+	const own = marks.filter((mark) => mark.isOwner);
+	const relayed = marks.filter((mark) => !mark.isOwner).map((mark) => mark.uuid);
+	for (const mark of own) {
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			await mark.delete();
+		} catch {
+			/* already gone */
+		}
+	}
+	if (relayed.length) await runAsGM('deleteEffects', { effectUuids: relayed });
+}
+
+// The wrench weapon itself (the damaging `tool-wrench` object), not the gadget
+// feature that grants it; any item can opt in with automation.turretRecall.
+function isToolWrench(item) {
+	if (getItemAutomationFlag(item, 'turretRecall') === true) return true;
+	return item?.system?.identifier === 'tool-wrench' && item?.type !== 'feature' && itemDealsDamage(item);
+}
+
+// The recall refunds the scrap the wrench's own chargeConsumer took (net 0), so
+// it must know whether Nimble actually charged it: an unequipped object's rules
+// are off, and the system's resource-spending automation can be disabled. Nimble
+// emits `<sys>.chargePool.consumed` after persisting a consumption (async, from
+// its own useItem listener) — record when the wrench was charged.
+const toolWrenchChargedAt = new Map(); // item uuid → Date.now() of the last charge
+
+function onChargePoolConsumed(payload) {
+	const item = payload?.item;
+	if (!item?.uuid || !isToolWrench(item)) return;
+	const charged = (payload?.consumption ?? []).some((entry) => (Number(entry?.cost) || 0) > 0);
+	if (charged) toolWrenchChargedAt.set(item.uuid, Date.now());
+}
+Hooks.once('init', () => Hooks.on(`${game.system?.id ?? 'nimble'}.chargePool.consumed`, onChargePoolConsumed));
+
+function isResourceSpendingAutomationOn() {
+	try {
+		const value = game.settings?.get(game.system?.id ?? 'nimble', 'automation.resourceSpending');
+		return value === undefined ? true : Boolean(value);
+	} catch {
+		return true;
+	}
+}
+
+// Wait (briefly) for the wrench's consumption record from this use.
+async function toolWrenchWasCharged(item, since) {
+	if (!isResourceSpendingAutomationOn()) return false;
+	for (let waited = 0; waited <= 2000; waited += 100) {
+		if ((toolWrenchChargedAt.get(item.uuid) ?? 0) >= since) return true;
+		// eslint-disable-next-line no-await-in-loop
+		await new Promise((resolve) => setTimeout(resolve, 100));
+	}
+	return false;
+}
+
+async function handleToolWrenchRecall(item, context) {
+	if (!isToolWrench(item)) return;
+	const actor = item?.actor;
+	if (!(actor instanceof Actor)) return;
+	const usedAt = Date.now() - 1000;
+	for (const token of context?.targets ?? []) {
+		const tokenDoc = token?.document ?? token;
+		const flag = getTokenSummonFlag(tokenDoc);
+		if (!flag || !TURRET_TEMPLATE_SET.has(flag.template) || flag.summonerActorUuid !== actor.uuid) continue;
+		// eslint-disable-next-line no-await-in-loop
+		const confirmed = await foundry.applications.api.DialogV2.confirm({
+			window: { title: `${item.name} — Recall Turret` },
+			content: `<p>Undeploy <strong>${escapeHtml(tokenDoc.name)}</strong> and regain its Toolbelt scrap?</p>`,
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (!confirmed) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await removeTurretToken(tokenDoc, actor, `<p><strong>${escapeHtml(tokenDoc.name)}</strong> is recalled.</p>`);
+		// Refund only what this use actually cost (and only once per use).
+		// eslint-disable-next-line no-await-in-loop
+		if (await toolWrenchWasCharged(item, usedAt)) {
+			toolWrenchChargedAt.delete(item.uuid);
+			// eslint-disable-next-line no-await-in-loop
+			await grantPoolWithUndo(actor, TOOLBELT_POOL, 1, { label: 'Toolbelt scrap', reason: `recalled ${tokenDoc.name}` });
+		} else {
+			postSummonChat(
+				actor,
+				`<p>${escapeHtml(actor.name)} recalls <strong>${escapeHtml(tokenDoc.name)}</strong>. No Toolbelt scrap was charged for this ${escapeHtml(item.name)} use (item unequipped or Nimble's resource spending off), so none is refunded — adjust the Toolbelt counter on the sheet if needed.</p>`,
+				item.name,
+			);
+		}
+	}
+}
+
+// useItem entry point for the turret section (called from onItemUsed).
+async function handleTurretUseItem(item, context) {
+	try {
+		await applyTargetingMatrix(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Targeting Matrix failed`, error);
+	}
+	try {
+		await handleToolWrenchRecall(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Tool Wrench recall failed`, error);
+	}
+}
+
+// ── Auto Deploy! (Engineer L7) ───────────────────────────────────────────────
+// "When you roll initiative, you automatically deploy a Rifle Turret. This does
+// not count against your turret limit and does not cost a Toolbelt scrap."
+// The turret is spawned by the module on combat start (and when an Engineer is
+// added to an already-running combat) instead of on the individual initiative
+// roll: Nimble rolls initiative for the whole party at once, so combat start is
+// the single moment every Engineer's rifle should appear.
+//
+// Everything about WHAT gets deployed (template, HP scaling, combat expiry) is
+// read from the owned feature item's automation flag, so auto-deploy.json stays
+// the single source of truth — this code only supplies the trigger.
+const AUTO_DEPLOY_IDENTIFIER = 'auto-deploy';
+const AUTO_DEPLOY_NAME = 'Auto Deploy!';
+
+// The free rifle is tagged { excludeFromCap, combatId } at spawn. Both the
+// trigger and a manual activation look for that exact tag before deploying, so
+// the turret can never be put out twice in the same combat (double `combatStart`
+// hooks, a re-added combatant, or the player clicking the feature afterwards).
+function findFreeAutoDeployTurret(caster, template, combatId) {
+	if (!combatId || !template) return null;
+	for (const token of findLiveSummons(caster, template)) {
+		const flag = getTokenSummonFlag(token);
+		if (flag?.excludeFromCap === true && flag.combatId === combatId) return token;
+	}
+	return null;
+}
+
+// Only one client may create tokens. Prefer the designated active GM; fall back
+// to any GM when that API is unavailable (mirrors onDeleteCombat's gate).
+function isActingGM() {
+	return game.users?.activeGM ? game.users.activeGM.isSelf : Boolean(game.user?.isGM);
+}
+
+// Deploy one combatant's free rifle turret, if it owns Auto Deploy! and hasn't
+// already got this combat's turret out. Silent no-op for everyone else.
+async function autoDeployForCombatant(combatant, combat) {
+	const combatId = combat?.id;
+	const actor = combatant?.actor;
+	if (!combatId || !(actor instanceof Actor)) return;
+	if (!actorOwnsFeature(actor, AUTO_DEPLOY_IDENTIFIER, AUTO_DEPLOY_NAME)) return;
+
+	const feature = findOwnedFeature(actor, AUTO_DEPLOY_IDENTIFIER, AUTO_DEPLOY_NAME);
+	const summon = getItemSummonAutomation(feature);
+	if (!summon?.template) return;
+
+	// Spawn on the COMBAT's scene, next to the combatant's token — not on whatever
+	// scene the acting GM happens to be viewing.
+	const tokenDoc = combatant.token ?? null;
+	const scene = tokenDoc?.parent ?? combat.scene ?? null;
+	if (!tokenDoc || !scene) return;
+
+	// Already out for this combat (trigger ran twice, or the player activated the
+	// feature manually first) → nothing to do.
+	if (findFreeAutoDeployTurret(actor, summon.template, combatId)) return;
+
+	const baseActor = await resolveCompanionBaseActor(summon.template);
+	if (!baseActor) {
+		console.warn(`[${MODULE_ID}] Auto Deploy!: could not resolve turret template "${summon.template}".`);
+		return;
+	}
+
+	// Position from the combatant's own token (getActiveTokens only sees the
+	// viewed canvas, which may be another scene).
+	const grid = scene.grid?.size ?? 100;
+	const x = tokenDoc.x + grid;
+	const y = tokenDoc.y;
+	// combatId is pinned explicitly rather than left to spawnSummonedToken's
+	// `game.combat` read: the combat that just started is not necessarily the
+	// viewing client's active combat.
+	const created = await spawnSummonedToken({
+		caster: actor,
+		summon,
+		baseActor,
+		scene,
+		x,
+		y,
+		extraFlag: { excludeFromCap: true, combatId, deployedAt: Date.now() },
+	});
+	if (!created) {
+		console.warn(`[${MODULE_ID}] Auto Deploy!: failed to spawn "${summon.template}" token.`);
+		return;
+	}
+
+	// Threshold/HP + Engineer scaling apply to every turret, flag or not.
+	const isTurret = summon.hpFromLevel || TURRET_TEMPLATE_SET.has(summon.template);
+	if (isTurret) await applyTurretHp(created, actor);
+
+	const hpNote = isTurret
+		? ` (destroyed by a single hit of ${turretHpForCaster(actor)}+ damage)`
+		: '';
+	postSummonChat(
+		actor,
+		`<p>${escapeHtml(actor.name)} automatically deploys a <strong>${escapeHtml(created.name ?? 'Rifle Turret')}</strong>${hpNote}. It does not count against the turret limit and costs no scrap.</p>`,
+		AUTO_DEPLOY_NAME,
+	);
+}
+
+// Sequential on purpose: several Engineers in one combat each create a token, and
+// serialising keeps the spawn positions/flags deterministic.
+async function autoDeployForCombat(combat) {
+	for (const combatant of combat?.combatants ?? []) {
+		// eslint-disable-next-line no-await-in-loop
+		await autoDeployForCombatant(combatant, combat);
+	}
+}
+
+// combatStart: the normal path — every Engineer already in the tracker deploys.
+function onCombatStart(combat) {
+	try {
+		if (!isActingGM()) return;
+		void autoDeployForCombat(combat).catch((error) =>
+			console.warn(`[${MODULE_ID}] Auto Deploy! on combat start failed`, error),
+		);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Auto Deploy! on combat start failed`, error);
+	}
+}
+
+// createCombatant: an Engineer dropped into an ALREADY-started combat deploys on
+// joining. Combatants added before the encounter begins are covered by
+// combatStart, so this only acts once `combat.started` is true.
+function onCreateCombatant(combatant) {
+	try {
+		const combat = combatant?.parent;
+		if (!combat?.started) return;
+		if (!isActingGM()) return;
+		void autoDeployForCombatant(combatant, combat).catch((error) =>
+			console.warn(`[${MODULE_ID}] Auto Deploy! on combatant creation failed`, error),
+		);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Auto Deploy! on combatant creation failed`, error);
+	}
 }
 
 // Every embedded item on `actorLike` as a plain array, spanning both the live
@@ -2753,13 +4486,11 @@ function rollHasPrimaryMaxFace(rollLike) {
 	return die ? dieHasMaxFace(die) : false;
 }
 
-// True when the actor owns a `feature`-type item with this exact name.
+// True when the actor owns a `feature`-type item with this exact name. Name-only
+// alias of actorOwnsFeature (the two were written independently on either side of
+// the Engineer/Specter merge — one implementation is enough).
 function actorHasFeatureNamed(actor, name) {
-	if (!(actor instanceof Actor)) return false;
-	for (const it of listEmbeddedItems(actor)) {
-		if (it?.type === 'feature' && it.name === name) return true;
-	}
-	return false;
+	return actorOwnsFeature(actor, null, name);
 }
 
 // The summon config that spawns `template`, read off the caster's own spell that
@@ -2772,14 +4503,6 @@ function findSummonConfigForTemplate(actor, template) {
 		if (summon?.template === template) return summon;
 	}
 	return null;
-}
-
-// Live summon cap for `summon` on `caster` (Infinity when uncapped).
-function getSummonCap(caster, summon) {
-	if (summon?.maxCount === 'minIntOrLevel') {
-		return Math.max(0, Math.min(getAbilityMod(caster, 'intelligence'), getCharacterLevel(caster)));
-	}
-	return Infinity;
 }
 
 // First free grid square among a target token's 8 neighbours (orthogonals first),
@@ -2825,7 +4548,7 @@ function postSwarmAtCapWhisper(caster) {
 async function spawnSwarmingShadow(caster, summon, targetToken, scene) {
 	if (!(caster instanceof Actor) || !summon || !scene) return null;
 
-	const cap = getSummonCap(caster, summon);
+	const cap = summonCountCap(caster, summon);
 	const count = findLiveSummons(caster, summon.template).length;
 	if (count >= cap) {
 		postSwarmAtCapWhisper(caster);
@@ -2985,15 +4708,16 @@ async function cleanupCombatSummons(combat) {
 		}
 	}
 
-	postSummonChat(null, '<p><em>The shadow minions dissolve as combat ends.</em></p>');
+	// Turrets and undead minions expire on combat end too, so keep this generic
+	// rather than naming the shadow minions it used to be the only cleanup for.
+	postSummonChat(null, '<p><em>The summoned companions vanish as combat ends.</em></p>');
 }
 
 function onDeleteCombat(combat) {
 	try {
-		// Only one client should perform the deletions. Prefer the designated
-		// active GM; fall back to any GM if that API is unavailable.
-		const shouldAct = game.users?.activeGM ? game.users.activeGM.isSelf : game.user?.isGM;
-		if (!shouldAct) return;
+		// Only one client should perform the deletions (isActingGM prefers the
+		// designated active GM, falling back to any GM).
+		if (!isActingGM()) return;
 		void cleanupCombatSummons(combat);
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] combat-end summon cleanup failed`, error);
@@ -3034,11 +4758,1106 @@ let summonAutomationInstalled = false;
 function installSummonAutomation() {
 	if (summonAutomationInstalled) return;
 	Hooks.on('deleteCombat', onDeleteCombat);
+	// Auto Deploy! (Engineer L7): free Rifle Turret on combat start, plus the
+	// late-joiner case (an Engineer added to an already-running combat).
+	Hooks.on('combatStart', onCombatStart);
+	Hooks.on('createCombatant', onCreateCombatant);
 	Hooks.on(`${game.system?.id ?? 'nimble'}.rest`, onSummonRest);
 	// Swarming Shadows group-attack path: minion group attacks bypass `useItem`
 	// and post a single `minionGroupAttack` chat card instead.
 	Hooks.on('createChatMessage', onCreateChatMessage);
 	summonAutomationInstalled = true;
+}
+
+// ── Specter: Soul Touched workflow ───────────────────────────────────────────
+// Soul Twist carries a native `markTarget` rule (flagKey `soul-touched`). Nimble
+// stores the marks relationally on the SPECTER — flags.<sys>.toggledEffects
+// ["soul-touched"] = [{ actorUuid, tokenUuid, name }] — and (when the rule names
+// a statusCondition) stamps a marker ActiveEffect on each target carrying
+// flags.<sys>.markTargetItemUuid = <Soul Twist item uuid> (see Nimble
+// src/models/rules/markTarget.ts + src/utils/markTargetEffects.ts). This section
+// treats that flag list as the single source of truth and layers on:
+//
+//   • Reconcile (active GM, on every change of the Specter's mark list): every
+//     marked creature gets exactly one VISIBLE "Soul Touched (<Specter>)" marker
+//     effect (keyed to the Soul Twist item, so Nimble's own eviction also clears
+//     it), plus companion effects from owned Soul Sculpting picks on enemies —
+//     Frozen Touch (Slowed) and Jinxed (Cursed). Unmarked creatures lose ours.
+//     Deleting a marker effect by hand removes the mark (flag) too, so the
+//     player/GM can always correct a mark from the token's effects.
+//   • Rites (features flagged automation.rite.consumesMark = "soul-touched"):
+//     pre-activation WARNING when a target isn't marked by this Specter (proceed /
+//     cancel — never a hard block); after the Rite resolves the marks on its
+//     targets are removed, with an Undo card that restores them. Reclaim Essence
+//     heals STR per mark removed (Undo card); Lingering adds a "Reapply Soul
+//     Touched (1 mana)" button to the removal card (spends mana, Undo card).
+//     One mark per Rite; Master of the Veil: two. Extra marked targets keep
+//     their mark (warning).
+//   • Free Soul Twist: Soul Taker (enemy drops to 0 HP within Range 8, in combat)
+//     and Bloodsong (the Specter gains a Wound, in combat) create a visible
+//     "Free Soul Twist" effect (flag freeSoulTwist). The next Soul Twist in combat
+//     skips Nimble's action deduction (activateItem's native `skipActionDeduction`)
+//     and consumes the effect (Undo card restores it). Cleared when combat ends.
+//   • End-of-turn save: when a Soul Touched enemy's turn ends, the GM gets a
+//     whispered card (save stat, DC = 10 + the Specter's KEY, disadvantage with
+//     Soothing) with a "Roll save" button. On a pass the mark is removed and the
+//     owned on-save picks apply — Agony (STR+LVL damage), Dissonance (Dazed),
+//     Earthbind (Prone), Rotting Flesh (Poisoned) — each with its own Undo card;
+//     Rupture is a reminder line (its victims need GM judgement).
+const SOUL_TOUCHED_KEY = 'soul-touched';
+const SOUL_TWIST_IDENTIFIER = 'soul-twist';
+// Soul Twist variants a Free Soul Twist applies to (Reanimated Soul is "Soul
+// Twist to conjure … instead").
+const SOUL_TWIST_VARIANTS = new Set([SOUL_TWIST_IDENTIFIER, 'reanimated-soul']);
+const FREE_SOUL_TWIST_FLAG = 'freeSoulTwist';
+const FREE_SOUL_TWIST_NAME = 'Free Soul Twist';
+const SOUL_MARKER_FLAG = 'soulTouchedMarker';
+const SOUL_COMPANION_FLAG = 'soulTouchedCompanion';
+const SOUL_SAVE_FLAG = 'soulSave';
+const SOUL_LINGERING_FLAG = 'soulLingering';
+const SOUL_SAVE_APPLIED_FLAG = 'soulSaveApplied';
+const SUFFERING_STAT_FLAG = 'sufferingSaveStat';
+const NIMBLE_MARK_ITEM_FLAG = 'markTargetItemUuid'; // Nimble's marker-effect flag
+const SOUL_TOUCHED_IMG = `modules/${MODULE_ID}/assets/features/specter/progression/soul-touched.webp`;
+const SOUL_TWIST_IMG = `modules/${MODULE_ID}/assets/features/specter/progression/soul-twist.webp`;
+const SAVE_STAT_LABELS = { strength: 'STR', dexterity: 'DEX', intelligence: 'INT', will: 'WIL' };
+const EFFECT_ICON_ALWAYS = () => CONST.ACTIVE_EFFECT_SHOW_ICON?.ALWAYS ?? 2;
+
+function findSoulTwistItem(specter) {
+	return findOwnedFeature(specter, SOUL_TWIST_IDENTIFIER, 'Soul Twist');
+}
+
+// The uuid marker effects are keyed to: the Soul Twist item (what Nimble's own
+// markTarget rule stamps), else the Specter itself.
+function soulMarkSourceUuid(specter) {
+	return findSoulTwistItem(specter)?.uuid ?? specter?.uuid ?? null;
+}
+
+function getSoulTouchedEntries(specter) {
+	const list = specter?.getFlag?.(chargePoolScope(), 'toggledEffects')?.[SOUL_TOUCHED_KEY];
+	return Array.isArray(list) ? list.filter((entry) => entry?.actorUuid) : [];
+}
+
+function isSoulTouchedBy(specter, targetActor) {
+	const uuid = targetActor?.uuid;
+	return Boolean(uuid) && getSoulTouchedEntries(specter).some((entry) => entry.actorUuid === uuid);
+}
+
+// Replace the Specter's whole soul-touched list (an array at a dotted path is
+// replaced, not merged). The GM-side reconcile then fixes the visible effects.
+async function writeSoulTouchedEntries(specter, list) {
+	await specter.update({ [`flags.${chargePoolScope()}.toggledEffects.${SOUL_TOUCHED_KEY}`]: list });
+}
+
+async function addSoulTouchedMarks(specter, entries) {
+	const fresh = (entries ?? []).filter((entry) => entry?.actorUuid);
+	if (!specter || !fresh.length) return;
+	const uuids = new Set(fresh.map((entry) => entry.actorUuid));
+	const list = getSoulTouchedEntries(specter).filter((entry) => !uuids.has(entry.actorUuid));
+	await writeSoulTouchedEntries(specter, [...list, ...fresh]);
+}
+
+// Remove marks for `actorUuids`; returns the removed entries (for Undo).
+async function removeSoulTouchedMarks(specter, actorUuids) {
+	const drop = new Set(actorUuids ?? []);
+	const current = getSoulTouchedEntries(specter);
+	const removed = current.filter((entry) => drop.has(entry.actorUuid));
+	if (removed.length) await writeSoulTouchedEntries(specter, current.filter((entry) => !drop.has(entry.actorUuid)));
+	return removed;
+}
+
+// Every character that can mark (owns Soul Twist) or currently has marks.
+function listSpecters() {
+	return (game.actors ?? []).filter(
+		(actor) => actor?.type === 'character' && (findSoulTwistItem(actor) || getSoulTouchedEntries(actor).length),
+	);
+}
+
+function resolveTokenDocSync(uuid) {
+	try {
+		const doc = uuid ? fromUuidSync(uuid) : null;
+		return doc?.documentName === 'Token' ? doc : doc?.document?.documentName === 'Token' ? doc.document : null;
+	} catch {
+		return null;
+	}
+}
+
+// A creature's token on the canvas (synthetic actors carry their own).
+function actorTokenDoc(actor, tokenUuid) {
+	return resolveTokenDocSync(tokenUuid) ?? actor?.token ?? actor?.getActiveTokens?.(true, true)?.[0] ?? null;
+}
+
+function isHostileToken(tokenDoc) {
+	return tokenDoc?.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+}
+
+// An "unwilling" creature for the end-of-turn save: not a hero, not friendly.
+function isUnwillingSoulTarget(actor, tokenDoc) {
+	if (!actor || actor.type === 'character') return false;
+	return tokenDoc?.disposition !== CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+}
+
+function conditionLabel(condition) {
+	const raw = CONFIG.NIMBLE?.conditions?.[condition] ?? condition;
+	try {
+		return game.i18n.localize(raw);
+	} catch {
+		return condition;
+	}
+}
+
+function buildSoulMarkerData(specter) {
+	const soulTwist = findSoulTwistItem(specter);
+	const sourceUuid = soulMarkSourceUuid(specter);
+	// Honour the rule's statusCondition (token status icon) when the data sets one.
+	const rule = (soulTwist?.system?.rules ?? []).find(
+		(r) => r?.type === 'markTarget' && r?.flagKey === SOUL_TOUCHED_KEY,
+	);
+	const data = {
+		name: `Soul Touched (${specter.name})`,
+		img: SOUL_TOUCHED_IMG,
+		origin: sourceUuid,
+		showIcon: EFFECT_ICON_ALWAYS(),
+		description:
+			'<p>Susceptible to Specter Rites. Unwilling targets save (WIL vs Hero DC) at the end of their turns to remove it. Delete this effect to remove the mark.</p>',
+		flags: {
+			[chargePoolScope()]: { [NIMBLE_MARK_ITEM_FLAG]: sourceUuid },
+			[MODULE_ID]: { [SOUL_MARKER_FLAG]: { specterUuid: specter.uuid } },
+		},
+	};
+	if (rule?.statusCondition) data.statuses = [rule.statusCondition];
+	return data;
+}
+
+// Companion effects an owned Soul Sculpting pick adds to a marked ENEMY. Keyed so
+// the reconcile can add/remove each independently.
+function soulCompanionSpecs(specter) {
+	const specs = [];
+	if (actorOwnsFeature(specter, 'frozen-touch', 'Frozen Touch')) {
+		specs.push({
+			key: 'frozen-touch',
+			name: `${conditionLabel('slowed')} — Frozen Touch (${specter.name})`,
+			img: CONFIG.NIMBLE?.conditionDefaultImages?.slowed ?? SOUL_TOUCHED_IMG,
+			statuses: ['slowed'],
+		});
+	}
+	if (actorOwnsFeature(specter, 'jinxed', 'Jinxed')) {
+		// "Cursed" is not a core Nimble condition; use it as a status only when a
+		// GM-defined custom condition with that id exists.
+		const cursed = CONFIG.NIMBLE?.conditions?.cursed ? 'cursed' : null;
+		specs.push({
+			key: 'jinxed',
+			name: `Cursed — Jinxed (${specter.name})`,
+			img: (cursed && CONFIG.NIMBLE?.conditionDefaultImages?.cursed) || SOUL_TOUCHED_IMG,
+			statuses: cursed ? [cursed] : [],
+		});
+	}
+	return specs;
+}
+
+function isOurMarker(effect, sourceUuid) {
+	return effect?.getFlag?.(chargePoolScope(), NIMBLE_MARK_ITEM_FLAG) === sourceUuid;
+}
+
+function companionOf(effect, specterUuid) {
+	const flag = effect?.flags?.[MODULE_ID]?.[SOUL_COMPANION_FLAG];
+	return flag && flag.specterUuid === specterUuid ? flag : null;
+}
+
+const SOUL_INTERNAL = { [`${MODULE_ID}Internal`]: true };
+
+async function safeDeleteEffects(actor, ids) {
+	const live = ids.filter((id) => actor?.effects?.get?.(id));
+	if (!live.length) return;
+	try {
+		await actor.deleteEmbeddedDocuments('ActiveEffect', live, SOUL_INTERNAL);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Soul Touched effect cleanup failed`, error);
+	}
+}
+
+// Active GM: make the visible effects match the Specter's mark list.
+async function reconcileSoulTouched(specter) {
+	if (!specter) return;
+	const sourceUuid = soulMarkSourceUuid(specter);
+	if (!sourceUuid) return;
+	const entries = getSoulTouchedEntries(specter);
+	const marked = new Map(entries.map((entry) => [entry.actorUuid, entry]));
+	const specs = soulCompanionSpecs(specter);
+
+	// Candidates: every marked creature + any creature on the loaded scenes still
+	// carrying one of this Specter's effects.
+	const candidates = new Map();
+	for (const entry of entries) {
+		// eslint-disable-next-line no-await-in-loop
+		const doc = await fromUuid(entry.actorUuid).catch(() => null);
+		const actor = doc instanceof Actor ? doc : doc?.actor ?? null;
+		if (actor) candidates.set(actor.uuid, { actor, entry });
+	}
+	const scenes = new Set([canvas?.scene, game.scenes?.active].filter(Boolean));
+	for (const scene of scenes) {
+		for (const token of scene.tokens ?? []) {
+			const actor = token.actor;
+			if (!actor || candidates.has(actor.uuid)) continue;
+			const has = actor.effects?.some?.((e) => isOurMarker(e, sourceUuid) || companionOf(e, specter.uuid));
+			if (has) candidates.set(actor.uuid, { actor, entry: null });
+		}
+	}
+
+	for (const { actor, entry } of candidates.values()) {
+		const effects = [...(actor.effects ?? [])];
+		const markers = effects.filter((e) => isOurMarker(e, sourceUuid));
+		const companions = effects.filter((e) => companionOf(e, specter.uuid));
+		if (!marked.has(actor.uuid)) {
+			// eslint-disable-next-line no-await-in-loop
+			await safeDeleteEffects(actor, [...markers, ...companions].map((e) => e.id));
+			continue;
+		}
+		if (markers.length === 0) {
+			// eslint-disable-next-line no-await-in-loop
+			await actor.createEmbeddedDocuments('ActiveEffect', [buildSoulMarkerData(specter)]).catch((error) =>
+				console.warn(`[${MODULE_ID}] Could not add Soul Touched marker`, error),
+			);
+		} else if (markers.length > 1) {
+			// A native marker and ours raced — keep one.
+			// eslint-disable-next-line no-await-in-loop
+			await safeDeleteEffects(actor, markers.slice(1).map((e) => e.id));
+		}
+		const enemy = isHostileToken(actorTokenDoc(actor, entry?.tokenUuid));
+		const wanted = enemy ? specs : [];
+		const wantedKeys = new Set(wanted.map((spec) => spec.key));
+		const haveKeys = new Set(companions.map((e) => companionOf(e, specter.uuid).key));
+		const stale = companions.filter((e) => !wantedKeys.has(companionOf(e, specter.uuid).key));
+		// eslint-disable-next-line no-await-in-loop
+		if (stale.length) await safeDeleteEffects(actor, stale.map((e) => e.id));
+		const missing = wanted
+			.filter((spec) => !haveKeys.has(spec.key))
+			.map((spec) => ({
+				name: spec.name,
+				img: spec.img,
+				statuses: spec.statuses,
+				origin: sourceUuid,
+				showIcon: EFFECT_ICON_ALWAYS(),
+				description: '<p>Lasts while this creature is Soul Touched; removed with the mark.</p>',
+				flags: { [MODULE_ID]: { [SOUL_COMPANION_FLAG]: { specterUuid: specter.uuid, key: spec.key } } },
+			}));
+		if (missing.length) {
+			// eslint-disable-next-line no-await-in-loop
+			await actor.createEmbeddedDocuments('ActiveEffect', missing).catch((error) =>
+				console.warn(`[${MODULE_ID}] Could not add Soul Touched companion effect`, error),
+			);
+		}
+	}
+}
+
+// Debounced per Specter: lets Nimble's own marker creation land first (so the
+// reconcile doesn't race it into a duplicate) and coalesces bursts of writes.
+const soulReconcileTimers = new Map();
+function scheduleSoulTouchedReconcile(specter, delay = 600) {
+	if (!specter?.uuid || !isActingGM()) return;
+	clearTimeout(soulReconcileTimers.get(specter.uuid));
+	soulReconcileTimers.set(
+		specter.uuid,
+		setTimeout(() => {
+			soulReconcileTimers.delete(specter.uuid);
+			reconcileSoulTouched(specter).catch((error) =>
+				console.error(`[${MODULE_ID}] Soul Touched reconcile failed`, error),
+			);
+		}, delay),
+	);
+}
+
+// A marker deleted by hand (token HUD / effects tab) removes the mark itself.
+async function onSoulMarkerDeleted(effect, options) {
+	if (!isActingGM() || options?.[`${MODULE_ID}Internal`]) return;
+	const sourceUuid = effect?.getFlag?.(chargePoolScope(), NIMBLE_MARK_ITEM_FLAG);
+	if (!sourceUuid) return;
+	let source = null;
+	try {
+		source = fromUuidSync(sourceUuid);
+	} catch {
+		return;
+	}
+	const specter = source instanceof Actor ? source : source?.actor;
+	const isSoulSource =
+		source instanceof Actor || SOUL_TWIST_VARIANTS.has(source?.system?.identifier ?? '');
+	if (!(specter instanceof Actor) || !isSoulSource) return;
+	const target = effect.parent;
+	if (!(target instanceof Actor)) return;
+	if (target.effects?.some?.((e) => e.id !== effect.id && isOurMarker(e, sourceUuid))) return;
+	if (isSoulTouchedBy(specter, target)) await removeSoulTouchedMarks(specter, [target.uuid]);
+	scheduleSoulTouchedReconcile(specter);
+}
+
+// ── Rites: pre-activation warning + post-resolution mark removal ──
+
+function getRiteAutomation(item) {
+	const automation = item?.getFlag?.(MODULE_ID, 'automation') ?? item?.flags?.[MODULE_ID]?.automation;
+	const rite = automation?.rite;
+	return rite && typeof rite === 'object' && rite.consumesMark ? rite : null;
+}
+
+// Runs inside the activate wrap, before any dialog/cost. Returns true to cancel.
+// Never hard-blocks: an unverifiable target only asks "proceed anyway?".
+async function riteActivationBlocked(item) {
+	const rite = getRiteAutomation(item);
+	if (!rite || rite.consumesMark !== SOUL_TOUCHED_KEY) return false;
+	const specter = item?.actor;
+	if (!(specter instanceof Actor) || specter.type !== 'character') return false;
+	const targets = [...(game.user?.targets ?? [])];
+	const unmarked = targets.filter((token) => !isSoulTouchedBy(specter, token?.actor ?? token?.document?.actor));
+	if (targets.length && !unmarked.length) return false;
+	const problem = targets.length
+		? `${unmarked.map((t) => `<strong>${escapeHtml(t.name ?? t.document?.name ?? '?')}</strong>`).join(', ')} ${
+				unmarked.length === 1 ? 'is' : 'are'
+			} not Soul Touched by ${escapeHtml(specter.name)} (as far as the module can tell).`
+		: 'No target is selected, so the module cannot check or remove Soul Touched.';
+	const proceed = await foundry.applications.api.DialogV2.confirm({
+		window: { title: `${item.name} — Soul Touched` },
+		content: `<p>${problem}</p><p>A Rite does nothing unless it removes Soul Touched. Use it anyway?</p>`,
+		yes: { label: 'Proceed anyway', icon: 'fa-solid fa-check' },
+		no: { label: 'Cancel', icon: 'fa-solid fa-xmark', default: true },
+		rejectClose: false,
+		modal: true,
+	}).catch(() => false);
+	return !proceed;
+}
+
+function specterHpSnapshot(actor) {
+	const hp = actor?.system?.attributes?.hp ?? {};
+	return { value: Number(hp.value) || 0, temp: Number(hp.temp) || 0 };
+}
+
+// Post-Rite: remove this Specter's marks from the Rite's targets.
+async function handleRiteResolved(item, context) {
+	const rite = getRiteAutomation(item);
+	if (!rite || rite.consumesMark !== SOUL_TOUCHED_KEY) return;
+	const specter = item?.actor;
+	if (!(specter instanceof Actor)) return;
+	const markedActors = (context?.targets ?? [])
+		.map((token) => token?.actor ?? token?.document?.actor)
+		.filter((actor) => actor && isSoulTouchedBy(specter, actor));
+	if (!markedActors.length) return;
+	// A Rite removes one mark; Master of the Veil (L20) allows a 2nd Soul Touched.
+	// Extra marked targets keep their mark (warned — remove it by hand if meant).
+	const cap = actorOwnsFeature(specter, 'master-of-the-veil', 'Master of the Veil') ? 2 : 1;
+	const targetActors = markedActors.slice(0, cap);
+	const skipped = markedActors.slice(cap);
+	if (skipped.length) {
+		ui.notifications?.warn(
+			`${item.name} removes Soul Touched from ${cap === 1 ? 'one target' : 'two targets'} only — ${skipped
+				.map((actor) => actor.name)
+				.join(', ')} keep${skipped.length === 1 ? 's' : ''} the mark (delete its Soul Touched effect by hand if needed).`,
+		);
+	}
+	const removed = await removeSoulTouchedMarks(
+		specter,
+		targetActors.map((actor) => actor.uuid),
+	);
+	if (!removed.length) return;
+
+	const names = removed.map((entry) => `<strong>${escapeHtml(entry.name || '?')}</strong>`).join(', ');
+	const lingering = actorOwnsFeature(specter, 'lingering', 'Lingering');
+	const card = await postUndoCard({
+		actor: specter,
+		flavor: item.name,
+		text: `<p>${escapeHtml(item.name)} removed Soul Touched from ${names}.</p>${
+			lingering
+				? `<button type="button" data-bcx-lingering><i class="fa-solid fa-ghost"></i> Reapply Soul Touched (1 mana)</button>`
+				: ''
+		}`,
+		undoAction: { type: 'soulTouchedRestore', data: { specterUuid: specter.uuid, entries: removed } },
+	});
+	if (card && lingering) {
+		await card.setFlag(MODULE_ID, SOUL_LINGERING_FLAG, { specterUuid: specter.uuid, entries: removed, used: false });
+	}
+
+	// Reclaim Essence (Eidolon of Defiance): regain STR HP per Soul Touched removed.
+	if (actorOwnsFeature(specter, 'reclaim-essence', 'Reclaim Essence')) {
+		const str = Math.max(0, getAbilityMod(specter, 'strength'));
+		const amount = str * removed.length;
+		if (amount > 0) {
+			const before = specterHpSnapshot(specter);
+			await specter.applyHealing(amount);
+			const after = specterHpSnapshot(specter);
+			await postUndoCard({
+				actor: specter,
+				flavor: 'Reclaim Essence',
+				text: `<p>${escapeHtml(specter.name)} regains <strong>${after.value - before.value}</strong> HP (STR × ${removed.length} Soul Touched removed). HP ${before.value} → ${after.value}.</p>`,
+				undoAction: { type: 'specterHpRestore', data: { actorUuid: specter.uuid, ...before } },
+			});
+		}
+	}
+
+	// Reanimated Soul: removing Soul Touched destroys an undead minion (confirm).
+	for (const actor of targetActors) {
+		const tokenDoc = actor.token ?? null;
+		const flag = getTokenSummonFlag(tokenDoc);
+		if (!flag || flag.summonerActorUuid !== specter.uuid || flag.template !== 'undead-minion') continue;
+		// eslint-disable-next-line no-await-in-loop
+		const destroy = await foundry.applications.api.DialogV2.confirm({
+			window: { title: 'Reanimated Soul' },
+			content: `<p>Removing Soul Touched destroys <strong>${escapeHtml(tokenDoc.name)}</strong> (it leaves an exploitable corpse). Remove the token now?</p>`,
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (!destroy) continue;
+		const reason = `<p><strong>${escapeHtml(tokenDoc.name)}</strong> crumbles (Soul Touched removed).</p>`;
+		if (tokenDoc.isOwner || game.user?.isGM) {
+			// eslint-disable-next-line no-await-in-loop
+			await dismissSummon(tokenDoc, { summonerActor: specter, template: 'undead-minion', reason });
+		} else {
+			// Players lack TOKEN_DELETE: the GM removes it (the relay checks that this
+			// user owns the minion or its Specter).
+			// eslint-disable-next-line no-await-in-loop
+			await runAsGM('dismissTurret', { tokenUuid: tokenDoc.uuid, reason });
+		}
+	}
+}
+
+// Lingering: "Reapply Soul Touched (1 mana)" on the removal card.
+async function onLingeringClick(message) {
+	const data = message?.getFlag?.(MODULE_ID, SOUL_LINGERING_FLAG);
+	if (!data || data.used) return;
+	const specter = resolveActorByUuid(data.specterUuid);
+	if (!specter || !(specter.isOwner || game.user?.isGM)) return;
+	const mana = Number(specter.system?.resources?.mana?.current) || 0;
+	if (mana < 1) {
+		ui.notifications?.warn(
+			`${specter.name} has no mana left to reapply Soul Touched. If that is wrong, fix mana on the sheet.`,
+		);
+		return;
+	}
+	await message.setFlag(MODULE_ID, `${SOUL_LINGERING_FLAG}.used`, true);
+	await specter.update({ 'system.resources.mana.current': mana - 1 });
+	await addSoulTouchedMarks(specter, data.entries ?? []);
+	const names = (data.entries ?? []).map((e) => `<strong>${escapeHtml(e.name || '?')}</strong>`).join(', ');
+	await postUndoCard({
+		actor: specter,
+		flavor: 'Lingering',
+		text: `<p>${escapeHtml(specter.name)} spent <strong>1 mana</strong> (${mana} → ${mana - 1}) to reapply Soul Touched to ${names}.</p>`,
+		undoAction: {
+			type: 'soulLingeringUndo',
+			data: {
+				specterUuid: specter.uuid,
+				actorUuids: (data.entries ?? []).map((e) => e.actorUuid),
+				mana: 1,
+				messageId: message.id,
+			},
+		},
+	});
+}
+
+// Soul of Suffering: the Specter picks the stat unwilling targets save with.
+async function promptSufferingStat(specter) {
+	const current = specter.getFlag(MODULE_ID, SUFFERING_STAT_FLAG) ?? 'will';
+	const stat = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${specter.name} — Soul of Suffering` },
+		content: `<p>Which stat do unwilling targets use for their save to remove your Soul Touched?</p>
+			<div style="display:flex;gap:12px">${Object.entries(SAVE_STAT_LABELS)
+				.map(
+					([key, label]) =>
+						`<label><input type="radio" name="bcx-suffering-stat" value="${key}" ${key === current ? 'checked' : ''}> ${label}</label>`,
+				)
+				.join('')}</div>`,
+		buttons: [
+			{
+				action: 'ok',
+				label: 'Confirm',
+				default: true,
+				callback: (_event, button, dialog) =>
+					(dialog?.element ?? button?.form ?? document).querySelector('input[name="bcx-suffering-stat"]:checked')
+						?.value ?? null,
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	if (!stat || !SAVE_STAT_LABELS[stat]) return;
+	await specter.setFlag(MODULE_ID, SUFFERING_STAT_FLAG, stat);
+	ui.notifications?.info(`${specter.name}: Soul Touched saves now use ${SAVE_STAT_LABELS[stat]}.`);
+}
+
+// useItem entry point for this section (called from onItemUsed).
+async function handleSpecterItemUsed(item, context) {
+	if (item?.actor?.type !== 'character') return;
+	const identifier = item.system?.identifier ?? '';
+	if (identifier === 'soul-of-suffering') {
+		await promptSufferingStat(item.actor);
+		return;
+	}
+	await handleRiteResolved(item, context);
+}
+
+// ── Reanimated Soul: one undead minion per Soul Power die ──
+
+// Soul Power dice: 1 at L1, +1 at L5/10/15/20 (Soul Twist 2–4, Master of the Veil).
+function soulPowerDice(actor) {
+	return Math.floor(getCharacterLevel(actor) / 5) + 1;
+}
+
+// Spawn min(Soul Power dice, cap − live) minions around the Specter (the gate in
+// summonActivationBlocked already refused a cast at/over the cap). Each is marked
+// Soul Touched by its Specter ("Your minions … are Soul Touched") through the same
+// mark list Soul Twist writes, so Rites/saves/effects treat them uniformly.
+async function spawnSoulPowerMinions(item, caster, summon, baseActor, scene) {
+	const live = findLiveSummons(caster, summon.template).length;
+	const count = Math.max(0, Math.min(soulPowerDice(caster), summonCountCap(caster, summon) - live));
+	if (count <= 0) return;
+	const origin = computeSummonSpawnPosition(caster, scene);
+	const grid = scene?.grid?.size ?? 100;
+	// Fan out from the spot beside the Specter so the tokens don't stack.
+	const offsets = [[0, 0], [0, 1], [0, -1], [1, 0], [1, 1], [1, -1], [-2, 1], [-2, -1]];
+	const created = [];
+	for (let i = 0; i < count; i += 1) {
+		const [ox, oy] = offsets[i % offsets.length];
+		// eslint-disable-next-line no-await-in-loop
+		const token = await spawnSummonedToken({
+			caster,
+			summon,
+			baseActor,
+			scene,
+			x: origin.x + ox * grid,
+			y: origin.y + oy * grid,
+		});
+		if (token) created.push(token);
+	}
+	if (!created.length) {
+		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" tokens.`);
+		return;
+	}
+	let marked = false;
+	if (findSoulTwistItem(caster)) {
+		try {
+			await addSoulTouchedMarks(
+				caster,
+				created.map((token) => ({ actorUuid: token.actor?.uuid, tokenUuid: token.uuid, name: token.name })),
+			);
+			marked = true;
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not mark undead minions Soul Touched`, error);
+		}
+	}
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} conjures <strong>${created.length}</strong> ${escapeHtml(
+			created[0].name ?? summon.template,
+		)}${created.length === 1 ? '' : 's'} (${soulPowerDice(caster)} Soul Power ${
+			soulPowerDice(caster) === 1 ? 'die' : 'dice'
+		}, cap ${summonCountCap(caster, summon)}).${marked ? ' They are Soul Touched.' : ''}</p>`,
+		item?.name,
+	);
+}
+
+// ── Free Soul Twist ──
+
+function findFreeSoulTwistEffect(actor) {
+	return actor?.effects?.find?.((e) => e?.flags?.[MODULE_ID]?.[FREE_SOUL_TWIST_FLAG]) ?? null;
+}
+
+async function createFreeSoulTwistEffect(specter, reason) {
+	if (!specter || findFreeSoulTwistEffect(specter)) return null;
+	const [effect] =
+		(await specter.createEmbeddedDocuments('ActiveEffect', [
+			{
+				name: FREE_SOUL_TWIST_NAME,
+				img: SOUL_TWIST_IMG,
+				origin: findSoulTwistItem(specter)?.uuid ?? specter.uuid,
+				showIcon: EFFECT_ICON_ALWAYS(),
+				description: `<p>Your next Soul Twist this encounter costs no action (${escapeHtml(reason ?? '')}). Consumed automatically; delete it by hand if it was granted by mistake.</p>`,
+				flags: { [MODULE_ID]: { [FREE_SOUL_TWIST_FLAG]: true, reason: reason ?? '' } },
+			},
+		])) ?? [];
+	return effect ?? null;
+}
+
+// Grant (active GM): visible effect + Undo card.
+async function grantFreeSoulTwist(specter, reason) {
+	const effect = await createFreeSoulTwistEffect(specter, reason);
+	if (!effect) return;
+	await postUndoCard({
+		actor: specter,
+		flavor: reason,
+		text: `<p>${escapeHtml(specter.name)}'s next Soul Twist is <strong>free</strong> (${escapeHtml(reason)}).</p>`,
+		undoAction: { type: 'freeSoulTwistRemove', data: { actorUuid: specter.uuid } },
+	});
+}
+
+function tokenDistanceSpaces(a, b) {
+	const size = a?.parent?.grid?.size ?? canvas?.grid?.size ?? 100;
+	const center = (t) => ({
+		x: (t.x ?? 0) + ((t.width ?? 1) * size) / 2,
+		y: (t.y ?? 0) + ((t.height ?? 1) * size) / 2,
+	});
+	const ca = center(a);
+	const cb = center(b);
+	// Chebyshev distance between footprints, in grid spaces.
+	const reach = ((a.width ?? 1) + (b.width ?? 1)) / 2;
+	const reachY = ((a.height ?? 1) + (b.height ?? 1)) / 2;
+	const dx = Math.max(0, Math.abs(ca.x - cb.x) / size - reach) + 1;
+	const dy = Math.max(0, Math.abs(ca.y - cb.y) / size - reachY) + 1;
+	return Math.round(Math.max(dx, dy));
+}
+
+// Soul Taker: an enemy dropping to 0 HP within Range 8 (combat only).
+async function soulTakerOnDeath(actor) {
+	if (!game.combat?.started || actor?.type === 'character') return;
+	const deadToken = actorTokenDoc(actor);
+	if (!deadToken || !isHostileToken(deadToken)) return;
+	for (const specter of listSpecters()) {
+		if (!actorOwnsFeature(specter, 'soul-taker', 'Soul Taker')) continue;
+		if (findFreeSoulTwistEffect(specter)) continue;
+		// Look on the fallen token's scene (not only the GM's viewed canvas).
+		const own = findActorTokenDoc(specter, deadToken.parent);
+		if (!own || tokenDistanceSpaces(own, deadToken) > 8) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await grantFreeSoulTwist(specter, `Soul Taker — ${deadToken.name} fell`);
+	}
+}
+
+// Bloodsong: the Specter gains a Wound (combat only). Wound counts are cached
+// (every client, cheap) so an update can be told apart as a gain.
+const specterWoundCache = new Map();
+function readWounds(actor) {
+	return Number(actor?.system?.attributes?.wounds?.value) || 0;
+}
+
+async function onSpecterActorUpdate(actor, changes, options) {
+	const scope = chargePoolScope();
+	if (actor?.type === 'character') {
+		// Prefer the pre-update value the updating client stamped on the options
+		// (onSpecterActorPreUpdate) — the cache misses actors created after ready.
+		const stamped = options?.[MODULE_ID]?.prevWounds;
+		const prevWounds = typeof stamped === 'number' ? stamped : specterWoundCache.get(actor.id);
+		const wounds = readWounds(actor);
+		specterWoundCache.set(actor.id, wounds);
+		if (!isActingGM()) return;
+		if (foundry.utils.hasProperty(changes, `flags.${scope}.toggledEffects`)) scheduleSoulTouchedReconcile(actor);
+		if (
+			prevWounds !== undefined &&
+			wounds > prevWounds &&
+			game.combat?.started &&
+			actorOwnsFeature(actor, 'bloodsong', 'Bloodsong')
+		) {
+			await grantFreeSoulTwist(actor, 'Bloodsong — gained a Wound');
+		}
+		return;
+	}
+	if (!isActingGM()) return;
+	if (foundry.utils.getProperty(changes, 'system.attributes.hp.value') === 0) await soulTakerOnDeath(actor);
+}
+
+async function clearFreeSoulTwists() {
+	if (!isActingGM()) return;
+	for (const specter of listSpecters()) {
+		const effect = findFreeSoulTwistEffect(specter);
+		// eslint-disable-next-line no-await-in-loop
+		if (effect) await effect.delete().catch(() => null);
+	}
+}
+
+// Wrap the character document's activateItem: a Soul Twist activated in combat
+// while "Free Soul Twist" is up skips Nimble's native action deduction (and its
+// insufficient-actions prompt) via `skipActionDeduction`, then consumes the effect.
+function installFreeSoulTwistWrap() {
+	const proto = CONFIG?.NIMBLE?.Actor?.documentClasses?.character?.prototype;
+	if (!proto || typeof proto.activateItem !== 'function') {
+		console.warn(`[${MODULE_ID}] character activateItem not found; Free Soul Twist not automated.`);
+		return;
+	}
+	if (Object.prototype.hasOwnProperty.call(proto, '__blueCodexFreeTwistWrapped')) return;
+	const original = proto.activateItem;
+	proto.activateItem = async function blueCodexFreeTwistActivateItem(id, options = {}) {
+		const item = this.items?.get?.(id);
+		const effect =
+			item && SOUL_TWIST_VARIANTS.has(item.system?.identifier ?? '') ? findFreeSoulTwistEffect(this) : null;
+		const inCombat =
+			effect && game.combat?.started && game.combat.combatants?.some?.((c) => c.actorId === this.id);
+		// Keep the free twist when this activation would cost nothing anyway: a
+		// non-action cost, or a native actionCost rule already setting it to 0
+		// (Dying Surge while Dying).
+		let costsAction = item?.system?.activation?.cost?.type === 'action';
+		if (costsAction) {
+			try {
+				costsAction = !Array.from(this.rules ?? []).some(
+					(rule) =>
+						rule?.type === 'actionCost' &&
+						rule.mode === 'set' &&
+						rule.appliesTo?.() &&
+						rule.matchesItem?.(item) &&
+						rule.resolveValue?.() === 0,
+				);
+			} catch {
+				/* fall through: treat as costing an action */
+			}
+		}
+		if (!inCombat || !costsAction || options?.skipActionDeduction) return original.call(this, id, options);
+		const result = await original.call(this, id, { ...options, skipActionDeduction: true });
+		if (result) {
+			try {
+				await effect.delete();
+				await postUndoCard({
+					actor: this,
+					flavor: FREE_SOUL_TWIST_NAME,
+					text: `<p>${escapeHtml(this.name)} used a <strong>free</strong> ${escapeHtml(item.name)} — no action spent.</p>`,
+					undoAction: {
+						type: 'freeSoulTwistRestore',
+						data: { actorUuid: this.uuid, reason: effect.flags?.[MODULE_ID]?.reason ?? '' },
+					},
+				});
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not consume Free Soul Twist`, error);
+			}
+		}
+		return result;
+	};
+	proto.__blueCodexFreeTwistWrapped = true;
+}
+
+// ── End-of-turn Soul Touched save ──
+
+function soulSaveDC(specter) {
+	let key = 0;
+	try {
+		key = Number(specter.getRollData?.()?.key) || 0;
+	} catch {
+		key = 0;
+	}
+	return 10 + key;
+}
+
+function soulSaveStat(specter) {
+	if (!actorOwnsFeature(specter, 'soul-of-suffering', 'Soul of Suffering')) return 'will';
+	const stat = specter.getFlag(MODULE_ID, SUFFERING_STAT_FLAG);
+	return SAVE_STAT_LABELS[stat] ? stat : 'will';
+}
+
+const soulTurnsHandled = new Set();
+async function onSoulTurnEnd(combat, changes) {
+	if (!isActingGM() || !combat?.started) return;
+	if (!('turn' in (changes ?? {})) && !('round' in (changes ?? {}))) return;
+	const prev = combat.previous;
+	const combatantId = prev?.combatantId;
+	if (!combatantId) return;
+	// Only a forward step ends the previous turn; a rewind (Previous Turn/Round)
+	// must not post a save card for the combatant being stepped back over.
+	const round = Number(combat.round) || 0;
+	const turn = Number(combat.turn) || 0;
+	const prevRound = Number(prev.round) || 0;
+	const prevTurn = Number(prev.turn) || 0;
+	if (round < prevRound || (round === prevRound && turn <= prevTurn)) return;
+	const key = `${combat.id}:${prev.round}:${prev.turn}:${combatantId}`;
+	if (soulTurnsHandled.has(key)) return;
+	soulTurnsHandled.add(key);
+	const combatant = combat.combatants?.get?.(combatantId);
+	const target = combatant?.actor;
+	const tokenDoc = combatant?.token ?? null;
+	if (!target || !isUnwillingSoulTarget(target, tokenDoc)) return;
+	const gmIds = (game.users?.filter?.((u) => u.isGM) ?? []).map((u) => u.id);
+	for (const specter of listSpecters()) {
+		if (!isSoulTouchedBy(specter, target)) continue;
+		const stat = soulSaveStat(specter);
+		const dc = soulSaveDC(specter);
+		const disadvantage = actorOwnsFeature(specter, 'soothing', 'Soothing');
+		// eslint-disable-next-line no-await-in-loop
+		await ChatMessage.create({
+			whisper: gmIds,
+			speaker: ChatMessage.getSpeaker({ actor: specter }),
+			flavor: '<strong>Soul Touched — end of turn</strong>',
+			content: `<div class="bcx-soul-save">
+				<p><strong>${escapeHtml(tokenDoc?.name ?? target.name)}</strong> may save to remove ${escapeHtml(specter.name)}'s Soul Touched.</p>
+				<p>${SAVE_STAT_LABELS[stat]} save vs <strong>DC ${dc}</strong> (10 + ${escapeHtml(specter.name)}'s KEY)${
+					disadvantage ? ', with <strong>disadvantage</strong> (Soothing)' : ''
+				}.</p>
+				${
+					actorOwnsFeature(specter, 'soul-of-suffering', 'Soul of Suffering')
+						? `<p>Soul of Suffering — save stat: <select data-bcx-soul-stat>${Object.entries(SAVE_STAT_LABELS)
+								.map(([k, l]) => `<option value="${k}" ${k === stat ? 'selected' : ''}>${l}</option>`)
+								.join('')}</select></p>`
+						: ''
+				}
+				<button type="button" data-bcx-soul-save><i class="fa-solid fa-dice-d20"></i> Roll save</button>
+			</div>`,
+			flags: {
+				[MODULE_ID]: {
+					[SOUL_SAVE_FLAG]: {
+						specterUuid: specter.uuid,
+						targetUuid: target.uuid,
+						targetName: tokenDoc?.name ?? target.name,
+						stat,
+						dc,
+						disadvantage,
+						resolved: false,
+					},
+				},
+			},
+		});
+	}
+}
+
+// Apply one condition as its own effect (so its Undo deletes exactly it).
+async function applySoulCondition(target, condition, source) {
+	const [effect] =
+		(await target.createEmbeddedDocuments('ActiveEffect', [
+			{
+				name: `${conditionLabel(condition)} (${source})`,
+				img: CONFIG.NIMBLE?.conditionDefaultImages?.[condition] ?? SOUL_TOUCHED_IMG,
+				statuses: [condition],
+				flags: { [MODULE_ID]: { [SOUL_SAVE_APPLIED_FLAG]: source } },
+			},
+		])) ?? [];
+	return effect ?? null;
+}
+
+const soulSavesInFlight = new Set();
+async function onSoulSaveClick(message, statOverride = null) {
+	if (!game.user?.isGM) return;
+	const stored = message?.getFlag?.(MODULE_ID, SOUL_SAVE_FLAG);
+	const data = stored ? { ...stored } : null;
+	if (!data || data.resolved || soulSavesInFlight.has(message.id)) return;
+	soulSavesInFlight.add(message.id);
+	try {
+		const specter = resolveActorByUuid(data.specterUuid);
+		const target = resolveActorByUuid(data.targetUuid);
+		if (!specter || !target) {
+			ui.notifications?.warn('Soul Touched save: the Specter or the creature no longer exists.');
+			return;
+		}
+		if (!isSoulTouchedBy(specter, target)) {
+			await message.setFlag(MODULE_ID, SOUL_SAVE_FLAG, { ...data, resolved: true, outcome: 'no longer Soul Touched' });
+			return;
+		}
+		// Soul of Suffering: the card's stat picker (pre-set from the Specter's choice).
+		if (statOverride && SAVE_STAT_LABELS[statOverride]) data.stat = statOverride;
+		const saveCard = await target.rollSavingThrowToChat(data.stat, {
+			rollModeModifier: data.disadvantage ? -1 : 0,
+		});
+		const total = Number(saveCard?.rolls?.[0]?.total);
+		if (!saveCard || !Number.isFinite(total)) return; // cancelled — button stays live
+		const passed = total >= data.dc;
+		await message.setFlag(MODULE_ID, SOUL_SAVE_FLAG, {
+			...data,
+			resolved: true,
+			outcome: `${passed ? 'Passed' : 'Failed'} (${total} vs DC ${data.dc})`,
+		});
+		if (!passed) return;
+
+		const name = escapeHtml(data.targetName ?? target.name);
+		const removed = await removeSoulTouchedMarks(specter, [target.uuid]);
+		const rupture = actorOwnsFeature(specter, 'rupture', 'Rupture');
+		const strLvl = Math.max(0, getAbilityMod(specter, 'strength')) + getCharacterLevel(specter);
+		await postUndoCard({
+			actor: specter,
+			flavor: 'Soul Touched',
+			text: `<p>${name} saved (${total} vs DC ${data.dc}) and is no longer Soul Touched by ${escapeHtml(specter.name)}.</p>${
+				rupture
+					? `<p><em>[M] Rupture: every enemy adjacent to ${name} takes <strong>${strLvl}</strong> damage (STR + LVL), ignoring armor — apply it by hand.</em></p>`
+					: ''
+			}`,
+			undoAction: { type: 'soulTouchedRestore', data: { specterUuid: specter.uuid, entries: removed } },
+		});
+
+		// Agony: the saver takes STR + LVL damage, ignoring armor.
+		if (actorOwnsFeature(specter, 'agony', 'Agony') && strLvl > 0) {
+			const before = specterHpSnapshot(target);
+			await target.applyDamage(strLvl);
+			const after = specterHpSnapshot(target);
+			await postUndoCard({
+				actor: target,
+				flavor: 'Agony',
+				text: `<p>${name} takes <strong>${strLvl}</strong> damage (Agony: STR + LVL, ignores armor). HP ${before.value} → ${after.value}${
+					before.temp !== after.temp ? `, temp ${before.temp} → ${after.temp}` : ''
+				}.</p>`,
+				undoAction: { type: 'specterHpRestore', data: { actorUuid: target.uuid, ...before } },
+			});
+		}
+		const conditions = [
+			['dissonance', 'Dissonance', 'dazed', '1 turn'],
+			['earthbind', 'Earthbind', 'prone', ''],
+			['rotting-flesh', 'Rotting Flesh', 'poisoned', '1 round'],
+		];
+		for (const [identifier, label, condition, duration] of conditions) {
+			if (!actorOwnsFeature(specter, identifier, label)) continue;
+			// eslint-disable-next-line no-await-in-loop
+			const effect = await applySoulCondition(target, condition, label);
+			if (!effect) continue;
+			// eslint-disable-next-line no-await-in-loop
+			await postUndoCard({
+				actor: target,
+				flavor: label,
+				text: `<p>${name} is <strong>${escapeHtml(conditionLabel(condition))}</strong>${duration ? `, ${duration}` : ''} (${label}).${
+					duration ? ' <em>[M] Remove it when the duration ends.</em>' : ''
+				}</p>`,
+				undoAction: { type: 'specterDeleteEffect', data: { actorUuid: target.uuid, effectId: effect.id } },
+			});
+		}
+	} finally {
+		soulSavesInFlight.delete(message.id);
+	}
+}
+
+// ── Undo handlers (run on the GM via the undo-card relay) ──
+
+registerUndoHandler('soulTouchedRestore', async ({ specterUuid, entries }) => {
+	const specter = resolveActorByUuid(specterUuid);
+	if (!specter || !Array.isArray(entries) || !entries.length) return false;
+	await addSoulTouchedMarks(specter, entries);
+	return `Soul Touched restored on ${entries.map((e) => e.name || '?').join(', ')}.`;
+});
+
+registerUndoHandler('soulLingeringUndo', async ({ specterUuid, actorUuids, mana, messageId }) => {
+	const specter = resolveActorByUuid(specterUuid);
+	if (!specter) return false;
+	await removeSoulTouchedMarks(specter, actorUuids ?? []);
+	const current = Number(specter.system?.resources?.mana?.current) || 0;
+	await specter.update({ 'system.resources.mana.current': current + (Number(mana) || 0) });
+	const card = messageId ? game.messages?.get(messageId) : null;
+	if (card) await card.setFlag(MODULE_ID, `${SOUL_LINGERING_FLAG}.used`, false).catch(() => null);
+	return `Soul Touched removed again; mana ${current} → ${current + (Number(mana) || 0)}.`;
+});
+
+registerUndoHandler('specterHpRestore', async ({ actorUuid, value, temp }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	await actor.update({ 'system.attributes.hp.value': Number(value) || 0, 'system.attributes.hp.temp': Number(temp) || 0 });
+	return `HP restored to ${value}${temp ? ` (+${temp} temp)` : ''}.`;
+});
+
+registerUndoHandler('specterDeleteEffect', async ({ actorUuid, effectId }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const effect = actor?.effects?.get?.(effectId);
+	if (effect) await effect.delete();
+	return effect ? `${effect.name} removed.` : 'Effect was already gone.';
+});
+
+registerUndoHandler('freeSoulTwistRestore', async ({ actorUuid, reason }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	await createFreeSoulTwistEffect(actor, reason || 'restored');
+	return 'Free Soul Twist restored.';
+});
+
+registerUndoHandler('freeSoulTwistRemove', async ({ actorUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const effect = findFreeSoulTwistEffect(actor);
+	if (effect) await effect.delete();
+	return 'Free Soul Twist removed.';
+});
+
+// ── Card buttons + install ──
+
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		const save = message?.flags?.[MODULE_ID]?.[SOUL_SAVE_FLAG];
+		const saveButton = html.querySelector?.('[data-bcx-soul-save]');
+		if (save && saveButton) {
+			if (save.resolved || !game.user?.isGM) {
+				saveButton.disabled = true;
+				if (save.outcome) saveButton.insertAdjacentHTML('afterend', `<p><em>${escapeHtml(save.outcome)}</em></p>`);
+			} else {
+				saveButton.addEventListener('click', (event) => {
+					event.preventDefault();
+					saveButton.disabled = true;
+					onSoulSaveClick(message, html.querySelector?.('[data-bcx-soul-stat]')?.value ?? null).finally(() => {
+						if (!message.getFlag(MODULE_ID, SOUL_SAVE_FLAG)?.resolved) saveButton.disabled = false;
+					});
+				});
+			}
+		}
+		const lingering = message?.flags?.[MODULE_ID]?.[SOUL_LINGERING_FLAG];
+		const lingerButton = html.querySelector?.('[data-bcx-lingering]');
+		if (lingerButton) {
+			const specter = lingering ? resolveActorByUuid(lingering.specterUuid) : null;
+			const canUse = lingering && !lingering.used && (game.user?.isGM || specter?.isOwner);
+			if (!canUse) {
+				lingerButton.disabled = true;
+				if (lingering?.used) lingerButton.insertAdjacentHTML('afterend', '<p><em>Soul Touched reapplied.</em></p>');
+			} else {
+				lingerButton.addEventListener('click', (event) => {
+					event.preventDefault();
+					lingerButton.disabled = true;
+					onLingeringClick(message).catch((error) => console.error(`[${MODULE_ID}] Lingering failed`, error));
+				});
+			}
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Specter chat-card wiring failed`, error);
+	}
+});
+
+let specterAutomationInstalled = false;
+function installSpecterAutomation() {
+	if (specterAutomationInstalled) return;
+	specterAutomationInstalled = true;
+	for (const actor of game.actors ?? []) {
+		if (actor?.type === 'character') specterWoundCache.set(actor.id, readWounds(actor));
+	}
+	installFreeSoulTwistWrap();
+	// preUpdateActor runs only on the updating client; its update options travel
+	// with the update to every client's updateActor, so stamp the old value there.
+	Hooks.on('preUpdateActor', (actor, changes, options) => {
+		if (actor?.type !== 'character') return;
+		if (!foundry.utils.hasProperty(changes, 'system.attributes.wounds.value')) return;
+		options[MODULE_ID] = { ...(options[MODULE_ID] ?? {}), prevWounds: readWounds(actor) };
+	});
+	Hooks.on('updateActor', (actor, changes, options) => {
+		onSpecterActorUpdate(actor, changes, options).catch((error) =>
+			console.error(`[${MODULE_ID}] Specter actor-update automation failed`, error),
+		);
+	});
+	Hooks.on('deleteActiveEffect', (effect, options) => {
+		onSoulMarkerDeleted(effect, options).catch((error) =>
+			console.error(`[${MODULE_ID}] Soul Touched marker sync failed`, error),
+		);
+	});
+	// A native marker landing after our reconcile may duplicate ours — re-check.
+	Hooks.on('createActiveEffect', (effect) => {
+		if (!isActingGM()) return;
+		const sourceUuid = effect?.getFlag?.(chargePoolScope(), NIMBLE_MARK_ITEM_FLAG);
+		if (!sourceUuid) return;
+		try {
+			const source = fromUuidSync(sourceUuid);
+			if (!SOUL_TWIST_VARIANTS.has(source?.system?.identifier ?? '')) return;
+			const specter = source?.actor;
+			if (specter instanceof Actor && specter.type === 'character') scheduleSoulTouchedReconcile(specter);
+		} catch {
+			/* unresolvable source — not ours */
+		}
+	});
+	Hooks.on('updateCombat', (combat, changes) => {
+		onSoulTurnEnd(combat, changes).catch((error) =>
+			console.error(`[${MODULE_ID}] Soul Touched end-of-turn save failed`, error),
+		);
+		if (changes?.started === false) clearFreeSoulTwists();
+	});
+	Hooks.on('deleteCombat', () => {
+		clearFreeSoulTwists();
+	});
+	// Gaining/losing Frozen Touch or Jinxed re-derives the companion effects.
+	const onCompanionPickChange = (item) => {
+		const actor = item?.parent;
+		if (actor?.type !== 'character') return;
+		if (['frozen-touch', 'jinxed'].includes(item.system?.identifier ?? '')) scheduleSoulTouchedReconcile(actor);
+	};
+	Hooks.on('createItem', onCompanionPickChange);
+	Hooks.on('deleteItem', onCompanionPickChange);
+	// A deleted token (dismissed minion, removed monster) drops out of every
+	// Specter's mark list so saves/Rites never chase a ghost.
+	Hooks.on('deleteToken', (tokenDoc) => {
+		if (!isActingGM() || !tokenDoc?.uuid) return;
+		for (const specter of listSpecters()) {
+			const stale = getSoulTouchedEntries(specter)
+				.filter((e) => e.tokenUuid === tokenDoc.uuid || e.actorUuid.startsWith(`${tokenDoc.uuid}.`))
+				.map((e) => e.actorUuid);
+			if (stale.length) {
+				removeSoulTouchedMarks(specter, stale).catch((error) =>
+					console.warn(`[${MODULE_ID}] Could not drop deleted token's Soul Touched`, error),
+				);
+			}
+		}
+	});
+	// Bring existing marks' visible effects in line once on load.
+	if (isActingGM()) for (const specter of listSpecters()) scheduleSoulTouchedReconcile(specter, 1500);
 }
 
 // ── Shadowmancer casting rules (Pilfered Power) ──────────────────────────────
@@ -3490,6 +6309,14 @@ async function handleActorFeatures(actor) {
 		console.error(`[${MODULE_ID}] class spell-school remap failed`, error);
 	}
 	try {
+		// Runs before the subclass swap so a Specter already owns its two Dark
+		// Knowledge Book-of-Ruin schools by the time Eidolon of Rage's element
+		// choice reads the caster's current schools.
+		await classSpellChoiceSync(actor);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] class spell-school choice grant failed`, error);
+	}
+	try {
 		await spellSchoolSync(actor);
 	} catch (error) {
 		console.error(`[${MODULE_ID}] spell-school sync failed`, error);
@@ -3511,6 +6338,67 @@ api.chooseSpellSchools = async (actor) => {
 	if (!target) return;
 	await target.unsetFlag(MODULE_ID, 'spellSchools');
 	return spellSchoolSync(target);
+};
+
+// Re-open a new module class's spell-school choice (Specter's Dark Knowledge —
+// Lamentations lets the Specter re-pick on a Safe Rest). Offers the pick dialog;
+// a dropped school's spells are listed in a confirm dialog (destructive) and
+// removed, the Eidolon of Rage subclass set (`spellSchools`) is re-synced so the
+// new Book-of-Ruin school replaces the old one there too, and the new school's
+// unlocked tiers are granted. Cancelling either dialog changes nothing.
+api.chooseClassSpellSchools = async (actor) => {
+	const target = actor ?? game.user?.character;
+	if (!target) return;
+	const classInfo = getPrimaryClass(target);
+	const config = CLASS_SPELL_CHOICE[classInfo?.classId];
+	if (!config) {
+		ui.notifications?.warn(`${target.name} has no class-level spell-school choice.`);
+		return;
+	}
+	const previous = getClassChoiceSchools(target);
+	if (!previous.length) return classSpellChoiceSync(target); // first pick — normal flow
+	if (classChoiceActive.has(target.id)) return;
+
+	classChoiceActive.add(target.id);
+	let picked;
+	try {
+		picked = await promptClassSchoolChoice(target, config);
+		if (!picked) return; // dismissed — keep the current pick
+		const dropped = new Set(previous.filter((school) => !picked.includes(school)));
+		const doomed = (target.items ?? []).filter(
+			(item) => item.type === 'spell' && dropped.has(item.system?.school),
+		);
+		if (doomed.length) {
+			const list = doomed
+				.map((item) => `<li>${escapeHtml(item.name)} <em>(${escapeHtml(SCHOOL_LABEL(item.system.school))})</em></li>`)
+				.join('');
+			const ok = await foundry.applications.api.DialogV2.confirm({
+				window: { title: `${target.name} — ${config.title}` },
+				content: `<p>Switching schools removes these ${doomed.length} spell${doomed.length > 1 ? 's' : ''} from ${escapeHtml(target.name)}:</p><ul>${list}</ul><p>Continue?</p>`,
+				rejectClose: false,
+				modal: true,
+			}).catch(() => false);
+			if (!ok) return;
+			await target.deleteEmbeddedDocuments('Item', doomed.map((item) => item.id));
+		}
+		// Re-sync an additive subclass set (Eidolon of Rage) to the new class schools.
+		const subSet = target.getFlag(MODULE_ID, 'spellSchools');
+		if (subSet && Array.isArray(subSet.schools)) {
+			const schools = new Set(subSet.schools.filter((school) => !dropped.has(school)));
+			for (const school of picked) schools.add(school);
+			await target.setFlag(MODULE_ID, 'spellSchools', { ...subSet, schools: [...schools] });
+		}
+		// Store the new pick with no high-water mark so the sync grants every
+		// unlocked tier of it (already-owned spells are skipped).
+		await target.setFlag(MODULE_ID, 'classSpellChoice', {
+			classId: classInfo.classId,
+			schools: picked,
+			grantedTier: -1,
+		});
+	} finally {
+		classChoiceActive.delete(target.id);
+	}
+	return classSpellChoiceSync(target);
 };
 
 // Grant/offer subclass content after any level change, subclass selection, and
@@ -3792,4 +6680,460 @@ Hooks.on('renderCompendium', (application, element) => {
 		.catch((error) =>
 			console.error(`[${MODULE_ID}] Failed to badge class-feature levels`, error),
 		);
+});
+
+// ── Class-content refresh (Engineer / Specter) ───────────────────────────────
+// A character owns *copies* of every class feature, gadget, kit and firearm it
+// was granted, so characters built before the Engineer/Specter automation pass
+// kept stale copies (no chargePool / chargeConsumer / markTarget / grantItem
+// rules, old activation and text) — and Nimble's `grantItem` only fires when the
+// granting item is created, so the children those new rules name (Rite options,
+// kit Toolbelt options, gadget Toolbelt features) never arrived.
+//
+//   await blueCodex.refreshClassContent(game.user.character);            // confirm dialog
+//   await blueCodex.refreshClassContent(actor, { dryRun: true });        // plan only
+//   await blueCodex.refreshClassContent(canvas.tokens.controlled[0].actor);
+//
+// Also on the character sheet's header menu ("Refresh Codex class content") for
+// Engineer/Specter characters, and on `ready` the GM gets a whispered card
+// listing stale characters with a Refresh button each.
+//
+// Matching is by compendium source (`_stats.compendiumSource`, or the legacy
+// `flags.core.source` / `flags.core.sourceId`) into the Codex class-features
+// pack (only features whose `system.class` is engineer/specter), the items pack
+// (Engineer gear — the only content it ships) and the subclasses pack
+// (engineer/specter subclasses: name/img/description/rules only). Class items
+// are never touched — they hold level, HP rolls and ability-score history.
+//
+// Kept per actor: flags outside the module's pack-owned keys (so every native
+// charge-pool `current` — item-scoped `flags.nimble.chargePools`, actor-scoped on
+// the actor — spell/school and choice flags), the item's `_id`, and on objects
+// `quantity` / `equipped` / `identified`. Exception: gadgets (misc objects of the
+// items pack) are set equipped, since Nimble disables rules on unequipped
+// objects and a gadget's scrap/use consumers must run.
+//
+// Missing grantItem children are created the way ItemGrantRule.preCreate builds
+// them (pack `toObject()`, `_stats.compendiumSource` = the rule's uuid, the
+// rule's quantity override) through the actor's createEmbeddedDocuments — which
+// is Nimble's own `NimbleBaseItem.createDocuments`, so a child's own grant rules
+// fire natively. Nimble tags no granter on the stored child (its `grantedBy` is
+// in-memory only; deletes do not cascade), so neither do we. Idempotent: a
+// second run finds nothing to do.
+const CLASS_REFRESH_CLASSES = new Set(['engineer', 'specter']);
+const CODEX_ITEMS_PACK = `${MODULE_ID}.blue-codex-items`;
+const CODEX_SUBCLASSES_PACK = `${MODULE_ID}.blue-codex-subclasses`;
+// Module flag keys that are content (authored in pack-sources), not actor state.
+const PACK_OWNED_FLAG_KEYS = ['automation', 'turretTemplate', 'pool'];
+const OBJECT_PRESERVED_KEYS = ['quantity', 'equipped', 'identified'];
+const SUBCLASS_REFRESH_KEYS = ['description', 'rules'];
+const CLASS_REFRESH_NOTICE_FLAG = 'classRefreshNotice';
+const CLASS_REFRESH_NOTICE_SETTING = 'classRefreshNoticeKey';
+
+function itemSourceUuid(item) {
+	const core = item?.flags?.core ?? {};
+	return item?._stats?.compendiumSource ?? core.source ?? core.sourceId ?? null;
+}
+
+function parseCodexItemSource(uuid) {
+	const match = /^Compendium\.([^.]+\.[^.]+)\.(?:Item\.)?([A-Za-z0-9]{16})$/.exec(String(uuid ?? ''));
+	if (!match || !match[1].startsWith(`${MODULE_ID}.`)) return null;
+	return { pack: match[1], id: match[2] };
+}
+
+function refreshStableStringify(value) {
+	if (value === null || value === undefined) return 'null';
+	if (Array.isArray(value)) return `[${value.map(refreshStableStringify).join(',')}]`;
+	if (typeof value === 'object') {
+		const keys = Object.keys(value).sort();
+		return `{${keys.map((k) => `${JSON.stringify(k)}:${refreshStableStringify(value[k])}`).join(',')}}`;
+	}
+	return JSON.stringify(value);
+}
+
+function actorHasRefreshClass(actor) {
+	return (actor?.items ?? []).some(
+		(item) =>
+			item.type === 'class' &&
+			CLASS_REFRESH_CLASSES.has(item.system?.identifier || item.name?.slugify?.({ strict: true })),
+	);
+}
+
+// Pack-id → allowed? for the class-features and subclasses packs (index only —
+// never pack.getDocuments()).
+async function loadRefreshScope() {
+	const scope = { features: new Set(), subclasses: new Set() };
+	const featurePack = game.packs.get(CLASS_FEATURES_PACK);
+	if (featurePack) {
+		const index = await featurePack.getIndex({ fields: ['system.class'] });
+		for (const entry of index) {
+			if (CLASS_REFRESH_CLASSES.has(entry.system?.class)) scope.features.add(entry._id);
+		}
+	}
+	const subclassPack = game.packs.get(CODEX_SUBCLASSES_PACK);
+	if (subclassPack) {
+		const index = await subclassPack.getIndex({ fields: ['system.parentClass'] });
+		for (const entry of index) {
+			if (CLASS_REFRESH_CLASSES.has(entry.system?.parentClass)) scope.subclasses.add(entry._id);
+		}
+	}
+	return scope;
+}
+
+function isInRefreshScope(parsed, scope) {
+	if (!parsed) return false;
+	if (parsed.pack === CLASS_FEATURES_PACK) return scope.features.has(parsed.id);
+	if (parsed.pack === CODEX_SUBCLASSES_PACK) return scope.subclasses.has(parsed.id);
+	return parsed.pack === CODEX_ITEMS_PACK;
+}
+
+// The update that brings `item` in line with `doc`, or null when it already is.
+function buildRefreshUpdate(item, doc) {
+	const packSource = doc.toObject();
+	const current = item._source ?? item.toObject();
+	const currentSystem = current.system ?? {};
+	let system;
+	let keys;
+	if (item.type === 'subclass') {
+		system = {};
+		for (const key of SUBCLASS_REFRESH_KEYS) system[key] = foundry.utils.deepClone(packSource.system?.[key]);
+		keys = SUBCLASS_REFRESH_KEYS;
+	} else {
+		system = foundry.utils.deepClone(packSource.system ?? {});
+		if (item.type === 'object') {
+			for (const key of OBJECT_PRESERVED_KEYS) {
+				if (key in currentSystem) system[key] = foundry.utils.deepClone(currentSystem[key]);
+				else delete system[key];
+			}
+			const isGadget = doc.pack === CODEX_ITEMS_PACK && packSource.system?.objectType === 'misc';
+			if (isGadget && 'equipped' in (packSource.system ?? {})) system.equipped = true;
+		}
+		keys = Object.keys(system);
+	}
+
+	const changed = [];
+	if (current.name !== packSource.name) changed.push('name');
+	if (current.img !== packSource.img) changed.push('img');
+	for (const key of keys) {
+		if (refreshStableStringify(currentSystem[key]) !== refreshStableStringify(system[key])) changed.push(key);
+	}
+	const flagUpdates = {};
+	const currentFlags = current.flags?.[MODULE_ID] ?? {};
+	const packFlags = packSource.flags?.[MODULE_ID] ?? {};
+	for (const key of PACK_OWNED_FLAG_KEYS) {
+		const next = packFlags[key] ?? null;
+		if (refreshStableStringify(currentFlags[key]) === refreshStableStringify(next)) continue;
+		flagUpdates[`flags.${MODULE_ID}.${key}`] = next === null ? null : foundry.utils.deepClone(next);
+		changed.push(`flag:${key}`);
+	}
+	if (!changed.length) return null;
+
+	const update = { _id: item.id, name: packSource.name, img: packSource.img, ...flagUpdates };
+	for (const key of keys) update[`system.${key}`] = system[key];
+	return { update, changed, name: item.name, to: packSource.name };
+}
+
+function grantItemRulesOf(rules) {
+	return (Array.isArray(rules) ? rules : []).filter(
+		(rule) => rule?.type === 'grantItem' && !rule.disabled && !rule.inMemoryOnly && rule.uuid,
+	);
+}
+
+/**
+ * Plan a refresh for one actor (reads only; fromUuid per owned document).
+ * @returns {Promise<{actor, updates: object[], children: object[], missingSources: string[]}>}
+ */
+async function planClassContentRefresh(actor, scope = null) {
+	scope ??= await loadRefreshScope();
+	const plan = { actor, updates: [], children: [], missingSources: [] };
+	const owned = new Set();
+	for (const item of actor.items ?? []) {
+		const uuid = itemSourceUuid(item);
+		if (uuid) owned.add(uuid);
+	}
+
+	const docCache = new Map();
+	const loadDoc = async (uuid) => {
+		if (!docCache.has(uuid)) {
+			let doc = null;
+			try {
+				doc = await fromUuid(uuid);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] refresh: could not load ${uuid}`, error);
+			}
+			docCache.set(uuid, doc);
+		}
+		return docCache.get(uuid);
+	};
+
+	const planned = new Set();
+	for (const item of actor.items ?? []) {
+		if (item.type === 'class') continue;
+		const uuid = itemSourceUuid(item);
+		const parsed = parseCodexItemSource(uuid);
+		if (!isInRefreshScope(parsed, scope)) continue;
+		const doc = await loadDoc(uuid);
+		if (!doc) {
+			plan.missingSources.push(item.name);
+			continue;
+		}
+		const refresh = buildRefreshUpdate(item, doc);
+		if (refresh) plan.updates.push(refresh);
+
+		// Children only for features: rules on unequipped objects are disabled, and
+		// subclass/class grants belong to creation-time flows.
+		if (item.type !== 'feature') continue;
+		for (const rule of grantItemRulesOf(doc.toObject().system?.rules)) {
+			if (owned.has(rule.uuid) || planned.has(rule.uuid)) continue;
+			const child = await loadDoc(rule.uuid);
+			if (!child) continue;
+			planned.add(rule.uuid);
+			plan.children.push({
+				uuid: rule.uuid,
+				name: child.name,
+				granterId: item.id,
+				granterName: doc.name,
+				ruleId: rule.id ?? null,
+				quantity: rule.quantity ?? null,
+			});
+		}
+	}
+	return plan;
+}
+
+// Build a grantItem child exactly as ItemGrantRule.preCreate does.
+async function buildGrantedChildSource(child, granter) {
+	const doc = await fromUuid(child.uuid);
+	if (!doc) return null;
+	const source = doc.toObject();
+	delete source._id;
+	delete source.folder;
+	delete source.sort;
+	delete source.ownership;
+	source._stats ??= {};
+	source._stats.compendiumSource = child.uuid;
+	if (itemSourceUuid(granter) === child.uuid && Array.isArray(source.system?.rules)) {
+		source.system.rules = source.system.rules.filter((rule) => rule.type !== 'GrantItem');
+	}
+	if (child.quantity !== null && source.system && 'quantity' in source.system) {
+		source.system.quantity = child.quantity;
+	}
+	return source;
+}
+
+async function applyClassContentRefresh(plan) {
+	const { actor } = plan;
+	const result = { updated: 0, added: [], skipped: [] };
+	if (plan.updates.length) {
+		await actor.updateEmbeddedDocuments(
+			'Item',
+			plan.updates.map((entry) => entry.update),
+		);
+		result.updated = plan.updates.length;
+	}
+
+	// One at a time, re-checking ownership: a child's own grant rules fire natively
+	// on creation and may already have produced a later child.
+	for (const child of plan.children) {
+		if ((actor.items ?? []).some((item) => itemSourceUuid(item) === child.uuid)) continue;
+		const granter = actor.items.get(child.granterId);
+		if (!granter) {
+			result.skipped.push(child.name);
+			continue;
+		}
+		const liveRule = granter.rules?.values
+			? [...granter.rules.values()].find((rule) => rule?.type === 'grantItem' && rule.uuid === child.uuid)
+			: null;
+		if (liveRule && (liveRule.disabled || (typeof liveRule.appliesTo === 'function' && !liveRule.appliesTo()))) {
+			result.skipped.push(child.name);
+			continue;
+		}
+		const source = await buildGrantedChildSource(child, granter);
+		if (!source) {
+			result.skipped.push(child.name);
+			continue;
+		}
+		await actor.createEmbeddedDocuments('Item', [source]);
+		result.added.push(child.name);
+	}
+	return result;
+}
+
+function renderRefreshPlan(plan) {
+	const updates = plan.updates
+		.map((entry) => {
+			const label =
+				entry.name !== entry.to
+					? `${escapeHtml(entry.name)} → <strong>${escapeHtml(entry.to)}</strong>`
+					: escapeHtml(entry.name);
+			return `<li>${label} <em>(${escapeHtml(entry.changed.join(', '))})</em></li>`;
+		})
+		.join('');
+	const children = plan.children
+		.map((child) => `<li><strong>${escapeHtml(child.name)}</strong> <em>(from ${escapeHtml(child.granterName)})</em></li>`)
+		.join('');
+	const missing = plan.missingSources.length
+		? `<p><em>No longer in the packs (left untouched): ${plan.missingSources.map(escapeHtml).join(', ')}.</em></p>`
+		: '';
+	return (
+		`<p>Refresh <strong>${escapeHtml(plan.actor.name)}</strong>'s Engineer/Specter content from the Blue's Codex packs. ` +
+		`Charge-pool counters, quantities, equipped state and choices are kept; gadgets are set equipped.</p>` +
+		`<div style="max-height:55vh;overflow:auto">` +
+		(updates ? `<h4>${plan.updates.length} item(s) updated</h4><ul>${updates}</ul>` : '') +
+		(children ? `<h4>${plan.children.length} granted item(s) added</h4><ul>${children}</ul>` : '') +
+		missing +
+		`</div>`
+	);
+}
+
+/**
+ * Refresh an actor's Engineer/Specter content from the packs.
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {boolean} [options.dryRun=false]  plan only: log + return the plan, write nothing
+ * @param {boolean} [options.confirm=true]  show the confirm dialog before writing
+ * @returns {Promise<object|null>}  the plan (dry run) or the applied result
+ */
+async function refreshClassContent(actor, { dryRun = false, confirm = true } = {}) {
+	actor ??= game.user?.character ?? canvas?.tokens?.controlled?.[0]?.actor ?? null;
+	if (!actor) {
+		ui.notifications?.warn("Blue's Codex | No actor: pass one, assign a character, or select a token.");
+		return null;
+	}
+	if (!dryRun && !actor.isOwner) {
+		ui.notifications?.warn(`Blue's Codex | You don't own ${actor.name}.`);
+		return null;
+	}
+	const plan = await planClassContentRefresh(actor);
+	const summary = `${plan.updates.length} item(s) to update, ${plan.children.length} granted item(s) to add`;
+	if (dryRun) {
+		console.log(`[${MODULE_ID}] refresh dry run — ${actor.name}: ${summary}`, plan);
+		ui.notifications?.info(`Blue's Codex | ${actor.name}: ${summary} (dry run, nothing written).`);
+		return plan;
+	}
+	if (!plan.updates.length && !plan.children.length) {
+		ui.notifications?.info(`Blue's Codex | ${actor.name}'s class content is up to date.`);
+		return { updated: 0, added: [], skipped: [] };
+	}
+	if (confirm) {
+		const ok = await foundry.applications.api.DialogV2.confirm({
+			window: { title: `Refresh class content — ${actor.name}`, icon: 'fa-solid fa-arrows-rotate' },
+			position: { width: 560 },
+			content: renderRefreshPlan(plan),
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (!ok) return null;
+	}
+
+	const result = await applyClassContentRefresh(plan);
+	const owners = (game.users ?? []).filter((user) => user.isGM || actor.testUserPermission?.(user, 'OWNER'));
+	const addedList = result.added.length
+		? `<p>Added: ${result.added.map(escapeHtml).join(', ')}.</p>`
+		: '';
+	const skippedList = result.skipped.length
+		? `<p><em>Skipped (grant no longer applies): ${result.skipped.map(escapeHtml).join(', ')}.</em></p>`
+		: '';
+	try {
+		await ChatMessage.create({
+			speaker: ChatMessage.getSpeaker({ actor }),
+			whisper: owners.map((user) => user.id),
+			content:
+				`<p><strong>Class content refreshed</strong> from the Blue's Codex packs: ` +
+				`${result.updated} item(s) updated, ${result.added.length} granted item(s) added. ` +
+				`Charge-pool counters were kept — click a counter on the sheet to correct it.</p>` +
+				addedList +
+				skippedList,
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post refresh summary`, error);
+	}
+	return result;
+}
+
+api.refreshClassContent = refreshClassContent;
+
+// GM notice on ready: whisper a card listing stale Engineer/Specter characters,
+// once per distinct (module version, stale-actor set).
+async function noticeStaleClassContent() {
+	if (!isActingGM()) return;
+	const candidates = (game.actors ?? []).filter((actor) => actor?.type === 'character' && actorHasRefreshClass(actor));
+	if (!candidates.length) return;
+	const scope = await loadRefreshScope();
+	const stale = [];
+	for (const actor of candidates) {
+		const plan = await planClassContentRefresh(actor, scope);
+		if (plan.updates.length || plan.children.length) stale.push({ actor, plan });
+	}
+	if (!stale.length) return;
+	const version = game.modules.get(MODULE_ID)?.version ?? '';
+	const key = `${version}|${stale.map(({ actor }) => actor.id).sort().join(',')}`;
+	if (game.settings.get(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING) === key) return;
+	await game.settings.set(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING, key);
+
+	const rows = stale
+		.map(
+			({ actor, plan }) =>
+				`<li>${escapeHtml(actor.name)} — ${plan.updates.length} to update, ${plan.children.length} to add ` +
+				`<button type="button" data-bcx-refresh-actor="${escapeHtml(actor.uuid)}"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button></li>`,
+		)
+		.join('');
+	await ChatMessage.create({
+		whisper: (game.users ?? []).filter((user) => user.isGM).map((user) => user.id),
+		flags: { [MODULE_ID]: { [CLASS_REFRESH_NOTICE_FLAG]: true } },
+		content:
+			`<p><strong>Blue's Codex:</strong> these characters hold Engineer/Specter content older than the packs ` +
+			`(missing resource counters, automation or granted options):</p><ul>${rows}</ul>` +
+			`<p><em>Or run <code>blueCodex.refreshClassContent(actor)</code>. Each refresh shows a preview first.</em></p>`,
+	});
+}
+
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	if (!message?.flags?.[MODULE_ID]?.[CLASS_REFRESH_NOTICE_FLAG]) return;
+	for (const button of html.querySelectorAll?.('[data-bcx-refresh-actor]') ?? []) {
+		if (!game.user?.isGM) {
+			button.remove();
+			continue;
+		}
+		button.addEventListener('click', (event) => {
+			event.preventDefault();
+			const actor = fromUuidSync(button.dataset.bcxRefreshActor);
+			if (!actor) {
+				ui.notifications?.warn("Blue's Codex | That actor no longer exists.");
+				return;
+			}
+			void refreshClassContent(actor).catch((error) =>
+				console.error(`[${MODULE_ID}] class-content refresh failed`, error),
+			);
+		});
+	}
+});
+
+// Character sheet header menu entry (Engineer/Specter characters, owners only).
+Hooks.on('getHeaderControlsPlayerCharacterSheet', (app, controls) => {
+	const actor = app?.actor ?? app?.document;
+	if (!actor?.isOwner || !actorHasRefreshClass(actor) || !Array.isArray(controls)) return;
+	controls.push({
+		icon: 'fa-solid fa-arrows-rotate',
+		label: 'Refresh Codex class content',
+		action: 'bcxRefreshClassContent',
+		onClick: () =>
+			void refreshClassContent(actor).catch((error) =>
+				console.error(`[${MODULE_ID}] class-content refresh failed`, error),
+			),
+	});
+});
+
+Hooks.once('init', () => {
+	game.settings.register(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING, {
+		scope: 'world',
+		config: false,
+		type: String,
+		default: '',
+	});
+});
+
+Hooks.once('ready', () => {
+	noticeStaleClassContent().catch((error) =>
+		console.error(`[${MODULE_ID}] stale class-content check failed`, error),
+	);
 });

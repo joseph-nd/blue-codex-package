@@ -1,0 +1,25 @@
+{
+	"name": "Mechanist",
+	"type": "subclass",
+	"img": "modules/blue-codex-package/assets/subclassImages/engineer/mechanist.webp",
+	"system": {
+		"macro": "",
+		"identifier": "mechanist",
+		"rules": [],
+		"description": "<p><em>Ingenious.</em> One turret is a tool; a battery of them is a war machine. The Mechanist floods the field with sturdier sentries, choreographs their fire with their own, and unleashes every special ability at once when the moment demands it.</p><p><strong>LEVEL 3</strong></p><p><strong>Master Technician.</strong> You can have up to two active turrets at once, and Turret Deployed! is no longer limited to 1/turn.</p><p><strong>Extra Plating.</strong> Your turrets are only destroyed by a single instance of damage equal to 2xLVL.</p><p><strong>LEVEL 7</strong></p><p><strong>Targeting Matrix.</strong> When a turret damages an enemy, the next attack against it has advantage.</p><p><strong>LEVEL 11</strong></p><p><strong>Coordinated Assault.</strong> 1/turn, your firearm attacks make every Rifle Turret in range fire alongside you, sharing your hit/crit/miss.</p><p><strong>LEVEL 15</strong></p><p><strong>Optimized Activation.</strong> 1/Safe Rest, spend 1 Toolbelt scrap to activate all active turrets' abilities without destroying them.</p>",
+		"parentClass": "engineer",
+		"resources": []
+	},
+	"effects": [],
+	"folder": "00bb693b48359049",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "BhOmSIvWHT8nHQLa"
+}
