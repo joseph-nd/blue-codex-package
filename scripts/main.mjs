@@ -446,6 +446,202 @@ Hooks.once('ready', () => {
 const SETTING_REPLACE_SPELLS = 'replaceOfficialSpells';
 const OFFICIAL_SPELL_PACKS = new Set(['nimble.nimble-spells', 'nimble.nimble-secret-spells']);
 const CODEX_SPELLS_PACK = `${MODULE_ID}.blue-codex-spells`;
+// Summon Lifebinding Spirit (Book of Radiance, tier 1, Shepherd only).
+const CODEX_LIFEBINDING_SPIRIT_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.EfjqVGarrBSsFoAF`;
+const CODEX_LIFEBINDING_SPIRIT_ID = 'summon-lifebinding-spirit';
+
+// ── Codex Lifebinding Spirit (Nimble 0.2 chassis) ────────────────────────────
+// Nimble 0.2 turned the Shepherd's tier-1 Lifebinding Spirit into a cantrip that
+// the L1 feature "My Buddy!" grants (Nim+ ships both; My Buddy! also owns the
+// actor-scoped `lifebindingMend` charge pool, WIL/Safe Rest). Blue's Codex ships
+// its own version of that cantrip — "Codex Lifebinding Spirit" (radiant, tier 0,
+// flags.<module>.playtest02): the 0.2 Harm/Mend on the Codex summon-token chassis,
+// with the Codex bonus commands and flavour, no mana. Which spirit a Shepherd
+// should own follows its rules, read off the character itself:
+//   '02'  — owns My Buddy!  → the Codex cantrip; never the tier-1 Codex spell;
+//   '203' — any other class-bearing actor → the tier-1 Codex spell at L2 (as before);
+//   no actor (character creator) → Nim+'s world setting (0.2 on & Nim+ active).
+// The cantrip is only ever granted by My Buddy!'s (rewritten) uuid grant, so it is
+// kept out of every school-based grant when the character plays 2.0.3 rules.
+const CODEX_LIFEBINDING_SPIRIT_02_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.thNZGzaP60h0Q9nE`;
+const CODEX_LIFEBINDING_SPIRIT_02_ID = 'codex-lifebinding-spirit';
+const NIM_PLUS_LIFEBINDING_CANTRIP_UUID = 'Compendium.nim-plus-package.nim-plus-spells.Item.SAEd6Nk8SfgJ2Ff7';
+const MY_BUDDY_IDENTIFIER = 'my-buddy';
+const MY_BUDDY_NAME = 'My Buddy!';
+
+/** Nim+ is active and its world setting plays the Nimble 0.2 core classes. */
+function nimPlusPlaytestWorld() {
+	if (!game.modules?.get?.(NIM_PLUS_ID)?.active) return false;
+	try {
+		return game.settings.get(NIM_PLUS_ID, 'playtestCoreClasses') !== false;
+	} catch {
+		return true; // Nim+'s own default
+	}
+}
+
+/** '02' or '203': which Lifebinding Spirit rules `actor` plays (see above). */
+function lifebindingSpiritMode(actor = null) {
+	if (actor) {
+		if (actorOwnsFeature(actor, MY_BUDDY_IDENTIFIER, MY_BUDDY_NAME)) return '02';
+		if (getPrimaryClass(actor)) return '203';
+	}
+	return nimPlusPlaytestWorld() ? '02' : '203';
+}
+
+/**
+ * Should the Codex spell `uuid` be kept out of a grant for `actor` (null = the
+ * character creator)? The 0.2 cantrip only with Codex magic on and 0.2 rules; the
+ * tier-1 spirit never for a 0.2 Shepherd (with Codex magic on).
+ */
+function codexSpiritGrantExcluded(uuid, actor = null) {
+	if (uuid === CODEX_LIFEBINDING_SPIRIT_02_UUID) {
+		return !isReplaceSpellsEnabled() || lifebindingSpiritMode(actor) !== '02';
+	}
+	if (uuid === CODEX_LIFEBINDING_SPIRIT_UUID) {
+		return isReplaceSpellsEnabled() && lifebindingSpiritMode(actor) === '02';
+	}
+	return false;
+}
+
+/** The owned spell is the Codex 0.2 spirit / the tier-1 Codex spirit. */
+function isCodexSpirit02Item(item) {
+	return (
+		item?.type === 'spell' &&
+		(itemSourceUuid(item) === CODEX_LIFEBINDING_SPIRIT_02_UUID ||
+			item.system?.identifier === CODEX_LIFEBINDING_SPIRIT_02_ID)
+	);
+}
+function isCodexSpiritT1Item(item) {
+	return (
+		item?.type === 'spell' &&
+		(itemSourceUuid(item) === CODEX_LIFEBINDING_SPIRIT_UUID ||
+			item.system?.identifier === CODEX_LIFEBINDING_SPIRIT_ID)
+	);
+}
+
+// ── Nim+ 0.2 playtest copies of official documents ───────────────────────────
+// The sibling nim-plus-package ships Nimble 0.2 playtest copies of core class
+// documents (class features, subclasses, class spells). Each copy names the system
+// document(s) it replaces in `flags.nim-plus-package.supersedes` (system UUIDs);
+// documents that are new in 0.2 carry `flags.nim-plus-package.playtest02 = true`.
+// With Nim+'s `playtestCoreClasses` setting on, the character creator and level-up
+// dialogs offer those copies instead of the system ones — e.g. the 0.2 Conduit of
+// Shadow grants Nim+ Summon Shadow / Command Shadows / Shadow Blast UUIDs, and the
+// 0.2 Mage/Songweaver grant Nim+ lightning/wind spells alongside the official packs.
+//
+// Everything below that is keyed on an OFFICIAL spell (the grant-index filter, the
+// preCreateItem block, the class-feature uuid remap) therefore treats a Nim+ copy
+// exactly like the system document it supersedes, and a 0.2-only core spell
+// (playtest02, no supersedes — e.g. Command Shadows) like any other official spell.
+// Works with the setting on or off (off: Nim+ hides its copies itself, so nothing
+// here ever sees them) and without nim-plus installed (the set stays empty).
+const NIM_PLUS_ID = 'nim-plus-package';
+const OFFICIAL_SPELL_UUID_PREFIXES = [...OFFICIAL_SPELL_PACKS].map((pack) => `Compendium.${pack}.`);
+
+/** @type {{ supersedes: Map<string, string[]>, playtestOnly: Set<string> } | null} */
+let nimPlusEquivalence = null;
+let nimPlusEquivalencePromise = null;
+
+function isOfficialSpellUuid(uuid) {
+	return typeof uuid === 'string' && OFFICIAL_SPELL_UUID_PREFIXES.some((prefix) => uuid.startsWith(prefix));
+}
+
+/**
+ * Build (once, cached) the Nim+ 0.2 equivalence set: Nim+ UUID → the system UUIDs
+ * it supersedes, plus the 0.2-only Nim+ UUIDs. Reads Nim+'s own supersede data
+ * through its API when present (built from the unfiltered indexes, so it is
+ * complete whichever way the setting points); otherwise falls back to a flag-field
+ * index read of the Nim+ Item packs. Never loads documents. Never rejects.
+ */
+function ensureNimPlusEquivalence() {
+	if (!nimPlusEquivalencePromise) {
+		nimPlusEquivalencePromise = (async () => {
+			const supersedes = new Map();
+			const playtestOnly = new Set();
+			const nimPlus = game.modules?.get?.(NIM_PLUS_ID);
+			if (nimPlus?.active) {
+				let done = false;
+				const data = await nimPlus.api?.supersede?.data?.().catch?.(() => null);
+				if (data?.supersedes instanceof Map) {
+					for (const [uuid, list] of data.supersedes) supersedes.set(uuid, [...(list ?? [])]);
+					for (const uuid of data.playtestOnly ?? []) playtestOnly.add(uuid);
+					done = true;
+				}
+				if (!done) {
+					const fields = [`flags.${NIM_PLUS_ID}.supersedes`, `flags.${NIM_PLUS_ID}.playtest02`];
+					for (const pack of game.packs ?? []) {
+						if (pack?.documentName !== 'Item') continue;
+						if (!String(pack.collection ?? '').startsWith(`${NIM_PLUS_ID}.`)) continue;
+						// eslint-disable-next-line no-await-in-loop
+						const index = await pack.getIndex({ fields }).catch(() => []);
+						for (const entry of index) {
+							const flags = entry?.flags?.[NIM_PLUS_ID];
+							if (!flags) continue;
+							const uuid = entry.uuid ?? pack.getUuid(entry._id);
+							const list = Array.isArray(flags.supersedes)
+								? flags.supersedes.filter((value) => typeof value === 'string')
+								: [];
+							if (list.length) supersedes.set(uuid, list);
+							else if (flags.playtest02 === true) playtestOnly.add(uuid);
+						}
+					}
+				}
+			}
+			nimPlusEquivalence = { supersedes, playtestOnly };
+			return nimPlusEquivalence;
+		})().catch((error) => {
+			console.error(`[${MODULE_ID}] Failed to read Nim+ 0.2 supersede data`, error);
+			nimPlusEquivalence = { supersedes: new Map(), playtestOnly: new Set() };
+			return nimPlusEquivalence;
+		});
+	}
+	return nimPlusEquivalencePromise;
+}
+
+/**
+ * The system UUIDs `uuid` stands for: itself for a system document, the documents
+ * it supersedes for a Nim+ 0.2 copy, else []. `flags` (a document's or index
+ * entry's `flags`, optional) is read first, so this also works synchronously before
+ * the equivalence set is built — an item created from a Nim+ copy carries its flags.
+ */
+function systemEquivalents(uuid, flags = null) {
+	if (typeof uuid === 'string' && uuid.startsWith('Compendium.nimble.')) return [uuid];
+	const fromFlags = flags?.[NIM_PLUS_ID]?.supersedes;
+	if (Array.isArray(fromFlags) && fromFlags.length) {
+		return fromFlags.filter((value) => typeof value === 'string');
+	}
+	return (typeof uuid === 'string' && nimPlusEquivalence?.supersedes.get(uuid)) || [];
+}
+
+/** True for a Nim+ 0.2 copy or 0.2-only document (by flags, or by the built set). */
+function isNimPlusPlaytestDoc(uuid, flags = null) {
+	const own = flags?.[NIM_PLUS_ID];
+	if (own && (own.playtest02 === true || (Array.isArray(own.supersedes) && own.supersedes.length))) return true;
+	if (typeof uuid !== 'string' || !nimPlusEquivalence) return false;
+	return nimPlusEquivalence.supersedes.has(uuid) || nimPlusEquivalence.playtestOnly.has(uuid);
+}
+
+/**
+ * True when a spell (by compendium source UUID and/or flags) is official core
+ * content: a system-pack spell, a Nim+ 0.2 copy of one, or a Nim+ 0.2-only spell.
+ */
+function isOfficialCoreSpell(uuid, flags = null) {
+	if (isOfficialSpellUuid(uuid)) return true;
+	if (systemEquivalents(uuid, flags).some(isOfficialSpellUuid)) return true;
+	if (flags?.[NIM_PLUS_ID]?.playtest02 === true) return true;
+	return typeof uuid === 'string' && nimPlusEquivalence?.playtestOnly.has(uuid) === true;
+}
+
+/**
+ * Should an official core spell of `school`/`tier` be kept off a character of
+ * class `classId` because the Codex replaces it? Mirrors the preCreateItem block:
+ * necrotic on the re-homed necrotic casters, or any school/tier the Codex covers.
+ */
+function codexReplacesOfficialSpell(school, tier, classId) {
+	if (!school) return false;
+	if (school === 'necrotic' && CLASS_SPELL_REMAP[classId]) return true;
+	return !!codexCoverageSet?.has(`${school}:${tier ?? 0}`);
+}
 
 // Set (to `{ actorId, subclassId }`) only while a character's native level-up
 // dialog is open — see wrapTriggerLevelUp. Lets the class-feature index patch
@@ -567,6 +763,13 @@ async function maybeInjectSubclassPoolOptions(pack, options, result) {
 	return transformed;
 }
 
+// Only the character-grant path (buildSpellIndex) requests `system.classes` and
+// omits `name`; the spell-compendium browser does the reverse.
+function isSpellGrantIndexRequest(options) {
+	const fields = options?.fields;
+	return Array.isArray(fields) && fields.includes('system.classes') && !fields.includes('name');
+}
+
 /**
  * Patch CompendiumCollection#getIndex so the official Nimble spell packs
  * contribute no Codex-covered spells to the character-grant index (while the
@@ -581,8 +784,8 @@ function patchSpellGrantIndex() {
 	if (!proto?.getIndex || proto.__blueCodexSpellFilterPatched) return;
 
 	const originalGetIndex = proto.getIndex;
-	proto.getIndex = async function blueCodexPatchedGetIndex(options = {}) {
-		const result = await originalGetIndex.call(this, options);
+	async function blueCodexFilteredGetIndex(wrapped, options = {}) {
+		let result = await wrapped.call(this, options);
 		// Subclass-scoped pool-option injection into the native level-up dialog
 		// (independent of the official-spell setting handled below).
 		try {
@@ -591,14 +794,30 @@ function patchSpellGrantIndex() {
 		} catch (error) {
 			console.error(`[${MODULE_ID}] Class-feature selection injection failed`, error);
 		}
+		// Lifebinding Spirit variants in the character-grant index (any setting): the
+		// Codex 0.2 cantrip only for a 0.2 Shepherd with Codex magic on (else the
+		// school grants would hand it to every Shepherd), the tier-1 Codex spirit
+		// never to a 0.2 Shepherd. Scoped to the leveling character when there is one.
+		try {
+			if (this.collection === CODEX_SPELLS_PACK && isSpellGrantIndexRequest(options)) {
+				const actor = levelUpContext?.actorId ? (game.actors?.get?.(levelUpContext.actorId) ?? null) : null;
+				let filtered = null;
+				for (const [key, entry] of result.entries()) {
+					const uuid = entry?.uuid ?? this.getUuid?.(entry?._id);
+					if (entry?.type === 'spell' && codexSpiritGrantExcluded(uuid, actor)) {
+						filtered ??= new foundry.utils.Collection(result.entries());
+						filtered.delete(key);
+					}
+				}
+				if (filtered) result = filtered;
+			}
+		} catch (error) {
+			console.error(`[${MODULE_ID}] Lifebinding Spirit grant filter failed`, error);
+		}
 		try {
 			if (!isReplaceSpellsEnabled()) return result;
 
-			// Only the character-grant path (buildSpellIndex) requests `system.classes`
-			// and omits `name`; the spell-compendium browser does the reverse.
-			const fields = options?.fields;
-			const isGrantPath =
-				Array.isArray(fields) && fields.includes('system.classes') && !fields.includes('name');
+			const isGrantPath = isSpellGrantIndexRequest(options);
 
 			// During a school-swapping subclass's level-up, drop the base-school Codex
 			// spells the character will not keep from the grant index, so the native
@@ -622,8 +841,14 @@ function patchSpellGrantIndex() {
 				return filtered;
 			}
 
-			if (!OFFICIAL_SPELL_PACKS.has(this.collection)) return result;
+			// The official packs, plus the Nim+ packs that carry 0.2 playtest copies of
+			// official spells (and 0.2-only core spells) — those are filtered exactly
+			// like the system spell they stand for; every other Nim+ spell passes.
+			const isOfficialPack = OFFICIAL_SPELL_PACKS.has(this.collection);
+			const isNimPlusPack = String(this.collection ?? '').startsWith(`${NIM_PLUS_ID}.`);
+			if (!isOfficialPack && !isNimPlusPack) return result;
 			if (!isGrantPath) return result;
+			if (isNimPlusPack) await ensureNimPlusEquivalence();
 
 			const coverage = (await ensureCodexCoverage()) ?? new Set();
 
@@ -637,7 +862,10 @@ function patchSpellGrantIndex() {
 
 			const filtered = new foundry.utils.Collection();
 			for (const [key, entry] of result.entries()) {
-				if (entry?.type === 'spell') {
+				if (
+					entry?.type === 'spell' &&
+					(isOfficialPack || isOfficialCoreSpell(entry.uuid ?? this.getUuid?.(entry._id), entry.flags))
+				) {
 					const school = entry?.system?.school;
 					const tier = entry?.system?.tier ?? 0;
 					if (dropNecrotic && school === 'necrotic') continue;
@@ -651,7 +879,24 @@ function patchSpellGrantIndex() {
 			console.error(`[${MODULE_ID}] Spell-grant index filter failed`, error);
 			return result;
 		}
-	};
+	}
+	// Through libWrapper when it is active, so modules patching getIndex too
+	// (Nim+'s supersede layer, Babele) share one chain instead of tripping its
+	// conflict warning; a direct patch otherwise.
+	if (typeof globalThis.libWrapper?.register === 'function') {
+		globalThis.libWrapper.register(
+			MODULE_ID,
+			'foundry.documents.collections.CompendiumCollection.prototype.getIndex',
+			function (wrapped, options) {
+				return blueCodexFilteredGetIndex.call(this, wrapped, options);
+			},
+			'WRAPPER',
+		);
+	} else {
+		proto.getIndex = function blueCodexPatchedGetIndex(options) {
+			return blueCodexFilteredGetIndex.call(this, originalGetIndex, options);
+		};
+	}
 	proto.__blueCodexSpellFilterPatched = true;
 }
 
@@ -671,10 +916,10 @@ Hooks.on('preCreateItem', (item, data) => {
 
 		const source = item?._stats?.compendiumSource ?? data?._stats?.compendiumSource ?? '';
 		if (typeof source !== 'string') return true;
-		const isOfficial =
-			source.startsWith('Compendium.nimble.nimble-spells.') ||
-			source.startsWith('Compendium.nimble.nimble-secret-spells.');
-		if (!isOfficial) return true;
+		// Official = a system-pack spell, or a Nim+ 0.2 copy / 0.2-only core spell
+		// (recognised by the flags the created item carries over from its source).
+		const flags = item?.flags ?? data?.flags ?? null;
+		if (!isOfficialCoreSpell(source, flags)) return true;
 
 		const school = item?.system?.school;
 		const tier = item?.system?.tier ?? 0;
@@ -689,6 +934,7 @@ Hooks.on('preCreateItem', (item, data) => {
 			console.log(
 				`[${MODULE_ID}] Blocked official necrotic spell "${item.name}" — re-homed to a Blue's Codex school for this class.`,
 			);
+			queueCodexSubstitute(actor, source, flags);
 			return false;
 		}
 
@@ -696,6 +942,7 @@ Hooks.on('preCreateItem', (item, data) => {
 			console.log(
 				`[${MODULE_ID}] Blocked official spell "${item.name}" (${school} T${tier}) — Blue's Codex is the default magic system.`,
 			);
+			queueCodexSubstitute(actor, source, flags);
 			return false;
 		}
 	} catch (error) {
@@ -703,6 +950,90 @@ Hooks.on('preCreateItem', (item, data) => {
 	}
 	return true;
 });
+
+// Safety net for the tier-1 Codex spirit on a Nimble 0.2 Shepherd (owns My Buddy!):
+// 0.2 has no tier-1 Lifebinding Spirit — the Shepherd knows the Codex cantrip
+// instead. The grant-index filter keeps it out of the dialogs; this catches every
+// other path (a school sync, a drag) and substitutes the cantrip (if not owned).
+Hooks.on('preCreateItem', (item, data) => {
+	try {
+		if (!isReplaceSpellsEnabled()) return true;
+		if (item?.type !== 'spell') return true;
+		const actor = item?.parent;
+		if (!(actor instanceof Actor) || actor.type !== 'character') return true;
+		const source = item?._stats?.compendiumSource ?? data?._stats?.compendiumSource ?? null;
+		const isT1 =
+			source === CODEX_LIFEBINDING_SPIRIT_UUID ||
+			(item.system?.identifier === CODEX_LIFEBINDING_SPIRIT_ID && item.system?.tier === 1);
+		if (!isT1 || lifebindingSpiritMode(actor) !== '02') return true;
+		console.log(
+			`[${MODULE_ID}] Blocked "${item.name}" on ${actor.name} — a Nimble 0.2 Shepherd knows Codex Lifebinding Spirit (cantrip) instead.`,
+		);
+		setTimeout(() => {
+			grantCodexSpellIfMissing(actor, CODEX_LIFEBINDING_SPIRIT_02_UUID).catch((error) =>
+				console.error(`[${MODULE_ID}] Codex Lifebinding Spirit substitute failed`, error),
+			);
+		}, 0);
+		return false;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] preCreateItem Lifebinding Spirit filter failed`, error);
+	}
+	return true;
+});
+
+// A blocked Nim+ 0.2 copy that the caster's class maps 1:1 to a Codex spell
+// (CLASS_FEATURE_SPELL_REWRITES[classId].uuidMap) is replaced by that Codex spell.
+// The dialogs already grant the Codex spell via the rewritten rules; this covers
+// paths that add the 0.2 document directly — Nim+'s 2.0.3 → 0.2 class migration
+// (the Shepherd's Lifebinding Spirit cantrip) or a drag from the Nim+ pack. Scoped
+// to Nim+ 0.2 documents, so nothing changes without nim-plus-package. Deferred:
+// a preCreate hook must stay synchronous.
+const pendingCodexSubstitutes = new Set();
+function queueCodexSubstitute(actor, source, flags) {
+	try {
+		if (!isNimPlusPlaytestDoc(source, flags)) return;
+		const classId = getPrimaryClass(actor)?.classId;
+		const mapped = lookupUuidMap(CLASS_FEATURE_SPELL_REWRITES[classId]?.uuidMap, source, flags);
+		if (typeof mapped !== 'string') return;
+		const key = `${actor.id}|${mapped}`;
+		if (pendingCodexSubstitutes.has(key)) return;
+		pendingCodexSubstitutes.add(key);
+		setTimeout(() => {
+			grantCodexSpellIfMissing(actor, mapped)
+				.catch((error) => console.error(`[${MODULE_ID}] Codex spell substitute failed`, error))
+				.finally(() => pendingCodexSubstitutes.delete(key));
+		}, 0);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Codex spell substitute failed`, error);
+	}
+}
+
+// Create the Codex spell `uuid` on `actor` unless an equivalent is already owned
+// (same compendiumSource, identifier+school, or name+school — the dedupe keys the
+// other grant paths use).
+async function grantCodexSpellIfMissing(actor, uuid) {
+	const doc = await (originalFromUuid ?? globalThis.fromUuid)(uuid);
+	if (!doc || doc.type !== 'spell') return;
+	const school = doc.system?.school;
+	const identifier = doc.system?.identifier;
+	const owned = (actor.items ?? []).some(
+		(it) =>
+			it.type === 'spell' &&
+			(it._stats?.compendiumSource === uuid ||
+				(identifier && it.system?.identifier === identifier && it.system?.school === school) ||
+				(it.name === doc.name && it.system?.school === school)),
+	);
+	if (owned) return;
+	const obj = doc.toObject();
+	delete obj._id;
+	obj._stats = obj._stats ?? {};
+	obj._stats.compendiumSource = uuid;
+	await actor.createEmbeddedDocuments('Item', [obj]);
+	console.log(`[${MODULE_ID}] Granted Blue's Codex "${doc.name}" in place of its Nim+ 0.2 counterpart.`);
+	// A 0.2 Shepherd that just got the Codex cantrip may still hold the tier-1
+	// spirit (Nim+ class migration of a Codex character): the acting GM converts it (debounced check).
+	if (uuid === CODEX_LIFEBINDING_SPIRIT_02_UUID) scheduleSpiritConversionCheck(actor);
+}
 
 // ── Compendium tier badges ───────────────────────────────────────────────────
 // The core Nimble spell compendium shows each spell's tier as a small badge in
@@ -909,6 +1240,8 @@ Hooks.once('ready', () => {
 	installShadowmancerCasting();
 	// Warm the Codex coverage cache so the synchronous preCreateItem net has it.
 	ensureCodexCoverage();
+	// Warm the Nim+ 0.2 supersede equivalence (empty without nim-plus-package).
+	ensureNimPlusEquivalence();
 	// Warm the subclass-pool option + auto-grant indexes.
 	loadPoolOptions();
 	loadAutoGrantFeatures();
@@ -1365,7 +1698,8 @@ const SUBCLASS_SPELL_POLICY = {
 	'circle-of-earth': { mandatory: ['earth'], cap: 3, summary: 'Learn Earth spells.' },
 	'circle-of-hunger': { mandatory: ['shadow', 'illusion'], cap: 3, summary: 'Learn Shadow and Illusion spells. You can know only 3 spell schools.' },
 	'circle-of-spores': { mandatory: ['nature'], cap: 3, summary: 'Learn Nature spells.' },
-	// ── Songweaver (base auto: wind + 1 chosen) ──
+	// ── Songweaver (base auto: wind + 1 chosen; the extra school is picked at L1
+	// in Heroes 2.0, at L2 in the Nim+ 0.2 copy — both before these L3 subclasses) ──
 	'herald-of-disruption': { mandatory: ['domination'], cap: 3, summary: 'Learn Domination spells.' },
 	'herald-of-inspiration': { mandatory: ['inspiration'], cap: 3, summary: 'Learn Inspiration spells.' },
 	// ── Specter / Eidolon of Rage (base schools come from Dark Knowledge — 2 of
@@ -1436,20 +1770,62 @@ const CLASS_SPELL_CHOICE = {
 //                 (Shadowmancer's conduit-of-shadow patron cantrips: official necrotic
 //                 Shadow Blast/Summon Shadow → their Codex-shadow equivalents), so the
 //                 level-1 caster previews/learns exactly those two Codex spells rather
-//                 than the whole school.
+//                 than the whole school. Keyed by SYSTEM UUID; a Nim+ 0.2 copy that
+//                 supersedes a key is remapped the same way (see lookupUuidMap). A
+//                 `null` value drops the spell from the grant.
 //   addSchools  — extend a `selectSchool` rule's option list (Songweaver gains the
 //                 Book of Ether + Divination + Curse as choosable additional schools).
+//   featureNotes — keyed by feature `system.identifier`: HTML appended (once) to a
+//                 Nim+ 0.2 feature's description when it is resolved, to explain a
+//                 remap the feature text doesn't mention.
+// Independently of this table, a uuid-only grant (any feature, any class) of an
+// official core spell the Codex replaces — same test as the preCreateItem block —
+// is dropped from the rule, so the dialogs never preview a spell that would be
+// blocked on creation.
+// My Buddy!'s appended note under Codex magic (see featureNotes below). The
+// `data-blue-codex-note="my-buddy"` marker also lets the refresh tool swap the
+// earlier "cannot cast it until level 2" note on already-owned copies.
+const MY_BUDDY_CODEX_NOTE =
+	'<p data-blue-codex-note="my-buddy">[M] <strong>Blue\u2019s Codex:</strong> instead of the Lifebinding Spirit cantrip you learn <strong>Codex Lifebinding Spirit</strong> (Radiant cantrip, no mana): the same spirit, summoned as a token with Harm, Mend and the Codex bonus commands of the schools you know. Its Mend and bonus commands spend the <em>Mend</em> counter below, shared with this feature\u2019s own Mend. You do not also learn the tier-1 Summon Lifebinding Spirit.</p>';
+const MY_BUDDY_OLD_NOTE_MARK = 'you cannot cast it until level 2';
+
 const CLASS_FEATURE_SPELL_REWRITES = {
 	shadowmancer: {
 		swap: { necrotic: 'shadow' },
 		uuidMap: {
+			// Shadow Blast (system; the Nim+ 0.2 copy supersedes it)
 			'Compendium.nimble.nimble-spells.Item.9TNPdOXlCcGgxw6r':
 				'Compendium.blue-codex-package.blue-codex-spells.Item.enkqIepuxNVpUsCh',
+			// Summon Shadow (system; the Nim+ 0.2 copy supersedes it)
 			'Compendium.nimble.nimble-spells.Item.ho2KADcmQWWTeYR0':
 				'Compendium.blue-codex-package.blue-codex-spells.Item.nrDkGygSyNE6JR7n',
+			// Command Shadows — new 0.2 cantrip (no system original), split out of 0.2
+			// Summon Shadow ("1 Action: ALL your Shadows move 6 then attack"). The Codex
+			// Summon Shadow already carries that command ("You can use 1 Action to
+			// command all to … Attack | Move 6, Reach 1, 1d12 each"), so under the Codex
+			// rewrite it would be a duplicate action: drop it.
+			'Compendium.nim-plus-package.nim-plus-spells.Item.uHirzuVSdqt7jVPU': null,
 		},
 	},
-	shepherd: { swap: { necrotic: 'death' } },
+	shepherd: {
+		swap: { necrotic: 'death' },
+		uuidMap: {
+			// Lifebinding Spirit, 2.0.3 system tier-1 spell → the Codex's tier-1 Summon
+			// Lifebinding Spirit. No 2.0.3 Shepherd feature grants it by UUID (the L2
+			// radiant school grant carries it), so this only serves direct adds.
+			'Compendium.nimble.nimble-spells.Item.KICmDNpyNoMuZ20E': CODEX_LIFEBINDING_SPIRIT_UUID,
+			// The Nim+ 0.2 Lifebinding Spirit cantrip (supersedes the entry above, so
+			// it must be keyed directly) → the Codex's own 0.2 cantrip, Codex
+			// Lifebinding Spirit. Only the 0.2 Shepherd's "My Buddy!" (L1) grants it by
+			// UUID; Nim+'s 2.0.3 → 0.2 class migration adds it directly (blocked and
+			// substituted by queueCodexSubstitute). The tier-1 Codex spirit is kept off
+			// a 0.2 Shepherd (codexSpiritGrantExcluded + the preCreateItem net).
+			[NIM_PLUS_LIFEBINDING_CANTRIP_UUID]: CODEX_LIFEBINDING_SPIRIT_02_UUID,
+		},
+		featureNotes: {
+			[MY_BUDDY_IDENTIFIER]: MY_BUDDY_CODEX_NOTE,
+		},
+	},
 	songweaver: {
 		swap: { necrotic: 'death' },
 		addSchools: ['illusion', 'domination', 'inspiration', 'divination', 'curse'],
@@ -1463,23 +1839,89 @@ function uniqueList(list) {
 }
 
 /**
- * Return a rewritten copy of a feature's `rules` per `cfg`, or null when nothing
- * changed. Only `grantSpells` rules are touched.
+ * `uuidMap` lookup that also resolves a Nim+ 0.2 copy through the system UUIDs it
+ * supersedes. Returns the mapped UUID, `null` (drop), or undefined (no entry).
  */
-function rewriteFeatureSpellRules(rules, cfg) {
+function lookupUuidMap(map, uuid, flags = null) {
+	if (!map) return undefined;
+	if (Object.hasOwn(map, uuid)) return map[uuid];
+	for (const systemUuid of systemEquivalents(uuid, flags)) {
+		if (Object.hasOwn(map, systemUuid)) return map[systemUuid];
+	}
+	return undefined;
+}
+
+// The unwrapped global fromUuid (set by installFromUuidRewrite), for lookups made
+// from inside the wrapper.
+let originalFromUuid = null;
+
+/**
+ * Remap a uuid-only grant's spell list: `cfg.uuidMap` first (system or superseding
+ * Nim+ UUID → Codex UUID / null), then drop any remaining official core spell the
+ * Codex replaces for `classId`. Resolves each unmapped UUID's document (cached
+ * compendium doc, one per spell — never a pack load) for its flags/school/tier.
+ */
+async function remapGrantUuids(uuids, cfg, classId) {
+	const out = [];
+	for (const uuid of uuids) {
+		let mapped = lookupUuidMap(cfg?.uuidMap, uuid);
+		let doc = null;
+		if (mapped === undefined) {
+			try {
+				// eslint-disable-next-line no-await-in-loop
+				doc = await (originalFromUuid ?? globalThis.fromUuid)(uuid);
+			} catch {
+				doc = null;
+			}
+			mapped = lookupUuidMap(cfg?.uuidMap, uuid, doc?.flags);
+		}
+		if (mapped === null) continue;
+		if (typeof mapped === 'string') {
+			out.push(mapped);
+			continue;
+		}
+		if (
+			doc?.type === 'spell' &&
+			isOfficialCoreSpell(uuid, doc.flags) &&
+			codexReplacesOfficialSpell(doc.system?.school, doc.system?.tier ?? 0, classId)
+		) {
+			continue;
+		}
+		out.push(uuid);
+	}
+	return uniqueList(out);
+}
+
+/**
+ * Return a rewritten copy of a feature's `rules` per `cfg`, or null when nothing
+ * changed. Only `grantSpells` rules are touched; a uuid-only grant whose every
+ * spell is dropped is removed outright.
+ */
+async function rewriteFeatureSpellRules(rules, cfg, classId) {
 	let changed = false;
-	const out = rules.map((rule) => {
-		if (rule?.type !== 'grantSpells') return rule;
+	const out = [];
+	for (const rule of rules) {
+		if (rule?.type !== 'grantSpells') {
+			out.push(rule);
+			continue;
+		}
 
 		// A uuid-only grant (no schools) → remap those specific spell UUIDs 1:1 to
 		// their Codex equivalents, preserving the precise (2-spell) grant.
-		if (cfg.uuidMap && Array.isArray(rule.uuids) && rule.uuids.length && !rule.schools?.length) {
-			const mapped = rule.uuids.map((u) => cfg.uuidMap[u] ?? u);
+		if (Array.isArray(rule.uuids) && rule.uuids.length && !rule.schools?.length) {
+			// eslint-disable-next-line no-await-in-loop
+			const mapped = await remapGrantUuids(rule.uuids, cfg, classId);
 			if (mapped.join(',') !== rule.uuids.join(',')) {
 				changed = true;
-				return { ...rule, uuids: mapped };
+				if (mapped.length) out.push({ ...rule, uuids: mapped });
+				continue;
 			}
-			return rule;
+			out.push(rule);
+			continue;
+		}
+		if (!cfg) {
+			out.push(rule);
+			continue;
 		}
 
 		if (Array.isArray(rule.schools) && rule.schools.length) {
@@ -1488,12 +1930,30 @@ function rewriteFeatureSpellRules(rules, cfg) {
 			schools = uniqueList(schools);
 			if (schools.join(',') !== rule.schools.join(',')) {
 				changed = true;
-				return { ...rule, schools };
+				out.push({ ...rule, schools });
+				continue;
 			}
 		}
-		return rule;
-	});
+		out.push(rule);
+	}
 	return changed ? out : null;
+}
+
+/**
+ * `cfg.featureNotes` entry for a Nim+ 0.2 feature (by `system.identifier`), as an
+ * updateSource patch appending the note to its description — or null (no note,
+ * not a 0.2 doc, or already appended). Handles string and `{ baseEffect }` shapes.
+ */
+function featureNoteUpdate(doc, cfg) {
+	const note = cfg?.featureNotes?.[doc?.system?.identifier];
+	if (!note || !isNimPlusPlaytestDoc(doc.uuid, doc.flags)) return null;
+	const description = doc.system?.description;
+	if (typeof description === 'string') {
+		return description.includes('data-blue-codex-note') ? null : { 'system.description': description + note };
+	}
+	const base = description?.baseEffect;
+	if (typeof base !== 'string' || base.includes('data-blue-codex-note')) return null;
+	return { 'system.description.baseEffect': base + note };
 }
 
 // fromUuid returns cached compendium docs; rewriting one in place (idempotently)
@@ -1512,17 +1972,29 @@ const rewrittenFeatureDocs = new WeakSet();
 function installFromUuidRewrite() {
 	const original = globalThis.fromUuid;
 	if (typeof original !== 'function' || original.__blueCodexRewrapped) return;
+	originalFromUuid = original;
 	const wrapped = async function blueCodexFromUuid(...args) {
 		const doc = await original.apply(this, args);
 		try {
 			if (!isReplaceSpellsEnabled()) return doc;
 			if (!doc || doc.type !== 'feature' || rewrittenFeatureDocs.has(doc)) return doc;
-			const cfg = doc.system?.class ? CLASS_FEATURE_SPELL_REWRITES[doc.system.class] : null;
-			if (!cfg) return doc;
 			const rules = doc.system?.rules;
-			if (Array.isArray(rules)) {
-				const rewritten = rewriteFeatureSpellRules(rules, cfg);
-				if (rewritten) doc.updateSource({ 'system.rules': rewritten });
+			if (!Array.isArray(rules) || !rules.some((rule) => rule?.type === 'grantSpells')) return doc;
+			const classId = doc.system?.class ?? '';
+			const cfg = classId ? (CLASS_FEATURE_SPELL_REWRITES[classId] ?? null) : null;
+			// Class-table rewrites apply wherever the doc lives (as before); the generic
+			// uuid-grant clean-up only to compendium documents.
+			if (!cfg && !doc.pack) return doc;
+			// Keyed by class identifier, so a Nim+ 0.2 copy of a class feature (same
+			// `system.class`) is rewritten like the system document it supersedes.
+			await Promise.all([ensureNimPlusEquivalence(), ensureCodexCoverage()]);
+			if (rewrittenFeatureDocs.has(doc)) return doc; // a concurrent call finished first
+			const rewritten = await rewriteFeatureSpellRules(rules, cfg, classId);
+			if (rewritten && !rewrittenFeatureDocs.has(doc)) {
+				const update = { 'system.rules': rewritten };
+				const note = featureNoteUpdate(doc, cfg);
+				if (note) Object.assign(update, note);
+				doc.updateSource(update);
 			}
 			rewrittenFeatureDocs.add(doc);
 		} catch (error) {
@@ -1678,8 +2150,14 @@ async function sweepStaleGrantCarriers(actor) {
 
 const SCHOOL_LABEL = (school) => school.charAt(0).toUpperCase() + school.slice(1);
 
-/** Spell tier T unlocks at character level 2·T (cantrips at 1); this caps the tiers to grant. */
-function maxSpellTierForLevel(level) {
+/**
+ * Highest spell tier to grant at `level`. Casters unlock tier T at character
+ * level 2·T (cantrips at 1); the Shadowmancer climbs its own slower ladder
+ * (SHADOWMANCER_TIER_THRESHOLDS: tier 2 at 5, not 4), the same one its casting
+ * cap uses, so grants never run ahead of what it can cast.
+ */
+function maxSpellTierForLevel(level, classId = null) {
+	if (classId === 'shadowmancer') return shadowmancerHighestTier(Number(level ?? 0));
 	return Math.max(0, Math.min(9, Math.floor(Number(level ?? 0) / 2)));
 }
 
@@ -1850,7 +2328,7 @@ async function promptSchoolChoice(actor, policy) {
  *     swap's school drop still happens once, at the moment of the choice.
  */
 async function applySpellSchools(actor, finalSchools, level, fromTier = -1, pruneDropped = false) {
-	const maxTier = maxSpellTierForLevel(level);
+	const maxTier = maxSpellTierForLevel(level, getPrimaryClass(actor)?.classId);
 	const spellItems = (actor.items ?? []).filter((item) => item.type === 'spell');
 
 	let removed = 0;
@@ -1889,6 +2367,7 @@ async function applySpellSchools(actor, finalSchools, level, fromTier = -1, prun
 		if (!list) continue;
 		for (const { uuid, tier } of list) {
 			if (tier > maxTier || tier <= fromTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
+			if (codexSpiritGrantExcluded(uuid, actor)) continue;
 			seen.add(uuid);
 			// eslint-disable-next-line no-await-in-loop
 			const doc = await fromUuid(uuid);
@@ -1935,7 +2414,7 @@ async function spellSchoolSync(actor) {
 	// document writes (which re-fire the sheet-render hook) can't re-enter.
 	spellSyncActive.add(actor.id);
 	try {
-		const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+		const maxTier = maxSpellTierForLevel(classInfo.classLevel, classInfo.classId);
 		let finalSchools;
 		// Exclusive lower bound of tiers to grant now: the highest tier already
 		// granted for this school set. This makes the grant one-time-per-tier so a
@@ -2021,6 +2500,7 @@ async function grantCodexSchoolSpells(actor, school, maxTier, fromTier, stats = 
 	const seen = new Set();
 	for (const { uuid, tier } of list) {
 		if (tier > maxTier || tier <= fromTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
+		if (codexSpiritGrantExcluded(uuid, actor)) continue;
 		seen.add(uuid);
 		// eslint-disable-next-line no-await-in-loop
 		const doc = await fromUuid(uuid);
@@ -2093,7 +2573,7 @@ async function classSpellRemapSync(actor) {
 	const target = CLASS_SPELL_REMAP[classInfo.classId];
 	if (!target) return;
 
-	const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+	const maxTier = maxSpellTierForLevel(classInfo.classLevel, classInfo.classId);
 	const stored = actor.getFlag(MODULE_ID, 'classSchools');
 	const isNew = !stored || stored.classId !== classInfo.classId;
 
@@ -2268,7 +2748,7 @@ async function classSpellChoiceSync(actor) {
 	const config = CLASS_SPELL_CHOICE[classInfo.classId];
 	if (!config) return;
 
-	const maxTier = maxSpellTierForLevel(classInfo.classLevel);
+	const maxTier = maxSpellTierForLevel(classInfo.classLevel, classInfo.classId);
 	const retryKey = `${actor.id}:${classInfo.classId}:${maxTier}`;
 	if ((classSpellChoiceRetries.get(retryKey) ?? 0) >= CLASS_SPELL_CHOICE_MAX_RETRIES) return;
 	const stored = actor.getFlag(MODULE_ID, 'classSpellChoice');
@@ -2542,6 +3022,11 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] summon charge consumption failed`, error);
 	}
+	try {
+		await consumeCasterPool(item);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] summoner-pool spend failed`, error);
+	}
 	// Swarming Shadows: a shadow minion's single attack that would crit spawns
 	// another minion beside the target.
 	try {
@@ -2599,6 +3084,12 @@ async function runWrappedActivate(originalActivate, options = {}) {
 		if (await summonActivationBlocked(this)) return null;
 	} catch (error) {
 		console.error(`[${MODULE_ID}] summon pre-activate gate failed`, error);
+	}
+	// Summoner-pool commands (Codex Lifebinding Spirit Mend / bonus commands).
+	try {
+		if (casterPoolActivationBlocked(this)) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] summoner-pool pre-activate check failed`, error);
 	}
 	// Specter Rites: warn (proceed / cancel) when a target isn't Soul Touched by
 	// this Specter. Cancelling here costs nothing (originalActivate never runs).
@@ -2837,10 +3328,13 @@ const SUMMONS_TRACK_FLAG = 'summons'; // caster-actor flag namespace for unique 
 // summons (cap = min(<ability> mod, character level), floored at 0). Shared by the
 // pre-activation gate (summonActivationBlocked) and the trigger-spawn cap check
 // (spawnSwarmingShadow) so a new mode only has to be declared once.
-//   minIntOrLevel → Summon Shadow (shadow minions);
+//   intMod        → Summon Shadow (Nimble 0.2 "Shadow Limit": up to INT Shadows,
+//                   no level cap — `noLevelCap`);
+//   minIntOrLevel → the pre-0.2 Summon Shadow cap, kept for old spell copies;
 //   minStrOrLevel → Reanimated Soul (undead minions, count = Soul Power dice used,
 //                   itself capped at min(STR, LVL)).
 const SUMMON_COUNT_MODES = {
+	intMod: { ability: 'intelligence', noun: 'Shadow', noLevelCap: true },
 	minIntOrLevel: { ability: 'intelligence', noun: 'shadow minion' },
 	minStrOrLevel: { ability: 'strength', noun: 'undead minion' },
 };
@@ -2849,7 +3343,8 @@ const SUMMON_COUNT_MODES = {
 function summonCountCap(caster, summon) {
 	const mode = SUMMON_COUNT_MODES[summon?.maxCount];
 	if (!mode) return Infinity;
-	return Math.max(0, Math.min(getAbilityMod(caster, mode.ability), getCharacterLevel(caster)));
+	const ability = getAbilityMod(caster, mode.ability);
+	return Math.max(0, mode.noLevelCap ? ability : Math.min(ability, getCharacterLevel(caster)));
 }
 
 // Read a spell's declared summon automation (or null).
@@ -2857,7 +3352,18 @@ function getItemSummonAutomation(item) {
 	const automation =
 		item?.getFlag?.(MODULE_ID, 'automation') ?? item?.flags?.[MODULE_ID]?.automation;
 	const summon = automation?.summon;
-	return summon && typeof summon === 'object' ? summon : null;
+	if (!summon || typeof summon !== 'object') return null;
+	return upgradeLegacyShadowSummon(summon);
+}
+
+// Summon Shadow copies owned before the Nimble 0.2 rule still carry the old
+// automation (cap min(INT, LVL), one Shadow per cast, +1 Reach every 5 levels).
+// Read them as the 0.2 rule, so existing characters follow it without re-adding
+// the spell: Shadow Limit INT, 1 + floor(LVL/5) Shadows per cast, no reach bonus.
+function upgradeLegacyShadowSummon(summon) {
+	if (summon.template !== SHADOW_MINION_TEMPLATE || summon.maxCount !== 'minIntOrLevel') return summon;
+	const { reachPerLevels: _legacyReach, ...rest } = summon;
+	return { ...rest, maxCount: 'intMod', spawnCount: 'perFiveLevels' };
 }
 
 // Read the raw summon provenance flag off a token document.
@@ -2904,6 +3410,12 @@ function stepSummonDie(baseFaces, steps, maxFaces) {
 // duplicated item still counts a single time. Returns an aggregate
 // { bonusMana, maxFacesOverride, uncapTier } (0 / null / false when the caster
 // owns none).
+// Summon featureBoosts whose feature Nimble 0.2 reworked into a different effect
+// (Nim+ playtest copies): Empowered Companion was "+1 mana, die up to d20" and is
+// now "+STR vs Undead / +WIL healing" ([M] in Nim+). The 2.0 boost only applies to
+// the 2.0 feature; the 0.2 one stays manual.
+const SUMMON_BOOSTS_REWORKED_IN_02 = new Set(['empowered-companion', 'Empowered Companion']);
+
 function getSummonFeatureBoosts(summon, actor) {
 	const result = {
 		bonusMana: 0,
@@ -2923,12 +3435,16 @@ function getSummonFeatureBoosts(summon, actor) {
 
 	for (const entry of boosts) {
 		if (!entry || typeof entry !== 'object') continue;
+		// A Nimble 0.2 rework (Nim+ playtest copy) of a boost feature keeps the name
+		// but not the Heroes 2.0 effect the boost encodes — it doesn't count.
+		const reworked = SUMMON_BOOSTS_REWORKED_IN_02.has(entry.feature) || SUMMON_BOOSTS_REWORKED_IN_02.has(entry.name);
 		// The owned item's identifier is often EMPTY in the core pack, so match on
 		// identifier OR exact (case-sensitive) name — either counts the entry once.
 		const owned = features.some(
 			(it) =>
-				(entry.feature && it.system?.identifier === entry.feature) ||
-				(entry.name && it.name === entry.name),
+				((entry.feature && it.system?.identifier === entry.feature) ||
+					(entry.name && it.name === entry.name)) &&
+				!(reworked && isNimPlusPlaytestDoc(itemSourceUuid(it), it.flags)),
 		);
 		if (!owned) continue;
 		result.bonusMana += Number(entry.bonusMana) || 0;
@@ -3113,6 +3629,16 @@ async function summonActivationBlocked(item) {
 			);
 			return true;
 		}
+	}
+
+	// 3a. recast replaces (max 1, Codex Lifebinding Spirit): clear the live summon
+	// and let the cast proceed — it resolves (no mana: a cantrip) and spawns the new
+	// one next to the caster.
+	if (summon.recastReplaces) {
+		for (const token of findLiveSummons(actor, summon.template)) {
+			await dismissSummon(token, { summonerActor: actor, template: summon.template });
+		}
+		return false;
 	}
 
 	// 3. recast dismisses: if a live summon of this template exists, remove it
@@ -3306,6 +3832,11 @@ async function handleSummonSpawn(item, context) {
 		await spawnSoulPowerMinions(item, caster, summon, baseActor, scene);
 		return;
 	}
+	// Summon Shadow (Nimble 0.2): 1 Shadow, +1 every 5 levels, within the limit.
+	if (summon.spawnCount === 'perFiveLevels') {
+		await spawnLevelScaledSummons(item, caster, summon, baseActor, scene);
+		return;
+	}
 
 	const { x, y } = computeSummonSpawnPosition(caster, scene);
 
@@ -3354,7 +3885,10 @@ async function handleSummonSpawn(item, context) {
 		const maxFaces = Math.max(flagMax, boosts.maxFacesOverride ?? 0);
 		const steps = Math.max(0, Number(context?.upcast?.upcastSteps) || 0) + boosts.bonusMana;
 		const faces = stepSummonDie(baseFaces, steps, maxFaces);
-		await patchLifebindingSpiritFormulas(created, faces, getAbilityMod(caster, 'will'));
+		await patchLifebindingSpiritFormulas(created, faces, getAbilityMod(caster, 'will'), caster);
+	} else if (summon.bakeFormulas) {
+		// Codex Lifebinding Spirit (0.2): no upcast — bake STR/WIL/level only.
+		await patchLifebindingSpiritFormulas(created, null, getAbilityMod(caster, 'will'), caster);
 	}
 
 	// School-gated bonus commands: keep only the spirit's commands whose required
@@ -3370,6 +3904,12 @@ async function handleSummonSpawn(item, context) {
 	let content = `<p>${escapeHtml(caster.name)} summons <strong>${escapeHtml(created.name ?? summon.template)}</strong>.</p>`;
 	if (summon.chargesFromMana) {
 		content += `<p>Heal charges remaining: <strong>${effectiveMana}</strong>.</p>`;
+	}
+	if (typeof summon.showPool === 'string' && summon.showPool) {
+		const pool = getChargePoolEntry(caster, `actor:${summon.showPool}`);
+		content += pool
+			? `<p>${escapeHtml(pool.label)}: <strong>${pool.current}/${pool.max}</strong>.</p>`
+			: `<p><em>No ${escapeHtml(summon.showPool)} counter on ${escapeHtml(caster.name)}'s sheet (it comes from My Buddy!).</em></p>`;
 	}
 	if (schoolGrant.gated) {
 		const names = schoolGrant.granted.length
@@ -4340,13 +4880,20 @@ function getItemAutomationFlag(item, key) {
 // after creation (not via the create payload) to avoid fragile array-merge
 // semantics — matches the nim-plus spirit.
 //
-//   summonFormula = { count?: 1, baseFaces, addWil?: bool, scalesWithUpcast?: bool }
+//   summonFormula = { count?: 1, baseFaces, addWil?: bool, scalesWithUpcast?: bool,
+//                     countFrom?: '<ability>', addStr?: bool, strEveryLevels?: N,
+//                     doubleWithFeature?: '<feature name>' }
 //
 // `scalesWithUpcast` items (Attack/Cure) use `steppedFaces` (the upcast die
-// step); the rest (school-command abilities like Reap 3d4+WIL) use their own
-// `baseFaces` unchanged. `addWil` bakes in the caster's WIL modifier with the
-// exact "+ <wil>" rendering (WIL 0 → "+ 0", negatives → "+ -1").
-async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod) {
+// step; null = no upcast, use baseFaces); the rest (school-command abilities like
+// Reap 3d4+WIL) use their own `baseFaces` unchanged. `addWil` bakes in the
+// caster's WIL modifier with the exact "+ <wil>" rendering (WIL 0 → "+ 0",
+// negatives → "+ -1"). Codex Lifebinding Spirit (0.2) adds: `countFrom` — the dice
+// count is that ability's modifier (Mend: WIL d20, min 1); `addStr` + optional
+// `strEveryLevels` — "+STR, and +STR again every N character levels" (Harm:
+// 1d8+STR, +STR every 5 levels); `doubleWithFeature` — twice as many dice when the
+// caster owns that feature (Twilight Sage).
+async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod, caster = null) {
 	try {
 		const synth = tokenDoc?.actor;
 		if (!synth) return;
@@ -4354,10 +4901,19 @@ async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod) {
 		for (const item of listEmbeddedItems(synth)) {
 			const cfg = getItemAutomationFlag(item, 'summonFormula');
 			if (!cfg || typeof cfg !== 'object') continue;
-			const count = Number(cfg.count) || 1;
-			const faces = cfg.scalesWithUpcast ? steppedFaces : (Number(cfg.baseFaces) || 6);
+			let count = Number(cfg.count) || 1;
+			if (typeof cfg.countFrom === 'string' && cfg.countFrom) {
+				count = Math.max(1, getAbilityMod(caster, cfg.countFrom));
+			}
+			if (cfg.doubleWithFeature && caster && actorOwnsFeature(caster, null, cfg.doubleWithFeature)) count *= 2;
+			const faces = cfg.scalesWithUpcast && steppedFaces ? steppedFaces : (Number(cfg.baseFaces) || 6);
 			let formula = `${count}d${faces}`;
 			if (cfg.addWil) formula += ` + ${wilMod}`;
+			if (cfg.addStr) {
+				const every = Number(cfg.strEveryLevels) || 0;
+				const times = 1 + (every > 0 ? Math.floor(getCharacterLevel(caster) / every) : 0);
+				formula += ` + ${getAbilityMod(caster, 'strength') * times}`;
+			}
 
 			const effects = foundry.utils.deepClone(item.system?.activation?.effects ?? []);
 			const node = effects.find((e) => e?.type === 'damage' || e?.type === 'healing');
@@ -4416,6 +4972,64 @@ async function applySchoolGatedAbilities(tokenDoc, caster) {
 		}
 	}
 	return { gated: true, granted };
+}
+
+// Summoner-pool commands (Codex Lifebinding Spirit, 0.2): a companion item with
+// `automation.consumesCasterPool = { pool, amount?, label? }` spends that many
+// charges from its SUMMONER's actor-scoped native charge pool (Mend →
+// `lifebindingMend`, owned by Nim+'s My Buddy!) — the same visible sheet counter
+// My Buddy!'s own Mend spends, so it stays the single source of truth. Checked
+// before activation (an empty or missing counter blocks the command: no roll, no
+// card) and spent after it resolves through spendPoolWithUndo (Undo card).
+function getCasterPoolCost(item) {
+	const cfg = getItemAutomationFlag(item, 'consumesCasterPool');
+	if (!cfg || typeof cfg !== 'object' || typeof cfg.pool !== 'string' || !cfg.pool) return null;
+	const actor = item?.actor;
+	const tokenDoc = actor?.isToken ? actor.token : null;
+	if (!tokenDoc || !getTokenSummonFlag(tokenDoc)) return null;
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	return {
+		summoner,
+		poolKey: `actor:${cfg.pool}`,
+		amount: Math.max(1, Math.floor(Number(cfg.amount) || 1)),
+		label: typeof cfg.label === 'string' && cfg.label ? cfg.label : cfg.pool,
+	};
+}
+
+// Pre-activate gate: true (blocked, with a warning) when the summoner's pool
+// cannot pay. Shift-click is NOT an override — correct the counter on the sheet.
+function casterPoolActivationBlocked(item) {
+	const cost = getCasterPoolCost(item);
+	if (!cost) return false;
+	if (!(cost.summoner instanceof Actor)) {
+		ui.notifications?.warn(`${item.name}: this spirit's summoner is gone — adjust by hand.`);
+		return true;
+	}
+	const entry = getChargePoolEntry(cost.summoner, cost.poolKey);
+	if (!entry) {
+		ui.notifications?.warn(
+			`${cost.summoner.name} has no ${cost.label} counter (it comes from My Buddy!) — ${item.name} was not used.`,
+		);
+		return true;
+	}
+	if (entry.current < cost.amount) {
+		ui.notifications?.warn(
+			`${cost.summoner.name} has no ${cost.label} charges left (${entry.current}/${entry.max}). If that is wrong, click the counter on the sheet to fix it.`,
+		);
+		return true;
+	}
+	return false;
+}
+
+// Post-use spend (Undo card). A lost race (counter emptied mid-roll) only warns.
+async function consumeCasterPool(item) {
+	const cost = getCasterPoolCost(item);
+	if (!cost || !(cost.summoner instanceof Actor)) return;
+	await spendPoolWithUndo(cost.summoner, cost.poolKey, cost.amount, {
+		label: cost.label,
+		reason: `${item.name} (${item.actor?.name ?? 'spirit'})`,
+		flavor: item.name,
+	});
 }
 
 // Heal-charge consumption (D): a summoned healer's Cure item carries
@@ -4544,13 +5158,14 @@ function postSwarmAtCapWhisper(caster) {
 }
 
 // Spawn one Swarming-Shadows minion adjacent to `targetToken` (respecting the
-// spell's cap). Returns the created token, or null when blocked/at cap.
-async function spawnSwarmingShadow(caster, summon, targetToken, scene) {
+// spell's cap unless `ignoreCap`). Returns the created token, or null when
+// blocked/at cap.
+async function spawnSwarmingShadow(caster, summon, targetToken, scene, { ignoreCap = false } = {}) {
 	if (!(caster instanceof Actor) || !summon || !scene) return null;
 
 	const cap = summonCountCap(caster, summon);
 	const count = findLiveSummons(caster, summon.template).length;
-	if (count >= cap) {
+	if (!ignoreCap && count >= cap) {
 		postSwarmAtCapWhisper(caster);
 		return null;
 	}
@@ -4582,14 +5197,18 @@ async function maybeSwarmFromMinionAttack(minionTokenDoc, rollLikes, targetToken
 	if (!Array.isArray(rollLikes) || !rollLikes.some(rollHasPrimaryMaxFace)) return;
 
 	const caster = resolveSummonerFromToken(minionTokenDoc);
-	if (!caster || !actorHasFeatureNamed(caster, SWARMING_SHADOWS_FEATURE)) return;
+	const swarming = caster ? findOwnedFeature(caster, null, SWARMING_SHADOWS_FEATURE) : null;
+	if (!swarming) return;
 
 	const summon = findSummonConfigForTemplate(caster, SHADOW_MINION_TEMPLATE);
 	if (!summon) return;
 
 	const spawnScene = scene ?? minionTokenDoc?.parent ?? canvas?.scene;
 	if (!spawnScene) return;
-	await spawnSwarmingShadow(caster, summon, targetToken, spawnScene);
+	// The Nimble 0.2 wording (Nim+ playtest copy) adds "ignoring your Shadow Limit";
+	// the Heroes 2.0 invocation respects the cap.
+	const ignoreCap = isNimPlusPlaytestDoc(itemSourceUuid(swarming), swarming.flags);
+	await spawnSwarmingShadow(caster, summon, targetToken, spawnScene, { ignoreCap });
 }
 
 // Path 1: single-item minion attack (nimble.useItem). Fires on the acting client
@@ -4726,18 +5345,21 @@ function onDeleteCombat(combat) {
 
 // Safe Rest (E): dismiss every lifebinding-spirit summon (all casters). Fires on
 // the resting client; no active-GM guard (that client owns/deletes the tokens).
+// Both the tier-1 spirit and the Codex 0.2 cantrip's ("until you cast this again
+// or take a Safe Rest" — free to re-summon).
+const LIFEBINDING_TEMPLATES = new Set(['lifebinding-spirit', 'lifebinding-spirit-02']);
 async function dismissAllLifebindingSpirits() {
 	const tokens = [];
 	for (const scene of game.scenes ?? []) {
 		for (const token of scene.tokens ?? []) {
-			if (getTokenSummonFlag(token)?.template === 'lifebinding-spirit') tokens.push(token);
+			if (LIFEBINDING_TEMPLATES.has(getTokenSummonFlag(token)?.template)) tokens.push(token);
 		}
 	}
 	if (!tokens.length) return;
 	for (const token of tokens) {
 		await dismissSummon(token, {
 			summonerActor: resolveSummonerFromToken(token),
-			template: 'lifebinding-spirit',
+			template: getTokenSummonFlag(token)?.template,
 		});
 	}
 	postSummonChat(null, '<p><em>The Lifebinding Spirits fade as the party takes a Safe Rest.</em></p>');
@@ -5300,6 +5922,51 @@ function soulPowerDice(actor) {
 // summonActivationBlocked already refused a cast at/over the cap). Each is marked
 // Soul Touched by its Specter ("Your minions … are Soul Touched") through the same
 // mark list Soul Twist writes, so Rites/saves/effects treat them uniformly.
+// How many a `perFiveLevels` cast summons: 1, +1 every 5 character levels.
+function levelScaledSummonCount(caster) {
+	return 1 + Math.floor(getCharacterLevel(caster) / 5);
+}
+
+// Summon Shadow (Nimble 0.2): one cast brings 1 + floor(LVL/5) Shadows, but never
+// past the live limit (summonCountCap). Fans out beside the caster like the
+// Reanimated Soul spawn; each token gets the usual provenance and feature boosts.
+async function spawnLevelScaledSummons(item, caster, summon, baseActor, scene) {
+	const live = findLiveSummons(caster, summon.template).length;
+	const cap = summonCountCap(caster, summon);
+	const wanted = levelScaledSummonCount(caster);
+	const count = Math.max(0, Math.min(wanted, cap - live));
+	if (count <= 0) return;
+	const origin = computeSummonSpawnPosition(caster, scene);
+	const grid = scene?.grid?.size ?? 100;
+	const offsets = [[0, 0], [0, 1], [0, -1], [1, 0], [1, 1], [1, -1], [-2, 1], [-2, -1]];
+	const created = [];
+	for (let i = 0; i < count; i += 1) {
+		const [ox, oy] = offsets[i % offsets.length];
+		// eslint-disable-next-line no-await-in-loop
+		const token = await spawnSummonedToken({
+			caster,
+			summon,
+			baseActor,
+			scene,
+			x: origin.x + ox * grid,
+			y: origin.y + oy * grid,
+		});
+		if (token) created.push(token);
+	}
+	if (!created.length) {
+		console.warn(`[${MODULE_ID}] Failed to spawn "${summon.template}" tokens.`);
+		return;
+	}
+	const limitNote = count < wanted ? ` (Shadow Limit ${cap} reached)` : '';
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} summons <strong>${created.length}</strong> ${escapeHtml(
+			created[0].name ?? summon.template,
+		)}${created.length === 1 ? '' : 's'}: ${live + created.length}/${cap} Shadows${limitNote}.</p>`,
+		item?.name,
+	);
+}
+
 async function spawnSoulPowerMinions(item, caster, summon, baseActor, scene) {
 	const live = findLiveSummons(caster, summon.template).length;
 	const count = Math.max(0, Math.min(soulPowerDice(caster), summonCountCap(caster, summon) - live));
@@ -6581,6 +7248,55 @@ Hooks.on('closePlayerCharacterSheet', (app) => {
 	delete app.__bcxPilferedObserver;
 });
 
+// ── Pilfered Power on the token's mana bar ───────────────────────────────────
+// Nimble lists `resources.mana` as a trackable bar attribute, so a token can show
+// mana as bar 1 or bar 2. Foundry draws those in CONFIG.Token.barConfig's colors
+// (mana comes out blue), which clashes with the shadow-violet Pilfered Power bar
+// on the Shadowmancer's sheet (PILFERED_POWER_CSS). Foundry v14 asks each token
+// for its bar colors through `Token#_getBarColors(index, data)`, so a
+// Shadowmancer's mana bar gets the sheet's gradient ends there — empty
+// hsl(270 45% 18%), full hsl(275 55% 42%) — and every other bar is left alone.
+const PILFERED_POWER_BAR_EMPTY = 0x2e1943;
+const PILFERED_POWER_BAR_FULL = 0x7530a6;
+
+function isManaBar(data) {
+	const attribute = String(data?.attribute ?? '');
+	return attribute === 'resources.mana' || attribute === 'system.resources.mana';
+}
+
+function pilferedPowerBarColors(token, data, fallback) {
+	try {
+		if (!isManaBar(data) || !isShadowmancerActor(token?.actor)) return fallback();
+		const ColorClass = foundry.utils.Color;
+		return { empty: ColorClass.from(PILFERED_POWER_BAR_EMPTY), full: ColorClass.from(PILFERED_POWER_BAR_FULL) };
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Pilfered Power bar colors failed`, error);
+		return fallback();
+	}
+}
+
+Hooks.once('init', () => {
+	const TokenClass = foundry?.canvas?.placeables?.Token ?? globalThis.Token;
+	const proto = TokenClass?.prototype;
+	if (typeof proto?._getBarColors !== 'function') return; // pre-v14 core: no hook point
+	// Through libWrapper when it is active (Nim+ and Babele patch core classes too).
+	if (typeof globalThis.libWrapper?.register === 'function') {
+		globalThis.libWrapper.register(
+			MODULE_ID,
+			'foundry.canvas.placeables.Token.prototype._getBarColors',
+			function (wrapped, index, data) {
+				return pilferedPowerBarColors(this, data, () => wrapped(index, data));
+			},
+			'MIXED',
+		);
+	} else {
+		const original = proto._getBarColors;
+		proto._getBarColors = function blueCodexGetBarColors(index, data) {
+			return pilferedPowerBarColors(this, data, () => original.call(this, index, data));
+		};
+	}
+});
+
 // ── Compendium level badges for class features ───────────────────────────────
 // Nimble's own renderCompendium hook badges each class-feature entry with its
 // gainedAtLevels and sorts by level — but it is hard-scoped to the system's
@@ -6690,13 +7406,25 @@ Hooks.on('renderCompendium', (application, element) => {
 // granting item is created, so the children those new rules name (Rite options,
 // kit Toolbelt options, gadget Toolbelt features) never arrived.
 //
-//   await blueCodex.refreshClassContent(game.user.character);            // confirm dialog
-//   await blueCodex.refreshClassContent(actor, { dryRun: true });        // plan only
+//   await blueCodex.refreshClassContent(game.user.character);            // apply now
+//   await blueCodex.refreshClassContent(actor, { dryRun: true });        // card only, writes nothing
 //   await blueCodex.refreshClassContent(canvas.tokens.controlled[0].actor);
 //
 // Also on the character sheet's header menu ("Refresh Codex class content") for
-// Engineer/Specter characters, and on `ready` the GM gets a whispered card
-// listing stale characters with a Refresh button each.
+// Engineer/Specter characters. No confirmation popup (user decision, same as
+// Nim+'s class migration): every step is deterministic, so it applies at once
+// and reports through a toast, a whispered chat card listing every change —
+// removals included, the card is the audit trail — and console.info.
+// On `ready` the acting GM runs the same pass over every stale character
+// automatically, once per module version (hidden world setting
+// `classContentRefreshVersion`), queued after the Codex content sync.
+//
+// Choice steps: none today. grantItem children are fixed by the pick that
+// grants them (the pick itself — turret/gadget/kit, rite options — is made at
+// level-up), and the Lifebinding Spirit conversion follows from the class
+// rules the character already plays. A step that ever needs the player's
+// decision must be skipped by the startup pass and listed as "needs a choice:
+// open their sheet → Refresh Codex class content"; only the sheet run may ask.
 //
 // Matching is by compendium source (`_stats.compendiumSource`, or the legacy
 // `flags.core.source` / `flags.core.sourceId`) into the Codex class-features
@@ -6726,8 +7454,10 @@ const CODEX_SUBCLASSES_PACK = `${MODULE_ID}.blue-codex-subclasses`;
 const PACK_OWNED_FLAG_KEYS = ['automation', 'turretTemplate', 'pool'];
 const OBJECT_PRESERVED_KEYS = ['quantity', 'equipped', 'identified'];
 const SUBCLASS_REFRESH_KEYS = ['description', 'rules'];
+// Cards posted by versions before 0.9.0 carried Refresh / "Review & convert"
+// buttons; their render hook strips those now-inert buttons.
 const CLASS_REFRESH_NOTICE_FLAG = 'classRefreshNotice';
-const CLASS_REFRESH_NOTICE_SETTING = 'classRefreshNoticeKey';
+const CLASS_REFRESH_SETTING = 'classContentRefreshVersion';
 
 function itemSourceUuid(item) {
 	const core = item?.flags?.core ?? {};
@@ -6838,13 +7568,359 @@ function grantItemRulesOf(rules) {
 	);
 }
 
+// ── Automatic-migration reports ──────────────────────────────────────────────
+// How the class-content refresh and the Lifebinding Spirit conversion report
+// what they did (modelled on nim-plus-package/scripts/core/migration-report.mjs):
+// a short toast from the caller, a chat card whispered to the GMs (plus
+// `extraRecipients`, e.g. the actor's owners) with every per-character line, and
+// the same lines as plain text through console.info. The card is the audit trail.
+function refreshPlural(n, word, many = `${word}s`) {
+	return `${n} ${n === 1 ? word : many}`;
+}
+
+function refreshPlainText(html) {
+	return String(html ?? '')
+		.replace(/<[^>]*>/g, '')
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;/g, "'")
+		.replace(/&amp;/g, '&')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+/**
+ * @param {object} report
+ * @param {string} report.title  card heading (HTML)
+ * @param {string} [report.intro]
+ * @param {{heading: string, lines: string[]}[]} report.sections  one per character (HTML)
+ * @param {string} [report.footer]
+ * @param {object[]} [report.extraRecipients]  users whispered besides the GMs
+ */
+async function whisperCodexReport({ title, intro = '', sections = [], footer = '', extraRecipients = [] }) {
+	for (const { heading, lines } of sections) {
+		console.info(
+			`[${MODULE_ID}] ${refreshPlainText(title)} — ${refreshPlainText(heading)}:\n  ${lines.map(refreshPlainText).join('\n  ')}`,
+		);
+	}
+	const body = sections
+		.map(
+			({ heading, lines }) =>
+				`<h4 style="margin:.5em 0 .2em">${heading}</h4>` +
+				`<ul style="margin:0 0 .4em 1.2em">${lines.map((line) => `<li>${line}</li>`).join('')}</ul>`,
+		)
+		.join('');
+	const whisper = new Set((game.users ?? []).filter((user) => user.isGM).map((user) => user.id));
+	for (const user of extraRecipients) if (user?.id) whisper.add(user.id);
+	try {
+		return await ChatMessage.create({
+			whisper: [...whisper],
+			speaker: { alias: "Blue's Codex" },
+			content:
+				`<div class="blue-codex-migration-report"><h3>${title}</h3>` +
+				(intro ? `<p>${intro}</p>` : '') +
+				body +
+				(footer ? `<p>${footer}</p>` : '') +
+				'</div>',
+		});
+	} catch (error) {
+		console.error(`[${MODULE_ID}] could not post the report card`, error);
+		return null;
+	}
+}
+
+// ── Lifebinding Spirit conversion (Codex 0.2 cantrip ⇄ tier-1 Codex spell) ──
+// Part of the refresh tool. With Codex magic on, a Shepherd's spirit follows the
+// rules it plays (lifebindingSpiritMode):
+//   '02'  — the tier-1 Summon Lifebinding Spirit (granted at L1 by the earlier My
+//           Buddy! mapping, or carried over by Nim+'s 2.0.3 → 0.2 class migration)
+//           is replaced by Codex Lifebinding Spirit; with neither owned the cantrip
+//           is added; an owned My Buddy! gets its grant rule pointed at the cantrip
+//           and its old "cannot cast it until level 2" note swapped.
+//   '203' — Codex Lifebinding Spirit (e.g. after Nim+'s 0.2 → 2.0.3 migration) is
+//           swapped back to the tier-1 spell at class level 2+, removed below it.
+// Applied automatically (no confirmation): by the refresh, and by the debounced
+// live check below on the acting GM's client. Never silent — every step,
+// removals included, is listed in the toast's chat card. The Mend counter (My
+// Buddy!'s charge pool) is never touched: My Buddy! is updated in place (grant
+// rule + note only), never replaced.
+function isShepherdActor(actor) {
+	return actor?.type === 'character' && getPrimaryClass(actor)?.classId === 'shepherd';
+}
+
+function actorHasLifebindingSpell(actor) {
+	return (actor.items ?? []).some((item) => item.type === 'spell' && /lifebinding/i.test(item.name ?? ''));
+}
+
+async function planLifebindingSpiritConversion(actor) {
+	const ops = [];
+	if (!isReplaceSpellsEnabled() || !isShepherdActor(actor)) return ops;
+	const items = [...(actor.items ?? [])];
+	const owned02 = items.filter(isCodexSpirit02Item);
+	const ownedT1 = items.filter(isCodexSpiritT1Item);
+	const mode = lifebindingSpiritMode(actor);
+	if (mode === '02') {
+		let needs02 = owned02.length === 0;
+		for (const item of ownedT1) {
+			if (needs02) {
+				ops.push({ kind: 'replace', itemId: item.id, name: item.name, toUuid: CODEX_LIFEBINDING_SPIRIT_02_UUID, toName: 'Codex Lifebinding Spirit', why: 'Nimble 0.2 Shepherd (My Buddy!) — the spirit is a cantrip' });
+				needs02 = false;
+			} else {
+				ops.push({ kind: 'remove', itemId: item.id, name: item.name, why: 'Nimble 0.2 has no tier-1 Lifebinding Spirit; you know Codex Lifebinding Spirit' });
+			}
+		}
+		if (needs02 && !actorHasLifebindingSpell(actor)) {
+			ops.push({ kind: 'add', toUuid: CODEX_LIFEBINDING_SPIRIT_02_UUID, toName: 'Codex Lifebinding Spirit', why: 'granted by My Buddy!' });
+		}
+		const buddy = findOwnedFeature(actor, MY_BUDDY_IDENTIFIER, MY_BUDDY_NAME);
+		const update = buddy ? myBuddyCodexUpdate(buddy) : null;
+		if (update) ops.push({ kind: 'update', itemId: buddy.id, name: buddy.name, update, why: 'grant and note point at Codex Lifebinding Spirit' });
+	} else {
+		const level = getPrimaryClass(actor)?.classLevel ?? getCharacterLevel(actor);
+		let needsT1 = ownedT1.length === 0 && level >= 2;
+		for (const item of owned02) {
+			if (needsT1) {
+				ops.push({ kind: 'replace', itemId: item.id, name: item.name, toUuid: CODEX_LIFEBINDING_SPIRIT_UUID, toName: 'Summon Lifebinding Spirit', why: 'Heroes 2.0.3 Shepherd — tier-1 spell at level 2+' });
+				needsT1 = false;
+			} else {
+				ops.push({ kind: 'remove', itemId: item.id, name: item.name, why: level >= 2 ? 'already knows Summon Lifebinding Spirit' : 'Heroes 2.0.3 learns the spirit (tier 1) at level 2' });
+			}
+		}
+	}
+	return ops;
+}
+
+// The update that points an owned My Buddy!'s grantSpells rule at the Codex
+// cantrip and replaces the earlier Codex note — or null when already current.
+function myBuddyCodexUpdate(buddy) {
+	const update = {};
+	const rules = foundry.utils.deepClone(buddy._source?.system?.rules ?? buddy.system?.rules ?? []);
+	let rulesChanged = false;
+	for (const rule of rules) {
+		if (rule?.type !== 'grantSpells' || !Array.isArray(rule.uuids)) continue;
+		const next = uniqueList(
+			rule.uuids.map((uuid) =>
+				uuid === CODEX_LIFEBINDING_SPIRIT_UUID || uuid === NIM_PLUS_LIFEBINDING_CANTRIP_UUID
+					? CODEX_LIFEBINDING_SPIRIT_02_UUID
+					: uuid,
+			),
+		);
+		if (next.join(',') !== rule.uuids.join(',')) {
+			rule.uuids = next;
+			rulesChanged = true;
+		}
+	}
+	if (rulesChanged) update['system.rules'] = rules;
+	const swapNote = (html) => {
+		if (typeof html !== 'string') return null;
+		const marker = /<p data-blue-codex-note="my-buddy">[\s\S]*?<\/p>/;
+		if (marker.test(html)) {
+			return html.includes(MY_BUDDY_OLD_NOTE_MARK) ? html.replace(marker, MY_BUDDY_CODEX_NOTE) : null;
+		}
+		return html + MY_BUDDY_CODEX_NOTE;
+	};
+	const description = buddy._source?.system?.description ?? buddy.system?.description;
+	if (typeof description === 'string') {
+		const next = swapNote(description);
+		if (next !== null && next !== description) update['system.description'] = next;
+	} else if (typeof description?.baseEffect === 'string') {
+		const next = swapNote(description.baseEffect);
+		if (next !== null && next !== description.baseEffect) update['system.description.baseEffect'] = next;
+	}
+	return Object.keys(update).length ? update : null;
+}
+
+// Apply the planned conversion: create the replacement FIRST, then delete (a
+// failed create leaves the old spell in place). Each step is caught on its own.
+// Returns HTML report lines (every removal listed) and error lines.
+async function applyLifebindingSpiritConversion(actor, ops) {
+	const lines = [];
+	const errors = [];
+	spiritConversionActive.add(actor.id);
+	try {
+		for (const op of ops) {
+			try {
+				if (op.kind === 'update') {
+					if (!actor.items.get(op.itemId)) continue;
+					await actor.updateEmbeddedDocuments('Item', [{ _id: op.itemId, ...op.update }]);
+					lines.push(`Updated <strong>${escapeHtml(op.name)}</strong> <em>(${escapeHtml(op.why)})</em>`);
+					continue;
+				}
+				if (op.kind === 'replace' || op.kind === 'add') {
+					const doc = await (originalFromUuid ?? globalThis.fromUuid)(op.toUuid);
+					if (!doc) {
+						errors.push(`${escapeHtml(op.toName)} not found in the packs — ${escapeHtml(op.name ?? 'nothing')} kept`);
+						continue;
+					}
+					const obj = doc.toObject();
+					delete obj._id;
+					delete obj.folder;
+					obj._stats = obj._stats ?? {};
+					obj._stats.compendiumSource = op.toUuid;
+					const [created] = (await actor.createEmbeddedDocuments('Item', [obj])) ?? [];
+					if (!created) {
+						errors.push(`${escapeHtml(op.toName)} could not be created — ${escapeHtml(op.name ?? 'nothing')} kept`);
+						continue;
+					}
+					if (op.kind === 'add') {
+						lines.push(`Added <strong>${escapeHtml(op.toName)}</strong> <em>(${escapeHtml(op.why)})</em>`);
+						continue;
+					}
+				}
+				if (actor.items.get(op.itemId)) await actor.deleteEmbeddedDocuments('Item', [op.itemId]);
+				lines.push(
+					op.kind === 'replace'
+						? `Replaced <s>${escapeHtml(op.name)}</s> (removed) → <strong>${escapeHtml(op.toName)}</strong> <em>(${escapeHtml(op.why)})</em>`
+						: `Removed <s>${escapeHtml(op.name)}</s> <em>(${escapeHtml(op.why)})</em>`,
+				);
+			} catch (error) {
+				console.error(`[${MODULE_ID}] Lifebinding Spirit step failed for ${actor.name}`, op, error);
+				errors.push(`${escapeHtml(op.name ?? op.toName)}: ${escapeHtml(error?.message ?? error)}`);
+			}
+		}
+	} finally {
+		spiritConversionActive.delete(actor.id);
+	}
+	return { lines, errors };
+}
+
+// One planned (not yet applied) step, for a dry-run card.
+function describeSpiritOp(op) {
+	const what =
+		op.kind === 'replace'
+			? `Would replace <s>${escapeHtml(op.name)}</s> → <strong>${escapeHtml(op.toName)}</strong>`
+			: op.kind === 'remove'
+				? `Would remove <s>${escapeHtml(op.name)}</s>`
+				: op.kind === 'add'
+					? `Would add <strong>${escapeHtml(op.toName)}</strong>`
+					: `Would update <strong>${escapeHtml(op.name)}</strong>`;
+	return `${what} <em>(${escapeHtml(op.why)})</em>`;
+}
+
+function spiritModeLabel(actor) {
+	return lifebindingSpiritMode(actor) === '02' ? 'Nimble 0.2 Shepherd' : 'Heroes 2.0.3 Shepherd';
+}
+
+function refreshPlanSize(plan) {
+	return plan.updates.length + plan.children.length + (plan.spirit?.length ?? 0);
+}
+
+// Live trigger: after a Shepherd's class features / spirit spells change (Nim+'s
+// class migration swaps My Buddy! ⇄ the 2.0.3 Lifebinding Spirit feature in place,
+// a substitute grant lands, …) the acting GM's client converts the spirit
+// automatically, then toasts and whispers the GMs a card. Debounced per actor.
+//
+// Loop guards: (1) while a conversion runs for an actor, its own create /
+// update / delete hooks are ignored (`spiritConversionActive` — Foundry fires
+// them before the write's promise resolves on the writing client); (2) once a
+// conversion has run, whatever it left undone (only failed steps) is
+// remembered, and a check planning exactly that does not try again — the
+// sheet's "Refresh Codex class content" retries it. A successful conversion
+// leaves nothing to plan (idempotent), which clears (2).
+const spiritConversionActive = new Set();
+const spiritCheckTimers = new Map();
+const spiritConversionApplied = new Map();
+const SPIRIT_CHECK_DELAY_MS = 750;
+
+function spiritPlanKey(ops) {
+	return ops.map((op) => `${op.kind}:${op.itemId ?? op.toUuid}`).join('|');
+}
+
+function scheduleSpiritConversionCheck(actor) {
+	if (!(actor instanceof Actor) || actor.type !== 'character') return;
+	if (!isActingGM() || spiritConversionActive.has(actor.id)) return;
+	clearTimeout(spiritCheckTimers.get(actor.id));
+	spiritCheckTimers.set(
+		actor.id,
+		setTimeout(() => {
+			spiritCheckTimers.delete(actor.id);
+			void runSpiritConversionCheck(actor);
+		}, SPIRIT_CHECK_DELAY_MS),
+	);
+}
+
+/**
+ * The live check's body (acting GM only): plan, apply, toast, card.
+ * @returns {Promise<'nothing'|'repeat'|'applied'|'failed'|'skipped'>}
+ */
+async function runSpiritConversionCheck(actor) {
+	if (!isActingGM() || spiritConversionActive.has(actor.id)) return 'skipped';
+	try {
+		const ops = await planLifebindingSpiritConversion(actor);
+		if (!ops.length) {
+			spiritConversionApplied.delete(actor.id);
+			return 'nothing';
+		}
+		if (spiritConversionApplied.get(actor.id) === spiritPlanKey(ops)) return 'repeat';
+		const { lines, errors } = await applyLifebindingSpiritConversion(actor, ops);
+		// Remember what is still left to do (only failed steps): the next check
+		// that plans exactly that does not try again.
+		const residual = await planLifebindingSpiritConversion(actor);
+		if (residual.length) spiritConversionApplied.set(actor.id, spiritPlanKey(residual));
+		else spiritConversionApplied.delete(actor.id);
+		reportSpiritConversion(actor, lines, errors);
+		return errors.length ? 'failed' : 'applied';
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Lifebinding Spirit conversion failed for ${actor?.name}`, error);
+		reportSpiritConversion(actor, [], [escapeHtml(error?.message ?? error)]);
+		return 'failed';
+	}
+}
+
+function reportSpiritConversion(actor, lines, errors) {
+	if (!lines.length && !errors.length) return;
+	const name = actor?.name ?? '?';
+	if (errors.length) {
+		ui.notifications?.warn(
+			`Blue's Codex | ${name}'s Lifebinding Spirit conversion had ${refreshPlural(errors.length, 'problem')} — see the chat card.`,
+		);
+	} else {
+		ui.notifications?.info(
+			`Blue's Codex converted ${name}'s Lifebinding Spirit to their ${spiritModeLabel(actor)} rules (${refreshPlural(lines.length, 'change')}).`,
+		);
+	}
+	void whisperCodexReport({
+		title: "Blue's Codex — Lifebinding Spirit converted",
+		intro:
+			`${escapeHtml(name)}'s Lifebinding Spirit no longer matched their ${spiritModeLabel(actor)} rules, ` +
+			'so it was converted automatically.',
+		sections: [
+			{
+				heading: escapeHtml(name),
+				lines: [...lines, ...errors.map((line) => `<strong>Failed:</strong> ${line}`)],
+			},
+		],
+		footer: '<em>The Mend counter (My Buddy!) was not touched.</em>',
+	});
+}
+
+function onShepherdItemChanged(item) {
+	try {
+		const actor = item?.parent;
+		if (!(actor instanceof Actor) || actor.type !== 'character') return;
+		const relevant =
+			(item.type === 'feature' && item.system?.class === 'shepherd') ||
+			isCodexSpirit02Item(item) ||
+			isCodexSpiritT1Item(item) ||
+			item.type === 'class';
+		if (relevant && isShepherdActor(actor)) scheduleSpiritConversionCheck(actor);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Lifebinding Spirit change hook failed`, error);
+	}
+}
+Hooks.on('createItem', onShepherdItemChanged);
+Hooks.on('updateItem', onShepherdItemChanged);
+Hooks.on('deleteItem', onShepherdItemChanged);
+
 /**
  * Plan a refresh for one actor (reads only; fromUuid per owned document).
  * @returns {Promise<{actor, updates: object[], children: object[], missingSources: string[]}>}
  */
 async function planClassContentRefresh(actor, scope = null) {
 	scope ??= await loadRefreshScope();
-	const plan = { actor, updates: [], children: [], missingSources: [] };
+	const plan = { actor, updates: [], children: [], missingSources: [], spirit: [] };
+	plan.spirit = await planLifebindingSpiritConversion(actor);
 	const owned = new Set();
 	for (const item of actor.items ?? []) {
 		const uuid = itemSourceUuid(item);
@@ -6920,80 +7996,164 @@ async function buildGrantedChildSource(child, granter) {
 	return source;
 }
 
+function emptyRefreshResult() {
+	return { updated: 0, updatedEntries: [], added: [], addedChildren: [], skipped: [], spirit: [], errors: [] };
+}
+
+/**
+ * Apply a planned refresh. Every step is caught: a failure is recorded in
+ * `result.errors` (reported in the toast and the card) and the rest still runs.
+ */
 async function applyClassContentRefresh(plan) {
 	const { actor } = plan;
-	const result = { updated: 0, added: [], skipped: [] };
-	if (plan.updates.length) {
-		await actor.updateEmbeddedDocuments(
-			'Item',
-			plan.updates.map((entry) => entry.update),
-		);
-		result.updated = plan.updates.length;
+	const result = emptyRefreshResult();
+	if (plan.spirit?.length) {
+		const { lines, errors } = await applyLifebindingSpiritConversion(actor, plan.spirit);
+		result.spirit = lines;
+		result.errors.push(...errors);
+	}
+	const updates = plan.updates.filter((entry) => actor.items?.get?.(entry.update._id));
+	if (updates.length) {
+		try {
+			await actor.updateEmbeddedDocuments(
+				'Item',
+				updates.map((entry) => entry.update),
+			);
+			result.updated = updates.length;
+			result.updatedEntries = updates;
+		} catch (error) {
+			console.error(`[${MODULE_ID}] class-content refresh: updating ${actor.name}'s items failed`, error);
+			result.errors.push(
+				`Updating ${refreshPlural(updates.length, 'item')} (${updates.map((entry) => escapeHtml(entry.name)).join(', ')}): ` +
+					escapeHtml(error?.message ?? error),
+			);
+		}
 	}
 
 	// One at a time, re-checking ownership: a child's own grant rules fire natively
 	// on creation and may already have produced a later child.
 	for (const child of plan.children) {
-		if ((actor.items ?? []).some((item) => itemSourceUuid(item) === child.uuid)) continue;
-		const granter = actor.items.get(child.granterId);
-		if (!granter) {
-			result.skipped.push(child.name);
-			continue;
+		try {
+			if ((actor.items ?? []).some((item) => itemSourceUuid(item) === child.uuid)) continue;
+			const granter = actor.items.get(child.granterId);
+			if (!granter) {
+				result.skipped.push(child.name);
+				continue;
+			}
+			const liveRule = granter.rules?.values
+				? [...granter.rules.values()].find((rule) => rule?.type === 'grantItem' && rule.uuid === child.uuid)
+				: null;
+			if (liveRule && (liveRule.disabled || (typeof liveRule.appliesTo === 'function' && !liveRule.appliesTo()))) {
+				result.skipped.push(child.name);
+				continue;
+			}
+			const source = await buildGrantedChildSource(child, granter);
+			if (!source) {
+				result.skipped.push(child.name);
+				continue;
+			}
+			await actor.createEmbeddedDocuments('Item', [source]);
+			result.added.push(child.name);
+			result.addedChildren.push(child);
+		} catch (error) {
+			console.error(`[${MODULE_ID}] class-content refresh: adding ${child.name} failed`, error);
+			result.errors.push(`Adding ${escapeHtml(child.name)}: ${escapeHtml(error?.message ?? error)}`);
 		}
-		const liveRule = granter.rules?.values
-			? [...granter.rules.values()].find((rule) => rule?.type === 'grantItem' && rule.uuid === child.uuid)
-			: null;
-		if (liveRule && (liveRule.disabled || (typeof liveRule.appliesTo === 'function' && !liveRule.appliesTo()))) {
-			result.skipped.push(child.name);
-			continue;
-		}
-		const source = await buildGrantedChildSource(child, granter);
-		if (!source) {
-			result.skipped.push(child.name);
-			continue;
-		}
-		await actor.createEmbeddedDocuments('Item', [source]);
-		result.added.push(child.name);
 	}
 	return result;
 }
 
-function renderRefreshPlan(plan) {
-	const updates = plan.updates
-		.map((entry) => {
-			const label =
-				entry.name !== entry.to
-					? `${escapeHtml(entry.name)} → <strong>${escapeHtml(entry.to)}</strong>`
-					: escapeHtml(entry.name);
-			return `<li>${label} <em>(${escapeHtml(entry.changed.join(', '))})</em></li>`;
-		})
-		.join('');
-	const children = plan.children
-		.map((child) => `<li><strong>${escapeHtml(child.name)}</strong> <em>(from ${escapeHtml(child.granterName)})</em></li>`)
-		.join('');
-	const missing = plan.missingSources.length
-		? `<p><em>No longer in the packs (left untouched): ${plan.missingSources.map(escapeHtml).join(', ')}.</em></p>`
-		: '';
-	return (
-		`<p>Refresh <strong>${escapeHtml(plan.actor.name)}</strong>'s Engineer/Specter content from the Blue's Codex packs. ` +
-		`Charge-pool counters, quantities, equipped state and choices are kept; gadgets are set equipped.</p>` +
-		`<div style="max-height:55vh;overflow:auto">` +
-		(updates ? `<h4>${plan.updates.length} item(s) updated</h4><ul>${updates}</ul>` : '') +
-		(children ? `<h4>${plan.children.length} granted item(s) added</h4><ul>${children}</ul>` : '') +
-		missing +
-		`</div>`
-	);
+function describeRefreshUpdate(entry, verb) {
+	const label =
+		entry.name !== entry.to
+			? `${escapeHtml(entry.name)} → <strong>${escapeHtml(entry.to)}</strong>`
+			: `<strong>${escapeHtml(entry.name)}</strong>`;
+	return `${verb} ${label} <em>(${escapeHtml(entry.changed.join(', '))})</em>`;
+}
+
+function describeMissingSources(plan) {
+	return plan.missingSources.length
+		? [`<em>No longer in the packs, left untouched: ${plan.missingSources.map(escapeHtml).join(', ')}</em>`]
+		: [];
+}
+
+// Report lines for what was applied to one actor (every removal included).
+function refreshResultLines(plan, result) {
+	return [
+		...result.spirit.map((line) => `Lifebinding Spirit: ${line}`),
+		...result.updatedEntries.map((entry) => describeRefreshUpdate(entry, 'Updated')),
+		...result.addedChildren.map(
+			(child) => `Added <strong>${escapeHtml(child.name)}</strong> <em>(granted by ${escapeHtml(child.granterName)})</em>`,
+		),
+		...result.skipped.map((name) => `<em>Skipped ${escapeHtml(name)} (grant no longer applies)</em>`),
+		...describeMissingSources(plan),
+		...result.errors.map((line) => `<strong>Failed:</strong> ${line}`),
+	];
+}
+
+// Report lines for a plan that was NOT applied (dry run).
+function refreshPlanLines(plan) {
+	return [
+		...(plan.spirit ?? []).map((op) => `Lifebinding Spirit: ${describeSpiritOp(op)}`),
+		...plan.updates.map((entry) => describeRefreshUpdate(entry, 'Would update')),
+		...plan.children.map(
+			(child) => `Would add <strong>${escapeHtml(child.name)}</strong> <em>(granted by ${escapeHtml(child.granterName)})</em>`,
+		),
+		...describeMissingSources(plan),
+	];
 }
 
 /**
- * Refresh an actor's Engineer/Specter content from the packs.
+ * Toast + card for applied refreshes. `done` = [{actor, plan, result}].
+ * @returns {Promise<void>}
+ */
+async function reportClassContentRefresh(done, { extraRecipients = [] } = {}) {
+	if (!done.length) return;
+	const sum = (pick) => done.reduce((total, entry) => total + pick(entry.result), 0);
+	const updated = sum((result) => result.updated);
+	const added = sum((result) => result.added.length);
+	const spirit = sum((result) => result.spirit.length);
+	const errors = sum((result) => result.errors.length);
+	const parts = [`${updated} updated`, `${added} added`];
+	if (spirit) parts.push(`${refreshPlural(spirit, 'Lifebinding Spirit change')}`);
+	ui.notifications?.info(
+		`Blue's Codex refreshed class content on ${refreshPlural(done.length, 'character')}: ${parts.join(', ')}.`,
+	);
+	if (errors) {
+		ui.notifications?.warn(
+			`Blue's Codex | The class-content refresh had ${refreshPlural(errors, 'problem')} — see the chat card.`,
+		);
+	}
+	await whisperCodexReport({
+		title: "Blue's Codex — class content refreshed",
+		intro:
+			"Updated in place from the Blue's Codex packs: item ids, charge-pool counters, quantities, equipped " +
+			'state and choices were kept; gadgets are set equipped. Click a counter on the sheet to correct it.',
+		sections: done.map(({ actor, plan, result }) => ({
+			heading: escapeHtml(actor.name),
+			lines: refreshResultLines(plan, result),
+		})),
+		footer: spirit ? '<em>The Mend counter (My Buddy!) was not touched.</em>' : '',
+		extraRecipients,
+	});
+}
+
+// The users who own `actor` (GMs are whispered anyway).
+function refreshOwnerRecipients(actor) {
+	return (game.users ?? []).filter((user) => !user.isGM && actor.testUserPermission?.(user, 'OWNER'));
+}
+
+/**
+ * Refresh an actor's Engineer/Specter content (and a Shepherd's Lifebinding
+ * Spirit) from the packs, at once — no confirmation. Its owned Codex spells are
+ * synced first (runCodexContentSync). Reports through a toast and a chat card
+ * whispered to the GMs and the actor's owners.
  * @param {Actor} actor
  * @param {object} [options]
- * @param {boolean} [options.dryRun=false]  plan only: log + return the plan, write nothing
- * @param {boolean} [options.confirm=true]  show the confirm dialog before writing
+ * @param {boolean} [options.dryRun=false]  plan only: post the card (what WOULD change), write nothing
  * @returns {Promise<object|null>}  the plan (dry run) or the applied result
  */
-async function refreshClassContent(actor, { dryRun = false, confirm = true } = {}) {
+async function refreshClassContent(actor, { dryRun = false } = {}) {
 	actor ??= game.user?.character ?? canvas?.tokens?.controlled?.[0]?.actor ?? null;
 	if (!actor) {
 		ui.notifications?.warn("Blue's Codex | No actor: pass one, assign a character, or select a token.");
@@ -7003,115 +8163,109 @@ async function refreshClassContent(actor, { dryRun = false, confirm = true } = {
 		ui.notifications?.warn(`Blue's Codex | You don't own ${actor.name}.`);
 		return null;
 	}
+	const extraRecipients = [...refreshOwnerRecipients(actor), ...(game.user && !game.user.isGM ? [game.user] : [])];
+	// Owned Codex spells first: synced in place at once (own toast + card) — see
+	// "Codex content sync" below. A dry run only plans them.
+	const spellSync = await runCodexContentSync({ actors: [actor], apply: !dryRun, silent: true });
 	const plan = await planClassContentRefresh(actor);
-	const summary = `${plan.updates.length} item(s) to update, ${plan.children.length} granted item(s) to add`;
 	if (dryRun) {
-		console.log(`[${MODULE_ID}] refresh dry run — ${actor.name}: ${summary}`, plan);
-		ui.notifications?.info(`Blue's Codex | ${actor.name}: ${summary} (dry run, nothing written).`);
+		plan.spellSync = spellSync.report;
+		const spellLines = spellSync.report.flatMap((entry) =>
+			entry.updates.map((update) => `Would sync spell ${describeContentSyncEntry(update)}`),
+		);
+		const lines = [...spellLines, ...refreshPlanLines(plan)];
+		console.log(`[${MODULE_ID}] refresh dry run — ${actor.name}`, plan);
+		ui.notifications?.info(
+			`Blue's Codex | ${actor.name}: ${refreshPlural(lines.length, 'planned change')} (dry run, nothing written).`,
+		);
+		if (lines.length) {
+			await whisperCodexReport({
+				title: "Blue's Codex — class-content refresh (dry run)",
+				intro: 'Nothing was written. Refresh Codex class content (sheet header) would:',
+				sections: [{ heading: escapeHtml(actor.name), lines }],
+				extraRecipients,
+			});
+		}
 		return plan;
 	}
-	if (!plan.updates.length && !plan.children.length) {
-		ui.notifications?.info(`Blue's Codex | ${actor.name}'s class content is up to date.`);
-		return { updated: 0, added: [], skipped: [] };
+	if (!refreshPlanSize(plan)) {
+		if (!spellSync.updated) ui.notifications?.info(`Blue's Codex | ${actor.name}'s class content is up to date.`);
+		return { ...emptyRefreshResult(), spellsSynced: spellSync.updated };
 	}
-	if (confirm) {
-		const ok = await foundry.applications.api.DialogV2.confirm({
-			window: { title: `Refresh class content — ${actor.name}`, icon: 'fa-solid fa-arrows-rotate' },
-			position: { width: 560 },
-			content: renderRefreshPlan(plan),
-			rejectClose: false,
-			modal: true,
-		}).catch(() => false);
-		if (!ok) return null;
-	}
-
-	const result = await applyClassContentRefresh(plan);
-	const owners = (game.users ?? []).filter((user) => user.isGM || actor.testUserPermission?.(user, 'OWNER'));
-	const addedList = result.added.length
-		? `<p>Added: ${result.added.map(escapeHtml).join(', ')}.</p>`
-		: '';
-	const skippedList = result.skipped.length
-		? `<p><em>Skipped (grant no longer applies): ${result.skipped.map(escapeHtml).join(', ')}.</em></p>`
-		: '';
+	let result;
 	try {
-		await ChatMessage.create({
-			speaker: ChatMessage.getSpeaker({ actor }),
-			whisper: owners.map((user) => user.id),
-			content:
-				`<p><strong>Class content refreshed</strong> from the Blue's Codex packs: ` +
-				`${result.updated} item(s) updated, ${result.added.length} granted item(s) added. ` +
-				`Charge-pool counters were kept — click a counter on the sheet to correct it.</p>` +
-				addedList +
-				skippedList,
-		});
+		result = await applyClassContentRefresh(plan);
 	} catch (error) {
-		console.warn(`[${MODULE_ID}] Could not post refresh summary`, error);
+		console.error(`[${MODULE_ID}] class-content refresh failed for ${actor.name}`, error);
+		result = emptyRefreshResult();
+		result.errors.push(escapeHtml(error?.message ?? error));
 	}
-	return result;
+	await reportClassContentRefresh([{ actor, plan, result }], { extraRecipients });
+	return { ...result, spellsSynced: spellSync.updated };
 }
 
 api.refreshClassContent = refreshClassContent;
 
-// GM notice on ready: whisper a card listing stale Engineer/Specter characters,
-// once per distinct (module version, stale-actor set).
-async function noticeStaleClassContent() {
-	if (!isActingGM()) return;
-	const candidates = (game.actors ?? []).filter((actor) => actor?.type === 'character' && actorHasRefreshClass(actor));
-	if (!candidates.length) return;
-	const scope = await loadRefreshScope();
-	const stale = [];
-	for (const actor of candidates) {
-		const plan = await planClassContentRefresh(actor, scope);
-		if (plan.updates.length || plan.children.length) stale.push({ actor, plan });
-	}
-	if (!stale.length) return;
+/**
+ * The version-gated startup pass (acting GM only): refreshes every stale
+ * Engineer/Specter character and converts every mismatched Shepherd spirit,
+ * automatically, with one toast and one card. Stamped once per module version;
+ * a failure anywhere leaves it unstamped so the next load retries (the refresh
+ * is idempotent — only what is still stale is planned again).
+ * @returns {Promise<'skipped'|'nothing'|'applied'|'failed'>}
+ */
+async function runClassContentRefreshStartup() {
+	if (!isActingGM()) return 'skipped';
 	const version = game.modules.get(MODULE_ID)?.version ?? '';
-	const key = `${version}|${stale.map(({ actor }) => actor.id).sort().join(',')}`;
-	if (game.settings.get(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING) === key) return;
-	await game.settings.set(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING, key);
-
-	const rows = stale
-		.map(
-			({ actor, plan }) =>
-				`<li>${escapeHtml(actor.name)} — ${plan.updates.length} to update, ${plan.children.length} to add ` +
-				`<button type="button" data-bcx-refresh-actor="${escapeHtml(actor.uuid)}"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button></li>`,
-		)
-		.join('');
-	await ChatMessage.create({
-		whisper: (game.users ?? []).filter((user) => user.isGM).map((user) => user.id),
-		flags: { [MODULE_ID]: { [CLASS_REFRESH_NOTICE_FLAG]: true } },
-		content:
-			`<p><strong>Blue's Codex:</strong> these characters hold Engineer/Specter content older than the packs ` +
-			`(missing resource counters, automation or granted options):</p><ul>${rows}</ul>` +
-			`<p><em>Or run <code>blueCodex.refreshClassContent(actor)</code>. Each refresh shows a preview first.</em></p>`,
-	});
+	if (game.settings.get(MODULE_ID, CLASS_REFRESH_SETTING) === version) return 'skipped';
+	try {
+		const candidates = (game.actors ?? []).filter(
+			(actor) => actor?.type === 'character' && (actorHasRefreshClass(actor) || isShepherdActor(actor)),
+		);
+		const scope = candidates.length ? await loadRefreshScope() : null;
+		const done = [];
+		let failed = false;
+		for (const actor of candidates) {
+			let plan = { actor, updates: [], children: [], missingSources: [], spirit: [] };
+			try {
+				plan = await planClassContentRefresh(actor, scope);
+				if (!refreshPlanSize(plan)) continue;
+				const result = await applyClassContentRefresh(plan);
+				if (result.errors.length) failed = true;
+				done.push({ actor, plan, result });
+			} catch (error) {
+				console.error(`[${MODULE_ID}] class-content refresh failed for ${actor.name}`, error);
+				failed = true;
+				const result = emptyRefreshResult();
+				result.errors.push(escapeHtml(error?.message ?? error));
+				done.push({ actor, plan, result });
+			}
+		}
+		await reportClassContentRefresh(done);
+		if (failed) return 'failed';
+		await game.settings.set(MODULE_ID, CLASS_REFRESH_SETTING, version);
+		return done.length ? 'applied' : 'nothing';
+	} catch (error) {
+		console.error(`[${MODULE_ID}] class-content refresh startup pass failed`, error);
+		ui.notifications?.warn("Blue's Codex | The class-content refresh failed — see the console.");
+		return 'failed';
+	}
 }
 
+// Cards from versions before 0.9.0 had Refresh / "Review & convert" buttons that
+// no longer do anything: strip them.
 Hooks.on('renderChatMessageHTML', (message, html) => {
 	if (!message?.flags?.[MODULE_ID]?.[CLASS_REFRESH_NOTICE_FLAG]) return;
-	for (const button of html.querySelectorAll?.('[data-bcx-refresh-actor]') ?? []) {
-		if (!game.user?.isGM) {
-			button.remove();
-			continue;
-		}
-		button.addEventListener('click', (event) => {
-			event.preventDefault();
-			const actor = fromUuidSync(button.dataset.bcxRefreshActor);
-			if (!actor) {
-				ui.notifications?.warn("Blue's Codex | That actor no longer exists.");
-				return;
-			}
-			void refreshClassContent(actor).catch((error) =>
-				console.error(`[${MODULE_ID}] class-content refresh failed`, error),
-			);
-		});
-	}
+	for (const button of html?.querySelectorAll?.('[data-bcx-refresh-actor]') ?? []) button.remove();
 });
 
-// Character sheet header menu entry (Engineer/Specter characters, owners only).
+// Character sheet header menu entry (owners only): Engineer/Specter characters,
+// Shepherds under Codex magic, and anyone owning Codex spells (content sync).
 Hooks.on('getHeaderControlsPlayerCharacterSheet', (app, controls) => {
 	const actor = app?.actor ?? app?.document;
-	if (!actor?.isOwner || !actorHasRefreshClass(actor) || !Array.isArray(controls)) return;
+	const spiritRelevant = isReplaceSpellsEnabled() && isShepherdActor(actor);
+	const relevant = actorHasRefreshClass(actor) || spiritRelevant || actorOwnsCodexSyncedItem(actor);
+	if (!actor?.isOwner || !relevant || !Array.isArray(controls)) return;
 	controls.push({
 		icon: 'fa-solid fa-arrows-rotate',
 		label: 'Refresh Codex class content',
@@ -7124,7 +8278,7 @@ Hooks.on('getHeaderControlsPlayerCharacterSheet', (app, controls) => {
 });
 
 Hooks.once('init', () => {
-	game.settings.register(MODULE_ID, CLASS_REFRESH_NOTICE_SETTING, {
+	game.settings.register(MODULE_ID, CLASS_REFRESH_SETTING, {
 		scope: 'world',
 		config: false,
 		type: String,
@@ -7132,8 +8286,466 @@ Hooks.once('init', () => {
 	});
 });
 
-Hooks.once('ready', () => {
-	noticeStaleClassContent().catch((error) =>
-		console.error(`[${MODULE_ID}] stale class-content check failed`, error),
+// The startup pass is queued on `ready` by the Codex content sync section below
+// (after the spell sync), not from a hook of its own.
+
+// ── Codex content sync (owned spell copies) ──────────────────────────────────
+// A character owns *copies* of its spells. When a Codex spell is reworded or
+// re-automated in the packs (Summon Shadow moving to the Nimble 0.2 rule), the
+// owned copy keeps its old text and flags: the sheet still reads "+1 Reach every
+// 5 levels" although the runtime (upgradeLegacyShadowSummon) already plays the
+// new rule. Players must never have to re-add a spell after an update, so this
+// brings those copies back in line with the packs — modelled on Nim+'s
+// subclass sync (nim-plus-package/scripts/core/subclass-sync.mjs).
+//
+// Scope: owned items of type `spell` whose compendium source
+// (`_stats.compendiumSource`, legacy `flags.core.source(Id)`) is the Codex spells
+// pack, on world actors and on unlinked tokens (only the items the token's delta
+// overrides — the rest are the base actor's and sync with it). Class features are
+// NOT in scope: owned features carry actor state the module writes itself (the
+// Fiendish Boon rules, My Buddy!'s note, rewritten grant rules), which a sync
+// would revert; Engineer/Specter features have the class-content refresh above.
+//
+// Compared per spell: `name`, `img`, `system` (every key — description,
+// activation, tier, school, properties, scaling, rules, …) and the module's
+// pack-owned flag keys (`automation`, `turretTemplate`, `pool`). The update is in
+// place: same `_id`, `system` replaced wholesale (Foundry v14 `_replace`, so keys
+// the pack dropped go too) except the actor-state `grantedById`, each pack-owned
+// module flag key replaced (or deleted when the pack no longer has it); every
+// other flag — charge/dice pool state, other modules' flags — is untouched.
+// Items whose pack entry no longer exists are left alone and reported.
+//
+// No dialog: on `ready` the acting GM applies it automatically, once per module
+// version (hidden world setting `codexContentSyncVersion`), and gets a toast
+// ("Blue's Codex updated 3 items on 2 characters (Summon Shadow…)"), the
+// per-item detail in the console (console.info) and a GM-whispered chat card.
+// Nothing is ever deleted; only pack-sourced copies are rewritten. Also:
+//
+//   await blueCodex.syncCodexContent();                    // apply, all actors
+//   await blueCodex.syncCodexContent({ apply: false });    // dry run (console only)
+//   await blueCodex.syncCodexContent({ actors: [actor] });
+//
+// and per actor from the sheet header's "Refresh Codex class content"
+// (refreshClassContent), which syncs that actor's spells first (no dialog), then
+// applies its class-content refresh (also without a dialog).
+const CONTENT_SYNC_SETTING = 'codexContentSyncVersion';
+const CONTENT_SYNC_PACKS = new Set([CODEX_SPELLS_PACK]);
+const CONTENT_SYNC_TYPES = new Set(['spell']);
+// `system` keys that are actor state, never taken from the pack.
+const CONTENT_SYNC_SYSTEM_KEEP = ['grantedById'];
+// Startup tasks run one at a time on `ready`, in queue order, each after the
+// previous one settled (whatever it threw). Same idea as Nim+'s startup-queue.
+let codexStartupTail = Promise.resolve();
+function queueCodexStartupPrompt(task) {
+	const run = codexStartupTail.then(task);
+	codexStartupTail = run.catch(() => {});
+	return run;
+}
+
+// Order-independent JSON for comparisons; undefined-valued keys count as absent.
+function contentSyncStable(value) {
+	if (value === null || value === undefined) return 'null';
+	if (Array.isArray(value)) return `[${value.map(contentSyncStable).join(',')}]`;
+	if (typeof value === 'object') {
+		const keys = Object.keys(value)
+			.filter((key) => value[key] !== undefined)
+			.sort();
+		return `{${keys.map((key) => `${JSON.stringify(key)}:${contentSyncStable(value[key])}`).join(',')}}`;
+	}
+	return JSON.stringify(value);
+}
+
+const contentSyncEqual = (a, b) => contentSyncStable(a) === contentSyncStable(b);
+
+function splitPath(path) {
+	const i = path.lastIndexOf('.');
+	return i < 0 ? ['', path] : [`${path.slice(0, i)}.`, path.slice(i + 1)];
+}
+
+// `path` set to `value` as a forced replacement (Foundry v14 `_replace`; legacy
+// `==key` spelling as fallback), so an object never merges with the old one.
+function setForcedReplacement(update, path, value) {
+	const Forced = foundry.data?.operators?.ForcedReplacement;
+	if (typeof Forced?.create === 'function') {
+		update[path] = Forced.create(value);
+		return;
+	}
+	const [head, key] = splitPath(path);
+	update[`${head}==${key}`] = value;
+}
+
+// `path` deleted (Foundry v14 `_del`; legacy `-=key` as fallback).
+function setForcedDeletion(update, path) {
+	const Deletion = foundry.data?.operators?.ForcedDeletion;
+	const del = globalThis._del;
+	if (Deletion && del instanceof Deletion) {
+		update[path] = del;
+		return;
+	}
+	const [head, key] = splitPath(path);
+	update[`${head}-=${key}`] = null;
+}
+
+function flagChangeLabels(key, from, to) {
+	const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
+	if (key === 'automation' && isObj(from) && isObj(to)) {
+		const subKeys = uniqueList([...Object.keys(from), ...Object.keys(to)]).filter(
+			(sub) => !contentSyncEqual(from[sub], to[sub]),
+		);
+		if (subKeys.length) return subKeys.map((sub) => `${sub} automation`);
+	}
+	return [key === 'automation' ? 'automation' : `${key} flag`];
+}
+
+/**
+ * The in-place update that brings owned `item` in line with pack `doc`, or null
+ * when it already is. `changed` lists what differs (console / chat card).
+ */
+function buildContentSyncUpdate(item, doc) {
+	const pack = doc.toObject();
+	const current = item._source ?? item.toObject();
+	const currentSystem = current.system ?? {};
+	const system = foundry.utils.deepClone(pack.system ?? {});
+	for (const key of CONTENT_SYNC_SYSTEM_KEEP) {
+		if (currentSystem[key] !== undefined) system[key] = foundry.utils.deepClone(currentSystem[key]);
+		else delete system[key];
+	}
+
+	const changed = [];
+	if (current.name !== pack.name) changed.push('name');
+	if (current.img !== pack.img) changed.push('icon');
+	let systemChanged = false;
+	for (const key of uniqueList([...Object.keys(currentSystem), ...Object.keys(system)])) {
+		if (contentSyncEqual(currentSystem[key], system[key])) continue;
+		changed.push(key);
+		systemChanged = true;
+	}
+
+	const flagUpdates = {};
+	const currentFlags = current.flags?.[MODULE_ID] ?? {};
+	const packFlags = pack.flags?.[MODULE_ID] ?? {};
+	for (const key of PACK_OWNED_FLAG_KEYS) {
+		const from = currentFlags[key];
+		const to = packFlags[key];
+		if (contentSyncEqual(from, to)) continue;
+		const path = `flags.${MODULE_ID}.${key}`;
+		if (to === undefined || to === null) setForcedDeletion(flagUpdates, path);
+		else setForcedReplacement(flagUpdates, path, foundry.utils.deepClone(to));
+		changed.push(...flagChangeLabels(key, from, to));
+	}
+	if (!changed.length) return null;
+
+	const update = { _id: item.id };
+	if (current.name !== pack.name) update.name = pack.name;
+	if (current.img !== pack.img) update.img = pack.img;
+	if (systemChanged) setForcedReplacement(update, 'system', system);
+	Object.assign(update, flagUpdates);
+	return { itemId: item.id, name: current.name, to: pack.name, changed, update };
+}
+
+// Pack docs by uuid (the unwrapped fromUuid: pack data as shipped), plus the
+// pack index once per pack so a deleted entry is reported without a lookup.
+function contentSyncDocLoader() {
+	const docs = new Map();
+	const indexes = new Map();
+	return {
+		async has(packId, id) {
+			if (!indexes.has(packId)) {
+				const pack = game.packs?.get?.(packId);
+				let ids = null;
+				if (pack) {
+					try {
+						const index = await pack.getIndex();
+						ids = new Set([...index].map((entry) => entry._id));
+					} catch (error) {
+						console.warn(`[${MODULE_ID}] content sync: could not read the ${packId} index`, error);
+					}
+				}
+				indexes.set(packId, ids);
+			}
+			const ids = indexes.get(packId);
+			return ids ? ids.has(id) : null; // null: pack unavailable — can't tell
+		},
+		async load(uuid) {
+			if (!docs.has(uuid)) {
+				let doc = null;
+				try {
+					doc = await (originalFromUuid ?? globalThis.fromUuid)(uuid);
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] content sync: could not load ${uuid}`, error);
+				}
+				docs.set(uuid, doc ?? null);
+			}
+			return docs.get(uuid);
+		},
+	};
+}
+
+// Item ids an unlinked token's delta overrides (null for a non-token actor).
+function tokenDeltaItemIds(actor) {
+	if (!actor?.isToken) return null;
+	const token = actor.token;
+	const items = token?._source?.delta?.items ?? token?.delta?._source?.items ?? [];
+	return new Set((Array.isArray(items) ? items : []).map((entry) => entry?._id).filter(Boolean));
+}
+
+function contentSyncLabel(actor) {
+	if (!actor?.isToken) return actor?.name ?? '?';
+	const scene = actor.token?.parent;
+	return `${actor.name} (token${scene?.name ? ` on ${scene.name}` : ''})`;
+}
+
+/**
+ * Plan the spell sync for one actor (reads only).
+ * @returns {Promise<{actor, label, updates: object[], missing: string[]}>}
+ */
+async function planCodexContentSync(actor, loader = contentSyncDocLoader()) {
+	const plan = { actor, label: contentSyncLabel(actor), updates: [], missing: [] };
+	const onlyIds = tokenDeltaItemIds(actor);
+	for (const item of actor?.items ?? []) {
+		if (!CONTENT_SYNC_TYPES.has(item.type)) continue;
+		if (onlyIds && !onlyIds.has(item.id)) continue;
+		const parsed = parseCodexItemSource(itemSourceUuid(item));
+		if (!parsed || !CONTENT_SYNC_PACKS.has(parsed.pack)) continue;
+		const present = await loader.has(parsed.pack, parsed.id);
+		if (present === null) continue; // pack not loaded: leave it alone, report nothing
+		const doc = present ? await loader.load(`Compendium.${parsed.pack}.Item.${parsed.id}`) : null;
+		if (!doc || doc.type !== item.type) {
+			plan.missing.push(item.name);
+			continue;
+		}
+		const entry = buildContentSyncUpdate(item, doc);
+		if (entry) plan.updates.push(entry);
+	}
+	return plan;
+}
+
+/** Apply `plan.updates` (optionally only `itemIds`) in one batch; returns the count. */
+async function applyCodexContentSync(plan, itemIds = null) {
+	const { actor } = plan;
+	const updates = plan.updates.filter(
+		(entry) => (!itemIds || itemIds.has(entry.itemId)) && actor.items?.get?.(entry.itemId),
 	);
+	if (!updates.length) return [];
+	await actor.updateEmbeddedDocuments(
+		'Item',
+		updates.map((entry) => entry.update),
+	);
+	console.log(`[${MODULE_ID}] ${plan.label}: content sync — ${updates.length} spell(s) updated`);
+	return updates;
+}
+
+// Cheap synchronous check (sheet header): does `actor` own a pack-sourced copy the
+// content sync covers?
+function actorOwnsCodexSyncedItem(actor) {
+	return (actor?.items ?? []).some((item) => {
+		if (!CONTENT_SYNC_TYPES.has(item.type)) return false;
+		const parsed = parseCodexItemSource(itemSourceUuid(item));
+		return Boolean(parsed && CONTENT_SYNC_PACKS.has(parsed.pack));
+	});
+}
+
+// Every actor that can hold a stale copy: world actors, plus unlinked tokens
+// whose delta overrides items.
+function contentSyncCandidates() {
+	const out = [...(game.actors ?? [])];
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			if (token.actorLink) continue;
+			const items = token._source?.delta?.items ?? token.delta?._source?.items;
+			if (!Array.isArray(items) || !items.length) continue;
+			const actor = token.actor;
+			if (actor) out.push(actor);
+		}
+	}
+	return out;
+}
+
+function describeContentSyncText(entry) {
+	const label = entry.name !== entry.to ? `${entry.name} → ${entry.to}` : entry.name;
+	return `${label}: ${entry.changed.join(', ')}`;
+}
+
+function describeContentSyncEntry(entry) {
+	const label =
+		entry.name !== entry.to
+			? `${escapeHtml(entry.name)} → <strong>${escapeHtml(entry.to)}</strong>`
+			: `<strong>${escapeHtml(entry.name)}</strong>`;
+	return `${label}: ${escapeHtml(entry.changed.join(', '))}`;
+}
+
+/** Toast text: "Blue's Codex updated 3 items on 2 characters (Summon Shadow, …)". */
+function contentSyncToast(done) {
+	const items = done.reduce((sum, { entries }) => sum + entries.length, 0);
+	const names = uniqueList(done.flatMap(({ entries }) => entries.map((entry) => entry.to)));
+	const shown = names.slice(0, 3).join(', ') + (names.length > 3 ? ', …' : '');
+	return (
+		`Blue's Codex updated ${items} item${items === 1 ? '' : 's'} on ${done.length} ` +
+		`character${done.length === 1 ? '' : 's'} (${shown}).`
+	);
+}
+
+/**
+ * Sync owned Codex spells with the packs: applies at once (no dialog), toasts a
+ * summary, logs every change with console.info and whispers the GMs a card.
+ * @param {object} [options]
+ * @param {Actor[]} [options.actors]  restrict to these actors (default: every world actor + unlinked tokens)
+ * @param {boolean} [options.apply=true]  false = dry run: plan, log and return, write nothing
+ * @param {boolean} [options.silent]  no "up to date" notification
+ * @returns {Promise<{status: 'applied'|'nothing'|'dry-run', updated: number, report: object[], missing: string[]}>}
+ */
+async function syncCodexContent({ actors, apply = true, silent = false } = {}) {
+	if (!game.user?.isGM) {
+		ui.notifications?.warn("Blue's Codex | Only a GM can sync Codex content.");
+		return { status: 'nothing', updated: 0, report: [], missing: [] };
+	}
+	return runCodexContentSync({ actors, apply, silent });
+}
+
+// The sync itself, without the GM gate: refreshClassContent calls it for one
+// actor its user owns (Foundry's own permissions cover the write).
+async function runCodexContentSync({ actors, apply = true, silent = false } = {}) {
+	const loader = contentSyncDocLoader();
+	const report = [];
+	const missing = [];
+	for (const actor of actors ?? contentSyncCandidates()) {
+		const plan = await planCodexContentSync(actor, loader);
+		if (plan.updates.length) report.push(plan);
+		for (const name of plan.missing) missing.push(`${name} (${plan.label})`);
+	}
+	if (missing.length) console.info(`[${MODULE_ID}] content sync: no longer in the packs, left untouched:`, missing);
+	if (!apply) {
+		for (const plan of report) {
+			for (const entry of plan.updates) {
+				console.info(`[${MODULE_ID}] content sync (dry run) — ${plan.label}: ${entry.name} (${entry.changed.join(', ')})`);
+			}
+		}
+		return { status: 'dry-run', updated: 0, report, missing };
+	}
+	if (!report.length) {
+		if (!silent) ui.notifications?.info("Blue's Codex | All owned Codex spells match the packs.");
+		return { status: 'nothing', updated: 0, report, missing };
+	}
+
+	const done = [];
+	for (const plan of report) {
+		try {
+			const entries = await applyCodexContentSync(plan);
+			if (entries.length) done.push({ plan, entries });
+			for (const entry of entries) {
+				console.info(`[${MODULE_ID}] content sync — ${plan.label}: ${describeContentSyncText(entry)}`);
+			}
+		} catch (error) {
+			console.error(`[${MODULE_ID}] content sync failed for ${plan.label}`, error);
+		}
+	}
+	if (!done.length) return { status: 'nothing', updated: 0, report, missing };
+
+	ui.notifications?.info(contentSyncToast(done));
+	try {
+		const rows = done
+			.map(
+				({ plan, entries }) =>
+					`<li>${escapeHtml(plan.label)}<ul>${entries.map((entry) => `<li>${describeContentSyncEntry(entry)}</li>`).join('')}</ul></li>`,
+			)
+			.join('');
+		await ChatMessage.create({
+			whisper: (game.users ?? []).filter((user) => user.isGM).map((user) => user.id),
+			content:
+				`<p><strong>Blue's Codex:</strong> owned spells updated from the packs (in place — ids, counters and ` +
+				`other flags kept):</p><ul>${rows}</ul>` +
+				(missing.length
+					? `<p><em>No longer in the packs (left untouched): ${missing.map(escapeHtml).join(', ')}.</em></p>`
+					: ''),
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post the content-sync summary`, error);
+	}
+	const updated = done.reduce((sum, { entries }) => sum + entries.length, 0);
+	return { status: 'applied', updated, report, missing };
+}
+
+api.syncCodexContent = syncCodexContent;
+
+/**
+ * The version-gated startup sync (acting GM only): applied automatically, once
+ * per module version. A failure leaves the version unstamped, so the next load
+ * tries again.
+ */
+async function runCodexContentSyncStartup() {
+	if (!isActingGM()) return 'skipped';
+	const version = game.modules.get(MODULE_ID)?.version ?? '';
+	if (game.settings.get(MODULE_ID, CONTENT_SYNC_SETTING) === version) return 'skipped';
+	try {
+		const result = await syncCodexContent({ silent: true });
+		await game.settings.set(MODULE_ID, CONTENT_SYNC_SETTING, version);
+		return result.status;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] content sync failed`, error);
+		return 'failed';
+	}
+}
+
+Hooks.once('init', () => {
+	game.settings.register(MODULE_ID, CONTENT_SYNC_SETTING, {
+		scope: 'world',
+		config: false,
+		type: String,
+		default: '',
+	});
 });
+
+// Startup order: the spell sync first, then the class-content refresh pass
+// (both automatic, version-gated, toast + card; acting GM only).
+let codexContentSyncStartup = null;
+let classContentRefreshStartup = null;
+Hooks.once('ready', () => {
+	if (!isActingGM()) return;
+	codexContentSyncStartup = queueCodexStartupPrompt(() => runCodexContentSyncStartup());
+	classContentRefreshStartup = queueCodexStartupPrompt(() => runClassContentRefreshStartup());
+});
+
+// Test-only handles for the content sync (tests/content-sync). Adds no behaviour.
+export const __contentSync__ = {
+	planCodexContentSync,
+	buildContentSyncUpdate,
+	applyCodexContentSync,
+	syncCodexContent,
+	runCodexContentSync,
+	runCodexContentSyncStartup,
+	queueCodexStartupPrompt,
+	CONTENT_SYNC_SETTING,
+	startup: () => codexContentSyncStartup,
+};
+
+// Test-only handles for the class-content refresh and the Lifebinding Spirit
+// conversion (tests/class-refresh). Adds no behaviour.
+export const __classRefresh__ = {
+	planClassContentRefresh,
+	applyClassContentRefresh,
+	refreshClassContent,
+	runClassContentRefreshStartup,
+	planLifebindingSpiritConversion,
+	applyLifebindingSpiritConversion,
+	scheduleSpiritConversionCheck,
+	runSpiritConversionCheck,
+	pendingSpiritChecks: () => spiritCheckTimers.size,
+	CLASS_REFRESH_SETTING,
+	SPIRIT_CHECK_DELAY_MS,
+	startup: () => classContentRefreshStartup,
+};
+
+// ── Test-only export ─────────────────────────────────────────────────────────
+// Read-only handles on internal pure helpers and config tables for the vitest
+// suite (tests/). Adds no behaviour: nothing in the module reads it, and Foundry
+// ignores an esmodule's exports.
+export const __test__ = {
+	maxSpellTierForLevel,
+	shadowmancerHighestTier,
+	SHADOWMANCER_TIER_THRESHOLDS,
+	CLASS_SPELL_REMAP,
+	CLASS_SPELL_CHOICE,
+	CLASS_FEATURE_SPELL_REWRITES,
+	SUBCLASS_SPELL_POLICY,
+	pilferedPowerBarColors,
+};

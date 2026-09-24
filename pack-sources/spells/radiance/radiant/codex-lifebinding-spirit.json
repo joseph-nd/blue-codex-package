@@ -1,0 +1,82 @@
+{
+	"name": "Codex Lifebinding Spirit",
+	"type": "spell",
+	"img": "modules/blue-codex-package/assets/spells/radiance/radiant/summon-lifebinding-spirit.webp",
+	"system": {
+		"macro": "",
+		"identifier": "codex-lifebinding-spirit",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Summon (max 1); command it with 1 Action",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until you cast this again or take a Safe Rest",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Shepherd Only.</strong> <em>Blue’s Codex version of the Nimble 0.2 Lifebinding Spirit (learned from <strong>My Buddy!</strong>).</em></p><p>Summon an Ethereal spirit companion (max 1) that moves when you do and is immune to harm. It can travel up to 4 spaces away from you. It lasts until you cast this spell again (the new spirit replaces it) or take a Safe Rest. You can use 1 Action to command it to do one of the following:</p><ul><li><strong>Harm</strong> | <strong>Reach:</strong> 4, <strong>Damage:</strong> 1d8+STR. Ignores armor. Damage type can be any from the schools you know.</li><li><strong>Mend</strong> | (WIL/Safe Rest) <strong>Reach:</strong> 4. Restore WIL d20 HP to a Dying creature.</li></ul><p><em><strong>Bonus Commands.</strong> The spirit automatically gains one extra command for each of Protection, Divination, Nature, Shadow, Death, Blood, or Curse you know — Courage, Twist Fate, Wild Bloom, Cloaked, Reap, Share Vitality, and Misfortune respectively (full text on the companion). Each spends a Mend charge, like Mend.</em></p><p><em><strong>Outside Combat.</strong> Your companion is a spirit, so it can pass through most obstacles. It can be up to 12 spaces away before teleporting back to you. Many places are aware of such spells and ward off such spirits.</em></p><p><em><strong>Rushed Attacks and My Companion?</strong> You and your companion use the same action pool, but count as different creatures. So you can each attack once without the Rushed Attack penalty every round.</em></p><p>[A] Casting spawns the spirit token next to you — no mana; casting again replaces it; a Safe Rest dismisses it. Harm (1d8 + STR, +STR every 5 levels), Mend (WIL d20) and the bonus commands are on the token, baked with your STR/WIL/level when summoned; Twilight Sage doubles its dice. Mend and every bonus command spend 1 charge from the <em>Mend</em> counter granted by My Buddy! (with an Undo card), the same counter My Buddy!’s own Mend uses — correct it with the sheet’s +/-.</p><p>[M] Blue’s Codex features that count “the mana spent to summon it” or the spirit’s “unused ability uses/charges” (Spirits Ward, Contemplation of Purity, Reclaim Energy, Dazing Discharge) count your remaining Mend charges instead. Luminary of Storms / Trickery damage-type changes apply to Harm.</p>",
+			"higherLevelEffect": "<p>+STR damage every 5 levels.</p>",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 4
+			},
+			"selected": []
+		},
+		"school": "radiant",
+		"tier": 0,
+		"classes": [
+			"shepherd"
+		]
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"playtest02": true,
+			"automation": {
+				"summon": {
+					"template": "lifebinding-spirit-02",
+					"unique": true,
+					"recastReplaces": true,
+					"bakeFormulas": true,
+					"showPool": "lifebindingMend"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "thNZGzaP60h0Q9nE",
+	"folder": "8facd4aa105a2ab4"
+}

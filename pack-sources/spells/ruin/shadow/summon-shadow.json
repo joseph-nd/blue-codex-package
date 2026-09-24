@@ -33,8 +33,8 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon a d12 shadow minion (you can summon a max of INT or LVL minions this way, whichever is lower). Your shadow minions follow the normal minion rules: They have 1 HP, no damage bonus, do not crit, and abandon you immediately outside of combat. You can use 1 Action to command all to do the following:</p><ul><li><strong>Attack</strong> | Move: 6 then, Reach: 1, Damage: 1d12 each.</li></ul>",
-			"higherLevelEffect": "<p><strong>High Levels:</strong> Reach +1 every 5 levels.</p>",
+			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon 1 adjacent Shadow (a d12 minion).</p><p><strong>Minions.</strong> They follow the minion rules (1 HP, no damage bonus, do not crit) and abandon you immediately outside of combat.</p><p><strong>Shadow Limit.</strong> You can have up to INT Shadows.</p><p>You can use 1 Action to command all your Shadows to do the following:</p><ul><li><strong>Attack</strong> | Move: 6 then, Reach: 1, Damage: 1d12 each.</li></ul><p>[A] Casting summons the Shadows beside you, up to your Shadow Limit, and they vanish when combat ends.</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 Shadow every 5 levels.</p>",
 			"upcastEffect": ""
 		},
 		"properties": {
@@ -62,15 +62,15 @@
 					"template": "shadow-minion",
 					"combatOnly": true,
 					"expireOnCombatEnd": true,
-					"maxCount": "minIntOrLevel",
-					"reachPerLevels": 5,
+					"maxCount": "intMod",
 					"featureBoosts": [
 						{
 							"name": "Shadow Magus",
 							"reachBonus": 4,
 							"formulaOverride": "1d10"
 						}
-					]
+					],
+					"spawnCount": "perFiveLevels"
 				}
 			}
 		}

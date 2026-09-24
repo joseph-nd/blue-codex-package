@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-09-24
+
+**Works with the Nim+ 0.12.0 playtest classes.** Nim+ 0.12.0 can replace the core classes with the Nimble 0.2 playtest versions (its world setting *Use Nimble 0.2 playtest core classes*). Blue's Codex now recognises those 0.2 copies. With nim-plus not installed, or with its setting off, nothing changes.
+
+### Added
+- **Codex Lifebinding Spirit**: our 0.2-compatible version of the spirit. In 0.2 the Shepherd's Lifebinding Spirit is a class ability, not a tier-1 mana spell. With Codex magic on and Nim+ 0.2 active, *My Buddy!* grants this Shepherd-only cantrip instead:
+  - no mana cost; max 1 spirit, and recasting replaces it;
+  - Harm: 1d8+STR, ignores armor, +STR every 5 levels;
+  - Mend: WIL d20.
+  - The seven Codex bonus commands are kept. Each one spends a charge from the same visible **Mend** counter as *My Buddy!*, with an Undo card.
+  - Existing Shepherds are converted automatically (see *Changed*), or on demand through **Refresh Codex class content**. This works in both directions. The Mend counter is never touched.
+- **Codex spells stay in sync with the packs.** When a Codex spell changes in an update (like Summon Shadow below), the copies characters already own are updated in place: text, icon, activation, tier, school, properties, rules and Codex automation. Nothing to re-add, and nothing is deleted: each spell keeps its id, its counters and other modules' flags, and spells whose pack entry is gone are left alone. The active GM's client runs it automatically once per module version and shows a notification listing what changed (details in the console and in a GM-only chat card). You can also run it any time with `blueCodex.syncCodexContent()`, or for one character with **Refresh Codex class content** in the sheet header (now shown for any character that owns Codex spells).
+- **Compendium folder.** All Blue's Codex compendiums are grouped in a "Blue's Codex" sidebar folder.
+- **Pilfered Power on the token.** A Shadowmancer's mana bar on the map (Nimble's token resource bar) uses the same shadow-violet as its sheet instead of the default blue. Other bars and other classes keep the core colors.
+
+### Changed
+- **Class-content refresh and the Lifebinding Spirit conversion apply automatically with a toast instead of a confirmation popup.** Same pattern as the Codex content sync and Nim+'s class migration:
+  - **Refresh Codex class content** (sheet header, or `blueCodex.refreshClassContent(actor)`) applies at once. `{ dryRun: true }` posts the card and writes nothing.
+  - On load, the active GM's client refreshes every stale Engineer/Specter character and converts every mismatched Shepherd spirit, once per module version, right after the Codex spell sync. This replaces the old "stale characters" card with its Refresh buttons.
+  - When a Shepherd's rules change mid-session (e.g. Nim+'s class migration), the active GM's client converts the Lifebinding Spirit automatically (the new spell is created before the old one is removed). This replaces the "Review & convert" card.
+  - Each run shows a notification and whispers the GMs (and the character's owners, for a sheet run) a chat card listing every change, including every removed item. Details also go to the console. Errors are caught and listed in the notification and the card.
+  - Ids, charge-pool counters, quantities, equipped state and choices are kept. Buttons on older cards are removed.
+- **Nim+ 0.2 copies count as the official cards they replace.**
+  - The Codex spell rewrite and the official-spell filter apply to them too, so a Shadowmancer, Mage, Songweaver, Stormshifter, Oathsworn or Shepherd no longer gets both the Nim+ spells and the Codex spells.
+  - The 0.2 **Command Shadows** cantrip is dropped under Codex magic, because the Codex Summon Shadow already includes the command action.
+- **Empowered Companion (0.2)** no longer applies the old +1 mana / d20 boost to the spirit.
+- **Swarming Shadows (0.2)** ignores the shadow cap, as the 0.2 text says.
+- **Summon Shadow follows the Nimble 0.2 rule.** It summons 1 adjacent Shadow (a d12 minion), plus 1 more every 5 levels, up to your **Shadow Limit** of INT Shadows. There is no longer a level cap, and the old "+1 Reach every 5 levels" is gone. The Codex command action (Move 6, Attack 1d12 each) is unchanged. Summon Shadow copies characters already own follow the new rule too, without re-adding the spell.
+
+### Fixed
+- **Shadowmancer spell grants follow the Shadowmancer ladder.** The Codex school grants used the generic caster rule (tier T at level 2·T), so a level-4 Shadowmancer was handed tier-2 spells a level early. Grants now use the same ladder as its casting cap: tier 1 at 2, then 5, 7, 10, 13, 16 and 19. Spells a character already received early are not removed; delete them by hand.
+- **libWrapper.** The compendium-index patch (spell-grant filter) now registers through libWrapper when libWrapper is installed. This clears the "Blue Codex Package and Nim+ Package modify the same functionality" warning.
+
+### Known issues
+- Nim+ and Blue's Codex both ship a Stormshifter subclass with the identifier `circle-of-spores`. A Nim+ Circle of Spores character picks up the Codex Nature-school rule.
+- Codex Luminary features that count "mana spent to summon" the spirit use the remaining Mend charges with the 0.2 spirit. They are text-only (`[M]`).
+
 ## [0.8.0] - 2026-09-24
 
 **Heroes.** The two Blue's Codex classes, ported with as much automation as the Nimble system reliably supports. Ancestries, backgrounds and the bestiary are still to come.
