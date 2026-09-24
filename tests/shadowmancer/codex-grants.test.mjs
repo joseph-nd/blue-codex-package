@@ -13,8 +13,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { codexSpells, isCodexSpellUuid, spellIndexEntries } from '../harness/index.mjs';
 import {
-	CODEX_SHADOW_BLAST,
-	CODEX_SUMMON_SHADOW,
+	CODEX_COMMAND_SHADOWS,
+	CODEX_L1_CANTRIPS,
 	LEVELS,
 	NP_COMMAND_SHADOWS,
 	expectedShadowSpells,
@@ -59,10 +59,10 @@ describe.each(VARIANTS)('Shadowmancer grants — %s', (_label, world) => {
 		expect(Math.max(...spells.map((s) => s.tier))).toBe(level < 2 ? 0 : cap);
 	});
 
-	it('L1 learns its cantrips: Codex Shadow Blast + Summon Shadow (Conduit of Shadow, remapped)', () => {
+	it('L1 learns its cantrips: Codex Shadow Blast + Summon Shadow (Conduit of Shadow, remapped) + Command Shadows', () => {
 		const { spells } = run.snaps[1];
 		expect(spells.length).toBeGreaterThanOrEqual(1);
-		expect(uuidsOf(spells)).toEqual([CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW].sort());
+		expect(uuidsOf(spells)).toEqual([...CODEX_L1_CANTRIPS].sort());
 		expect(spells.every((s) => s.tier === 0)).toBe(true);
 	});
 
@@ -104,8 +104,12 @@ describe.each(VARIANTS)('Shadowmancer grants — %s', (_label, world) => {
 		}
 	});
 
-	it('never grants Command Shadows (dropped: the Codex Summon Shadow already carries the command)', () => {
-		expect(run.snaps[20].spells.some((s) => s.source === NP_COMMAND_SHADOWS || s.name === 'Command Shadows')).toBe(false);
+	it('grants Codex Command Shadows once from L1 on, never the Nim+ one', () => {
+		for (const level of LEVELS) {
+			const commands = run.snaps[level].spells.filter((s) => s.name === 'Command Shadows');
+			expect(commands.map((s) => s.source), `L${level}`).toEqual([CODEX_COMMAND_SHADOWS]);
+		}
+		expect(run.snaps[20].spells.some((s) => s.source === NP_COMMAND_SHADOWS)).toBe(false);
 	});
 
 	it('no Dark Knowledge prompt, no dialogs, no hook errors, no warnings', () => {

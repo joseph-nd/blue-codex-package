@@ -18,6 +18,9 @@ export const LEVELS = Array.from({ length: 20 }, (_, i) => i + 1);
 export const CODEX = 'Compendium.blue-codex-package.blue-codex-spells.Item.';
 export const CODEX_SHADOW_BLAST = `${CODEX}enkqIepuxNVpUsCh`;
 export const CODEX_SUMMON_SHADOW = `${CODEX}nrDkGygSyNE6JR7n`;
+export const CODEX_COMMAND_SHADOWS = `${CODEX}cmucaHB11GKzwrAr`;
+/** The L1 Codex cantrips: Conduit of Shadow's patron cantrips (remapped) + Command Shadows (the 0.2 split). */
+export const CODEX_L1_CANTRIPS = [CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS];
 export const SYS_SHADOW_BLAST = 'Compendium.nimble.nimble-spells.Item.9TNPdOXlCcGgxw6r';
 export const SYS_SUMMON_SHADOW = 'Compendium.nimble.nimble-spells.Item.ho2KADcmQWWTeYR0';
 export const NP_SHADOW_BLAST = 'Compendium.nim-plus-package.nim-plus-spells.Item.GLJKE5D5LdARXT29';
@@ -31,9 +34,10 @@ export const SYS_SHADOWMASTERY = 'Compendium.nimble.nimble-class-features.Item.6
 /** The non-secret Codex shadow spells a Shadowmancer should own at `level`. */
 export function expectedShadowSpells(level) {
 	const all = codexSpells('shadow');
-	// L1: only the Conduit of Shadow patron cantrips (remapped to their Codex versions);
-	// the rest of the school arrives with Master of Darkness at L2.
-	if (level < 2) return all.filter((s) => s.uuid === CODEX_SHADOW_BLAST || s.uuid === CODEX_SUMMON_SHADOW);
+	// L1: only the Conduit of Shadow patron cantrips (remapped to their Codex versions)
+	// plus Codex Command Shadows (granted with Summon Shadow); the rest of the school
+	// arrives with Master of Darkness at L2.
+	if (level < 2) return all.filter((s) => CODEX_L1_CANTRIPS.includes(s.uuid));
 	return all.filter((s) => s.tier <= shadowmancerTier(level));
 }
 

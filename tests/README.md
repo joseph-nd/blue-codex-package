@@ -36,6 +36,7 @@ tests/
   shadowmancer/     the Shadowmancer battery (tier ladder, Codex grants L1-20, remaps, empty pack, existing chars)
   content-sync/     owned Codex spell copies synced with the packs (toast, no dialog, version-gated startup)
   class-refresh/    Refresh Codex class content + Lifebinding Spirit conversion (automatic, toast + card, loop guard)
+  command-shadows/  Codex Command Shadows automation (own scene/combat stand-ins: group attack per target, no distance gate, no Shadow turns, 1/turn)
 ```
 
 Test files must be named `*.test.mjs`.

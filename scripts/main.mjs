@@ -639,8 +639,59 @@ function isOfficialCoreSpell(uuid, flags = null) {
  */
 function codexReplacesOfficialSpell(school, tier, classId) {
 	if (!school) return false;
-	if (school === 'necrotic' && CLASS_SPELL_REMAP[classId]) return true;
+	if (school === 'necrotic' && activeClassSpellRemap(classId)) return true;
 	return !!codexCoverageSet?.has(`${school}:${tier ?? 0}`);
+}
+
+/**
+ * Does the Codex spell pack provide (non-secret) spells of `school`? Synchronous:
+ * reads the snapshot ensureCodexCoverage builds (warmed at `ready`), so the sync
+ * paths (the preCreateItem net) can use it.
+ *
+ * Default before the snapshot exists: TRUE (assume a healthy pack). The snapshot is
+ * warmed at `ready`, before any user can create or level a character, and every
+ * async path (grant-index filter, fromUuid rule rewrite, classSpellRemapSync) awaits
+ * ensureCodexCoverage first, so the default is only ever seen by a spell created in
+ * the brief window between `ready` and the index resolving. Assuming "present" there
+ * keeps a healthy world exactly as before (an official necrotic spell leaking onto a
+ * Shadowmancer would be permanent), and the empty-pack case is caught by the GM
+ * warning the moment the snapshot resolves.
+ */
+function codexProvidesSchool(school) {
+	if (!school) return false;
+	if (!codexSchoolSet) return true;
+	return codexSchoolSet.has(school);
+}
+
+/** Does the Codex spell pack contain `uuid`? TRUE before the snapshot exists (see codexProvidesSchool). */
+function codexHasSpellUuid(uuid) {
+	if (!codexSpellUuidSet) return true;
+	return codexSpellUuidSet.has(uuid);
+}
+
+/**
+ * The Codex school a re-homed necrotic caster (CLASS_SPELL_REMAP) learns instead
+ * of official necrotic — or null when the class is not re-homed OR the Codex pack
+ * does not provide that school (empty/broken pack build). Same coverage rule every
+ * other school follows: official spells are only replaced where the Codex actually
+ * has a replacement, so a Shadowmancer/Shepherd falls back to official necrotic.
+ */
+function activeClassSpellRemap(classId) {
+	const target = classId ? CLASS_SPELL_REMAP[classId] : null;
+	return target && codexProvidesSchool(target) ? target : null;
+}
+
+// One GM warning per session when the Codex spells pack is empty/unavailable (or
+// lacks a school a re-homed class needs) and official spells are used instead.
+let codexFallbackWarned = false;
+function warnCodexSpellsUnavailable(detail = '') {
+	if (codexFallbackWarned) return;
+	if (!game.user?.isGM) return;
+	codexFallbackWarned = true;
+	ui.notifications?.warn(
+		`Blue's Codex: the Codex spells pack is empty or unavailable${detail ? ` (${detail})` : ''} — official Nimble spells are used instead. Rebuild the module's packs with Foundry closed, then reload.`,
+		{ permanent: true },
+	);
 }
 
 // Set (to `{ actorId, subclassId }`) only while a character's native level-up
@@ -650,6 +701,10 @@ let levelUpContext = null;
 
 /** Set of `${school}:${tier}` the Codex spell pack can grant (non-secret). */
 let codexCoverageSet = null;
+/** Set of schools the Codex spell pack provides (non-secret) — same snapshot. */
+let codexSchoolSet = null;
+/** Set of every spell UUID in the Codex spell pack — same snapshot. */
+let codexSpellUuidSet = null;
 let codexCoveragePromise = null;
 
 function isReplaceSpellsEnabled() {
@@ -670,6 +725,8 @@ function ensureCodexCoverage() {
 	if (!codexCoveragePromise) {
 		codexCoveragePromise = (async () => {
 			const set = new Set();
+			const schools = new Set();
+			const uuids = new Set();
 			try {
 				const pack = game.packs?.get?.(CODEX_SPELLS_PACK);
 				if (pack) {
@@ -677,17 +734,25 @@ function ensureCodexCoverage() {
 						fields: ['system.school', 'system.tier', 'system.properties.selected'],
 					});
 					for (const entry of index) {
+						const uuid = entry?.uuid ?? pack.getUuid?.(entry?._id);
+						if (uuid) uuids.add(uuid);
 						const school = entry?.system?.school;
 						if (!school) continue;
 						const selected = entry?.system?.properties?.selected ?? [];
 						if (selected.includes('secretSpell')) continue;
 						set.add(`${school}:${entry?.system?.tier ?? 0}`);
+						schools.add(school);
 					}
 				}
 			} catch (error) {
 				console.error(`[${MODULE_ID}] Failed to build Codex spell coverage`, error);
 			}
 			codexCoverageSet = set;
+			codexSchoolSet = schools;
+			codexSpellUuidSet = uuids;
+			// Empty/missing pack (e.g. rebuilt while Foundry ran): every official spell
+			// falls back through the coverage rule — tell the GM once.
+			if (set.size === 0 && isReplaceSpellsEnabled()) warnCodexSpellsUnavailable();
 			return set;
 		})();
 	}
@@ -858,7 +923,8 @@ function patchSpellGrantIndex() {
 			// that class via levelUpContext so Mage (Invoker of Control) and Songweaver,
 			// which offer necrotic as a *choice*, are left untouched. The authoritative,
 			// all-paths suppression is the preCreateItem block below.
-			const dropNecrotic = !!CLASS_SPELL_REMAP[levelUpContext?.classId];
+			// Only when the Codex actually provides the target school (activeClassSpellRemap).
+			const dropNecrotic = !!activeClassSpellRemap(levelUpContext?.classId);
 
 			const filtered = new foundry.utils.Collection();
 			for (const [key, entry] of result.entries()) {
@@ -929,8 +995,9 @@ Hooks.on('preCreateItem', (item, data) => {
 		// Shepherd → death). Catches the school-, uuid- and selectSpell-mode grants
 		// alike (they all funnel through here). Scoped to those classes so Mage /
 		// Songweaver necrotic choices are untouched. classSpellRemapSync grants the
-		// Codex replacement school.
-		if (school === 'necrotic' && CLASS_SPELL_REMAP[getPrimaryClass(actor)?.classId]) {
+		// Codex replacement school. Skipped (official necrotic kept) when the Codex
+		// pack does not provide that school — see activeClassSpellRemap.
+		if (school === 'necrotic' && activeClassSpellRemap(getPrimaryClass(actor)?.classId)) {
 			console.log(
 				`[${MODULE_ID}] Blocked official necrotic spell "${item.name}" — re-homed to a Blue's Codex school for this class.`,
 			);
@@ -1773,6 +1840,9 @@ const CLASS_SPELL_CHOICE = {
 //                 than the whole school. Keyed by SYSTEM UUID; a Nim+ 0.2 copy that
 //                 supersedes a key is remapped the same way (see lookupUuidMap). A
 //                 `null` value drops the spell from the grant.
+//   grantAlongside — keyed by Codex UUID: extra Codex spells a uuid-only grant
+//                 gains whenever it (after remapping) grants that spell (Summon
+//                 Shadow → + Command Shadows, the Nimble 0.2 split).
 //   addSchools  — extend a `selectSchool` rule's option list (Songweaver gains the
 //                 Book of Ether + Divination + Curse as choosable additional schools).
 //   featureNotes — keyed by feature `system.identifier`: HTML appended (once) to a
@@ -1789,6 +1859,11 @@ const MY_BUDDY_CODEX_NOTE =
 	'<p data-blue-codex-note="my-buddy">[M] <strong>Blue\u2019s Codex:</strong> instead of the Lifebinding Spirit cantrip you learn <strong>Codex Lifebinding Spirit</strong> (Radiant cantrip, no mana): the same spirit, summoned as a token with Harm, Mend and the Codex bonus commands of the schools you know. Its Mend and bonus commands spend the <em>Mend</em> counter below, shared with this feature\u2019s own Mend. You do not also learn the tier-1 Summon Lifebinding Spirit.</p>';
 const MY_BUDDY_OLD_NOTE_MARK = 'you cannot cast it until level 2';
 
+// The Codex Shadowmancer cantrips remapped/granted below (and automated in the
+// summon / Command Shadows sections).
+const CODEX_SUMMON_SHADOW_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.nrDkGygSyNE6JR7n`;
+const CODEX_COMMAND_SHADOWS_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.cmucaHB11GKzwrAr`;
+
 const CLASS_FEATURE_SPELL_REWRITES = {
 	shadowmancer: {
 		swap: { necrotic: 'shadow' },
@@ -1797,14 +1872,20 @@ const CLASS_FEATURE_SPELL_REWRITES = {
 			'Compendium.nimble.nimble-spells.Item.9TNPdOXlCcGgxw6r':
 				'Compendium.blue-codex-package.blue-codex-spells.Item.enkqIepuxNVpUsCh',
 			// Summon Shadow (system; the Nim+ 0.2 copy supersedes it)
-			'Compendium.nimble.nimble-spells.Item.ho2KADcmQWWTeYR0':
-				'Compendium.blue-codex-package.blue-codex-spells.Item.nrDkGygSyNE6JR7n',
+			'Compendium.nimble.nimble-spells.Item.ho2KADcmQWWTeYR0': CODEX_SUMMON_SHADOW_UUID,
 			// Command Shadows — new 0.2 cantrip (no system original), split out of 0.2
-			// Summon Shadow ("1 Action: ALL your Shadows move 6 then attack"). The Codex
-			// Summon Shadow already carries that command ("You can use 1 Action to
-			// command all to … Attack | Move 6, Reach 1, 1d12 each"), so under the Codex
-			// rewrite it would be a duplicate action: drop it.
-			'Compendium.nim-plus-package.nim-plus-spells.Item.uHirzuVSdqt7jVPU': null,
+			// Summon Shadow ("1 Action (1/turn): ALL your Shadows move 6 then attack").
+			// The Codex follows the split: its own Command Shadows cantrip (automated —
+			// see the Command Shadows section) replaces the Nim+ one.
+			'Compendium.nim-plus-package.nim-plus-spells.Item.uHirzuVSdqt7jVPU': CODEX_COMMAND_SHADOWS_UUID,
+		},
+		// Codex spells granted together with a remapped one (uuid-only grants):
+		// Command Shadows comes with Summon Shadow, so the 2.0.3 Conduit of Shadow
+		// (Shadow Blast + Summon Shadow, no Command Shadows) teaches it at level 1
+		// too — the 0.2 Conduit grants it by UUID anyway (de-duplicated). Also used
+		// by the Codex content sync to hand it to existing Shadowmancers.
+		grantAlongside: {
+			[CODEX_SUMMON_SHADOW_UUID]: [CODEX_COMMAND_SHADOWS_UUID],
 		},
 	},
 	shepherd: {
@@ -1851,6 +1932,12 @@ function lookupUuidMap(map, uuid, flags = null) {
 	return undefined;
 }
 
+/** `cfg.grantAlongside` extras of Codex spell `uuid` that the Codex pack contains. */
+function grantAlongsideOf(cfg, uuid) {
+	const extras = cfg?.grantAlongside?.[uuid];
+	return Array.isArray(extras) ? extras.filter((extra) => typeof extra === 'string' && codexHasSpellUuid(extra)) : [];
+}
+
 // The unwrapped global fromUuid (set by installFromUuidRewrite), for lookups made
 // from inside the wrapper.
 let originalFromUuid = null;
@@ -1864,7 +1951,15 @@ let originalFromUuid = null;
 async function remapGrantUuids(uuids, cfg, classId) {
 	const out = [];
 	for (const uuid of uuids) {
-		let mapped = lookupUuidMap(cfg?.uuidMap, uuid);
+		// Only map onto a Codex spell the pack actually contains, and only drop a
+		// spell (null) for a re-homed class whose Codex school is available; else
+		// keep the official spell (empty/broken Codex pack → official fallback).
+		const usableMapping = (value) => {
+			if (typeof value === 'string' && !codexHasSpellUuid(value)) return undefined;
+			if (value === null && CLASS_SPELL_REMAP[classId] && !activeClassSpellRemap(classId)) return undefined;
+			return value;
+		};
+		let mapped = usableMapping(lookupUuidMap(cfg?.uuidMap, uuid));
 		let doc = null;
 		if (mapped === undefined) {
 			try {
@@ -1873,11 +1968,11 @@ async function remapGrantUuids(uuids, cfg, classId) {
 			} catch {
 				doc = null;
 			}
-			mapped = lookupUuidMap(cfg?.uuidMap, uuid, doc?.flags);
+			mapped = usableMapping(lookupUuidMap(cfg?.uuidMap, uuid, doc?.flags));
 		}
 		if (mapped === null) continue;
 		if (typeof mapped === 'string') {
-			out.push(mapped);
+			out.push(mapped, ...grantAlongsideOf(cfg, mapped));
 			continue;
 		}
 		if (
@@ -1925,8 +2020,14 @@ async function rewriteFeatureSpellRules(rules, cfg, classId) {
 		}
 
 		if (Array.isArray(rule.schools) && rule.schools.length) {
-			let schools = rule.schools.map((school) => cfg.swap?.[school] ?? school);
-			if (cfg.addSchools && rule.mode === 'selectSchool') schools = [...schools, ...cfg.addSchools];
+			// Swap/add only schools the Codex pack provides (else keep the official one).
+			let schools = rule.schools.map((school) => {
+				const swapped = cfg.swap?.[school];
+				return swapped && codexProvidesSchool(swapped) ? swapped : school;
+			});
+			if (cfg.addSchools && rule.mode === 'selectSchool') {
+				schools = [...schools, ...cfg.addSchools.filter(codexProvidesSchool)];
+			}
 			schools = uniqueList(schools);
 			if (schools.join(',') !== rule.schools.join(',')) {
 				changed = true;
@@ -2572,6 +2673,15 @@ async function classSpellRemapSync(actor) {
 	if (!classInfo?.classId || classInfo.classLevel < 1) return;
 	const target = CLASS_SPELL_REMAP[classInfo.classId];
 	if (!target) return;
+	// Re-home only when the Codex provides the target school. Otherwise the official
+	// necrotic spells stay (they are not vetoed either — activeClassSpellRemap), no
+	// high-water mark is written (so a later sync with a repaired pack still re-homes
+	// and prunes them), and the GM is told once.
+	await ensureCodexCoverage();
+	if (!codexProvidesSchool(target)) {
+		warnCodexSpellsUnavailable(`no ${SCHOOL_LABEL(target)} spells`);
+		return;
+	}
 
 	const maxTier = maxSpellTierForLevel(classInfo.classLevel, classInfo.classId);
 	const stored = actor.getFlag(MODULE_ID, 'classSchools');
@@ -2597,15 +2707,32 @@ async function classSpellRemapSync(actor) {
 		const ownsTargetSchool = (actor.items ?? []).some(
 			(item) => item.type === 'spell' && item.system?.school === target,
 		);
+		// Official necrotic still owned = a character that levelled under the
+		// official-spell fallback (empty/broken Codex pack, BUG-bc-1). Its level-up
+		// dialog may already have granted a few target-school spells (the rewritten
+		// patron cantrips) once the pack is repaired, so owning the target school does
+		// NOT mean the school was granted: re-home it fully (prune + grant) below.
+		const necroticSpells = (actor.items ?? []).filter(
+			(item) => item.type === 'spell' && item.system?.school === 'necrotic',
+		);
 		// maxTier === 0: at level 1 the class feature (via the fromUuid rewrite) is the
 		// sole authority on cantrips. During creation the sheet renders after the class
 		// item lands but BEFORE the granted spells do, so ownsTargetSchool is briefly
 		// false — blanket-granting here would hand out the whole tier-0 school.
-		if (isNew && (ownsTargetSchool || maxTier === 0)) {
+		if (isNew && (maxTier === 0 || (ownsTargetSchool && !necroticSpells.length))) {
+			// A fallback L1 caster: swap its 1:1-mapped official cantrips (Conduit of
+			// Shadow's patron cantrips) for their Codex versions before the prune.
+			const rewrites = CLASS_FEATURE_SPELL_REWRITES[classInfo.classId];
+			for (const item of necroticSpells) {
+				const mapped = lookupUuidMap(rewrites?.uuidMap, item._stats?.compendiumSource, item.flags);
+				if (typeof mapped !== 'string' || !codexHasSpellUuid(mapped)) continue;
+				for (const uuid of [mapped, ...grantAlongsideOf(rewrites, mapped)]) {
+					// eslint-disable-next-line no-await-in-loop
+					await grantCodexSpellIfMissing(actor, uuid);
+				}
+			}
 			// Still prune any official necrotic this class replaces that leaked through.
-			const necroticIds = (actor.items ?? [])
-				.filter((item) => item.type === 'spell' && item.system?.school === 'necrotic')
-				.map((item) => item.id);
+			const necroticIds = necroticSpells.map((item) => item.id);
 			if (necroticIds.length) await actor.deleteEmbeddedDocuments('Item', necroticIds);
 			await actor.setFlag(MODULE_ID, 'classSchools', {
 				classId: classInfo.classId,
@@ -3027,6 +3154,12 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] summoner-pool spend failed`, error);
 	}
+	// Command Shadows: spend the 1/turn charge, then every commanded Shadow attacks.
+	try {
+		await handleCommandShadowsUsed(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Command Shadows failed`, error);
+	}
 	// Swarming Shadows: a shadow minion's single attack that would crit spawns
 	// another minion beside the target.
 	try {
@@ -3090,6 +3223,14 @@ async function runWrappedActivate(originalActivate, options = {}) {
 		if (casterPoolActivationBlocked(this)) return null;
 	} catch (error) {
 		console.error(`[${MODULE_ID}] summoner-pool pre-activate check failed`, error);
+	}
+	// Command Shadows: Shadows + targets (+ the 1/turn charge in combat) before the
+	// cast, and the per-target split when several are targeted. Blocking here
+	// costs nothing (originalActivate never runs).
+	try {
+		if (await commandShadowsActivationBlocked(this)) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Command Shadows pre-activate gate failed`, error);
 	}
 	// Specter Rites: warn (proceed / cancel) when a target isn't Soul Touched by
 	// this Specter. Cancelling here costs nothing (originalActivate never runs).
@@ -3182,6 +3323,8 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	let result;
 	try {
 		result = await originalActivate.call(this, options);
+		// A cancelled Command Shadows cast drops the plan its gate prepared.
+		if (!result && this?.uuid) pendingCommandShadows.delete(this.uuid);
 		// Consume the mark only if an attack actually resolved (dialog not cancelled).
 		if (marks.length && result) {
 			try {
@@ -5260,14 +5403,19 @@ async function handleSwarmingShadowsGroupAttack(message) {
 	const targetDoc = resolveGroupAttackTargetToken(message.system?.targets);
 	const scene = targetDoc?.parent ?? canvas?.scene;
 
+	// Resolve every member's token before the first await: Command Shadows removes
+	// its transient Shadow combatants right after the attack (retired map fallback).
+	const hits = [];
 	for (const row of rows) {
 		if (row?.isMiss) continue;
 		if (!rollHasPrimaryMaxFace(row?.roll)) continue;
-		const combatant = resolveCombatantById(row?.memberCombatantId);
-		const tokenDoc = combatant?.token;
-		if (!tokenDoc) continue;
+		const id = row?.memberCombatantId;
+		const tokenDoc = resolveCombatantById(id)?.token ?? retiredShadowCombatantTokens.get(id) ?? null;
+		if (tokenDoc) hits.push({ tokenDoc, roll: row.roll });
+	}
+	for (const { tokenDoc, roll } of hits) {
 		// Each qualifying member spawns its own minion (cap re-checked per spawn).
-		await maybeSwarmFromMinionAttack(tokenDoc, [row.roll], targetDoc, scene);
+		await maybeSwarmFromMinionAttack(tokenDoc, [roll], targetDoc, scene);
 	}
 }
 
@@ -5281,6 +5429,499 @@ async function onCreateChatMessage(message) {
 		await handleSwarmingShadowsGroupAttack(message);
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Swarming Shadows group-attack handler failed`, error);
+	}
+}
+
+// ── Command Shadows (Shadowmancer cantrip, Nimble 0.2) ───────────────────────
+// "1 Action (1/turn): ALL your Shadows move 6 then attack." A spell opts in with
+//
+//   flags.blue-codex-package.automation.commandShadows = {
+//     template: 'shadow-minion', move: 6, perTurnPool: 'command-shadows'
+//   }
+//
+// Same activate-wrap / useItem split as the summon framework:
+//   • gate (commandShadowsActivationBlocked, before the dialog and chat card, so
+//     blocking costs nothing): the caster's live Shadows (tokens of `template` it
+//     summoned, on its scene) and the user's targets — none of either: warn and
+//     block. In a started combat the spell's item pool `perTurnPool` (a visible
+//     native chargePool, refilled onTurnStart) must hold a charge. 2+ targets: a
+//     dialog assigns each Shadow to a target (even round-robin split pre-filled,
+//     distances shown as a hint); Cancel blocks. There is no distance gate: every
+//     Shadow attacks its target (the Shadows "move 6 then attack" — the GM moves
+//     the tokens by hand if they care). The plan waits for the useItem half.
+//   • useItem (the cast resolved; handleCommandShadowsUsed): in combat spend the
+//     pool (Undo card), then run the attacks with GM authority (runAsGM
+//     'commandShadows', executeCommandShadows):
+//       – in a started combat, through the system's minion group attack
+//         (Combat#performMinionGroupAttack), one per target. The system only
+//         rolls for minion COMBATANTS (and spends their `system.actions.base`),
+//         so the Shadows join the tracker just for the attack (fresh combatants
+//         = a full action every cast) and are removed again right after: Shadows
+//         never keep a combatant, so they never get turns of their own (Nimble
+//         has no "in combat but no turn" state — its minion groups still give the
+//         group leader a turn and dissolve every round). The system reads the
+//         target from the executing user's targets, so they are swapped in for
+//         the call (withUserTargets). The `minionGroupAttack` cards are
+//         self-contained (rows carry name/img/roll) and feed Swarming Shadows,
+//         which maps removed combatant ids back to their tokens;
+//       – outside combat (testing: no 1/turn limit), each Shadow's attack item is
+//         activated at its target (fast-forwarded).
+//     One summary card follows: assignments, "each Shadow may move 6 before
+//     attacking", Shadows the system could not roll for.
+// Shadow combatants left in a running combat (the first 0.9.1 draft kept them)
+// are swept on the acting GM's `ready` and by every command.
+// Tokens are never moved. The Pact of the Endless Swarm "your Hives can also
+// move" rider stays text-only.
+const COMMAND_SHADOWS_FLAG = 'commandShadows';
+const COMMAND_SHADOWS_SKIP_LABELS = {
+	noActionSelected: 'no attack found',
+	noActionsRemaining: 'no action left',
+	actorCannotActivate: 'cannot act',
+	actionNotFound: 'no attack found',
+	noDamageFormula: 'no damage formula',
+	activationFailed: 'the attack failed',
+	notInCombat: 'not in the combat',
+	missing: 'gone',
+};
+// item uuid → the plan the gate built for that cast (consumed by the useItem half).
+const pendingCommandShadows = new Map();
+
+// The spell's commandShadows automation (with defaults), or null.
+function getCommandShadowsAutomation(item) {
+	const cfg = getItemAutomationFlag(item, COMMAND_SHADOWS_FLAG);
+	if (!cfg || typeof cfg !== 'object') return null;
+	return {
+		template: typeof cfg.template === 'string' && cfg.template ? cfg.template : SHADOW_MINION_TEMPLATE,
+		move: Math.max(0, Number(cfg.move ?? 6) || 0),
+		perTurnPool: typeof cfg.perTurnPool === 'string' && cfg.perTurnPool ? cfg.perTurnPool : null,
+	};
+}
+
+// A minion's attack: its first item whose activation has a damage node (what the
+// system's group attack rolls).
+function findMinionAttackItem(actorLike) {
+	return (
+		listEmbeddedItems(actorLike).find((item) =>
+			(item?.system?.activation?.effects ?? []).some((node) => node?.type === 'damage'),
+		) ?? null
+	);
+}
+
+function isTokenDefeated(tokenDoc) {
+	const hp = tokenDoc?.actor?.system?.attributes?.hp?.value;
+	return typeof hp === 'number' && hp <= 0;
+}
+
+// The caster's live Shadows on `scene` (never defeated ones).
+function findCommandableShadows(caster, template, scene) {
+	return findLiveSummons(caster, template).filter(
+		(token) => (!scene || token.parent?.id === scene.id) && !isTokenDefeated(token),
+	);
+}
+
+// Even round-robin split: Shadow i → target i mod n.
+function defaultShadowAssignment(shadowCount, targetCount) {
+	return Array.from({ length: shadowCount }, (_, i) => (targetCount > 0 ? i % targetCount : 0));
+}
+
+// Ask how to split the Shadows over 2+ targets. Resolves an array (target index
+// per Shadow) or null (cancelled).
+async function promptShadowAssignment(caster, shadows, targets) {
+	const defaults = defaultShadowAssignment(shadows.length, targets.length);
+	const rows = shadows
+		.map((shadow, i) => {
+			const options = targets
+				.map(
+					(target, t) =>
+						`<option value="${t}" ${defaults[i] === t ? 'selected' : ''}>${escapeHtml(target.name ?? `Target ${t + 1}`)} (${tokenDistanceSpaces(shadow, target)} spaces)</option>`,
+				)
+				.join('');
+			return `
+			<label class="bcx-command-row">
+				<span>${escapeHtml(shadow.name ?? 'Shadow')} #${i + 1}</span>
+				<select name="bcx-command-${i}">${options}</select>
+			</label>`;
+		})
+		.join('');
+	return foundry.applications.api.DialogV2.wait({
+		window: { title: `${caster.name} — Command Shadows` },
+		content: `<form class="bcx-command-form">
+				<p>Choose which target each Shadow attacks:</p>
+				<div class="bcx-command-list">${rows}</div>
+			</form>
+			<style>
+				.bcx-command-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
+				.bcx-command-row select{flex:0 1 60%}
+			</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Attack',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? null;
+					return defaults.map((fallback, i) => {
+						const value = Number(root?.querySelector?.(`select[name="bcx-command-${i}"]`)?.value);
+						return Number.isInteger(value) && value >= 0 && value < targets.length ? value : fallback;
+					});
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	})
+		.then((result) => (Array.isArray(result) ? result : null))
+		.catch(() => null);
+}
+
+// Pre-activate gate: true = blocked (warned; the cast costs nothing).
+async function commandShadowsActivationBlocked(item) {
+	const cfg = getCommandShadowsAutomation(item);
+	if (!cfg) return false;
+	const caster = item?.actor;
+	if (!(caster instanceof Actor)) return false;
+	pendingCommandShadows.delete(item.uuid);
+
+	const scene = findActorTokenDoc(caster)?.parent ?? canvas?.scene ?? null;
+	const shadows = findCommandableShadows(caster, cfg.template, scene);
+	if (!shadows.length) {
+		ui.notifications?.warn(`${caster.name} has no Shadows to command — ${item.name} was not cast.`);
+		return true;
+	}
+	const shadowIds = new Set(shadows.map((token) => token.id));
+	const targets = uniqueList(
+		Array.from(game.user?.targets ?? [])
+			.map((placeable) => placeable?.document ?? placeable)
+			.filter((doc) => doc?.id && !shadowIds.has(doc.id)),
+	);
+	if (!targets.length) {
+		ui.notifications?.warn(`Target the creature(s) your Shadows attack, then cast ${item.name} again.`);
+		return true;
+	}
+
+	const inCombat = Boolean(game.combat?.started);
+	if (inCombat && cfg.perTurnPool) {
+		const pool = getChargePoolEntry(caster, cfg.perTurnPool, { item });
+		if (pool && pool.current < 1) {
+			ui.notifications?.warn(
+				`${caster.name} already used ${item.name} this turn (${pool.current}/${pool.max}). If that is wrong, click the counter on the sheet to fix it.`,
+			);
+			return true;
+		}
+	}
+
+	let picks = defaultShadowAssignment(shadows.length, targets.length);
+	if (targets.length > 1) {
+		picks = await promptShadowAssignment(caster, shadows, targets);
+		if (!picks) return true;
+	}
+	const assignments = shadows.map((shadow, i) => ({ shadow, target: targets[picks[i]] ?? targets[0] }));
+
+	pendingCommandShadows.set(item.uuid, {
+		casterUuid: caster.uuid,
+		itemName: item.name,
+		sceneId: scene?.id ?? assignments[0].shadow.parent?.id ?? null,
+		move: cfg.move,
+		template: cfg.template,
+		inCombat,
+		assignments: assignments.map(({ shadow, target }) => ({ shadowId: shadow.id, targetId: target.id })),
+	});
+	return false;
+}
+
+// useItem half: spend the 1/turn charge (combat only), then attack with GM authority.
+async function handleCommandShadowsUsed(item, _context) {
+	const cfg = getCommandShadowsAutomation(item);
+	if (!cfg) return undefined;
+	const plan = pendingCommandShadows.get(item?.uuid);
+	pendingCommandShadows.delete(item?.uuid);
+	if (!plan) return undefined;
+	const caster = item.actor;
+	if (plan.inCombat && cfg.perTurnPool) {
+		await spendPoolWithUndo(caster, cfg.perTurnPool, 1, {
+			item,
+			label: `${item.name} (1/turn)`,
+			reason: 'Shadows commanded',
+			flavor: item.name,
+		});
+	}
+	return runAsGM('commandShadows', plan);
+}
+
+// Run `fn` while the current user's targets are exactly `tokenDocs` (the system's
+// group attack and item activation read `game.user.targets`). User#targets is an
+// own instance field, so it is shadowed and restored — never re-targeted on the
+// canvas, which would broadcast.
+async function withUserTargets(tokenDocs, fn) {
+	const user = game.user;
+	if (!user) return fn();
+	const placeables = tokenDocs.map((doc) => doc?.object ?? { id: doc.id, name: doc.name, document: doc });
+	const targets = new Set(placeables);
+	targets.ids = placeables.map((placeable) => placeable.id);
+	const own = Object.getOwnPropertyDescriptor(user, 'targets');
+	Object.defineProperty(user, 'targets', { value: targets, configurable: true, writable: true });
+	try {
+		return await fn();
+	} finally {
+		if (own) Object.defineProperty(user, 'targets', own);
+		else delete user.targets;
+	}
+}
+
+// A token that is a summoned Shadow (the Command Shadows template, default
+// shadow-minion) — these never keep a combatant.
+function isShadowSummonToken(tokenDoc, template = SHADOW_MINION_TEMPLATE) {
+	const summonTemplate = getTokenSummonFlag(tokenDoc)?.template;
+	return Boolean(summonTemplate) && (summonTemplate === template || summonTemplate === SHADOW_MINION_TEMPLATE);
+}
+
+function combatantTokenDoc(combatant) {
+	return (
+		combatant?.token ??
+		game.scenes?.get?.(combatant?.sceneId)?.tokens?.get?.(combatant?.tokenId) ??
+		null
+	);
+}
+
+// Removed Shadow combatant id → its token, so a `minionGroupAttack` card whose
+// rows name a combatant that is already gone (Swarming Shadows) still finds the
+// Shadow. Bounded; only the newest entries matter.
+const retiredShadowCombatantTokens = new Map();
+function rememberRetiredShadowCombatant(combatantId, tokenDoc) {
+	if (!combatantId || !tokenDoc) return;
+	retiredShadowCombatantTokens.set(combatantId, tokenDoc);
+	while (retiredShadowCombatantTokens.size > 200) {
+		retiredShadowCombatantTokens.delete(retiredShadowCombatantTokens.keys().next().value);
+	}
+}
+
+// Join `tokenDocs` to the tracker for a group attack: a Shadow without a
+// combatant gets a fresh one (the system gives it a full action), one that
+// already has one (left over) is topped up to its action max, so a command never
+// fails on "no action left". Returns Map(token id → combatant).
+async function prepareShadowCombatants(combat, tokenDocs) {
+	const find = (token) =>
+		combat.combatants?.find?.((c) => c.tokenId === token.id && (!c.sceneId || c.sceneId === token.parent?.id)) ?? null;
+	const missing = tokenDocs.filter((token) => !find(token));
+	if (missing.length) {
+		await combat.createEmbeddedDocuments(
+			'Combatant',
+			missing.map((token) => ({
+				type: 'npc',
+				tokenId: token.id,
+				sceneId: token.parent?.id ?? null,
+				actorId: token.actorId ?? token.actor?.id ?? '',
+				hidden: Boolean(token.hidden),
+				flags: { [MODULE_ID]: { commandShadowsTransient: true } },
+			})),
+		);
+	}
+	const topUps = [];
+	for (const token of tokenDocs) {
+		const combatant = find(token);
+		if (!combatant?.id) continue;
+		const base = combatant.system?.actions?.base ?? {};
+		const max = Math.max(1, Number.isFinite(Number(base.max)) ? Number(base.max) : 1);
+		const current = Number(base.current);
+		if (!(Number.isFinite(current) && current >= max)) {
+			topUps.push({ _id: combatant.id, 'system.actions.base.current': max });
+		}
+	}
+	if (topUps.length) await combat.updateEmbeddedDocuments('Combatant', topUps);
+	return new Map(tokenDocs.map((token) => [token.id, find(token)]));
+}
+
+// Remove every Shadow combatant from `combat` (Shadows never keep a turn).
+// Returns the number removed.
+async function removeShadowCombatants(combat, template = SHADOW_MINION_TEMPLATE) {
+	if (!combat?.combatants || typeof combat.deleteEmbeddedDocuments !== 'function') return 0;
+	const doomed = [];
+	for (const combatant of combat.combatants) {
+		const token = combatantTokenDoc(combatant);
+		const transient = Boolean(combatant?.flags?.[MODULE_ID]?.commandShadowsTransient);
+		if (!combatant?.id || !(transient || isShadowSummonToken(token, template))) continue;
+		rememberRetiredShadowCombatant(combatant.id, token);
+		doomed.push(combatant.id);
+	}
+	if (!doomed.length) return 0;
+	await combat.deleteEmbeddedDocuments('Combatant', doomed);
+	return doomed.length;
+}
+
+// Acting GM, on ready: drop Shadow combatants an earlier build left in a running
+// combat, so they stop taking turns.
+async function sweepShadowCombatants() {
+	if (!isActingGM()) return 0;
+	let removed = 0;
+	for (const combat of game.combats ?? []) {
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			removed += await removeShadowCombatants(combat);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not remove Shadow combatants from combat ${combat?.id}`, error);
+		}
+	}
+	return removed;
+}
+Hooks.once('ready', () => {
+	void sweepShadowCombatants();
+});
+
+// GM side: resolve the plan against the scene and run the attacks. Returns a
+// summary ({ mode, groups, skipped }) — also posted as a card.
+async function executeCommandShadows(plan, { user } = {}) {
+	const caster = resolveActorByUuid(plan?.casterUuid);
+	if (!caster) return null;
+	if (user && !userMayActFor(user, caster)) return relayDenied('commandShadows', user, caster.name);
+	const scene = game.scenes?.get?.(plan.sceneId) ?? canvas?.scene ?? null;
+	const tokenOf = (id) => scene?.tokens?.get?.(id) ?? null;
+	const template = typeof plan.template === 'string' && plan.template ? plan.template : SHADOW_MINION_TEMPLATE;
+
+	const skipped = [];
+	const resolved = [];
+	for (const { shadowId, targetId } of plan.assignments ?? []) {
+		const shadow = tokenOf(shadowId);
+		const target = tokenOf(targetId);
+		if (!shadow || !target || isTokenDefeated(shadow)) {
+			skipped.push({ name: shadow?.name ?? 'Shadow', reason: 'missing' });
+			continue;
+		}
+		resolved.push({ shadow, target });
+	}
+	// One group per target, in first-assignment order. No distance gate.
+	const groups = [];
+	for (const entry of resolved) {
+		let group = groups.find((g) => g.target.id === entry.target.id);
+		if (!group) groups.push((group = { target: entry.target, shadows: [] }));
+		group.shadows.push(entry.shadow);
+	}
+
+	const combat = game.combat;
+	const useGroupAttack =
+		Boolean(combat?.started) &&
+		typeof combat.performMinionGroupAttack === 'function' &&
+		(!combat.scene?.id || combat.scene.id === scene?.id);
+	const mode = useGroupAttack ? 'groupAttack' : 'individual';
+	// The Shadows join the tracker only for the group attacks (one create for all
+	// of them) and leave it right after, whatever happens.
+	let combatants = new Map();
+	try {
+		if (useGroupAttack && groups.length) {
+			combatants = await prepareShadowCombatants(
+				combat,
+				groups.flatMap((g) => g.shadows),
+			);
+		}
+		await runCommandShadowsGroups({ groups, useGroupAttack, combat, combatants, skipped });
+	} finally {
+		if (useGroupAttack) {
+			try {
+				await removeShadowCombatants(combat, template);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Command Shadows: could not remove the Shadow combatants`, error);
+			}
+		}
+	}
+
+	const summary = {
+		mode,
+		groups: groups.map((g) => ({
+			targetId: g.target.id,
+			targetName: g.target.name ?? 'target',
+			shadowIds: g.shadows.map((s) => s.id),
+			attacked: g.members ?? 0,
+			chatMessageId: g.chatMessageId ?? null,
+		})),
+		skipped,
+	};
+	await postCommandShadowsCard(caster, plan, summary);
+	return summary;
+}
+registerGMRelayOp('commandShadows', executeCommandShadows);
+
+// Roll every group: the system group attack per target (combat) or each Shadow's
+// own attack item (outside combat). Mutates groups (members, chatMessageId) and
+// `skipped`.
+async function runCommandShadowsGroups({ groups, useGroupAttack, combat, combatants, skipped }) {
+	for (const group of groups) {
+		if (useGroupAttack) {
+			const members = [];
+			const selections = [];
+			for (const shadow of group.shadows) {
+				const combatant = combatants.get(shadow.id);
+				const attack = findMinionAttackItem(shadow.actor);
+				if (!combatant?.id) {
+					skipped.push({ name: shadow.name, reason: 'notInCombat' });
+					continue;
+				}
+				if (!attack?.id) {
+					skipped.push({ name: shadow.name, reason: 'noActionSelected' });
+					continue;
+				}
+				members.push({ shadow, combatantId: combatant.id });
+				selections.push({ memberCombatantId: combatant.id, actionId: attack.id });
+			}
+			group.members = members.length;
+			if (!members.length) continue;
+			// eslint-disable-next-line no-await-in-loop
+			const result = await withUserTargets([group.target], () =>
+				combat.performMinionGroupAttack({
+					memberCombatantIds: members.map((m) => m.combatantId),
+					targetTokenIds: [group.target.id],
+					selections,
+					endTurn: false,
+				}),
+			);
+			group.chatMessageId = result?.chatMessageId ?? null;
+			for (const skip of result?.skippedMembers ?? []) {
+				const member = members.find((m) => m.combatantId === skip.combatantId);
+				skipped.push({ name: member?.shadow?.name ?? 'Shadow', reason: skip.reason });
+			}
+		} else {
+			group.members = 0;
+			for (const shadow of group.shadows) {
+				const attack = findMinionAttackItem(shadow.actor);
+				if (typeof attack?.activate !== 'function') {
+					skipped.push({ name: shadow.name, reason: 'noActionSelected' });
+					continue;
+				}
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					const card = await withUserTargets([group.target], () => attack.activate({ fastForward: true }));
+					if (card) group.members += 1;
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] Command Shadows: ${shadow.name} attack failed`, error);
+					skipped.push({ name: shadow.name, reason: 'activationFailed' });
+				}
+			}
+		}
+	}
+}
+
+async function postCommandShadowsCard(caster, plan, summary) {
+	try {
+		const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+		const how = summary.mode === 'groupAttack' ? 'minion group attack' : 'individual attacks, outside combat';
+		let content = `<p><em>Each Shadow may move ${plan.move} before attacking.</em></p>`;
+		if (summary.groups.length) {
+			content += `<ul>${summary.groups
+				.map((g) => `<li><strong>${escapeHtml(g.targetName)}</strong> ← ${plural(g.shadowIds.length, 'Shadow')}</li>`)
+				.join('')}</ul><p>(${how})</p>`;
+		}
+		if (summary.skipped.length) {
+			content += `<p><strong>Could not attack:</strong> ${summary.skipped
+				.map((s) => `${escapeHtml(s.name)} (${escapeHtml(COMMAND_SHADOWS_SKIP_LABELS[s.reason] ?? s.reason)})`)
+				.join('; ')}.</p>`;
+		}
+		await ChatMessage.create({
+			content,
+			speaker: ChatMessage.getSpeaker({ actor: caster }),
+			flavor: `<strong>${escapeHtml(plan.itemName ?? 'Command Shadows')}</strong>`,
+			flags: { [MODULE_ID]: { [COMMAND_SHADOWS_FLAG]: summary } },
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post the Command Shadows card`, error);
 	}
 }
 
@@ -6998,6 +7639,28 @@ async function handleActorFeatures(actor) {
 api.choosePoolOptions = (actor) => maybePromptPools(actor ?? game.user?.character);
 api.syncSubclassFeatures = (actor) => handleActorFeatures(actor ?? game.user?.character);
 
+// Diagnostics for the Codex spells-pack snapshot (BUG-bc-1): which schools the
+// Codex provides, and which necrotic re-homes are active (null = the class falls
+// back to official necrotic). `null` schools = snapshot not loaded yet.
+api.codexSpellStatus = () => ({
+	loaded: codexSchoolSet !== null,
+	schools: codexSchoolSet ? [...codexSchoolSet].sort() : null,
+	spellCount: codexSpellUuidSet?.size ?? null,
+	remaps: Object.fromEntries(Object.keys(CLASS_SPELL_REMAP).map((classId) => [classId, activeClassSpellRemap(classId)])),
+	officialNecroticVetoed: Object.fromEntries(
+		Object.keys(CLASS_SPELL_REMAP).map((classId) => [classId, codexReplacesOfficialSpell('necrotic', 0, classId)]),
+	),
+	fallbackWarned: codexFallbackWarned,
+});
+// Rebuild the snapshot (and the school index) from the pack as it is now. System
+// feature docs the dialogs already resolved keep their current rules until reload.
+api.refreshCodexSpellCoverage = async () => {
+	codexCoveragePromise = null;
+	codexSpellsBySchoolPromise = null;
+	await Promise.all([ensureCodexCoverage(), loadCodexSpellsBySchool()]);
+	return api.codexSpellStatus();
+};
+
 // Re-open the subclass spell-school choice (clears the stored pick so the dialog
 // is offered again). Useful if a player wants to re-decide their schools.
 api.chooseSpellSchools = async (actor) => {
@@ -8315,8 +8978,13 @@ Hooks.once('init', () => {
 // other flag — charge/dice pool state, other modules' flags — is untouched.
 // Items whose pack entry no longer exists are left alone and reported.
 //
+// Also added (never removed): a Codex spell a character's class learns together
+// with one it owns (`grantAlongside`, e.g. Command Shadows with Summon Shadow)
+// but that it is missing — a Shadowmancer created before Command Shadows existed.
+//
 // No dialog: on `ready` the acting GM applies it automatically, once per module
-// version (hidden world setting `codexContentSyncVersion`), and gets a toast
+// version and CONTENT_SYNC_REVISION (hidden world setting
+// `codexContentSyncVersion`), and gets a toast
 // ("Blue's Codex updated 3 items on 2 characters (Summon Shadow…)"), the
 // per-item detail in the console (console.info) and a GM-whispered chat card.
 // Nothing is ever deleted; only pack-sourced copies are rewritten. Also:
@@ -8517,22 +9185,79 @@ async function planCodexContentSync(actor, loader = contentSyncDocLoader()) {
 		const entry = buildContentSyncUpdate(item, doc);
 		if (entry) plan.updates.push(entry);
 	}
+	plan.updates.push(...(await planCodexContentAdditions(actor, loader)));
 	return plan;
+}
+
+/**
+ * Codex spells a character is missing although its class learns them together
+ * with one it owns (CLASS_FEATURE_SPELL_REWRITES[classId].grantAlongside — e.g.
+ * Command Shadows, split out of Summon Shadow in Nimble 0.2, for Shadowmancers
+ * created before it existed). Codex magic on, world characters only. Entries
+ * carry `create` (the item data) instead of `update`.
+ */
+async function planCodexContentAdditions(actor, loader) {
+	if (!isReplaceSpellsEnabled() || actor?.type !== 'character' || actor.isToken) return [];
+	const alongside = CLASS_FEATURE_SPELL_REWRITES[getPrimaryClass(actor)?.classId]?.grantAlongside;
+	if (!alongside) return [];
+	const owned = (actor.items ?? []).filter((item) => item.type === 'spell');
+	const ownsSource = (uuid) => owned.some((item) => itemSourceUuid(item) === uuid);
+	const additions = [];
+	for (const [anchor, extras] of Object.entries(alongside)) {
+		if (!ownsSource(anchor)) continue;
+		for (const uuid of extras ?? []) {
+			if (ownsSource(uuid) || additions.some((entry) => entry.uuid === uuid)) continue;
+			const parsed = parseCodexItemSource(uuid);
+			if (!parsed || !(await loader.has(parsed.pack, parsed.id))) continue;
+			const doc = await loader.load(uuid);
+			if (!doc || doc.type !== 'spell') continue;
+			// Same dedupe keys as grantCodexSpellIfMissing (identifier/name + school).
+			const identifier = doc.system?.identifier;
+			const school = doc.system?.school;
+			const equivalent = owned.some(
+				(item) =>
+					item.system?.school === school &&
+					((identifier && item.system?.identifier === identifier) || item.name === doc.name),
+			);
+			if (equivalent) continue;
+			const create = doc.toObject();
+			delete create._id;
+			create._stats = { ...(create._stats ?? {}), compendiumSource: uuid };
+			additions.push({ itemId: null, uuid, name: doc.name, to: doc.name, changed: ['added'], create });
+		}
+	}
+	return additions;
 }
 
 /** Apply `plan.updates` (optionally only `itemIds`) in one batch; returns the count. */
 async function applyCodexContentSync(plan, itemIds = null) {
 	const { actor } = plan;
 	const updates = plan.updates.filter(
-		(entry) => (!itemIds || itemIds.has(entry.itemId)) && actor.items?.get?.(entry.itemId),
+		(entry) => entry.update && (!itemIds || itemIds.has(entry.itemId)) && actor.items?.get?.(entry.itemId),
 	);
-	if (!updates.length) return [];
-	await actor.updateEmbeddedDocuments(
-		'Item',
-		updates.map((entry) => entry.update),
+	// Missing spells (planCodexContentAdditions) — not selectable by item id.
+	const additions = itemIds ? [] : plan.updates.filter((entry) => entry.create);
+	if (updates.length) {
+		await actor.updateEmbeddedDocuments(
+			'Item',
+			updates.map((entry) => entry.update),
+		);
+	}
+	let added = [];
+	if (additions.length) {
+		const created = await actor.createEmbeddedDocuments(
+			'Item',
+			additions.map((entry) => foundry.utils.deepClone(entry.create)),
+		);
+		// A preCreateItem veto may drop one: report only what landed.
+		const landed = new Set((created ?? []).map((item) => itemSourceUuid(item)));
+		added = additions.filter((entry) => landed.has(entry.uuid));
+	}
+	if (!updates.length && !added.length) return [];
+	console.log(
+		`[${MODULE_ID}] ${plan.label}: content sync — ${updates.length} spell(s) updated, ${added.length} added`,
 	);
-	console.log(`[${MODULE_ID}] ${plan.label}: content sync — ${updates.length} spell(s) updated`);
-	return updates;
+	return [...updates, ...added];
 }
 
 // Cheap synchronous check (sheet header): does `actor` own a pack-sourced copy the
@@ -8653,7 +9378,9 @@ async function runCodexContentSync({ actors, apply = true, silent = false } = {}
 			whisper: (game.users ?? []).filter((user) => user.isGM).map((user) => user.id),
 			content:
 				`<p><strong>Blue's Codex:</strong> owned spells updated from the packs (in place — ids, counters and ` +
-				`other flags kept):</p><ul>${rows}</ul>` +
+				`other flags kept)${
+					done.some(({ entries }) => entries.some((entry) => entry.create)) ? ', and missing class spells added' : ''
+				}:</p><ul>${rows}</ul>` +
 				(missing.length
 					? `<p><em>No longer in the packs (left untouched): ${missing.map(escapeHtml).join(', ')}.</em></p>`
 					: ''),
@@ -8672,9 +9399,19 @@ api.syncCodexContent = syncCodexContent;
  * per module version. A failure leaves the version unstamped, so the next load
  * tries again.
  */
+// Bump CONTENT_SYNC_REVISION when the startup sync must run again within the same
+// module version — e.g. a world that already ran the 0.9.1 sync before Codex
+// Command Shadows was added (revision 2: hand it to existing Shadowmancers). The
+// stamp is "<version>+sync<revision>"; a plain "<version>" stamp from before
+// revisions existed counts as revision 1.
+const CONTENT_SYNC_REVISION = 2;
+function contentSyncStamp() {
+	return `${game.modules.get(MODULE_ID)?.version ?? ''}+sync${CONTENT_SYNC_REVISION}`;
+}
+
 async function runCodexContentSyncStartup() {
 	if (!isActingGM()) return 'skipped';
-	const version = game.modules.get(MODULE_ID)?.version ?? '';
+	const version = contentSyncStamp();
 	if (game.settings.get(MODULE_ID, CONTENT_SYNC_SETTING) === version) return 'skipped';
 	try {
 		const result = await syncCodexContent({ silent: true });
@@ -8705,6 +9442,22 @@ Hooks.once('ready', () => {
 	classContentRefreshStartup = queueCodexStartupPrompt(() => runClassContentRefreshStartup());
 });
 
+// Test-only handles for the Command Shadows automation (tests/command-shadows).
+// Adds no behaviour.
+export const __commandShadows__ = {
+	commandShadowsActivationBlocked,
+	handleCommandShadowsUsed,
+	executeCommandShadows,
+	defaultShadowAssignment,
+	removeShadowCombatants,
+	sweepShadowCombatants,
+	handleSwarmingShadowsGroupAttack,
+	retiredShadowCombatantTokens,
+	pending: pendingCommandShadows,
+	CODEX_COMMAND_SHADOWS_UUID,
+	CODEX_SUMMON_SHADOW_UUID,
+};
+
 // Test-only handles for the content sync (tests/content-sync). Adds no behaviour.
 export const __contentSync__ = {
 	planCodexContentSync,
@@ -8715,6 +9468,7 @@ export const __contentSync__ = {
 	runCodexContentSyncStartup,
 	queueCodexStartupPrompt,
 	CONTENT_SYNC_SETTING,
+	stamp: contentSyncStamp,
 	startup: () => codexContentSyncStartup,
 };
 

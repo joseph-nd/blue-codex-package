@@ -3,7 +3,8 @@
  * CLASS_FEATURE_SPELL_REWRITES.shadowmancer) and the preCreateItem vetoes /
  * substitutes behind them:
  *   - Conduit of Shadow's patron cantrips: system Shadow Blast / Summon Shadow and
- *     their Nim+ 0.2 copies → the Codex spells; Nim+ 0.2 Command Shadows dropped;
+ *     their Nim+ 0.2 copies → the Codex spells, Codex Command Shadows granted with
+ *     Summon Shadow (grantAlongside); Nim+ 0.2 Command Shadows → Codex Command Shadows;
  *   - Master of Darkness / Shadowmastery necrotic school grants → shadow;
  *   - official necrotic never lands on a Shadowmancer; a Nim+ 0.2 copy that maps
  *     1:1 is replaced by its Codex spell.
@@ -11,6 +12,7 @@
 import { describe, expect, it } from 'vitest';
 import { rawDoc, setupWorld, createCharacter, spellSummary, findDocs } from '../harness/index.mjs';
 import {
+	CODEX_COMMAND_SHADOWS,
 	CODEX_SHADOW_BLAST,
 	CODEX_SUMMON_SHADOW,
 	NP_COMMAND_SHADOWS,
@@ -27,10 +29,10 @@ import {
 const grantRules = (doc) => doc.system.rules.filter((r) => r.type === 'grantSpells');
 
 describe('Conduit of Shadow patron cantrips', () => {
-	it('system feature: Shadow Blast / Summon Shadow → Codex', async () => {
+	it('system feature: Shadow Blast / Summon Shadow → Codex, + Codex Command Shadows', async () => {
 		await setupWorld();
 		const doc = await fromUuid(SYS_CONDUIT);
-		expect(grantRules(doc).map((r) => r.uuids)).toEqual([[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW]]);
+		expect(grantRules(doc).map((r) => r.uuids)).toEqual([[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS]]);
 		// The pack source itself is untouched (only the cached document is rewritten).
 		expect(grantRules(rawDoc(SYS_CONDUIT))[0].uuids).toEqual([SYS_SHADOW_BLAST, SYS_SUMMON_SHADOW]);
 	});
@@ -40,7 +42,7 @@ describe('Conduit of Shadow patron cantrips', () => {
 		const a = await fromUuid(SYS_CONDUIT);
 		const b = await fromUuid(SYS_CONDUIT);
 		expect(b).toBe(a);
-		expect(grantRules(b).map((r) => r.uuids)).toEqual([[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW]]);
+		expect(grantRules(b).map((r) => r.uuids)).toEqual([[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS]]);
 	});
 
 	it('Codex magic off: the system grant is left alone', async () => {
@@ -52,19 +54,36 @@ describe('Conduit of Shadow patron cantrips', () => {
 	it.each([
 		['with the Nim+ api', {}],
 		['via the flag-index fallback', { nimPlusApi: false }],
-	])('Nim+ 0.2 feature (%s): Summon Shadow / Shadow Blast → Codex, Command Shadows dropped', async (_l, extra) => {
+	])('Nim+ 0.2 feature (%s): Summon Shadow / Command Shadows / Shadow Blast → Codex', async (_l, extra) => {
 		await setupWorld({ nimPlus: true, ...extra });
 		const doc = await fromUuid(NP_CONDUIT);
 		expect(grantRules(rawDoc(NP_CONDUIT))[0].uuids).toEqual([NP_SUMMON_SHADOW, NP_COMMAND_SHADOWS, NP_SHADOW_BLAST]);
-		expect(grantRules(doc).map((r) => r.uuids)).toEqual([[CODEX_SUMMON_SHADOW, CODEX_SHADOW_BLAST]]);
+		expect(grantRules(doc).map((r) => r.uuids)).toEqual([[CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS, CODEX_SHADOW_BLAST]]);
 	});
 
-	it('a 0.2 Shadowmancer (Nim+ playtest on) is created with the Codex cantrips only', async () => {
+	it('a 0.2 Shadowmancer (Nim+ playtest on) is created with the Codex cantrips only (Command Shadows included)', async () => {
 		const { env } = await setupWorld({ nimPlus: true });
 		const { actor, features } = await createCharacter(env, { classId: 'shadowmancer' });
 		expect(features.map((f) => f.uuid)).toContain(NP_CONDUIT);
 		expect(features.map((f) => f.uuid)).not.toContain(SYS_CONDUIT);
-		expect(spellSummary(actor).map((s) => s.source).sort()).toEqual([CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW].sort());
+		expect(spellSummary(actor).map((s) => s.source).sort()).toEqual(
+			[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS].sort(),
+		);
+	});
+
+	it('Nim+ installed with the playtest off: the system feature grants the Codex cantrips + Command Shadows', async () => {
+		const { env } = await setupWorld({ nimPlus: true, playtest: false });
+		const { actor, features } = await createCharacter(env, { classId: 'shadowmancer' });
+		expect(features.map((f) => f.uuid)).toContain(SYS_CONDUIT);
+		expect(spellSummary(actor).map((s) => s.source).sort()).toEqual(
+			[CODEX_SHADOW_BLAST, CODEX_SUMMON_SHADOW, CODEX_COMMAND_SHADOWS].sort(),
+		);
+	});
+
+	it('Codex magic off: no Codex Command Shadows is added to the system grant', async () => {
+		const { env } = await setupWorld({ replaceSpells: false });
+		const { actor } = await createCharacter(env, { classId: 'shadowmancer' });
+		expect(spellSummary(actor).map((s) => s.source)).not.toContain(CODEX_COMMAND_SHADOWS);
 	});
 });
 
@@ -110,6 +129,7 @@ describe('official necrotic vs a Shadowmancer (preCreateItem)', () => {
 	it.each([
 		['Summon Shadow', NP_SUMMON_SHADOW, CODEX_SUMMON_SHADOW],
 		['Shadow Blast', NP_SHADOW_BLAST, CODEX_SHADOW_BLAST],
+		['Command Shadows', NP_COMMAND_SHADOWS, CODEX_COMMAND_SHADOWS],
 	])('a directly added Nim+ 0.2 %s is blocked and replaced by the Codex spell', async (_n, npUuid, codexUuid) => {
 		const { env } = await setupWorld({ nimPlus: true });
 		const { actor } = await createCharacter(env, { classId: 'shadowmancer' });
@@ -123,16 +143,6 @@ describe('official necrotic vs a Shadowmancer (preCreateItem)', () => {
 		expect(sources).toContain(codexUuid);
 		expect(sources).not.toContain(npUuid);
 		expect(sources.filter((s) => s === codexUuid)).toHaveLength(1);
-	});
-
-	it('a directly added Nim+ 0.2 Command Shadows is blocked with no substitute', async () => {
-		const { env } = await setupWorld({ nimPlus: true });
-		const { actor } = await createCharacter(env, { classId: 'shadowmancer' });
-		const before = spellSummary(actor);
-		const doc = await fromUuid(NP_COMMAND_SHADOWS);
-		expect(await actor.createEmbeddedDocuments('Item', [{ ...doc.toObject(), _stats: { compendiumSource: NP_COMMAND_SHADOWS } }])).toEqual([]);
-		await env.flush();
-		expect(spellSummary(actor)).toEqual(before);
 	});
 
 	it('a directly added SYSTEM Summon Shadow is blocked; no substitute (only Nim+ copies are substituted)', async () => {

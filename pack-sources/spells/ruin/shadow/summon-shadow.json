@@ -33,7 +33,7 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon 1 adjacent Shadow (a d12 minion).</p><p><strong>Minions.</strong> They follow the minion rules (1 HP, no damage bonus, do not crit) and abandon you immediately outside of combat.</p><p><strong>Shadow Limit.</strong> You can have up to INT Shadows.</p><p>You can use 1 Action to command all your Shadows to do the following:</p><ul><li><strong>Attack</strong> | Move: 6 then, Reach: 1, Damage: 1d12 each.</li></ul><p>[A] Casting summons the Shadows beside you, up to your Shadow Limit, and they vanish when combat ends.</p>",
+			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon 1 adjacent Shadow (a d12 minion).</p><p><strong>Minions.</strong> They follow the minion rules (1 HP, no damage bonus, do not crit) and abandon you immediately outside of combat.</p><p><strong>Shadow Limit.</strong> You can have up to INT Shadows.</p><p>Command them with the <strong>Command Shadows</strong> cantrip.</p><p>[A] Casting summons the Shadows beside you, up to your Shadow Limit, and they vanish when combat ends.</p>",
 			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 Shadow every 5 levels.</p>",
 			"upcastEffect": ""
 		},

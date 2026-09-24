@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-09-24
+
+### Added
+- **Codex Command Shadows**: a Shadowmancer-only Shadow cantrip (1 Action, 1/turn): all your Shadows move 6, then attack. It follows the Nimble 0.2 split of Summon Shadow. Every Shadowmancer learns it at level 1 with Summon Shadow, with or without Nim+ and with its 0.2 playtest on or off. With the playtest on, the Nim+ Command Shadows becomes this spell.
+  - **Automated.** Target the creature(s), then cast. Every Shadow you summoned on the scene attacks its target through the system's minion group attack, one group attack per target. The Shadows join the combat tracker only for that attack and leave it right after, so they never take turns of their own and can be commanded every turn. With several targets, a dialog assigns each Shadow to a target, pre-filled with an even split; Cancel does nothing. Pact features such as Swarming Shadows see these attacks like any group attack.
+  - Tokens are not moved and distance is not checked: every Shadow attacks, and the card says each Shadow may move 6 before attacking. The target dialog shows each Shadow's distance as a hint.
+  - **1/turn** in combat, tracked by a *Command Shadows (1/turn)* counter on the spell. The counter refills at the start of your turn and can be adjusted on the sheet; each spend posts an Undo card. Outside combat there is no limit, and each Shadow rolls its own attack.
+  - With no target or no Shadow, the cast is cancelled with a warning and costs nothing.
+  - Shadow combatants left in a running combat by an earlier 0.9.1 build are removed when the GM loads the world, or at the next Command Shadows.
+- **Existing Shadowmancers get Command Shadows automatically.** The Codex content sync runs once when the GM loads the world, with a toast and a chat card and no popup. It adds the spell to every Shadowmancer who has the Codex Summon Shadow but not Command Shadows. *Refresh Codex class content* on the sheet header does the same for one character.
+
+### Changed
+- **Codex Summon Shadow** no longer describes the "command all your Shadows" action, since that is now Command Shadows. Owned copies are updated by the content sync.
+- The content sync now also runs again within the same module version when the Codex needs it. This time it runs because of Command Shadows, even in a world that already ran the 0.9.1 sync.
+
+### Fixed
+- **An empty Codex spells pack no longer leaves a Shadowmancer or Shepherd with no spells.** This happens when the packs are rebuilt while Foundry is running. These two classes learn a Codex school (Shadow, Death) instead of official necrotic, and official necrotic was blocked even when the Codex had no spells of that school. They now keep the official necrotic spells when the Codex school is missing. Every other school already worked this way: a Mage falls back to the official fire spells. The GM sees one warning per session that the Codex spells pack is empty or unavailable and official spells are used. When the pack is repaired, the character's next level-up, or opening its sheet, swaps the official spells for the Codex ones.
+- New console helpers: `blueCodex.codexSpellStatus()` shows which Codex schools the pack provides and whether the Shadowmancer/Shepherd swap is active; `blueCodex.refreshCodexSpellCoverage()` re-reads the pack.
+
 ## [0.9.0] - 2026-09-24
 
 **Works with the Nim+ 0.12.0 playtest classes.** Nim+ 0.12.0 can replace the core classes with the Nimble 0.2 playtest versions (its world setting *Use Nimble 0.2 playtest core classes*). Blue's Codex now recognises those 0.2 copies. With nim-plus not installed, or with its setting off, nothing changes.

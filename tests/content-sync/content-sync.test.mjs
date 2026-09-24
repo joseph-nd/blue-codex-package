@@ -165,7 +165,8 @@ describe('startup (version gate)', () => {
 		expect(status).toBe('applied');
 		expect(env.dialogs.log).toEqual([]);
 		const version = env.game.modules.get(MODULE_ID).version;
-		expect(env.game.settings.get(MODULE_ID, 'codexContentSyncVersion')).toBe(version);
+		expect(main.__contentSync__.stamp()).toBe(`${version}+sync2`);
+		expect(env.game.settings.get(MODULE_ID, 'codexContentSyncVersion')).toBe(main.__contentSync__.stamp());
 		expect(actor.items.get('ownedShadow00001')._source.flags[MODULE_ID].automation.summon.maxCount).toBe('intMod');
 
 		// Same version: skipped even if something went stale again.
@@ -186,7 +187,16 @@ describe('startup (version gate)', () => {
 		shadowmancer(env, [currentCopy('Summon Shadow', 'ownedShadow00001')]);
 		await env.boot();
 		expect(await main.__contentSync__.startup()).toBe('nothing');
-		expect(env.game.settings.get(MODULE_ID, 'codexContentSyncVersion')).toBe(env.game.modules.get(MODULE_ID).version);
+		expect(env.game.settings.get(MODULE_ID, 'codexContentSyncVersion')).toBe(main.__contentSync__.stamp());
+	});
+
+	it('runs again in a world stamped with the bare module version (the sync revision was bumped)', async () => {
+		const { main, env } = await setupWorld({ boot: false });
+		const actor = shadowmancer(env, [legacySummonShadow()]);
+		env.game.settings.preset(`${MODULE_ID}.codexContentSyncVersion`, env.game.modules.get(MODULE_ID).version);
+		await env.boot();
+		expect(await main.__contentSync__.startup()).toBe('applied');
+		expect(actor.items.get('ownedShadow00001').system.description.baseEffect).not.toMatch(/Reach every 5 levels/);
 	});
 
 	it('does not run for a player', async () => {
@@ -211,5 +221,78 @@ describe('Refresh Codex class content (sheet header)', () => {
 		expect(env.notifications.messages('info')).toContain(
 			"Blue's Codex updated 1 item on 1 character (Summon Shadow).",
 		);
+	});
+});
+
+describe('missing class spells: Codex Command Shadows for existing Shadowmancers', () => {
+	const COMMAND_SHADOWS = 'Compendium.blue-codex-package.blue-codex-spells.Item.cmucaHB11GKzwrAr';
+
+	/** An L5 Shadowmancer as it was before Command Shadows existed (grants run, then the spell removed). */
+	async function legacyL5Shadowmancer() {
+		const { buildCharacterByLevelUps } = await import('../harness/index.mjs');
+		const { env } = await setupWorld();
+		const { actor } = await buildCharacterByLevelUps(env, 'shadowmancer', 5);
+		const data = actor.toObject();
+		data.items = data.items.filter((i) => i._stats?.compendiumSource !== COMMAND_SHADOWS);
+		expect(data.items.some((i) => i._stats?.compendiumSource === SUMMON_SHADOW)).toBe(true);
+		return data;
+	}
+	const commandShadowsOf = (actor) => actor.items.filter((i) => i.type === 'spell' && i.name === 'Command Shadows');
+
+	it('the startup sync adds it to an existing L5 Shadowmancer — toast + card, no dialog, once', async () => {
+		const data = await legacyL5Shadowmancer();
+		const { main, env } = await setupWorld({ boot: false });
+		const actor = adoptActor(env, data);
+		const spellsBefore = actor.items.filter((i) => i.type === 'spell').length;
+		await env.boot();
+		expect(await main.__contentSync__.startup()).toBe('applied');
+
+		const added = commandShadowsOf(actor);
+		expect(added).toHaveLength(1);
+		expect(added[0]._stats.compendiumSource).toBe(COMMAND_SHADOWS);
+		expect(added[0]._source.flags[MODULE_ID].automation.commandShadows).toBeTruthy();
+		expect(actor.items.filter((i) => i.type === 'spell')).toHaveLength(spellsBefore + 1);
+		expect(env.dialogs.log).toEqual([]);
+		expect(env.notifications.messages('info')).toContain("Blue's Codex updated 1 item on 1 character (Command Shadows).");
+		expect(env.ChatMessage.created.at(-1).content).toMatch(/missing class spells added/);
+		expect(env.ChatMessage.created.at(-1).content).toMatch(/Command Shadows.*added/);
+
+		// Idempotent: nothing left to add.
+		const again = await main.__contentSync__.syncCodexContent({ actors: [actor], silent: true });
+		expect(again.status).toBe('nothing');
+		expect(commandShadowsOf(actor)).toHaveLength(1);
+	});
+
+	it('the sheet header refresh adds it too', async () => {
+		const data = await legacyL5Shadowmancer();
+		const { env } = await setupWorld();
+		const actor = adoptActor(env, data);
+		await globalThis.blueCodex.refreshClassContent(actor);
+		expect(commandShadowsOf(actor)).toHaveLength(1);
+		expect(env.dialogs.log).toEqual([]);
+	});
+
+	it('a dry run only plans it', async () => {
+		const data = await legacyL5Shadowmancer();
+		const { main, env } = await setupWorld();
+		const actor = adoptActor(env, data);
+		const result = await main.__contentSync__.syncCodexContent({ actors: [actor], apply: false });
+		expect(result.report[0].updates.map((u) => [u.to, u.changed])).toEqual([['Command Shadows', ['added']]]);
+		expect(commandShadowsOf(actor)).toHaveLength(0);
+	});
+
+	it('not with Codex magic off, and not for a character without Codex Summon Shadow', async () => {
+		const data = await legacyL5Shadowmancer();
+		const off = await setupWorld({ replaceSpells: false });
+		const offActor = adoptActor(off.env, data);
+		await off.main.__contentSync__.syncCodexContent({ actors: [offActor], silent: true });
+		expect(commandShadowsOf(offActor)).toHaveLength(0);
+
+		const { main, env } = await setupWorld();
+		const noSummon = structuredClone(data);
+		noSummon.items = noSummon.items.filter((i) => i._stats?.compendiumSource !== SUMMON_SHADOW);
+		const actor = adoptActor(env, noSummon);
+		await main.__contentSync__.syncCodexContent({ actors: [actor], silent: true });
+		expect(commandShadowsOf(actor)).toHaveLength(0);
 	});
 });

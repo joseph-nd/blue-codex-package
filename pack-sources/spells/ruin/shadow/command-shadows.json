@@ -1,0 +1,106 @@
+{
+	"name": "Command Shadows",
+	"type": "spell",
+	"img": "modules/blue-codex-package/assets/spells/ruin/shadow/command-shadows.webp",
+	"system": {
+		"macro": "",
+		"identifier": "command-shadows",
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "command-shadows-turn-pool",
+				"identifier": "command-shadows",
+				"label": "Command Shadows (1/turn)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"recoveries": [
+					{
+						"trigger": "onTurnStart",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "encounterEnd",
+						"mode": "refresh",
+						"value": "1"
+					}
+				],
+				"hidden": false
+			}
+		],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong> <em>(1/turn)</em></p><p>ALL your Shadows move 6 then attack.</p><ul><li><strong>Attack</strong> | Move: 6 then, Reach: 1, Damage: 1d12 each.</li></ul><p>[A] Target the creature(s) your Shadows attack, then cast. With several targets you assign each Shadow to one of them (an even split is pre-filled). The Shadows attack through the minion group attack, one group attack per target; they join the combat tracker only for the attack, so they never take turns of their own. Tokens are not moved and distance is not checked: each Shadow may move 6 before attacking.</p><p>[A] 1/turn: in combat each cast spends the <em>Command Shadows (1/turn)</em> counter, which refills at the start of your turn (adjust it on the sheet if needed). Outside combat there is no limit. With no target or no Shadow the cast is cancelled and costs nothing.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": ""
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": []
+		},
+		"school": "shadow",
+		"tier": 0,
+		"classes": [
+			"shadowmancer"
+		]
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"commandShadows": {
+					"template": "shadow-minion",
+					"move": 6,
+					"perTurnPool": "command-shadows"
+				}
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"folder": "6e1b6998275cef34",
+	"_id": "cmucaHB11GKzwrAr"
+}
