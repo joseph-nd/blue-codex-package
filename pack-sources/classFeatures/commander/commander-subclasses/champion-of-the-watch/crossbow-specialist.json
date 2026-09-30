@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You gain proficiency with crossbows and handheld ballista can use INT instead of DEX. You ignore the STR needed for hand ballista. While Prone, you do not have disadvantage on attacks with Ranged weapons.</p>",
+		"description": "<p>You gain proficiency with crossbows and handheld ballista can use INT instead of DEX. You ignore the STR needed for hand ballista. While Prone, you do not have disadvantage on attacks with Ranged weapons.</p><hr><p><em>[A] Crossbows and handheld ballistas you own use INT instead of DEX for their damage, and the ballista's STR requirement is cleared on your sheet.</em></p><p><em>[M] While Prone, ignore the disadvantage on Ranged weapon attacks (the system does not apply it for you).</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-watch",

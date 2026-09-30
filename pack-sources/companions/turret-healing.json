@@ -258,7 +258,7 @@
 						"width": 1
 					}
 				},
-				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Burst: 2. The turret is destroyed afterwards.</strong> Restore <strong>INTd4</strong> HP. Allies gain temp HP equal to the total.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d4 healing and a matching INT d4 temp HP line (plus Overclocked).</em></p><p><em>[M] The temp HP should equal the healing total — the second line is its own roll, so apply the healing total as temp HP instead.</em></p>",
+				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Burst: 2. The turret is destroyed afterwards.</strong> Restore <strong>INTd4</strong> HP. Allies gain temp HP equal to the total.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d4 healing (plus Overclocked); the temp HP line on the card equals that healing total.</em></p>",
 				"subtype": "action"
 			},
 			"effects": [],
@@ -268,7 +268,8 @@
 				"blue-codex-package": {
 					"automation": {
 						"turretToolbelt": true,
-						"diceCount": "int"
+						"diceCount": "int",
+						"tempEqualsHealing": true
 					}
 				}
 			},

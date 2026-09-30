@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>While Raging, if you move at least 3 spaces, your next attack deals +LVL damage. If your target was Large or smaller, you can spend 1 Fury Die to knocked Prone.</p>",
+		"description": "<p>While Raging, if you move at least 3 spaces, your next attack deals +LVL damage. If your target was Large or smaller, you can spend 1 Fury Die to knocked Prone.</p><hr><p><em>[A] While you Rage, moving your token 3 or more spaces in one turn readies the pounce: your next attack deals +LVL damage, and on a hit a card offers to expend 1 Fury Die to knock the target Prone.</em></p><p><em>[M] The Large-or-smaller check is yours.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",

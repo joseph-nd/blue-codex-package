@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "cleansing-fire",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "cleansing-fire-pool",
+				"identifier": "cleansing-fire-uses",
+				"label": "Cleansing Fire (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "cleansing-fire-use",
+				"identifier": "",
+				"label": "Cleansing Fire use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "cleansing-fire-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +66,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) When you take Fire damage, you can choose to lose one negative condition (not including Wounds).</p>",
+		"description": "<p>(1/encounter) When you take Fire damage, you can choose to lose one negative condition (not including Wounds).</p><hr><p><em>[A] The 1/encounter use is a counter on this feature (click it to correct mistakes). Using it after you take fire damage removes one of your negative conditions (you pick when you have several; Undo card).</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

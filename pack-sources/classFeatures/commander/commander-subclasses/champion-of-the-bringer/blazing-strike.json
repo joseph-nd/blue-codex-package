@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Your attack deals extra Fire damage equal to a roll of your Combat Die and the target gains Smoldering.</p>",
+		"description": "<p>Your attack deals extra Fire damage equal to a roll of your Combat Die and the target gains Smoldering.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit a Combat Die of fire damage is added and spent, and the target gains Smoldering.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

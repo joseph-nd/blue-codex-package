@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "find-their-weakness",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "find-their-weakness-pool",
+				"identifier": "find-their-weakness-use",
+				"label": "Find Their Weakness! (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "find-their-weakness-use",
+				"identifier": "",
+				"label": "Find Their Weakness! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "find-their-weakness-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,12 +66,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) 1 Action, Range: 6. The next attack target ally makes treats Immunity as Resistance and ignores Resistances.</p>",
+		"description": "<p>(1/encounter) 1 Action, Range: 6. The next attack target ally makes treats Immunity as Resistance and ignores Resistances.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature, refreshed when an encounter starts.</em></p><p><em>[M] Apply the ally's next attack treating Immunity as Resistance and ignoring Resistances by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -55,7 +89,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

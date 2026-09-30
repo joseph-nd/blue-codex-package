@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "dodge-this",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "dodge-this-pool",
+				"identifier": "dodge-this-use",
+				"label": "Dodge This! (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "dodge-this-use",
+				"identifier": "",
+				"label": "Dodge This! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "dodge-this-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,12 +66,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) 1 Action, Range: 6. Target ally's next attack ignores Cover and crits on its highest two die values.</p>",
+		"description": "<p>(1/encounter) 1 Action, Range: 6. Target ally's next attack ignores Cover and crits on its highest two die values.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature, refreshed when an encounter starts.</em></p><p><em>[M] Cover is ignored and the ally's next attack crits on its highest two die values: raise the Primary Die by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -55,7 +89,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

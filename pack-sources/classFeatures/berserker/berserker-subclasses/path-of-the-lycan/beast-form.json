@@ -5,13 +5,34 @@
 	"system": {
 		"macro": "",
 		"identifier": "beast-form",
-		"rules": [],
+		"rules": [
+			{
+				"type": "toggleEffect",
+				"disabled": false,
+				"id": "beastFormToggle",
+				"identifier": "beast-form",
+				"label": "Beast Form",
+				"predicate": {},
+				"priority": 1,
+				"tags": [
+					"self:beast-form"
+				],
+				"turnOff": [
+					"onActorKilled",
+					"onActorDying",
+					"onRest"
+				],
+				"confirmEndPrompt": "",
+				"clearPoolsOnEnd": [],
+				"endAfterInactiveRounds": null
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
 				"details": "",
 				"quantity": 1,
-				"type": "free",
+				"type": "none",
 				"isReaction": false
 			},
 			"duration": {
@@ -32,7 +53,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Free Action. You can transform into an animal representation of your Lycanthrope curse gaining your Lycan Fury features, but no other benefits from Raging. You cannot speak, do activities requiring hands or anything a normal animal couldn't do.</p>",
+		"description": "<p>Free Action. You can transform into an animal representation of your Lycanthrope curse gaining your Lycan Fury features, but no other benefits from Raging. You cannot speak, do activities requiring hands or anything a normal animal couldn't do.</p><hr><p><em>[A] Using this feature turns Beast Form on (an effect on your token, switched off from the effects panel): your natural weapons, the +DEX speed and the That all you got?! bonus apply without Raging.</em></p><p><em>[M] Speech, hands and what a normal animal could not do are for the table.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",

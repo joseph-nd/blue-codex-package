@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Allies adjacent to your target regain HP equal to a roll of your Combat Die.</p>",
+		"description": "<p>Allies adjacent to your target regain HP equal to a roll of your Combat Die.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit the Combat Die is spent and the card offers a Heal button for each ally adjacent to your target.</em></p><p><em>[M] Without Nim+, spend the die with the Combat Dice stepper and heal the adjacent allies by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

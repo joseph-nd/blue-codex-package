@@ -9,9 +9,9 @@
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "You expend Fury Dice for That all you got?!",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -19,7 +19,29 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "deafeningRebukeDmg",
+					"type": "damage",
+					"damageType": "thunder",
+					"formula": "0",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "deafeningRebukeDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "deafeningRebukeDmg"
+							}
+						]
+					}
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -32,7 +54,7 @@
 				"width": 1
 			}
 		},
-		"description": "<strong>Reaction:</strong> When you expend Fury Dice for That All You Got?!, if the attacker is within Range 4, they take Thunder damage equal to the highest die rolled.",
+		"description": "<strong>Reaction:</strong> When you expend Fury Dice for That All You Got?!, if the attacker is within Range 4, they take Thunder damage equal to the highest die rolled.<hr><p><em>[A] Target the attacker and use it right after That all you got?! (or Boltering Howl): the thunder damage is the highest Fury Die you just expended (you are asked when it is not known).</em></p><p><em>[M] Range 4 is yours to check.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

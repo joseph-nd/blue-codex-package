@@ -21,7 +21,7 @@
 				"hidden": false,
 				"recoveries": [
 					{
-						"trigger": "onInitiativeRolled",
+						"trigger": "encounterStart",
 						"mode": "refresh",
 						"value": "1"
 					},
@@ -59,7 +59,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><strong>1/encounter.</strong> Your <strong>Turret Deployed!</strong> costs 0 Toolbelt scraps.</p><hr><p><em>[A] The 1/encounter free deploy is a native counter, tracked on the sheet (click the counter to correct mistakes); it refills when you roll initiative and when combat ends.</em></p><p><em>[A] Turret Deployed! offers the free deploy in its turret picker while the counter has a charge, and spends it instead of a scrap (chat card with Undo).</em></p>",
+		"description": "<p><strong>1/encounter.</strong> Your <strong>Turret Deployed!</strong> costs 0 Toolbelt scraps.</p><hr><p><em>[A] The 1/encounter free deploy is a native counter, tracked on the sheet (click the counter to correct mistakes); it refills when combat starts and when combat ends (re-rolling initiative does not refill it).</em></p><p><em>[A] Turret Deployed! offers the free deploy in its turret picker while the counter has a charge, and spends it instead of a scrap (chat card with Undo).</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-progression",

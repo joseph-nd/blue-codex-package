@@ -33,10 +33,19 @@ tests/
     nimplus.mjs       installNimPlus(): Nim+ as blue-codex sees it (module + api + setting + index hiding)
     scenario.mjs      setupWorld(), adoptActor()
   examples/         harness smoke tests
-  shadowmancer/     the Shadowmancer battery (tier ladder, Codex grants L1-20, remaps, empty pack, existing chars)
+  shadowmancer/     the Shadowmancer battery (tier ladder, Codex grants L1-20, remaps, empty pack, existing chars,
+                    0.2 invocations + Pact of the Id on the Shadow tokens — invocations.test.mjs)
+  summons/          summon framework (fallen 0-HP summons) + the scene/token/combat stand-ins (helpers.mjs)
   content-sync/     owned Codex spell copies synced with the packs (toast, no dialog, version-gated startup)
   class-refresh/    Refresh Codex class content + Lifebinding Spirit conversion (automatic, toast + card, loop guard)
   command-shadows/  Codex Command Shadows automation (own scene/combat stand-ins: group attack per target, no distance gate, no Shadow turns, 1/turn)
+  engineer/         Engineer: turret deploy/activation costs + GM relay + ownership, Activate Turret, Reload, Coordinated
+                    Assault, Enhanced Formula, Potent Concoction, Charged/Smoldering riders, Fumigate, Overflow, content,
+                    the character creator's leftovers (creation.test.mjs: Pistol re-equipped, Codex pools filled)
+                    (helpers.mjs: Engineer world with a combatant carrying Nimble's action pips)
+  berserker/        Codex Berserker subclasses (Skald / Lycan / Cinderheart): content (natural weapons, counters, save
+                    nodes, costs) and runtime (Battle Hymn verses, Warrior Poet, Ablaze, Fury terms, Apex Lycan, …)
+                    (helpers.mjs: Berserker world + per-actor ActiveEffect CRUD, statuses, applyDamage, queued dice)
 ```
 
 Test files must be named `*.test.mjs`.

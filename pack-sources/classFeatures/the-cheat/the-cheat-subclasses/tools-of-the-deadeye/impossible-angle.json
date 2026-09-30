@@ -5,7 +5,46 @@
 	"system": {
 		"macro": "",
 		"identifier": "impossible-angle",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "impossible-angle-pool",
+				"identifier": "impossible-angle-uses",
+				"label": "Impossible Angle (1/Field Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "fieldRest",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "impossible-angle-use",
+				"identifier": "",
+				"label": "Impossible Angle use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "impossible-angle-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +71,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/Field Rest) 1 Action. You can make a thrown weapon attack against a target you are aware of in Range 8 regardless of Cover. This attack is made with advantage and if it hits, it deals your normal weapon damage and your maximum possible Sneak Attack damage automatically.</p>",
+		"description": "<p>(1/Field Rest) 1 Action. You can make a thrown weapon attack against a target you are aware of in Range 8 regardless of Cover. This attack is made with advantage and if it hits, it deals your normal weapon damage and your maximum possible Sneak Attack damage automatically.</p><hr><p><em>[A] The 1/Field Rest use is a counter on this feature, tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Using this feature makes the attack with your thrown weapon (you pick it when you carry several), with advantage; the use is spent only once that attack is made. On a hit, Nim+ adds your maximum Sneak Attack damage to the same roll, without using your Sneak Attack for the turn.</em></p><p><em>[M] Without Nim+ class automation, add your maximum Sneak Attack damage by hand (a card reminds you). Cover and Range 8 are yours to judge.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "tools-of-the-deadeye",

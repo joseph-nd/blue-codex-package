@@ -88,7 +88,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Toolbelt upgrade of your <strong>AED</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — When you'd drop to 0 HP, drop to 1 instead and shock the area.</em></p><p><strong>1/Safe Rest · Free Reaction.</strong> When you would drop to 0 HP, you instead drop to 1, then Burst 1, Damage: LVL Lightning and gain Charged. Ignores armor.</p><p><strong>Toolbelt:</strong> Restore: INT+LVL HP.</p><p><strong>Passive:</strong> Max Wounds increase by 1.</p><hr><p><em>[A] Spends 2 Toolbelt scraps and the gadget's 1/Safe Rest use — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Spends the AED's 1/Safe Rest use, rolls the LVL Lightning burst and the INT+LVL healing.</em></p><p><em>[M] Set your HP to 1 first, then apply the healing to yourself; give yourself Charged.</em></p>",
+		"description": "<p><em>Toolbelt upgrade of your <strong>AED</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — When you'd drop to 0 HP, drop to 1 instead and shock the area.</em></p><p><strong>1/Safe Rest · Free Reaction.</strong> When you would drop to 0 HP, you instead drop to 1, then Burst 1, Damage: LVL Lightning and gain Charged. Ignores armor.</p><p><strong>Toolbelt:</strong> Restore: INT+LVL HP.</p><p><strong>Passive:</strong> Max Wounds increase by 1.</p><hr><p><em>[A] Spends 2 Toolbelt scraps and the gadget's 1/Safe Rest use — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Spends the AED's 1/Safe Rest use, rolls the LVL Lightning burst and the INT+LVL healing.</em></p><p><em>[A] You gain Charged.</em></p><p><em>[M] Set your HP to 1 first, then apply the healing to yourself.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-gadget-toolbelt",
@@ -97,7 +97,13 @@
 		"subclass": false
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"enhancedFormula": true
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",

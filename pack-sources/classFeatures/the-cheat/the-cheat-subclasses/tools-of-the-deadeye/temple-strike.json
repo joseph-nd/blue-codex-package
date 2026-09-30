@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you hit a creature with your Sneak Attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target is Blinded, Stunned and Deafened 2 turns.</p>",
+		"description": "<p>When you hit a creature with your Sneak Attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target is Blinded, Stunned and Deafened 2 turns.</p><hr><p><em>[A] With Nim+, the Sneak Attack prompt offers Temple Strike: forgo ⌊dice/2⌋ Sneak Attack dice (0 while you roll a single die), and the target is Blinded and Stunned for 2 turns (conditions on it lasting 2 rounds; the card has an Undo button). The card shows the arithmetic.</em></p><p><em>[M] Deafened is not a Nimble condition: a <em>Deafened</em> reminder effect is added alongside; the GM rules what it means. Without Nim+, apply everything yourself.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "underhanded-abilities",

@@ -5,7 +5,46 @@
 	"system": {
 		"macro": "",
 		"identifier": "tactical-reload",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "tactical-reload-pool",
+				"identifier": "tactical-reload-round",
+				"label": "Tactical Reload (1/round)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "onTurnStart",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "encounterEnd",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "tactical-reload-use",
+				"identifier": "",
+				"label": "Tactical Reload use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "tactical-reload-round",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +71,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/Round) When you Move, the next time you reload your weapon takes 1 less Action (min 0).</p>",
+		"description": "<p>(1/Round) When you Move, the next time you reload your weapon takes 1 less Action (min 0).</p><hr><p><em>[A] The 1/round use is a counter on this feature, refreshed at the start of your turn.</em></p><p><em>[M] The system has no reload model: reduce the reload's actions by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-watch",

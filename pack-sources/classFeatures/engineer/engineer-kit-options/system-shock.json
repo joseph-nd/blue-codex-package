@@ -95,7 +95,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>System Shock — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6+STR Lightning, lose Charged. If you lost Charged, target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</p><p><strong>High Levels:</strong> +6 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6+STR Lightning (+6 per 5 levels) and posts the STR save: Stunned on a fail, Dazed on a save.</em></p><p><em>[M] Remove your Charged. Only use the save if you actually lost Charged; Dazed lasts 1 turn.</em></p>",
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>System Shock — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6+STR Lightning, lose Charged. If you lost Charged, target must make a STR save or be Stunned. On a save, they are Dazed, 1 turn.</p><p><strong>High Levels:</strong> +6 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6+STR Lightning (+6 per 5 levels) and posts the STR save: Stunned on a fail, Dazed on a save.</em></p><p><em>[A] If you are Charged you lose it and the card posts the STR save; if you are not Charged the save is left off the card.</em></p><p><em>[M] The Dazed on a save lasts 1 turn.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-kit-options",

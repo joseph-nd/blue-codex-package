@@ -5,13 +5,47 @@
 	"system": {
 		"macro": "",
 		"identifier": "interceptive-shot",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "interceptive-shot-pool",
+				"identifier": "interceptive-shot-uses",
+				"label": "Interceptive Shot (INT/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "@intelligence",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "interceptive-shot-use",
+				"identifier": "",
+				"label": "Interceptive Shot use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "interceptive-shot-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "An ally in Range 8 is attacked by a Ranged weapon",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -32,7 +66,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(INT/Safe Rest) Reaction: When an ally in Range 8 is attacked by a Ranged weapon. The attack has disadvantage. If it misses, you can make a free thrown weapon attack against the attacker if they are in Range of you.</p>",
+		"description": "<p>(INT/Safe Rest) Reaction: When an ally in Range 8 is attacked by a Ranged weapon. The attack has disadvantage. If it misses, you can make a free thrown weapon attack against the attacker if they are in Range of you.</p><hr><p><em>[A] The INT/Safe Rest uses are a counter on this feature, tracked on the sheet (click the counter to correct mistakes); using the feature spends one, and your Reaction's action.</em></p><p><em>[A] Target the attacker, then use this feature: its next attack is rolled with disadvantage (a mark on it, removed by that attack). If that attack misses, a card offers you a free thrown weapon attack against it.</em></p><p><em>[M] Use it only when a Ranged weapon attack targets an ally within Range 8 — the mark applies to the attacker's next attack, whatever it is. Whether the attacker is in your weapon's range is yours to judge.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "tools-of-the-deadeye",

@@ -379,7 +379,9 @@ export function createDocumentClasses(env) {
 			mana.current = Number(mana.current ?? 0) || 0;
 			mana.value = mana.current;
 			mana.max = prepareMaxMana(this);
-			system.resources.highestUnlockedSpellTier ??= prepareHighestUnlockedSpellTier(this);
+			// System 0.9: a stored number is a manual override, otherwise derived.
+			const stored = this._source?.system?.resources?.highestUnlockedSpellTier;
+			system.resources.highestUnlockedSpellTier = stored ?? prepareHighestUnlockedSpellTier(this);
 		}
 
 		/** Runs the ported native level-up (see ./nimble.mjs). `options` scripts the dialog. */
@@ -439,10 +441,26 @@ function prepareMaxMana(actor) {
 	return max;
 }
 
-/** character.ts `_prepareHighestUnlockedSpellTier`. */
+/**
+ * character.ts `_prepareHighestUnlockedSpellTier` (system 0.9): the highest tier
+ * any grantSpells rule on a class / subclass / feature item grants, counting only
+ * rules with a level threshold (`predicate.level.min`) the character has reached
+ * (utils/spell/getHighestSpellTier.ts). No mana gate, no shared table.
+ */
+const TIER_GRANTING_ITEM_TYPES = new Set(['class', 'subclass', 'feature']);
 function prepareHighestUnlockedSpellTier(actor) {
-	const classes = Object.values(actor.classes ?? {});
-	if (classes.length === 0) return 0;
-	if (!(actor.system.resources.mana.max > 0)) return null;
-	return nimbleHighestSpellTier(actor.levels.character);
+	const level = Number(actor.levels?.character ?? 0);
+	let highest = 0;
+	for (const item of actor.items ?? []) {
+		if (!TIER_GRANTING_ITEM_TYPES.has(item.type)) continue;
+		for (const rule of item.system?.rules ?? []) {
+			if (rule?.type !== 'grantSpells' || rule.disabled) continue;
+			const min = rule.predicate?.level?.min;
+			if (typeof min !== 'number' || level < min) continue;
+			for (const tier of Array.isArray(rule.tiers) ? rule.tiers : []) {
+				if (Number.isInteger(tier) && tier >= 0 && tier <= 9 && tier > highest) highest = tier;
+			}
+		}
+	}
+	return highest;
 }

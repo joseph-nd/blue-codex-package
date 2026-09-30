@@ -91,8 +91,9 @@ describe.each(VARIANTS)('Shadowmancer grants — %s', (_label, world) => {
 		expect([...new Set(created.map((s) => s.tier))]).toEqual([tier]);
 	});
 
-	it('the casting cap matches the grant ladder once the Shadowmancer has mana (L2+)', () => {
-		expect(run.snaps[1].highestUnlockedSpellTier).toBeNull();
+	// System 0.9 derives the cap from the grant thresholds (no mana gate): 0 at L1.
+	it('the casting cap matches the grant ladder at every level', () => {
+		expect(run.snaps[1].highestUnlockedSpellTier).toBe(0);
 		for (const level of LEVELS.filter((l) => l > 1)) {
 			expect(run.snaps[level].highestUnlockedSpellTier, `L${level}`).toBe(shadowmancerTier(level));
 		}

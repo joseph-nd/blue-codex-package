@@ -68,7 +68,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Elixir Gun — Toolbelt option.</em></p><p><strong>Fumigate — 2 Actions, 1 Toolbelt scrap.</strong> Cone 3, Damage: 3d4 Acid. Allies take no damage and you heal 1 negative condition from allies in the area (not including Wounds).</p><p><strong>High Levels:</strong> +6 Acid damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d4 Acid (+6 per 5 levels); allies in the cone take no damage.</em></p><p><em>[M] Remove 1 negative condition (not Wounds) from each ally in the area.</em></p>",
+		"description": "<p><em>Elixir Gun — Toolbelt option.</em></p><p><strong>Fumigate — 2 Actions, 1 Toolbelt scrap.</strong> Cone 3, Damage: 3d4 Acid. Allies take no damage and you heal 1 negative condition from allies in the area (not including Wounds).</p><p><strong>High Levels:</strong> +6 Acid damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d4 Acid (+6 per 5 levels). Allies (your disposition) caught in the cone are dropped from the card's targets, so they take no damage.</em></p><p><em>[A] Each ally in the cone loses its negative condition when it has exactly one (Undo card); an ally with several gets them listed — remove one by hand.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-kit-options",
@@ -77,7 +77,13 @@
 		"subclass": false
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"enhancedFormula": true
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",

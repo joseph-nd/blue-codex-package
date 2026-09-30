@@ -5,13 +5,47 @@
 	"system": {
 		"macro": "",
 		"identifier": "its-just-a-flesh-wound",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "its-just-a-flesh-wound-pool",
+				"identifier": "its-just-a-flesh-wound-uses",
+				"label": "It's Just a Flesh Wound! (INT/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "max(@intelligence, 0)",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "its-just-a-flesh-wound-use",
+				"identifier": "",
+				"label": "It's Just a Flesh Wound! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "its-just-a-flesh-wound-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "When an ally in Range 6 gains a Wound",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -41,12 +75,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(INT/Safe Rest) <strong>Reaction:</strong> When an ally in Range 6 gains a Wound. Target ally regains INT+5 HP.</p>",
+		"description": "<p>(INT/Safe Rest) <strong>Reaction:</strong> When an ally in Range 6 gains a Wound. Target ally regains INT+5 HP.</p><hr><p><em>[A] The INT/Safe Rest uses are a counter on this feature. Target the ally and apply the card's healing.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -64,7 +98,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

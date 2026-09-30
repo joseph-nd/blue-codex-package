@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you successfully hit a Distracted target, you can immediately make a second attack for free against that same creature.</p>",
+		"description": "<p>When you successfully hit a Distracted target, you can immediately make a second attack for free against that same creature.</p><hr><p><em>[A] Your weapon attack dialogs show a <strong>Press the Advantage?</strong> box. It starts ticked when the target is Distracted or Taunted, and follows the <em>Vicious Opportunist?</em> box when you tick it. On a hit, the module makes one free second attack with the same weapon against the same creature; that attack cannot trigger another.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "underhanded-abilities",

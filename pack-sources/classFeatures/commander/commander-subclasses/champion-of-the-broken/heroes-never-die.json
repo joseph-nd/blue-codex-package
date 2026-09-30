@@ -5,13 +5,47 @@
 	"system": {
 		"macro": "",
 		"identifier": "heroes-never-die",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "heroes-never-die-pool",
+				"identifier": "heroes-never-die-use",
+				"label": "Heroes Never Die! (1/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "heroes-never-die-use",
+				"identifier": "",
+				"label": "Heroes Never Die! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "heroes-never-die-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
-				"quantity": 1,
-				"type": "reaction",
+				"details": "When an ally you can see is reduced to 0 HP",
+				"quantity": 0,
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -41,7 +75,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/Safe Rest) Free Reaction: When an ally you can see is reduced to 0 HP. The ally is instead reduced to 1 HP. Additionally, all allies that can hear you gain LVL temp HP, 1 minute.</p>",
+		"description": "<p>(1/Safe Rest) Free Reaction: When an ally you can see is reduced to 0 HP. The ally is instead reduced to 1 HP. Additionally, all allies that can hear you gain LVL temp HP, 1 minute.</p><hr><p><em>[A] The 1/Safe Rest use is a counter on this feature (a Free Reaction). When an allied hero drops to 0 HP while the use is there, your owner is asked: use it and the ally is set to 1 HP (Dying removed), the card's LVL temp HP goes to the allies you pick, with an Undo card.</em></p><p><em>[M] The temp HP lasts 1 minute: remove what is left by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

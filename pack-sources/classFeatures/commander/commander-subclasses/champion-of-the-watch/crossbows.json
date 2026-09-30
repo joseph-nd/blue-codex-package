@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Crossbows gain the Vicious Property and Hand Ballistas take 1 less Action to reload.</p>",
+		"description": "<p>Crossbows gain the Vicious Property and Hand Ballistas take 1 less Action to reload.</p><hr><p><em>[A] Your crossbows gain the Vicious property on your sheet.</em></p><p><em>[M] Hand Ballistas reload with 1 less action by hand (the system has no reload model).</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "weapon-mastery",

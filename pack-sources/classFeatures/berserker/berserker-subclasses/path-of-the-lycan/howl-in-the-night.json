@@ -19,7 +19,37 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "howlInTheNightSave",
+					"type": "savingThrow",
+					"savingThrowType": "will",
+					"saveType": "will",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [
+							{
+								"id": "howlInTheNightFrightened",
+								"type": "condition",
+								"condition": "frightened",
+								"parentContext": "failedSave",
+								"parentNode": "howlInTheNightSave"
+							},
+							{
+								"id": "howlInTheNightNote",
+								"type": "note",
+								"noteType": "reminder",
+								"text": "Frightened of you, 1 turn.",
+								"parentContext": "failedSave",
+								"parentNode": "howlInTheNightSave"
+							}
+						],
+						"passedSave": []
+					},
+					"sharedRolls": []
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -27,12 +57,12 @@
 			},
 			"template": {
 				"length": 1,
-				"radius": 1,
+				"radius": 3,
 				"shape": "",
 				"width": 1
 			}
 		},
-		"description": "<p>1 Action, Burst: 3. Spend a Fury Die to unleash a blood freezing howl. Enemies in the area must make a WIL save or be Frightened of you, 1 turn. Whenever you attack a target Frightened of you, two of your Fury Die are always their max value.</p>",
+		"description": "<p>1 Action, Burst: 3. Spend a Fury Die to unleash a blood freezing howl. Enemies in the area must make a WIL save or be Frightened of you, 1 turn. Whenever you attack a target Frightened of you, two of your Fury Die are always their max value.</p><hr><p><em>[A] Using it targets every enemy in Burst 3 when you have no targets, and expends your lowest Fury Die (Undo card; with none left you are asked first). Each target rolls the WIL save from the card; a failed save makes it Frightened.</em></p><p><em>[A] Your attacks against a Frightened target count two of your Fury Dice at their max value.</em></p><p><em>[M] Remove Frightened after 1 turn. \"Frightened of you\" is assumed for any Frightened target.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",

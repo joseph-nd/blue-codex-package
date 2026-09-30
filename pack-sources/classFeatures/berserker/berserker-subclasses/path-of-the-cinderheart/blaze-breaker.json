@@ -7,7 +7,7 @@
 		"identifier": "blaze-breaker",
 		"rules": [],
 		"activation": {
-			"acquireTargetsFromTemplate": false,
+			"acquireTargetsFromTemplate": true,
 			"cost": {
 				"details": "",
 				"quantity": 1,
@@ -15,24 +15,75 @@
 				"isReaction": false
 			},
 			"duration": {
-				"details": "",
+				"details": "The area burns for 1 minute",
 				"quantity": 1,
-				"type": "none"
+				"type": "minute"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "blazeBreakerSave",
+					"type": "savingThrow",
+					"savingThrowType": "dexterity",
+					"saveType": "dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"on": {
+						"failedSave": [],
+						"passedSave": []
+					},
+					"sharedRolls": [
+						{
+							"id": "blazeBreakerDmg",
+							"type": "damage",
+							"damageType": "fire",
+							"formula": "@key",
+							"parentContext": "sharedRolls",
+							"parentNode": "blazeBreakerSave",
+							"on": {
+								"failedSave": [
+									{
+										"id": "blazeBreakerDmg-f",
+										"type": "damageOutcome",
+										"outcome": "fullDamage",
+										"parentContext": "failedSave",
+										"parentNode": "blazeBreakerDmg"
+									}
+								],
+								"passedSave": [
+									{
+										"id": "blazeBreakerDmg-p",
+										"type": "damageOutcome",
+										"outcome": "halfDamage",
+										"parentContext": "passedSave",
+										"parentNode": "blazeBreakerDmg"
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"id": "blazeBreakerNote",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "The area burns for the next minute: a creature that enters a space takes KEY fire damage.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
 				"restrictions": ""
 			},
 			"template": {
-				"length": 1,
+				"length": 3,
 				"radius": 1,
-				"shape": "",
+				"shape": "cone",
 				"width": 1
 			}
 		},
-		"description": "<p>1 Action, Cone: 3. Expend 1 or more Fury Die. Creatures in the area must make a DEX save. On a fail, they take Fire damage equal to the sum of expended Fury Die + KEY. On a save, half damage. The area burns for the next minute. Creatures that enter a space take KEY Fire damage.</p>",
+		"description": "<p>1 Action, Cone: 3. Expend 1 or more Fury Die. Creatures in the area must make a DEX save. On a fail, they take Fire damage equal to the sum of expended Fury Die + KEY. On a save, half damage. The area burns for the next minute. Creatures that enter a space take KEY Fire damage.</p><hr><p><em>[A] Choose how many Fury Dice to expend when you use it: the fire damage is their sum + KEY (half on a passed DEX save, per target on the card). The dice leave your pool once the card is posted (Undo card). With King of Fires, a damaged creature gains Smoldering (on the card).</em></p><p><em>[M] Creatures entering the burning area take KEY fire damage: roll it by hand.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-cinderheart",

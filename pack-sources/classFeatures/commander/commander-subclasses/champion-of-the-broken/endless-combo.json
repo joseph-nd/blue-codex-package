@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>1 Action. Make an attack. If it hits it deals extra damage equal to a roll of your Combat Die. You can continue expending Combat Die on additional attacks that deal extra damage as long as they continue to hit. Each attack must follow Rushed attack rules.</p>",
+		"description": "<p>1 Action. Make an attack. If it hits it deals extra damage equal to a roll of your Combat Die. You can continue expending Combat Die on additional attacks that deal extra damage as long as they continue to hit. Each attack must follow Rushed attack rules.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit a Combat Die is added to the damage and spent; attack again and pick it again while you keep hitting.</em></p><p><em>[M] The Rushed attack rules for each further attack are applied by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

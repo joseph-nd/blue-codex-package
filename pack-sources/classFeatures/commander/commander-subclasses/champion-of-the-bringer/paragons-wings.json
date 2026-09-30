@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you use Coordinated Strike, both you and your chosen ally gain a flying speed equal to your walk speed, 1 turn. You both can move for free once before attacking or casting a spell.</p>",
+		"description": "<p>When you use Coordinated Strike, both you and your chosen ally gain a flying speed equal to your walk speed, 1 turn. You both can move for free once before attacking or casting a spell.</p><hr><p><em>[A] With Nim+ class automation on, using Coordinated Strike gives you and each ally who joins a fly speed equal to your walk speed until the end of the turn, and the card reminds of the free move.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-bringer",

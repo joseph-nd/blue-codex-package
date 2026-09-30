@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "years-of-study",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "years-of-study-pool",
+				"identifier": "years-of-study-uses",
+				"label": "Years of Study (INT/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "max(@intelligence, 0)",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "years-of-study-use",
+				"identifier": "",
+				"label": "Years of Study use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "years-of-study-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +66,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(INT/Safe Rest) You can spend 6 seconds using Examination (INT) to correctly determine any current non-magical maladies a creature is suffering or determine a cause of death.</p>",
+		"description": "<p>(INT/Safe Rest) You can spend 6 seconds using Examination (INT) to correctly determine any current non-magical maladies a creature is suffering or determine a cause of death.</p><hr><p><em>[A] The INT/Safe Rest uses are a counter on this feature; using it spends one.</em></p><p><em>[M] The Examination (INT) check and what it reveals are for the table.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

@@ -5,13 +5,47 @@
 	"system": {
 		"macro": "",
 		"identifier": "help-me",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "help-me-pool",
+				"identifier": "help-me-use",
+				"label": "Help Me! (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "help-me-use",
+				"identifier": "",
+				"label": "Help Me! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "help-me-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
-				"quantity": 1,
-				"type": "reaction",
+				"details": "When any ally would Interpose for you",
+				"quantity": 0,
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -32,12 +66,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) <strong>Free Reaction:</strong> When any ally would Interpose for you. Ally takes INT+LVL less damage from the attack.</p>",
+		"description": "<p>(1/encounter) <strong>Free Reaction:</strong> When any ally would Interpose for you. Ally takes INT+LVL less damage from the attack.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature (a Free Reaction).</em></p><p><em>[M] Reduce the Interposing ally's damage by INT + LVL by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -55,7 +89,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

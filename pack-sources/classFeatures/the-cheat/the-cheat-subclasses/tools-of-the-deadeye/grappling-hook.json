@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<strong>1 Action.</strong> Fire a tether up to 12 spaces leaving a rope behind. Allies can use an Action to travel the length of the rope.",
+		"description": "<strong>1 Action.</strong> Fire a tether up to 12 spaces leaving a rope behind. Allies can use an Action to travel the length of the rope.<hr><p><em>[M] Place the rope yourself; an ally spends an Action to travel its length.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "underhanded-abilities",

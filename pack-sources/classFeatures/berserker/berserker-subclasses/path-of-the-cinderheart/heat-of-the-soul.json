@@ -19,7 +19,30 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "heatOfTheSoulDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "(@strength + @dexterity)",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "heatOfTheSoulDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "heatOfTheSoulDmg"
+							}
+						]
+					}
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -32,7 +55,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you use That All You Got?!, you can instead deal STR+DEX Fire damage per expended Fury Die to enemies in Burst 1. Ignores armor.</p>",
+		"description": "<p>When you use That All You Got?!, you can instead deal STR+DEX Fire damage per expended Fury Die to enemies in Burst 1. Ignores armor.</p><hr><p><em>[A] Use it instead of That all you got?!: choose how many Fury Dice to expend and every enemy in Burst 1 is targeted for STR+DEX fire damage per die, armor ignored (Apply Damage on the card). The dice leave your pool (Undo card).</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-cinderheart",

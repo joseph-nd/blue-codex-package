@@ -9,9 +9,9 @@
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "When an enemy Moves adjacent to an ally",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><strong>Reaction:</strong> When an enemy Moves adjacent to an ally. Expend a Combat Die to make an attack against that enemy. On hit: inflict Dazed this turn.</p>",
+		"description": "<p><strong>Reaction:</strong> When an enemy Moves adjacent to an ally. Expend a Combat Die to make an attack against that enemy. On hit: inflict Dazed this turn.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list for the reaction attack: the Combat Die is spent and a hit leaves the target Dazed until the end of this turn.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

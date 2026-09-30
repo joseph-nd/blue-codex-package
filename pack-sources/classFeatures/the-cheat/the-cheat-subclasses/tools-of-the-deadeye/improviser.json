@@ -5,7 +5,20 @@
 	"system": {
 		"macro": "",
 		"identifier": "improviser",
-		"rules": [],
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "improviserWeaponGrant",
+				"identifier": "",
+				"label": "Improvised Weapon",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.TYuMYeRDaJprusX4"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +45,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Anything small enough (and dangerous enough) that you can hold becomes a thrown weapon. Your improvised weapons deal 1d4+DEX and have the Light and Thrown properties. Additionally, you always seem to have at least 2xLVL “things” within reach to throw.</p>",
+		"description": "<p>Anything small enough (and dangerous enough) that you can hold becomes a thrown weapon. Your improvised weapons deal 1d4+DEX and have the Light and Thrown properties. Additionally, you always seem to have at least 2xLVL “things” within reach to throw.</p><hr><p><em>[A] Grants the <strong>Improvised Weapon</strong> (1d4+DEX, Light, Thrown) to attack with.</em></p><p><em>[M] You always have 2×LVL things to throw — no ammunition to track.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "tools-of-the-deadeye",

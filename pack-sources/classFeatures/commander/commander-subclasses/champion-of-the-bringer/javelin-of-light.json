@@ -10,8 +10,8 @@
 			"acquireTargetsFromTemplate": false,
 			"cost": {
 				"details": "",
-				"quantity": 1,
-				"type": "free",
+				"quantity": 0,
+				"type": "action",
 				"isReaction": false
 			},
 			"duration": {
@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Free Action. Create a javelin of light that deals Piercing or Radiant damage. It disappears at the end of your turn. These javelins' die increase 1 step at levels 7, 11 and 15.</p>",
+		"description": "<p>Free Action. Create a javelin of light that deals Piercing or Radiant damage. It disappears at the end of your turn. These javelins' die increase 1 step at levels 7, 11 and 15.</p><hr><p><em>[A] Using it asks Piercing or Radiant and puts a Javelin of Light weapon (1d6+STR, Range 8 — d8 from level 7, d10 from 11, d12 from 15) in your inventory; every Javelin of Light vanishes at the end of your turn (or when combat ends).</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-bringer",

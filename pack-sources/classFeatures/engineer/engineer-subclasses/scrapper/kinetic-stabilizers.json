@@ -13,7 +13,7 @@
 				"identifier": "",
 				"label": "Kinetic Stabilizers",
 				"predicate": {
-					"armor": "equipped"
+					"self": "mailArmorEquipped"
 				},
 				"priority": 1,
 				"mode": "flat",
@@ -31,7 +31,7 @@
 				"identifier": "",
 				"label": "Kinetic Stabilizers: vs being moved against your will (mail armor)",
 				"predicate": {
-					"armor": "equipped"
+					"self": "mailArmorEquipped"
 				},
 				"priority": 1,
 				"value": 1,
@@ -69,7 +69,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>While you wear mail armor, any Bludgeoning, Piercing and Slashing damage you take is reduced by STR and you have advantage on saves vs being moved against your will.</p><hr><p><em>[A] Reduces Bludgeoning, Piercing and Slashing damage by STR while you wear armor (approximation: the check is \"armor equipped\", Nimble can't test for mail specifically).</em></p><p><em>[A] Offers advantage on saves vs being moved against your will (tick it in the save dialog).</em></p><p><em>[M] If you wear non-mail armor, ignore the reduction.</em></p>",
+		"description": "<p>While you wear mail armor, any Bludgeoning, Piercing and Slashing damage you take is reduced by STR and you have advantage on saves vs being moved against your will.</p><hr><p><em>[A] Reduces Bludgeoning, Piercing and Slashing damage by STR while you wear <strong>equipped mail armor</strong> (Chain Shirt, Rusty Mail, Scale Mail, Dragonscale — or any armor whose Armor adds at most DEX 2). Other armor, or none, gives no reduction.</em></p><p><em>[A] Offers advantage on saves vs being moved against your will (in mail armor; tick it in the save dialog when the save is against forced movement).</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "scrapper",

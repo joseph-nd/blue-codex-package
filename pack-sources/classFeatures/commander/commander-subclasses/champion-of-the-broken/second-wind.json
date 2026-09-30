@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "second-wind",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "second-wind-pool",
+				"identifier": "second-wind-use",
+				"label": "Second Wind (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "second-wind-use",
+				"identifier": "",
+				"label": "Second Wind use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "second-wind-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -41,7 +75,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) When you are Bloodied, you can choose to regain 2xLVL HP.</p>",
+		"description": "<p>(1/encounter) When you are Bloodied, you can choose to regain 2xLVL HP.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature, refreshed when an encounter starts. Using it while not Bloodied asks first.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

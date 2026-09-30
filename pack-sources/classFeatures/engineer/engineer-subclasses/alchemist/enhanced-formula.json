@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>All damage, temp HP and HP you restore through your Med Kit, Elixir Gun, and Healing Turret and Gadgets increases by 3.</p><hr><p><em>[M] Add +3 to the damage, temp HP and healing of your Med Kit, Elixir Gun, Healing Turret and Gadgets.</em></p>",
+		"description": "<p>All damage, temp HP and HP you restore through your Med Kit, Elixir Gun, and Healing Turret and Gadgets increases by 3.</p><hr><p><em>[A] +3 is added automatically to every damage, temp HP and healing roll of your Med Kit, Elixir Gun (and their Toolbelt options), your Gadgets (and their Toolbelt versions) and your Healing Turret.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "alchemist",

@@ -24,7 +24,7 @@
 					"id": "shadowBlastDamage1",
 					"type": "damage",
 					"damageType": "necrotic",
-					"formula": "1d12 + @key",
+					"formula": "1d12 + @dexterity + (floor(@level / 5))d12",
 					"parentContext": null,
 					"parentNode": null,
 					"canCrit": true,
@@ -77,8 +77,8 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 8.</strong></p><p><strong>Damage:</strong> 1d12+KEY.</p>",
-			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 target every 5 levels (can be the same target).</p>",
+			"baseEffect": "<p><strong>Cantrip · 1 Action · Range 8.</strong></p><p><strong>Damage:</strong> 1d12+DEX (1/round).</p>",
+			"higherLevelEffect": "<p><strong>High Levels:</strong> +1d12 every 5 levels.</p>",
 			"upcastEffect": ""
 		},
 		"properties": {

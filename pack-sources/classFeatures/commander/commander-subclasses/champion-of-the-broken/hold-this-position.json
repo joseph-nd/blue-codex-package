@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "hold-this-position",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "hold-this-position-pool",
+				"identifier": "hold-this-position-use",
+				"label": "Hold This Position! (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "hold-this-position-use",
+				"identifier": "",
+				"label": "Hold This Position! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "hold-this-position-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -41,12 +75,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) 1 Action, Burst: 2. Until the start of your next turn, allies in the area gain +LVL temp HP.</p>",
+		"description": "<p>(1/encounter) 1 Action, Burst: 2. Until the start of your next turn, allies in the area gain +LVL temp HP.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature, refreshed when an encounter starts. Target the allies in the Burst and apply the card's temp HP.</em></p><p><em>[M] The temp HP ends at the start of your next turn: remove what is left by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -64,7 +98,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

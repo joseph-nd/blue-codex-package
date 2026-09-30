@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Your javelin attacks treat monster armor as 1 tier lower.</p>",
+		"description": "<p>Your javelin attacks treat monster armor as 1 tier lower.</p><hr><p><em>[A] Your Javelin and Javelin of Light attacks against a Medium-armored target ignore its armor.</em></p><p><em>[M] Against Heavy armor (treated as Medium) the card says what to apply by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "weapon-mastery",

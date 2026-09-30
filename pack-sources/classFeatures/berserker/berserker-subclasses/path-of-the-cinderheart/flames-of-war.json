@@ -5,7 +5,25 @@
 	"system": {
 		"macro": "",
 		"identifier": "flames-of-war",
-		"rules": [],
+		"rules": [
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "flamesOfWarMax",
+				"identifier": "",
+				"label": "Flames of War (+2 max Fury Dice while Ablaze)",
+				"predicate": {
+					"self": "ablaze"
+				},
+				"priority": 2,
+				"poolType": "dice",
+				"poolIdentifier": "fury",
+				"dieSize": null,
+				"maxDelta": "2",
+				"minFace": null,
+				"addRefills": []
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +50,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>While Ablaze, the max number of Fury Die you can have increases by 2.</p>",
+		"description": "<p>While Ablaze, the max number of Fury Die you can have increases by 2.</p><hr><p><em>[A] Your Fury Dice maximum is +2 while Ablaze.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-cinderheart",

@@ -5,7 +5,19 @@
 	"system": {
 		"macro": "",
 		"identifier": "ascended-wings",
-		"rules": [],
+		"rules": [
+			{
+				"type": "grantMovement",
+				"disabled": false,
+				"id": "ascended-wings-fly",
+				"identifier": "",
+				"label": "Ascended Wings",
+				"predicate": {},
+				"priority": 1,
+				"mode": "fly",
+				"speed": "@attributes.movement.walk"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +44,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You gain Paragon's Wings flying speed permanently. Allies deal +INT Radiant damage on attacks and spells while they have a flying speed granted by you.</p>",
+		"description": "<p>You gain Paragon's Wings flying speed permanently. Allies deal +INT Radiant damage on attacks and spells while they have a flying speed granted by you.</p><hr><p><em>[A] You have a fly speed equal to your walk speed. With Nim+, the ally of your Coordinated Strike adds +INT radiant damage to that attack.</em></p><p><em>[M] Other attacks and spells of allies flying on a speed you granted: add +INT radiant damage by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-bringer",

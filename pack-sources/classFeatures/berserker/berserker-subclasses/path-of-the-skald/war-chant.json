@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>While Raging, when you hit with a weapon attack, you can expend a Fury Die to ignore the Rushed Attack penalty.</p>",
+		"description": "<p>While Raging, when you hit with a weapon attack, you can expend a Fury Die to ignore the Rushed Attack penalty.</p><hr><p><em>[M] Expend the Fury Die from the Fury Dice panel and roll the attack without the Rushed Attack penalty.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

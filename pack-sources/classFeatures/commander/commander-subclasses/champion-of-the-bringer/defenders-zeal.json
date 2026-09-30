@@ -5,7 +5,29 @@
 	"system": {
 		"macro": "",
 		"identifier": "defenders-zeal",
-		"rules": [],
+		"rules": [
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "defenders-zeal-self-wound",
+				"identifier": "",
+				"label": "Defender's Zeal: +1 Coordinated Strike use when you gain a Wound",
+				"predicate": {},
+				"priority": 1,
+				"poolType": "charge",
+				"poolIdentifier": "coordinated-strike-uses",
+				"dieSize": null,
+				"maxDelta": null,
+				"addRefills": [
+					{
+						"trigger": "onWound",
+						"mode": "add",
+						"value": "1",
+						"predicate": {}
+					}
+				]
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +54,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Whenever you or ally you can see gains a Wound, you gain 1 Coordinated Strike charge.</p>",
+		"description": "<p>Whenever you or ally you can see gains a Wound, you gain 1 Coordinated Strike charge.</p><hr><p><em>[A] Your own Wound adds 1 Coordinated Strike use (native). When an allied hero on your scene gains a Wound, 1 use is added too (Undo card).</em></p><p><em>[M] \"An ally you can see\" is not checked: undo the use when you could not see them.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-bringer",

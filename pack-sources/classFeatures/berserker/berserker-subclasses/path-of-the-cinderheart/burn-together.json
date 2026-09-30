@@ -54,7 +54,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you gain a Wound, all enemies in Burst 1 take 2d10 Fire damage.</p>",
+		"description": "<p>When you gain a Wound, all enemies in Burst 1 take 2d10 Fire damage.</p><hr><p><em>[A] When you gain a Wound, this is used for you against every enemy in Burst 1: 2d10 fire damage on its card, Apply Damage per target.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

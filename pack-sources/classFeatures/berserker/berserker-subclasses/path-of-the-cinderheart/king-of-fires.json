@@ -5,7 +5,38 @@
 	"system": {
 		"macro": "",
 		"identifier": "king-of-fires",
-		"rules": [],
+		"rules": [
+			{
+				"type": "damageReduction",
+				"disabled": false,
+				"id": "kingOfFiresResistance",
+				"identifier": "",
+				"label": "King of Fires (fire resistance)",
+				"predicate": {},
+				"priority": 1,
+				"mode": "half",
+				"value": "1",
+				"damageTypes": [
+					"fire"
+				]
+			},
+			{
+				"type": "damageReduction",
+				"disabled": false,
+				"id": "kingOfFiresAblaze",
+				"identifier": "",
+				"label": "King of Fires (Ablaze)",
+				"predicate": {
+					"self": "ablaze"
+				},
+				"priority": 2,
+				"mode": "flat",
+				"value": "@strength",
+				"damageTypes": [
+					"fire"
+				]
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +63,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You gain resistance to Fire damage. While Ablaze, Fire damage you take is reduced by STR. Additionally, enemies damaged by your fiery aura or Blaze Breaker gain Smoldering.</p>",
+		"description": "<p>You gain resistance to Fire damage. While Ablaze, Fire damage you take is reduced by STR. Additionally, enemies damaged by your fiery aura or Blaze Breaker gain Smoldering.</p><hr><p><em>[A] Fire resistance and, while Ablaze, −STR fire damage are applied to the fire damage you take (Ablaze’s own burn included). Your fiery aura and Blaze Breaker give Smoldering to the creatures they damage.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-cinderheart",

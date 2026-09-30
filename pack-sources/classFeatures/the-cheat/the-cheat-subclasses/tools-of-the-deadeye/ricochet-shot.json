@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "ricochet-shot",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "ricochet-shot-pool",
+				"identifier": "ricochet-shot-uses",
+				"label": "Ricochet Shot (INT/Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "@intelligence",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "ricochet-shot-use",
+				"identifier": "",
+				"label": "Ricochet Shot use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "ricochet-shot-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -19,7 +53,29 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "bcxRicochetDmg",
+					"type": "damage",
+					"damageType": "piercing",
+					"formula": "1d8",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "bcxRicochetDmgH",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "bcxRicochetDmg"
+							}
+						]
+					}
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -32,7 +88,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(INT/Safe Rest) When you hit a creature with a thrown weapon attack, a second target in Range 4 of the first takes damage equal to your Sneak attack die.</p>",
+		"description": "<p>(INT/Safe Rest) When you hit a creature with a thrown weapon attack, a second target in Range 4 of the first takes damage equal to your Sneak attack die.</p><hr><p><em>[A] The INT/Safe Rest uses are a counter on this feature, tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] After a thrown weapon attack hits (<strong>Thrown attack?</strong> ticked in its dialog), a prompt asks for the second target — creatures within Range 4 of the first are listed first — and this feature rolls one Sneak Attack die against it: its own damage card with an Apply button, spending a use (the card has an Undo button). Using the feature from the sheet does the same against your current target.</em></p><p><em>[A] The die is one die of your current Sneak Attack size (d8 at level 7, d10 at 9, d12 at 11, d20 from 15).</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "tools-of-the-deadeye",

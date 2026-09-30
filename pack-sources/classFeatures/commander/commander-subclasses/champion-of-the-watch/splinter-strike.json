@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>On hit: Deal damage equal to one roll of your Combat Die to enemies in a Cone 3. The Cone originates from your target and extends away from you.</p>",
+		"description": "<p>On hit: Deal damage equal to one roll of your Combat Die to enemies in a Cone 3. The Cone originates from your target and extends away from you.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit the Combat Die is spent and rolled, and the card offers damage buttons for the enemies within 3 spaces behind your target.</em></p><p><em>[M] The cone is approximated (within 3 spaces of the target, on the far side from you): skip any button outside the real cone.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

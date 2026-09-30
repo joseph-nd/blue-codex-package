@@ -5,7 +5,46 @@
 	"system": {
 		"macro": "",
 		"identifier": "triage",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "triage-pool",
+				"identifier": "triage-use",
+				"label": "Triage! (1/Field Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "fieldRest",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "triage-use",
+				"identifier": "",
+				"label": "Triage! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "triage-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,12 +71,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/Field Rest) 1 Action, Range: 6. For the next minute, any HP target ally regains from consuming potions or your Combat Medic feature is the maximum possible value.</p>",
+		"description": "<p>(1/Field Rest) 1 Action, Range: 6. For the next minute, any HP target ally regains from consuming potions or your Combat Medic feature is the maximum possible value.</p><hr><p><em>[A] The 1/Field Rest use is a counter on this feature. The targeted ally gets a \"Triage!\" effect for 1 minute (10 rounds): your Combat Medic heals them for the maximum.</em></p><p><em>[M] Potions consumed while Triage! is on: heal the maximum by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -55,7 +94,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

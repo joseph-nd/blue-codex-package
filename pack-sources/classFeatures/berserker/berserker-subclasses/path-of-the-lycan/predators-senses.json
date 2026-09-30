@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You can see in the dark and you have advantage on Perception (WIL) to see, hear, or smell creatures.</p>",
+		"description": "<p>You can see in the dark and you have advantage on Perception (WIL) to see, hear, or smell creatures.</p><hr><p><em>[M] Darkvision and the Perception advantage (to see, hear or smell creatures) are by hand.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",

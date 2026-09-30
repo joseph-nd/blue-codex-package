@@ -41,12 +41,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>1 Action, Range: 6. Target gains INT temp HP and their next attack has advantage.</p>",
+		"description": "<p>1 Action, Range: 6. Target gains INT temp HP and their next attack has advantage.</p><hr><p><em>[A] Target the ally and apply the card's INT temp HP; they also get an \"advantage on your next attack\" mark that their next attack uses up.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -64,7 +64,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

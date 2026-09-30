@@ -5,7 +5,35 @@
 	"system": {
 		"macro": "",
 		"identifier": "phoenix-rising",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "phoenix-rising-pool",
+				"identifier": "phoenix-rising-uses",
+				"label": "Phoenix Rising (once every 30 days)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": []
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "phoenix-rising-use",
+				"identifier": "",
+				"label": "Phoenix Rising use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "phoenix-rising-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +60,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you die, you instead return to life in 1d4 days. This can only occur once every 30 days.</p>",
+		"description": "<p>When you die, you instead return to life in 1d4 days. This can only occur once every 30 days.</p><hr><p><em>[A] The use is a counter on this feature; using the feature spends it.</em></p><p><em>[M] Refill the counter by hand once 30 days have passed; the 1d4 days are for the table.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

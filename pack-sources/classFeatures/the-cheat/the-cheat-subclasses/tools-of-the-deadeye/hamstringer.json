@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you hit a creature with your Sneak Attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target's speed is reduced to 0, 1 turn.</p>",
+		"description": "<p>When you hit a creature with your Sneak Attack, you can choose to forgo half your Sneak Attack damage die (rounded down). If you do, the target's speed is reduced to 0, 1 turn.</p><hr><p><em>[A] With Nim+, the Sneak Attack prompt offers Hamstringer: forgo ⌊dice/2⌋ Sneak Attack dice (0 while you roll a single die), and the target's speed drops to 0 for 1 turn (an effect on it lasting 1 round; the card has an Undo button). The card shows the arithmetic.</em></p><p><em>[M] Without Nim+, drop the dice and set the speed yourself.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "underhanded-abilities",

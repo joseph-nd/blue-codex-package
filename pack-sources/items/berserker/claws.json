@@ -1,0 +1,130 @@
+{
+	"name": "Claws",
+	"type": "object",
+	"img": "icons/creatures/claws/claw-curved-jagged-gray.webp",
+	"system": {
+		"macro": "",
+		"identifier": "claws",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "bcxLycanClawsDmg",
+					"type": "damage",
+					"damageType": "slashing",
+					"formula": "1d8 + @strength",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"miss": [
+							{
+								"id": "bcxLycanClawsDmgM",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "bcxLycanClawsDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "bcxLycanClawsDmgC",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "bcxLycanClawsDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "bcxLycanClawsDmgH",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "bcxLycanClawsDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": false,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach"
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Damage:</strong> 1d8+STR Slashing</p><p><strong>Properties:</strong> Natural weapon</p><hr><p><em>Lycan Fury (Path of the Lycan): while you Rage you shift into a monstrous hybrid form. You cannot wield weapons, but you gain natural weapons you’re proficient with: a Bite, 1d10+STR, and Claws, 1d8+STR.</em></p><hr><p><em>[A] Granted by Lycan Fury. Apex Lycan (level 15) gives it 1 additional damage die (2d8+STR). Fury Dice ride it like any melee weapon attack. Attacking with it while neither Raging nor in Beast Form only posts a reminder — it is never blocked.</em></p><p><em>[M] It takes no inventory slot. Talk with your GM to reflavour it (tail, horns…) — the dice stay the same.</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Object",
+		"objectSizeType": "slots",
+		"slotsRequired": 0,
+		"stackSize": 1,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"naturalWeapon": "lycan"
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "GqVIxuys6WO5ndfc",
+	"folder": null
+}

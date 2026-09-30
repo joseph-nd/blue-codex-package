@@ -5,7 +5,46 @@
 	"system": {
 		"macro": "",
 		"identifier": "combat-medic",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "combat-medic-pool",
+				"identifier": "combat-medic-kits",
+				"label": "Medic kits (INT, Make a Camp / Safe Rest)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "max(@intelligence, 0)",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "fieldRest",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "safeRest",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "combat-medic-use",
+				"identifier": "",
+				"label": "Medic kits use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "combat-medic-kits",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +71,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You carry INT specialized medic kits that replenish whenever you take a Make a Camp or Safe Rest. You can expend a kit with 1 Action to aid an ally you can touch. The target can immediately expend and roll one of their Hit Die, regaining HP equal to the roll + their STR + your INT. If the target has no Hit Die remaining, you can expend one of your own.</p>",
+		"description": "<p>You carry INT specialized medic kits that replenish whenever you take a Make a Camp or Safe Rest. You can expend a kit with 1 Action to aid an ally you can touch. The target can immediately expend and roll one of their Hit Die, regaining HP equal to the roll + their STR + your INT. If the target has no Hit Die remaining, you can expend one of your own.</p><hr><p><em>[A] The medic kits are a counter on this feature (INT, refilled by a Field Rest — Make a Camp — or a Safe Rest). Target the ally you touch and use it: the kit is spent, the ally expends their largest Hit Die (yours when they have none) and heals the roll + their STR + your INT (the maximum while Triage! is on them), with an Undo card. From level 11 (Advanced Combat Medic) the card lists the ally's negative conditions with a button to remove one.</em></p><p><em>[M] Without a target, the kit is spent and the card says what to heal by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

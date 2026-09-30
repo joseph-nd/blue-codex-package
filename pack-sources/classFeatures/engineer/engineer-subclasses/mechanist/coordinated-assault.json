@@ -5,7 +5,39 @@
 	"system": {
 		"macro": "",
 		"identifier": "coordinated-assault",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "coordinated-assault-turn-pool",
+				"identifier": "coordinated-assault-turn",
+				"label": "Coordinated Assault (1/turn)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "onTurnStart",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					},
+					{
+						"trigger": "encounterEnd",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +64,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/turn) Whenever you attack with a firearm, all Rifle Turrets in range of the target fire as well. Rifle Turret attacks hit if your attack hits, crit if your attack crits, or miss if your attack misses.</p><hr><p><em>[M] 1/turn, on a firearm attack: activate each Rifle Turret in range of the target and give it your hit/crit/miss result.</em></p>",
+		"description": "<p>(1/turn) Whenever you attack with a firearm, all Rifle Turrets in range of the target fire as well. Rifle Turret attacks hit if your attack hits, crit if your attack crits, or miss if your attack misses.</p><hr><p><em>[A] Your first firearm attack each turn (Pistol, Rifle, Blunderbuss, Hidden Pistol): every Rifle Turret of yours within Range 12 of the target fires at it for free with your result — a miss for all on a miss, a crit (maximum primary die) on a crit, a hit otherwise. Spends the 1/turn counter on this feature (refills at the start of your turn; click it to correct mistakes) with an Undo card.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "mechanist",

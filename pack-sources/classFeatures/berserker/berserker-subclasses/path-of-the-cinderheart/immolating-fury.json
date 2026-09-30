@@ -5,7 +5,30 @@
 	"system": {
 		"macro": "",
 		"identifier": "immolating-fury",
-		"rules": [],
+		"rules": [
+			{
+				"type": "toggleEffect",
+				"disabled": false,
+				"id": "ablazeToggle",
+				"identifier": "ablaze",
+				"label": "Ablaze",
+				"predicate": {
+					"self": "raging"
+				},
+				"priority": 1,
+				"tags": [
+					"self:ablaze"
+				],
+				"turnOff": [
+					"onActorKilled",
+					"onEncounterEnd",
+					"onRest"
+				],
+				"confirmEndPrompt": "",
+				"clearPoolsOnEnd": [],
+				"endAfterInactiveRounds": null
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +55,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you Rage, you can take STR Fire damage to set yourself Ablaze which lasts until your Rage ends or when you choose for it to end. While Ablaze you gain the following:</p><ul><li>You take STR Fire damage at the start of each of your turns after the first.</li><li>Damage from your Fury Die is increased by 1 per die and now deals Fire damage.</li><li>You gain a fiery aura that deals KEY Fire damage to enemies in Reach 1 at the end of your turns. Ignores armor.</li></ul>",
+		"description": "<p>When you Rage, you can take STR Fire damage to set yourself Ablaze which lasts until your Rage ends or when you choose for it to end. While Ablaze you gain the following:</p><ul><li>You take STR Fire damage at the start of each of your turns after the first.</li><li>Damage from your Fury Die is increased by 1 per die and now deals Fire damage.</li><li>You gain a fiery aura that deals KEY Fire damage to enemies in Reach 1 at the end of your turns. Ignores armor.</li></ul><hr><p><em>[A] When you Rage you are asked whether to set yourself Ablaze (a card button when the Rage was free); using this feature while Raging does it too. You take the STR fire damage at once (Undo card).</em></p><p><em>[A] While Ablaze: STR fire damage to you at the start of each of your turns after the first; each Fury Die on your attacks adds +1 (a separate \"Ablaze\" term); at the end of your turns every enemy in Reach 1 takes KEY fire damage, armor ignored (applied for you, Undo card). Ablaze ends when your Rage ends, or from the effects panel.</em></p><p><em>[M] The Fury Dice damage counts as fire: apply fire resistances/immunities to that part by hand.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-cinderheart",

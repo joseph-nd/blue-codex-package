@@ -26,6 +26,18 @@
 						"value": "1"
 					}
 				]
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "toolbelt-reload-grant",
+				"identifier": "",
+				"label": "Reload",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-class-features.Item.KjsYybFco5dV1tQ5"
 			}
 		],
 		"activation": {
@@ -54,7 +66,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You carry a maximum of (INT + STR) x2 Toolbelt scraps used to power your inventions. You regain all spent scraps when you complete a Safe Rest.</p><hr><p><em>[A] Toolbelt scraps are a native pool, tracked on the sheet (click the counter to correct mistakes): max (INT+STR)x2, refilled on a Safe Rest.</em></p><p><em>[A] Gadgets and Weapon Kit Toolbelt options spend scraps natively when used. Turret deploys, turret Toolbelt specials and the Tool Wrench recall spend/refund them through the module, which posts a chat card with an Undo button.</em></p>",
+		"description": "<p>You carry a maximum of (INT + STR) x2 Toolbelt scraps used to power your inventions. You regain all spent scraps when you complete a Safe Rest.</p><hr><p><em>[A] Toolbelt scraps are a native pool, tracked on the sheet (click the counter to correct mistakes): max (INT+STR)x2, refilled on a Safe Rest.</em></p><p><em>[A] Gadgets and Weapon Kit Toolbelt options spend scraps natively when used. Turret deploys, turret Toolbelt specials and the Tool Wrench recall spend/refund them through the module, which posts a chat card with an Undo button.</em></p><p><em>[A] Grants the <strong>Reload</strong> action (1 Action: refill a firearm's Ammo counter).</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-progression",

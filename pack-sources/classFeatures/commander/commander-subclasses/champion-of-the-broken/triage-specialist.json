@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>During a Field Rest, allies of your choice roll any Hit Die they expend with advantage. Any ally that uses a Hit Die also gains your Field Medic bonus for each Hit Die expended.</p>",
+		"description": "<p>During a Field Rest, allies of your choice roll any Hit Die they expend with advantage. Any ally that uses a Hit Die also gains your Field Medic bonus for each Hit Die expended.</p><hr><p><em>[M] Field Rest only: allies roll their Hit Dice with advantage and add your Field Medic bonus per die by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

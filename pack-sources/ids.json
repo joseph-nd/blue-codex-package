@@ -85,6 +85,10 @@
 			}
 		},
 		"engineer": {
+			"engineer-actions": {
+				"activate-turret": "qsyKkbra4OT9iysN",
+				"reload": "KjsYybFco5dV1tQ5"
+			},
 			"engineer-gadget-picks": {
 				"acid-shell": "Qjky50uOH3hONVKM",
 				"aed": "TTPbp2QSCNPxFjce",
@@ -675,6 +679,7 @@
 		"specter": "RAyTBIDLoTwcRhHY"
 	},
 	"companions": {
+		"greater-shadow": "bREqzXxVsPHQTPwH",
 		"lifebinding-spirit": "ldRzN9jHtyI7abGa",
 		"lifebinding-spirit-02": "d6Ud5nNdy48Myw6x",
 		"shadow-minion": "2nK0HW5EGGDAJISw",
@@ -687,6 +692,13 @@
 		"undead-minion": "17I60M02tj3gnnrf"
 	},
 	"items": {
+		"berserker": {
+			"bite": "WKOIIg3vxVKd6Hnr",
+			"claws": "GqVIxuys6WO5ndfc"
+		},
+		"commander": {
+			"javelin-of-light": "JkykGiSQSNkwbUzs"
+		},
 		"engineer": {
 			"firearms": {
 				"blunderbuss": "OiVh0x13puqHpjwx",
@@ -728,6 +740,9 @@
 				"grenade-kit": "vajujw6n55Q3gs5J",
 				"med-kit": "h84ze8iy5Oepqith"
 			}
+		},
+		"the-cheat": {
+			"improvised-weapon": "TYuMYeRDaJprusX4"
 		}
 	},
 	"spells": {

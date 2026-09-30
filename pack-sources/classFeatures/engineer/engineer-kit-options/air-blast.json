@@ -88,7 +88,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Flamethrower — Toolbelt option.</em></p><p><strong>Air Blast — 2 Actions, 1 Toolbelt scrap.</strong> Reach 4, Damage: 3d8 Fire. On a failed STR save, Large and smaller targets are pushed back INT spaces. Can't miss Smoldering targets and Smoldering targets automatically fail.</p><p><strong>High Levels:</strong> +5 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d8 Fire (+5 per 5 levels) and posts the STR save.</em></p><p><em>[M] Push a Large or smaller target INT spaces on a failed save. A Smoldering target can't be missed (treat a miss as a hit) and automatically fails the save.</em></p>",
+		"description": "<p><em>Flamethrower — Toolbelt option.</em></p><p><strong>Air Blast — 2 Actions, 1 Toolbelt scrap.</strong> Reach 4, Damage: 3d8 Fire. On a failed STR save, Large and smaller targets are pushed back INT spaces. Can't miss Smoldering targets and Smoldering targets automatically fail.</p><p><strong>High Levels:</strong> +5 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 3d8 Fire (+5 per 5 levels) and posts the STR save.</em></p><p><em>[A] Against a Smoldering target the attack cannot miss and a chat note says it fails the STR save automatically.</em></p><p><em>[M] Push a Large or smaller target INT spaces on a failed save.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-kit-options",

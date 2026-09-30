@@ -1,0 +1,127 @@
+{
+	"name": "Improvised Weapon",
+	"type": "object",
+	"img": "icons/weapons/thrown/throwing-brick.webp",
+	"system": {
+		"macro": "",
+		"identifier": "improvised-weapon",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "bcxImprovisedDmg",
+					"type": "damage",
+					"damageType": "bludgeoning",
+					"formula": "1d4 + @dexterity",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": true,
+					"canMiss": true,
+					"on": {
+						"miss": [
+							{
+								"id": "bcxImprovisedDmgM",
+								"type": "note",
+								"noteType": "warning",
+								"text": "MISS",
+								"parentContext": "miss",
+								"parentNode": "bcxImprovisedDmg"
+							}
+						],
+						"criticalHit": [
+							{
+								"id": "bcxImprovisedDmgC",
+								"type": "note",
+								"noteType": "warning",
+								"text": "CRIT",
+								"parentContext": "criticalHit",
+								"parentNode": "bcxImprovisedDmg"
+							}
+						],
+						"hit": [
+							{
+								"id": "bcxImprovisedDmgH",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "bcxImprovisedDmg"
+							}
+						]
+					}
+				}
+			],
+			"showDescription": false,
+			"targets": {
+				"count": 1,
+				"restrictions": "",
+				"attackType": "reach"
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"public": "<p><strong>Damage:</strong> 1d4+DEX Bludgeoning</p><p><strong>Properties:</strong> Light, Thrown 4</p><hr><p><em>Improviser (Tools of the Deadeye): anything small enough (and dangerous enough) that you can hold becomes a thrown weapon. You always seem to have at least 2×LVL “things” within reach to throw.</em></p><hr><p><em>[A] Granted by Improviser. Its Thrown range shows +4 with Master Thrower (Thrown 8). In the attack dialog the <strong>Thrown attack?</strong> box starts ticked for it.</em></p><p><em>[M] It takes no inventory slot and never runs out — describe what you throw (a brick, a bottle, a chair leg…).</em></p>",
+			"unidentified": "",
+			"secret": ""
+		},
+		"identified": true,
+		"objectType": "weapon",
+		"quantity": 1,
+		"equipped": true,
+		"unidentifiedName": "Unidentified Object",
+		"objectSizeType": "slots",
+		"slotsRequired": 0,
+		"stackSize": 1,
+		"properties": {
+			"range": {
+				"min": 2,
+				"max": null
+			},
+			"reach": {
+				"min": 1,
+				"max": null
+			},
+			"selected": [
+				"light",
+				"thrown"
+			],
+			"strengthRequirement": {
+				"value": null,
+				"overridesTwoHanded": false
+			},
+			"thrownRange": 4
+		},
+		"price": {
+			"value": 0,
+			"denomination": "gp"
+		}
+	},
+	"effects": [],
+	"flags": {},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "TYuMYeRDaJprusX4",
+	"folder": null
+}

@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>1 Action. You gain Armor equal to the roll of your Combat Die until the end of your next turn.</p>",
+		"description": "<p>1 Action. You gain Armor equal to the roll of your Combat Die until the end of your next turn.</p><hr><p><em>[A] With Nim+ class automation on, using it spends and rolls a Combat Die and gives you that much Armor until the end of your next turn (Undo card).</em></p><p><em>[M] Without Nim+, roll the die from the sheet and add the Armor by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

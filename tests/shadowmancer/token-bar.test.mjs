@@ -1,7 +1,10 @@
 /**
- * Pilfered Power on the token: a Shadowmancer's mana bar (Nimble trackable
- * `resources.mana`) takes the sheet's shadow-violet gradient ends through
- * `Token#_getBarColors`; every other bar and every other class keep the core colors.
+ * Pilfered Power on the token: under the legacy mana model (a system before 0.9,
+ * whose Shadowmancer class declares no Pilfered Power pool) a Shadowmancer's mana
+ * bar (Nimble trackable `resources.mana`) takes the sheet's shadow-violet gradient
+ * ends through `Token#_getBarColors`. Since system 0.9 Pilfered Power is a charge
+ * pool, not mana, so the mana bar keeps the core colors. Every other bar and every
+ * other class keep the core colors too.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createCharacter, setupWorld } from '../harness/index.mjs';
@@ -26,8 +29,14 @@ describe('Pilfered Power token bar colors', () => {
 		foundry.utils.Color = realColor;
 	});
 
-	it('recolors a Shadowmancer mana bar to the sheet gradient ends', async () => {
+	it('system 0.9 (Pilfered Power is a pool): the mana bar keeps the core colors', async () => {
 		const { actor } = await createCharacter(env, { classId: 'shadowmancer', render: false });
+		expect(T.pilferedPowerBarColors({ actor }, { attribute: 'resources.mana' }, core)).toBe(CORE);
+	});
+
+	it('legacy mana model: recolors a Shadowmancer mana bar to the sheet gradient ends', async () => {
+		const { actor } = await createCharacter(env, { classId: 'shadowmancer', render: false });
+		actor.items.find((i) => i.type === 'class').system.spellcasting = {}; // a pre-0.9 class
 		for (const attribute of ['resources.mana', 'system.resources.mana']) {
 			const colors = T.pilferedPowerBarColors({ actor }, { attribute }, core);
 			expect(colors.empty.hex).toBe(0x2e1943);

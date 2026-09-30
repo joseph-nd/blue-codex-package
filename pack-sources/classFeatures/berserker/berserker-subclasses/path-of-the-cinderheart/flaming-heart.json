@@ -19,7 +19,29 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "flamingHeartDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "@strength",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"on": {
+						"hit": [
+							{
+								"id": "flamingHeartDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "flamingHeartDmg"
+							}
+						]
+					}
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -32,7 +54,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you Rage or gain a Fury Die, enemies in Reach 1 take STR Fire damage.</p>",
+		"description": "<p>When you Rage or gain a Fury Die, enemies in Reach 1 take STR Fire damage.</p><hr><p><em>[A] When you Rage or gain Fury Dice, this is used for you against every enemy in Reach 1 (once per Rage or gain): STR fire damage on its card, Apply Damage per target.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

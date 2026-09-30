@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>On hit: deal bonus damage equal to a roll of your Combat Die and Move half your speed for free. You gain Guarded, 1 round.</p>",
+		"description": "<p>On hit: deal bonus damage equal to a roll of your Combat Die and Move half your speed for free. You gain Guarded, 1 round.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit a Combat Die is added to the damage and spent, and you gain Guarded until the start of your next turn.</em></p><p><em>[M] Move half your speed for free by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

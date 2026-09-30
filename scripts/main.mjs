@@ -1305,6 +1305,9 @@ Hooks.once('ready', () => {
 	// Shadowmancer casting rules: custom spell-tier cap table + Pilfered Power
 	// flat 1-mana cost.
 	installShadowmancerCasting();
+	// Shadowmancer 0.2 invocations / Pact of the Id on the Shadow tokens (Armor of
+	// Shadows prep, Know Your Limits turn-start summon).
+	installShadowmancerInvocations();
 	// Warm the Codex coverage cache so the synchronous preCreateItem net has it.
 	ensureCodexCoverage();
 	// Warm the Nim+ 0.2 supersede equivalence (empty without nim-plus-package).
@@ -1848,6 +1851,8 @@ const CLASS_SPELL_CHOICE = {
 //   featureNotes — keyed by feature `system.identifier`: HTML appended (once) to a
 //                 Nim+ 0.2 feature's description when it is resolved, to explain a
 //                 remap the feature text doesn't mention.
+//   featureNotesAnySource — the same, for a feature of either source (system or
+//                 Nim+ 0.2 copy), e.g. Shadowmastery's "nothing to choose" note.
 // Independently of this table, a uuid-only grant (any feature, any class) of an
 // official core spell the Codex replaces — same test as the preCreateItem block —
 // is dropped from the rule, so the dialogs never preview a spell that would be
@@ -1863,6 +1868,20 @@ const MY_BUDDY_OLD_NOTE_MARK = 'you cannot cast it until level 2';
 // summon / Command Shadows sections).
 const CODEX_SUMMON_SHADOW_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.nrDkGygSyNE6JR7n`;
 const CODEX_COMMAND_SHADOWS_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.Item.cmucaHB11GKzwrAr`;
+
+// Conduit of Shadow (Nim+ 0.2) links the Nim+ cantrips; under Codex magic the
+// character learns the Codex ones (the Codex Shadow Blast matches the 0.2 card).
+const CONDUIT_OF_SHADOW_CODEX_NOTE =
+	'<p data-blue-codex-note="conduit-of-shadow">[M] <strong>Blue’s Codex:</strong> you learn the Codex versions of these cantrips. <strong>Shadow Blast</strong> is the same as the 0.2 card (Range 8, 1d12+DEX, 1/round, +1d12 every 5 levels). <strong>Summon Shadow</strong> and <strong>Command Shadows</strong> summon and command the Shadow tokens for you.</p>';
+// Shadowmastery under Codex magic: the Codex re-homes Necrotic into Shadow, which
+// has no utility spells — so the choice is empty by design (BUG-bc-3).
+const SHADOWMASTERY_CODEX_NOTE =
+	'<p data-blue-codex-note="shadowmastery">[M] <strong>Blue’s Codex:</strong> Necrotic becomes the Codex <em>Shadow</em> school, which has no utility spells, so Shadowmastery has nothing to offer under Codex magic (no pick appears). Ask your GM if you want a Codex utility spell instead.</p>';
+// Master of Radiance under Codex magic: the Codex replaces the official Radiant
+// cantrips (Light, Beautify and Bond of Peace included) and has no Radiant utility
+// spells, so the choice is empty by design (the BUG-bc-3 convention).
+const MASTER_OF_RADIANCE_CODEX_NOTE =
+	'<p data-blue-codex-note="master-of-radiance">[M] <strong>Blue’s Codex:</strong> Codex magic replaces the official Radiant cantrips, and the Codex <em>Radiant</em> school has no utility spells, so Master of Radiance has nothing to offer under Codex magic (no pick appears at levels 7 and 11). Ask your GM if you want a Codex utility spell instead.</p>';
 
 const CLASS_FEATURE_SPELL_REWRITES = {
 	shadowmancer: {
@@ -1887,6 +1906,12 @@ const CLASS_FEATURE_SPELL_REWRITES = {
 		grantAlongside: {
 			[CODEX_SUMMON_SHADOW_UUID]: [CODEX_COMMAND_SHADOWS_UUID],
 		},
+		featureNotes: {
+			'conduit-of-shadow': CONDUIT_OF_SHADOW_CODEX_NOTE,
+		},
+		featureNotesAnySource: {
+			shadowmastery: SHADOWMASTERY_CODEX_NOTE,
+		},
 	},
 	shepherd: {
 		swap: { necrotic: 'death' },
@@ -1910,6 +1935,18 @@ const CLASS_FEATURE_SPELL_REWRITES = {
 	songweaver: {
 		swap: { necrotic: 'death' },
 		addSchools: ['illusion', 'domination', 'inspiration', 'divination', 'curse'],
+	},
+	oathsworn: {
+		// Master of Radiance (Nim+ 0.2 copy: a radiant utility pick at 7 and 11). Its
+		// rules are not rewritten — the Codex covers official radiant tier 0, so the
+		// pick simply has nothing to offer (BUG-bc-3 convention) — hence a note that
+		// applies without a rule rewrite, only while that coverage holds.
+		featureNotesAnySource: {
+			'master-of-radiance': MASTER_OF_RADIANCE_CODEX_NOTE,
+		},
+		noteWhenCovered: {
+			'master-of-radiance': 'radiant:0',
+		},
 	},
 };
 
@@ -2046,8 +2083,11 @@ async function rewriteFeatureSpellRules(rules, cfg, classId) {
  * not a 0.2 doc, or already appended). Handles string and `{ baseEffect }` shapes.
  */
 function featureNoteUpdate(doc, cfg) {
-	const note = cfg?.featureNotes?.[doc?.system?.identifier];
-	if (!note || !isNimPlusPlaytestDoc(doc.uuid, doc.flags)) return null;
+	const identifier = doc?.system?.identifier;
+	let note = cfg?.featureNotes?.[identifier];
+	if (note && !isNimPlusPlaytestDoc(doc.uuid, doc.flags)) note = null;
+	note ??= cfg?.featureNotesAnySource?.[identifier] ?? null;
+	if (!note) return null;
 	const description = doc.system?.description;
 	if (typeof description === 'string') {
 		return description.includes('data-blue-codex-note') ? null : { 'system.description': description + note };
@@ -2096,6 +2136,13 @@ function installFromUuidRewrite() {
 				const note = featureNoteUpdate(doc, cfg);
 				if (note) Object.assign(update, note);
 				doc.updateSource(update);
+			} else if (!rewritten && !rewrittenFeatureDocs.has(doc)) {
+				// `noteWhenCovered`: a note that explains an unchanged rule, while the
+				// Codex covers the school:tier it names (Master of Radiance).
+				const coveredKey = cfg?.noteWhenCovered?.[doc.system?.identifier];
+				const coverage = coveredKey ? await ensureCodexCoverage() : null;
+				const note = coverage?.has?.(coveredKey) ? featureNoteUpdate(doc, cfg) : null;
+				if (note && !rewrittenFeatureDocs.has(doc)) doc.updateSource(note);
 			}
 			rewrittenFeatureDocs.add(doc);
 		} catch (error) {
@@ -3160,6 +3207,13 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Command Shadows failed`, error);
 	}
+	// Shadowmancer features (Unified Psyche, Defense Mechanism, Eldritch Usurper):
+	// run the plan their pre-activate gate prepared.
+	try {
+		await handleShadowmancerFeatureUsed(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Shadowmancer feature automation failed`, error);
+	}
 	// Swarming Shadows: a shadow minion's single attack that would crit spawns
 	// another minion beside the target.
 	try {
@@ -3180,6 +3234,12 @@ async function onItemUsed(item, _chatCard, context) {
 		await handleSpecterItemUsed(item, context);
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Specter item automation failed`, error);
+	}
+	// Tools of the Deadeye: Interceptive Shot marks the attacker.
+	try {
+		await handleDeadeyeUseItem(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Deadeye automation failed`, error);
 	}
 	// Engineer turrets: Targeting Matrix marks + Tool Wrench recall.
 	await handleTurretUseItem(item, context);
@@ -3209,6 +3269,7 @@ async function applyOnHitAutomations(item, context) {
 async function runWrappedActivate(originalActivate, options = {}) {
 	// The macro path is not an attack roll; pass straight through.
 	if (options?.executeMacro) return originalActivate.call(this, options);
+	const entryOptions = options;
 	// Summon gating: for spells carrying a summon automation flag, decide whether
 	// the cast may proceed BEFORE the dialog/mana/chat-card. Blocking here means
 	// `originalActivate` never runs, so a recast-dismiss costs no mana (see the
@@ -3232,6 +3293,13 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.error(`[${MODULE_ID}] Command Shadows pre-activate gate failed`, error);
 	}
+	// Shadowmancer features with a module flow (Unified Psyche, Defense Mechanism,
+	// Eldritch Usurper): checked/planned before their chargeConsumer spends anything.
+	try {
+		if (await shadowmancerFeatureActivationBlocked(this)) return null;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Shadowmancer feature pre-activate gate failed`, error);
+	}
 	// Specter Rites: warn (proceed / cancel) when a target isn't Soul Touched by
 	// this Specter. Cancelling here costs nothing (originalActivate never runs).
 	try {
@@ -3239,15 +3307,28 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.error(`[${MODULE_ID}] Rite pre-activate check failed`, error);
 	}
-	// Turret Toolbelt special: confirm (scrap + turret destruction) before the
-	// roll; cancel = no activation. Paid/destroyed after it resolves (see
-	// prepareTurretToolbelt in the Engineer turret section).
+	// Turret actions: a Toolbelt special confirms (scrap + turret destruction)
+	// before the roll; cancel = no activation. Paid/destroyed after it resolves;
+	// a basic action charges the Engineer's Action afterwards (free once after a
+	// deploy). See prepareTurretActivation in "Engineer automation".
 	let turretToolbelt = null;
 	try {
-		turretToolbelt = await prepareTurretToolbelt(this);
+		turretToolbelt = await prepareTurretActivation(this, options);
 		if (turretToolbelt?.blocked) return null;
+		if (turretToolbelt?.options) options = turretToolbelt.options;
 	} catch (error) {
 		console.error(`[${MODULE_ID}] turret toolbelt pre-activate failed`, error);
+	}
+	// Tools of the Deadeye: Impossible Angle's attack (before its use is spent),
+	// Ricochet Shot's die, Interceptive Shot's target check; weapon follow-ups
+	// (Ricochet Shot, Press the Advantage) run once this activation resolved.
+	let deadeye = null;
+	try {
+		deadeye = await prepareDeadeyeActivation(this, options);
+		if (deadeye?.blocked) return null;
+		if (deadeye?.options) options = deadeye.options;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Deadeye pre-activate failed`, error);
 	}
 	let marks = [];
 	try {
@@ -3261,10 +3342,21 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	// Targeting Matrix: an attack at a marked target starts at advantage.
 	let matrixMarks = [];
 	try {
-		matrixMarks = collectTargetingMatrixMarks(this);
+		matrixMarks = collectTargetingMatrixMarks(this, null);
 		if (matrixMarks.length) options = { ...options, rollMode: (options.rollMode ?? 0) + 1 };
 	} catch (error) {
 		console.error(`[${MODULE_ID}] Targeting Matrix pre-activate failed`, error);
+	}
+	// Shadowmancer: Hyperfixation (+1 advantage per own Shadow adjacent to the
+	// target) and Shadow Spear (Shadow Blast vs a Prone target) at roll time.
+	try {
+		const bonus = shadowmancerAttackAdvantage(this, firstUserTargetDoc());
+		if (bonus.stacks) {
+			options = { ...options, rollMode: (options.rollMode ?? 0) + bonus.stacks };
+			announceAttackAdvantage(bonus);
+		}
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Shadowmancer attack-advantage pre-activate failed`, error);
 	}
 	// Tier-cap lift: a summon boost with `uncapsTierLimit` (Empowered Companion —
 	// "ignoring the typical spell tier restrictions") lets the upcast slider run
@@ -3303,13 +3395,35 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	// real value BEFORE the system's own deduction (so the true flat cost persists),
 	// and the `finally` restores it if the cast is cancelled before preUse ever fires.
 	// Also strip fastForward so the dialog (hence the auto-answer) always runs.
+	// Before that: a Hungering Shadows free cast, or the overdraft warning and
+	// Greedy Pact's STR save (cancelling the save cancels the cast; a 20+ raises
+	// the forced tier by 1 for this cast) — see "Shadowmancer invocations".
+	let pilferPlan = null;
+	try {
+		pilferPlan = await preparePilferedPowerCast(this);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Pilfered Power pre-cast check failed`, error);
+	}
+	if (pilferPlan?.blocked) {
+		if (hadOverride) tierResources.highestUnlockedSpellTier = priorTier;
+		return null;
+	}
+	let pilferTierPrior = null;
 	try {
 		if (this?.type === 'spell' && (Number(this.system?.tier) || 0) >= 1 && isShadowmancerActor(this?.actor)) {
-			if (options?.fastForward) options = { ...options, fastForward: false };
+			const native = nativePilferedPower(this.actor);
+			if (!native && options?.fastForward) options = { ...options, fastForward: false };
 			const resources = this.actor.system?.resources;
 			const realMana = Number(resources?.mana?.current) || 0;
-			const cap = Number(resources?.highestUnlockedSpellTier) || 0;
-			if (resources?.mana && realMana < cap) {
+			let cap = Number(resources?.highestUnlockedSpellTier) || 0;
+			if (pilferPlan?.tierBump && resources && cap > 0 && cap < 9) {
+				pilferTierPrior = cap;
+				cap += 1;
+				resources.highestUnlockedSpellTier = cap;
+			}
+			// Greedy Pact's raise above works on the system's pinned tier too (it
+			// reads the same derived cap); the mana fudge is legacy-only.
+			if (!native && resources?.mana && realMana < cap) {
 				resources.mana.current = cap;
 				// Store only the plain value; the live `resources` object can be
 				// replaced if prepareData() re-runs during the dialog window, so the
@@ -3320,11 +3434,31 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] shadowmancer mana pre-activate fudge failed`, error);
 	}
+	// Engineer: Reload / Activate Turret / an empty firearm run their own flow;
+	// kit & gadget riders patch this activation in memory (Enhanced Formula +3,
+	// Smoldering, Charged — restored in `finally`) or retarget it (Discharge).
+	// See prepareEngineerActivation in "Engineer automation".
+	let engineer = null;
+	try {
+		engineer = await prepareEngineerActivation(this, options);
+		if (engineer?.options) options = engineer.options;
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Engineer pre-activate failed`, error);
+	}
 	let result;
 	try {
-		result = await originalActivate.call(this, options);
-		// A cancelled Command Shadows cast drops the plan its gate prepared.
-		if (!result && this?.uuid) pendingCommandShadows.delete(this.uuid);
+		if (engineer?.blocked) return null;
+		const targetOverride = engineer?.targets ?? null;
+		result = targetOverride
+			? await withUserTargets(targetOverride, () => originalActivate.call(this, options))
+			: await originalActivate.call(this, options);
+		// A cancelled Command Shadows cast drops the plan its gate prepared (same for
+		// a Greater Shadow choice and the Pact of the Id feature plans).
+		if (!result && this?.uuid) {
+			pendingCommandShadows.delete(this.uuid);
+			pendingGreaterShadows.delete(this.uuid);
+			pendingShadowmancerFeatures.delete(this.uuid);
+		}
 		// Consume the mark only if an attack actually resolved (dialog not cancelled).
 		if (marks.length && result) {
 			try {
@@ -3334,6 +3468,12 @@ async function runWrappedActivate(originalActivate, options = {}) {
 				);
 			} catch (error) {
 				console.warn(`[${MODULE_ID}] Could not clear disadvantage mark`, error);
+			}
+			// Interceptive Shot: a missed intercepted attack earns the Cheat a free throw.
+			try {
+				await notifyInterceptiveMiss(this, marks, result);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Interceptive Shot follow-up failed`, error);
 			}
 		}
 		if (result && matrixMarks.length) {
@@ -3361,6 +3501,11 @@ async function runWrappedActivate(originalActivate, options = {}) {
 				if (!again) break;
 			}
 		}
+		if (result && isShadowBlastItem(this)) {
+			// The Repelling Blast / Shadow Spear reminders.
+			const notes = shadowBlastInvocationNotes(this.actor);
+			if (notes.length) postSummonChat(this.actor, notes.join(''), this.name);
+		}
 		if (result && turretToolbelt?.complete) {
 			try {
 				await turretToolbelt.complete();
@@ -3368,8 +3513,28 @@ async function runWrappedActivate(originalActivate, options = {}) {
 				console.warn(`[${MODULE_ID}] turret toolbelt completion failed`, error);
 			}
 		}
+		if (result && deadeye?.complete) {
+			try {
+				await deadeye.complete(result);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Deadeye follow-up failed`, error);
+			}
+		}
+		if (result && engineer?.complete) {
+			try {
+				await engineer.complete(result);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Engineer follow-up failed`, error);
+			}
+		}
 		return result;
 	} finally {
+		// Engineer in-memory activation patches (see prepareEngineerActivation).
+		try {
+			engineer?.restore?.();
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not restore an Engineer activation patch`, error);
+		}
 		// ALWAYS restore the exact prior tier cap, even when activate throws.
 		if (hadOverride) {
 			try {
@@ -3378,8 +3543,20 @@ async function runWrappedActivate(originalActivate, options = {}) {
 				console.warn(`[${MODULE_ID}] Could not restore spell tier cap`, error);
 			}
 		}
+		// Greedy Pact 20+: drop the one-cast tier raise (re-resolved, like the fudge).
+		if (pilferTierPrior !== null) {
+			const resources = this?.actor?.system?.resources;
+			if (resources) resources.highestUnlockedSpellTier = pilferTierPrior;
+		}
 		try {
 			const uuid = this?.actor?.uuid;
+			// A cancelled cast keeps no Pilfered Power plan (the Greedy save stays banked),
+			// and gives back a Hungering Shadows top-up of the system's pool.
+			if (uuid && !result) {
+				const plan = shadowmancerCastPlans.get(uuid);
+				shadowmancerCastPlans.delete(uuid);
+				await revertPilferedPowerTopUp(this?.actor, plan);
+			}
 			// Restore the mana fudge if onSpellPreUse never ran (the cast was
 			// cancelled/aborted before the deduction); a completed cast already
 			// restored it in preUse. Re-resolve the live mana object — the reference
@@ -3483,10 +3660,12 @@ const SUMMON_COUNT_MODES = {
 };
 
 // Live summon cap for `summon` on `caster` (Infinity when the flag names no mode).
+// An owned feature boost can raise it (`limitBonusAbility`: Pact of the Id's Know
+// Your Limits adds WIL to the Shadow Limit).
 function summonCountCap(caster, summon) {
 	const mode = SUMMON_COUNT_MODES[summon?.maxCount];
 	if (!mode) return Infinity;
-	const ability = getAbilityMod(caster, mode.ability);
+	const ability = getAbilityMod(caster, mode.ability) + getSummonFeatureBoosts(summon, caster).limitBonus;
 	return Math.max(0, mode.noLevelCap ? ability : Math.min(ability, getCharacterLevel(caster)));
 }
 
@@ -3566,6 +3745,7 @@ function getSummonFeatureBoosts(summon, actor) {
 		uncapTier: false,
 		reachBonus: 0,
 		formulaOverride: null,
+		limitBonus: 0,
 	};
 	const boosts = summon?.featureBoosts;
 	if (!Array.isArray(boosts) || !(actor instanceof Actor)) return result;
@@ -3598,6 +3778,9 @@ function getSummonFeatureBoosts(summon, actor) {
 		if (typeof entry.formulaOverride === 'string' && entry.formulaOverride) {
 			result.formulaOverride = entry.formulaOverride; // last owned entry wins
 		}
+		if (typeof entry.limitBonusAbility === 'string' && entry.limitBonusAbility) {
+			result.limitBonus += getAbilityMod(actor, entry.limitBonusAbility);
+		}
 	}
 	return result;
 }
@@ -3619,6 +3802,13 @@ function findLiveSummons(casterActor, template) {
 		}
 	}
 	return out;
+}
+
+// The live summons that still COUNT (limits, Armor of Shadows, Hyperfixation): a
+// minion at 0 HP is dead — it no longer takes a slot, even before the fallen-
+// summon cleanup (see "Fallen summons") has removed its token.
+function findActiveSummons(casterActor, template) {
+	return findLiveSummons(casterActor, template).filter((token) => !isTokenDefeated(token));
 }
 
 // Resolve the caster Actor recorded on a summoned token's flag.
@@ -3750,13 +3940,22 @@ async function summonActivationBlocked(item) {
 			await handleTurretDeploy(item, actor, summon);
 		} catch (error) {
 			console.error(`[${MODULE_ID}] turret deploy failed`, error);
+			// Never a silent no-op for the player who clicked it.
+			ui.notifications?.error(`${item.name} failed: ${error?.message ?? error}. Deploy the turret by hand (see the console for details).`);
 		}
 		return true;
 	}
 
-	// 1. combat-only spells cannot be cast outside combat.
+	// 1. combat-only spells cannot be cast outside combat — except the one Shadow
+	// My Favored Pet lets tolerate you (see "Shadowmancer invocations").
 	if (summon.combatOnly && !game.combat?.started) {
-		ui.notifications?.warn(`${item.name} can only be cast during combat.`);
+		const pet = favoredPetSummonCheck(actor, summon);
+		if (pet === 'allowed') return false;
+		ui.notifications?.warn(
+			pet === 'taken'
+				? `${actor.name} already has a favored pet Shadow — only one tolerates you outside combat.`
+				: `${item.name} can only be cast during combat.`,
+		);
 		return true;
 	}
 
@@ -3770,6 +3969,16 @@ async function summonActivationBlocked(item) {
 			ui.notifications?.warn(
 				`${actor.name} already deployed ${free.name ?? 'the free turret'} this combat.`,
 			);
+			return true;
+		}
+		// Not out yet: the Engineer turret path (GM-relayed spawn, owned by the
+		// Engineer's players, activates on deploy) — see "Engineer automation".
+		if (TURRET_TEMPLATE_SET.has(summon.template)) {
+			try {
+				await manualAutoDeploy(item, actor, summon);
+			} catch (error) {
+				console.error(`[${MODULE_ID}] Auto Deploy! (manual) failed`, error);
+			}
 			return true;
 		}
 	}
@@ -3813,12 +4022,15 @@ async function summonActivationBlocked(item) {
 			ui.notifications?.warn(`${actor.name} cannot summon any ${noun}s right now.`);
 			return true;
 		}
-		const count = findLiveSummons(actor, summon.template).length;
+		const count = findActiveSummons(actor, summon.template).length;
 		if (count >= cap) {
 			ui.notifications?.warn(`${actor.name} already has the maximum ${cap} ${noun}${cap === 1 ? '' : 's'}.`);
 			return true;
 		}
 	}
+
+	// 4. Eldritch Usurper (Nim+ 0.2, L20): offer a Greater Shadow instead (1/encounter).
+	if (await greaterShadowOfferCancelled(item, actor, summon)) return true;
 
 	return false;
 }
@@ -3829,7 +4041,9 @@ async function summonActivationBlocked(item) {
 // post-cast spawn (handleSummonSpawn) and the Swarming Shadows trigger, so a
 // swarm-spawned minion inherits the same Shadow Magus reach/die as a cast one.
 // `extraFlag` merges into the token summon flag (e.g. { charges } for healers).
-async function spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extraFlag } = {}) {
+// `tokenOverrides` merges into the token data (Engineer turrets: the actor
+// delta's ownership, so the Engineer's players own their turret).
+async function spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extraFlag, tokenOverrides } = {}) {
 	if (!(caster instanceof Actor) || !baseActor || !scene) return null;
 
 	const casterToken = caster.getActiveTokens?.(true, true)?.[0] ?? null;
@@ -3855,12 +4069,15 @@ async function spawnSummonedToken({ caster, summon, baseActor, scene, x, y, extr
 		},
 		{ inplace: false },
 	);
+	if (tokenOverrides && typeof tokenOverrides === 'object') foundry.utils.mergeObject(tokenData, tokenOverrides);
 	delete tokenData._id;
 
 	const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
 	if (!created) return null;
 
 	await patchSummonFeatureBoosts(created, summon, caster);
+	// Dire Shadows: attacks against the caster's Shadows have disadvantage.
+	await applyDireShadows(created, summon, caster);
 	return created;
 }
 
@@ -3961,6 +4178,13 @@ async function handleSummonSpawn(item, context) {
 	const scene = canvas?.scene;
 	if (!scene) {
 		console.warn(`[${MODULE_ID}] No active scene to summon "${summon.template}" onto.`);
+		return;
+	}
+
+	// Eldritch Usurper: the cast's gate chose a Greater Shadow instead.
+	if (pendingGreaterShadows.has(item.uuid)) {
+		pendingGreaterShadows.delete(item.uuid);
+		await spawnGreaterShadow(caster, summon, scene, { spendFrom: 'cast', flavor: item?.name });
 		return;
 	}
 
@@ -4185,6 +4409,8 @@ async function patchTurretScaling(tokenDoc, caster) {
 		const intCount = Math.max(1, int);
 		const tier = overclockedTier(caster);
 		const dc = engineerSaveDC(caster);
+		// Enhanced Formula (Alchemist L7): +3 on the Healing Turret's rolls.
+		const enhanced = enhancedFormulaTurretBonus(tokenDoc, caster);
 		const updates = [];
 		for (const item of listEmbeddedItems(synth)) {
 			const activation = item.system?.activation;
@@ -4205,7 +4431,7 @@ async function patchTurretScaling(tokenDoc, caster) {
 						const next = scaleTurretFormula(node.formula, {
 							diceCount: isIntScaling(auto.diceCount) ? intCount : null,
 							extraDice: tier >= 2 ? 1 : 0,
-							flatBonus: (auto.addInt === true ? int : 0) + (tier >= 1 ? int : 0),
+							flatBonus: (auto.addInt === true ? int : 0) + (tier >= 1 ? int : 0) + enhanced,
 						});
 						if (next !== node.formula) {
 							node.formula = next;
@@ -4231,7 +4457,7 @@ async function patchTurretScaling(tokenDoc, caster) {
 			if (repeats) bits.push(`fires ${repeats} times (one attack roll each)`);
 			const update = { _id: item.id ?? item._id, 'system.activation.effects': effects };
 			update['system.description'] =
-				`<p><em>[A] Scaled to ${escapeHtml(caster.name)} (INT ${int}${tier ? `, Overclocked ${tier}` : ''}): ${bits.join(' · ')}.</em></p>` +
+				`<p><em>[A] Scaled to ${escapeHtml(caster.name)} (INT ${int}${tier ? `, Overclocked ${tier}` : ''}${enhanced ? `, Enhanced Formula +${enhanced}` : ''}): ${bits.join(' · ')}.</em></p>` +
 				(item.system?.description ?? '');
 			if (repeats) update.name = `${item.name} (×${repeats})`;
 			updates.push(update);
@@ -4265,6 +4491,13 @@ async function applyTurretHp(tokenDoc, caster) {
 		console.warn(`[${MODULE_ID}] Could not set turret HP`, error);
 	}
 	await patchTurretScaling(tokenDoc, caster);
+	// Last write: a client waiting for a GM-relayed deploy (waitForTurretReady)
+	// only uses the turret once it is fully scaled.
+	try {
+		await tokenDoc.update({ [`flags.${MODULE_ID}.${SUMMON_FLAG}.setupDone`]: true });
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not mark the turret ready`, error);
+	}
 }
 
 // The turret templates a caster can deploy: Rifle (Mechanical Mayhem 1) plus one
@@ -4376,10 +4609,13 @@ async function promptTurretChoice(caster, known, { scrap = null, freeAvailable =
 
 // Spawn a single turret token of `template` with level-scaled HP/stats and
 // provenance. Mirrors handleSummonSpawn's token construction but for a
-// caller-chosen template.
-async function spawnTurret(caster, template, summon) {
+// caller-chosen template. Needs GM authority (actor import + token creation):
+// players go through deployTurretToken, which relays here. The token's actor
+// delta makes the Engineer's players owners of the turret. Options: extraFlag
+// (merged into the summon flag), scene / position overrides (Auto Deploy!).
+async function spawnTurret(caster, template, summon, { extraFlag = {}, scene: sceneOverride = null, position = null } = {}) {
 	// The Engineer's own scene (the viewing client may be looking elsewhere).
-	const scene = findActorTokenDoc(caster)?.parent ?? canvas?.scene;
+	const scene = sceneOverride ?? findActorTokenDoc(caster)?.parent ?? canvas?.scene;
 	if (!scene) {
 		console.warn(`[${MODULE_ID}] No active scene to deploy "${template}" onto.`);
 		return null;
@@ -4389,7 +4625,7 @@ async function spawnTurret(caster, template, summon) {
 		console.warn(`[${MODULE_ID}] Could not resolve turret template "${template}".`);
 		return null;
 	}
-	const { x, y } = computeSummonSpawnPosition(caster, scene);
+	const { x, y } = position ?? computeSummonSpawnPosition(caster, scene);
 	const created = await spawnSummonedToken({
 		caster,
 		summon: { ...summon, template },
@@ -4397,7 +4633,8 @@ async function spawnTurret(caster, template, summon) {
 		scene,
 		x,
 		y,
-		extraFlag: { deployedAt: Date.now() },
+		extraFlag: { deployedAt: Date.now(), ...extraFlag },
+		tokenOverrides: turretOwnershipOverrides(caster),
 	});
 	if (!created) {
 		console.warn(`[${MODULE_ID}] Failed to deploy "${template}" token.`);
@@ -4407,11 +4644,14 @@ async function spawnTurret(caster, template, summon) {
 	return created;
 }
 
-// Turret Deployed! flow: combat check → 1/turn check (shift-click overrides;
-// Master Technician lifts it) → picker (+ free-deploy choice) → pay (undo card) →
-// make room under the cap (oldest first; "deploying another destroys the previous
-// one") → spawn. Mechanist's Master Technician raises the cap from 1 to 2. A
-// cancelled picker deploys nothing and costs nothing.
+// Turret Deployed! flow: combat check → 1/turn check (the item's 1/turn counter;
+// shift-click overrides; Master Technician lifts it) → no scrap: warning + "use it
+// anyway?" (nothing spent) → picker (+ free-deploy choice) → spawn (GM-relayed for players) → make room under the cap (oldest
+// first; "deploying another destroys the previous one") → ONE cost card (1 Action,
+// the scrap or free deploy, the 1/turn use; Fire + Undo buttons) → the turret
+// activates on deploy (its basic action opens, free). Mechanist's Master
+// Technician raises the cap from 1 to 2. A cancelled picker or a failed spawn
+// costs nothing. See "Engineer automation" for the helpers.
 async function handleTurretDeploy(item, caster, summon) {
 	if (summon.combatOnly && !game.combat?.started) {
 		ui.notifications?.warn(`${item.name} can only be used during combat.`);
@@ -4419,20 +4659,26 @@ async function handleTurretDeploy(item, caster, summon) {
 	}
 	const masterTechnician = actorOwnsFeature(caster, 'master-technician', 'Master Technician');
 	const turnKey = combatTurnKey(game.combat);
-	if (!masterTechnician && turnKey && !isShiftHeld() && caster.getFlag?.(MODULE_ID, TURRET_DEPLOY_TURN_FLAG) === turnKey) {
+	const override = isShiftHeld();
+	// The 1/turn counter (refills on the Engineer's turn start); copies from before
+	// it existed fall back to the per-turn marker flag.
+	const turnPool = masterTechnician ? null : getChargePoolEntry(caster, TURRET_DEPLOY_TURN_POOL, { item });
+	const usedThisTurn = turnPool ? turnPool.current < 1 : caster.getFlag?.(MODULE_ID, TURRET_DEPLOY_TURN_FLAG) === turnKey;
+	if (!masterTechnician && turnKey && !override && usedThisTurn) {
 		ui.notifications?.warn(
-			`${caster.name} already deployed a turret this turn (Turret Deployed! is 1/turn). Shift-click the action to deploy anyway.`,
+			`${caster.name} already deployed a turret this turn (Turret Deployed! is 1/turn). If that is wrong, click the Turret Deployed! (1/turn) counter on the sheet — or shift-click the action to deploy anyway.`,
 		);
 		return;
 	}
 
 	const scrap = getChargePoolEntry(caster, TOOLBELT_POOL);
 	const freeAvailable = (getChargePoolEntry(caster, TESTING_IN_PROGRESS_POOL)?.current ?? 0) > 0;
+	// Out of scrap with no free deploy: always say why, then offer "deploy anyway"
+	// (the counter may be wrong — nothing is spent then). Never a silent no-op.
+	let scrapShort = false;
 	if (scrap && scrap.current < 1 && !freeAvailable) {
-		ui.notifications?.warn(
-			`${caster.name} has no Toolbelt scrap left. If that is wrong, click the Toolbelt counter on the sheet to fix it.`,
-		);
-		return;
+		if (!(await confirmEngineerScrap(caster, scrap, item.name))) return;
+		scrapShort = true;
 	}
 
 	const known = getKnownTurretTemplates(caster);
@@ -4441,51 +4687,61 @@ async function handleTurretDeploy(item, caster, summon) {
 	if (!template || !TURRET_TEMPLATE_SET.has(template)) return; // cancelled — free
 	const label = turretLabel(template);
 
-	// Pay first (each spend posts its own undo card); a refused spend deploys nothing.
-	if (choice.useFree) {
-		const paid = await spendPoolWithUndo(caster, TESTING_IN_PROGRESS_POOL, 1, {
-			label: 'Testing In Progress! free deploy',
-			reason: `deploying a ${label}`,
-		});
-		if (!paid) return;
-	} else if (scrap) {
-		const paid = await spendPoolWithUndo(caster, TOOLBELT_POOL, 1, {
-			label: 'Toolbelt scrap',
-			reason: `Turret Deployed!: ${label}`,
-		});
-		if (!paid) return;
-	} else {
-		ui.notifications?.warn(`${caster.name} has no Toolbelt counter on the sheet — deduct the scrap by hand.`);
-	}
-
-	// Cap: base maxCount (1), raised to 2 by Master Technician. Make room by
-	// dismissing the OLDEST live turret(s) so the new one fits under the cap.
+	// Cap: base maxCount (1), raised to 2 by Master Technician. The OLDEST live
+	// turret(s) make room — removed only once the new one is out.
 	let cap = Number(summon.maxCount) || 1;
 	if (masterTechnician) cap = Math.max(cap, 2);
 	const live = findLiveTurrets(caster);
-	const overflow = live.length - (cap - 1);
-	for (let i = 0; i < overflow && i < live.length; i += 1) {
-		// eslint-disable-next-line no-await-in-loop
-		await removeTurretToken(live[i], caster);
-	}
+	const overflow = live.slice(0, Math.max(0, live.length - (cap - 1)));
 
-	const created = await spawnTurret(caster, template, summon);
+	// combatId pinned here: a relayed spawn runs on the GM, whose active combat may differ.
+	const extraFlag = { freeActivation: true };
+	if (summon.expireOnCombatEnd) extraFlag.combatId = game.combat?.id ?? null;
+	const created = await deployTurretToken(caster, template, summon, { extraFlag });
 	if (!created) {
-		ui.notifications?.warn(`Deploying the ${label} failed — use Undo on the cost card to get the resource back.`);
+		ui.notifications?.warn(`Deploying the ${label} failed (or the GM's client did not answer) — nothing was spent.`);
 		return;
 	}
-	if (turnKey) {
+	const restoreTokens = [];
+	for (const token of overflow) {
+		restoreTokens.push({ sceneId: token.parent?.id ?? null, tokenData: token.toObject() });
+		// eslint-disable-next-line no-await-in-loop
+		await removeTurretToken(token, caster);
+	}
+
+	// One card: the Action, the scrap (or the free deploy), the 1/turn use — and a
+	// note whenever one of them is NOT spent (deployed without scrap, no 1/turn
+	// limit, limit overridden), so the card always accounts for both counters.
+	const pools = [];
+	const notes = [];
+	if (choice.useFree) pools.push({ key: TESTING_IN_PROGRESS_POOL, amount: 1, label: 'Testing In Progress! free deploy' });
+	else if (scrapShort) notes.push('Toolbelt scrap: none left — deployed anyway, nothing spent.');
+	else pools.push({ key: TOOLBELT_POOL, amount: 1, label: 'Toolbelt scrap' });
+	if (turnPool && turnKey && !override) pools.push({ key: TURRET_DEPLOY_TURN_POOL, amount: 1, item, label: 'Turret Deployed! (1/turn)' });
+	else if (masterTechnician) notes.push('Turret Deployed!: no 1/turn limit (Master Technician).');
+	else if (turnKey && override) notes.push('1/turn limit overridden (shift-click) — the Turret Deployed! (1/turn) counter is left as it is.');
+	else if (turnKey) notes.push('Turret Deployed! (1/turn): used for this turn.'); // a copy without the counter: the turn marker
+	const replaced = overflow.length
+		? ` It replaces ${overflow.map((token) => `<strong>${escapeHtml(token.name ?? 'the old turret')}</strong>`).join(', ')}.`
+		: '';
+	const noteHtml = notes.map((note) => `<p><em>${escapeHtml(note)}</em></p>`).join('');
+	await payEngineerCosts(caster, {
+		actions: 1,
+		pools,
+		flavor: item?.name,
+		text: `<p>${escapeHtml(caster.name)} deploys a <strong>${escapeHtml(label)}</strong>. It is destroyed by a single hit of <strong>${turretHpForCaster(caster)}+</strong> damage.${replaced}</p>${noteHtml}`,
+		...turretFireCardParts(created, caster),
+		undoExtra: { removeTokens: [created.uuid], restoreTokens, clearDeployTurn: !turnPool && !!turnKey },
+	});
+	if (!turnPool && turnKey) {
 		try {
 			await caster.setFlag(MODULE_ID, TURRET_DEPLOY_TURN_FLAG, turnKey);
 		} catch (error) {
 			console.warn(`[${MODULE_ID}] Could not record the turret 1/turn marker`, error);
 		}
 	}
-	postSummonChat(
-		caster,
-		`<p>${escapeHtml(caster.name)} deploys a <strong>${escapeHtml(label)}</strong>. It is destroyed by a single hit of <strong>${turretHpForCaster(caster)}+</strong> damage.</p>`,
-		item?.name,
-	);
+	// "Turrets activate when deployed": the basic action opens now (free).
+	await autoFireOnDeploy(created);
 }
 
 // Delete a turret token with GM authority (players normally lack TOKEN_DELETE).
@@ -4560,9 +4816,16 @@ async function prepareTurretToolbelt(item) {
 	}
 	buttons.push({ action: 'cancel', label: 'Cancel' });
 	const scrapText = scrap ? `${scrap.current}/${scrap.max} left` : 'no counter found — deduct it by hand';
+	// The Engineer's Actions: 2 for the special (the item's cost), 1 for the whole
+	// Optimized Activation (its own cost), none for a ride-along. Shown, never refused.
+	const actionCost = turretActionCost(item);
+	const combatant = engineerActionsTracked(summoner) ? engineerCombatant(summoner) : null;
+	const actionText = combatant
+		? ` and <strong>${actionCost} Actions</strong> (${combatantActions(combatant)} left${combatantActions(combatant) < actionCost ? ' — not enough, it will still go ahead' : ''})`
+		: '';
 	const mode = await foundry.applications.api.DialogV2.wait({
 		window: { title: `${tokenDoc.name} — ${item.name}` },
-		content: `<p>Using <strong>${escapeHtml(item.name)}</strong> spends <strong>1 Toolbelt scrap</strong> from <strong>${escapeHtml(summoner.name)}</strong> (${escapeHtml(scrapText)}) and destroys <strong>${escapeHtml(tokenDoc.name)}</strong> afterwards.</p>`,
+		content: `<p>Using <strong>${escapeHtml(item.name)}</strong> spends <strong>1 Toolbelt scrap</strong> from <strong>${escapeHtml(summoner.name)}</strong> (${escapeHtml(scrapText)})${actionText} and destroys <strong>${escapeHtml(tokenDoc.name)}</strong> afterwards.</p>`,
 		buttons,
 		rejectClose: false,
 		modal: true,
@@ -4576,13 +4839,17 @@ async function prepareTurretToolbelt(item) {
 		blocked: false,
 		shots,
 		complete: async () => {
-			const reason = `${item.name} (${tokenDoc.name})`;
 			if (mode === 'rideAlong') return;
+			// One card for the Actions, the scrap and the Optimized Activation use; its
+			// Undo refunds them and brings a destroyed turret back.
+			const pools = [];
 			if (mode === 'optimized') {
-				await spendPoolWithUndo(summoner, 'uses', 1, { item: oaFeature, label: 'Optimized Activation use', reason });
+				pools.push({ key: 'uses', amount: 1, item: oaFeature, label: 'Optimized Activation use' });
 				if (turnKey) optimizedActivationTurns.set(summoner.uuid, turnKey);
 			}
-			if (scrap) await spendPoolWithUndo(summoner, TOOLBELT_POOL, 1, { label: 'Toolbelt scrap', reason });
+			if (scrap) pools.push({ key: TOOLBELT_POOL, amount: 1, label: 'Toolbelt scrap' });
+			const tokenData = tokenDoc.toObject();
+			const sceneId = tokenDoc.parent?.id ?? null;
 			if (mode === 'destroy') {
 				await removeTurretToken(
 					tokenDoc,
@@ -4590,6 +4857,15 @@ async function prepareTurretToolbelt(item) {
 					`<p><strong>${escapeHtml(tokenDoc.name)}</strong> is destroyed after its Toolbelt special.</p>`,
 				);
 			}
+			await payEngineerCosts(summoner, {
+				actions: mode === 'optimized' ? 1 : actionCost,
+				pools,
+				flavor: item.name,
+				text: `<p><strong>${escapeHtml(tokenDoc.name)}</strong> uses <strong>${escapeHtml(item.name)}</strong>${
+					mode === 'optimized' ? ' (Optimized Activation — the turret stays)' : ' and is destroyed'
+				}.</p>`,
+				undoExtra: mode === 'destroy' ? { restoreTokens: [{ sceneId, tokenData }] } : null,
+			});
 		},
 	};
 }
@@ -4746,11 +5022,12 @@ async function applyTargetingMatrix(item, context) {
 }
 
 // activate-wrap helper: the Targeting Matrix marks on this user's current
-// targets when `item` is a to-hit attack (empty otherwise).
-function collectTargetingMatrixMarks(item) {
+// targets (or on `targetDocs`, when the attack goes at a subset — Shadow Blast's
+// first blast) when `item` is a to-hit attack (empty otherwise).
+function collectTargetingMatrixMarks(item, targetDocs = null) {
 	if (!item?.actor || !isAttackItem(item)) return [];
 	const marks = [];
-	for (const token of game.user?.targets ?? []) marks.push(...getTargetingMatrixMarks(token?.actor));
+	for (const token of targetDocs ?? game.user?.targets ?? []) marks.push(...getTargetingMatrixMarks(token?.actor));
 	return marks;
 }
 
@@ -4857,6 +5134,12 @@ async function handleTurretUseItem(item, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Tool Wrench recall failed`, error);
 	}
+	// Mechanist Coordinated Assault (see "Engineer automation").
+	try {
+		await coordinatedAssault(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Coordinated Assault failed`, error);
+	}
 }
 
 // ── Auto Deploy! (Engineer L7) ───────────────────────────────────────────────
@@ -4914,17 +5197,38 @@ async function autoDeployForCombatant(combatant, combat) {
 	// feature manually first) → nothing to do.
 	if (findFreeAutoDeployTurret(actor, summon.template, combatId)) return;
 
+	// Position from the combatant's own token (getActiveTokens only sees the
+	// viewed canvas, which may be another scene).
+	const grid = scene.grid?.size ?? 100;
+	const x = tokenDoc.x + grid;
+	const y = tokenDoc.y;
+
+	// Engineer turrets: owned by the Engineer's players, activate on deploy (the
+	// card's Fire button, free) — see "Engineer automation".
+	if (TURRET_TEMPLATE_SET.has(summon.template)) {
+		const turret = await spawnTurret(actor, summon.template, summon, {
+			scene,
+			position: { x, y },
+			extraFlag: { excludeFromCap: true, combatId, freeActivation: true },
+		});
+		if (!turret) {
+			console.warn(`[${MODULE_ID}] Auto Deploy!: failed to spawn "${summon.template}" token.`);
+			return;
+		}
+		await postEngineerCard(actor, {
+			flavor: AUTO_DEPLOY_NAME,
+			text: `<p>${escapeHtml(actor.name)} automatically deploys a <strong>${escapeHtml(turret.name ?? 'Rifle Turret')}</strong> (destroyed by a single hit of ${turretHpForCaster(actor)}+ damage). It does not count against the turret limit and costs no scrap. It activates on deploy: target a creature and press Fire (free).</p>`,
+			...turretFireCardParts(turret, actor),
+		});
+		return;
+	}
+
 	const baseActor = await resolveCompanionBaseActor(summon.template);
 	if (!baseActor) {
 		console.warn(`[${MODULE_ID}] Auto Deploy!: could not resolve turret template "${summon.template}".`);
 		return;
 	}
 
-	// Position from the combatant's own token (getActiveTokens only sees the
-	// viewed canvas, which may be another scene).
-	const grid = scene.grid?.size ?? 100;
-	const x = tokenDoc.x + grid;
-	const y = tokenDoc.y;
 	// combatId is pinned explicitly rather than left to spawnSummonedToken's
 	// `game.combat` read: the combat that just started is not necessarily the
 	// viewing client's active combat.
@@ -4992,6 +5296,1506 @@ function onCreateCombatant(combatant) {
 		console.warn(`[${MODULE_ID}] Auto Deploy! on combatant creation failed`, error);
 	}
 }
+
+// ── Engineer automation ──────────────────────────────────────────────────────
+// What the Engineer pays or triggers beyond the native rules (turret spawning,
+// the damage threshold and the Toolbelt specials live in the sections above):
+//
+//   • Action economy — Nimble charges a character's Actions only for an item it
+//     activates itself. Turrets are NPCs and Turret Deployed! runs the module's
+//     own flow, so the module charges the ENGINEER: deploy 1 Action, a turret's
+//     basic action 1 (free the first time after a deploy: "turrets activate when
+//     deployed"), a Toolbelt special 2 (Optimized Activation: 1). Only in a
+//     started combat with Nimble's action tracking on; a shortfall is shown or
+//     asked about (Nimble's soft-block), never refused.
+//   • One cost card per step (payEngineerCosts): Actions + scrap/uses together,
+//     with ONE Undo that refunds all of them (a deploy's Undo also removes the new
+//     turret and brings back one it replaced; a special's Undo restores the
+//     destroyed turret). Relayed to the GM when this client cannot write.
+//   • Turret ownership + GM relay — a player cannot import actors or create
+//     tokens, so deployTurretToken asks the active GM (runAsGM 'spawnTurret') and
+//     waits for the finished turret; the token's actor delta makes the
+//     Engineer's players OWNER, so they open and fire their own turret.
+//   • Activate Turret (an Engineer action) — pick a live turret's basic action or
+//     Toolbelt special and it runs from here; deploy cards carry a Fire button.
+//   • Reload (1 Action) refills a firearm's Ammo; firing an empty firearm offers
+//     "Reload & fire".
+//   • Coordinated Assault, Enhanced Formula, Potent Concoction, the Electro
+//     Baton's Charged loop, the Flamethrower's Smoldering riders, Fumigate's ally
+//     exclusion (any `ignoreAllies` damage node), Healing Turret Overflow's temp
+//     HP = its healing total, and Kinetic Stabilizers' equipped-mail tag.
+const ENGINEER_ACTIONS_PATH = 'system.actions.base.current';
+const TURRET_DEPLOY_TURN_POOL = 'turret-deployed-turn';
+const COORDINATED_ASSAULT_POOL = 'coordinated-assault-turn';
+const COORDINATED_ASSAULT_TURN_FLAG = 'coordinatedAssaultTurn';
+const COORDINATED_ASSAULT_RANGE = 12;
+const TURRET_FIRE_FLAG = 'turretFire'; // chat card flag: { tokenUuid, actorUuid }
+const ENGINEER_COSTS_UNDO = 'engineerCosts';
+const TURRET_READY_TIMEOUT_MS = 10000;
+const FIREARM_AMMO_SUFFIX = '-ammo';
+const FIREARM_ATTACK_IDS = ['pistol', 'rifle', 'blunderbuss', 'hidden-pistol', 'hidden-pistol-toolbelt'];
+const ENHANCED_FORMULA_BONUS = 3;
+const POTENT_CONCOCTION_FLAG = 'potentConcoction';
+const POTENT_CONCOCTION_IMG = `modules/${MODULE_ID}/assets/features/engineer/alchemist/potent-concoction.webp`;
+const MAIL_ARMOR_TAG = 'self:mailArmorEquipped';
+const MAIL_ARMOR_NAME = /mail|chain|scale/i;
+// Conditions that are not "negative" (Fumigate's cleanse leaves them alone).
+const NOT_NEGATIVE_CONDITIONS = new Set([
+	'concentration',
+	'invisible',
+	'riding',
+	'charged',
+	'lastStand',
+	'dead',
+	'dying',
+	'bloodied',
+	'wounded',
+]);
+
+// An item's identifier as authored (`_source`) or as prepared — Nimble always
+// re-derives `system.identifier` from the name ("Electro Baton: Discharge" →
+// "electro-baton-discharge"), so callers list either spelling.
+function engineerItemIs(item, ...ids) {
+	if (!item) return false;
+	const authored = item._source?.system?.identifier;
+	const prepared = item.system?.identifier;
+	return ids.some((id) => id && (id === authored || id === prepared));
+}
+
+function actorHasStatus(actor, status) {
+	return !!actor?.statuses?.has?.(status);
+}
+
+// A Codex Engineer item: an Engineer class feature, or an object that came from
+// this module's packs (so another module's "Flamethrower" is left alone).
+function isCodexEngineerItem(item) {
+	if (item?.type === 'feature') return item.system?.class === 'engineer';
+	return item?.type === 'object' && String(itemSourceUuid(item) ?? '').startsWith(`Compendium.${MODULE_ID}.`);
+}
+
+// Visit every effect node (nested `on.*` branches and shared rolls included).
+function forEachEffectNode(nodes, fn) {
+	for (const node of Array.isArray(nodes) ? nodes : []) {
+		if (!node || typeof node !== 'object') continue;
+		fn(node);
+		for (const children of Object.values(node.on ?? {})) forEachEffectNode(children, fn);
+		forEachEffectNode(node.sharedRolls, fn);
+	}
+}
+
+function firstDamageNode(nodes) {
+	let found = null;
+	forEachEffectNode(nodes, (node) => {
+		if (!found && node.type === 'damage') found = node;
+	});
+	return found;
+}
+
+// Swap the item's in-memory activation for a patched clone for ONE activation
+// (Nimble's activation manager and its dialog both read `item.system.activation`).
+// `mutate(clone)` returns false when it changed nothing. Returns the restore
+// function (a no-op once the item re-prepared its data), or null.
+function patchItemActivation(item, mutate) {
+	const system = item?.system;
+	if (!system?.activation) return null;
+	const original = system.activation;
+	const clone = foundry.utils.deepClone(original);
+	if (mutate(clone) === false) return null;
+	system.activation = clone;
+	return () => {
+		if (system.activation === clone) system.activation = original;
+	};
+}
+
+/* ── Actions ── */
+
+function engineerActionTracking() {
+	try {
+		return game.settings?.get?.(game.system?.id ?? 'nimble', 'automation.actionTracking') !== false;
+	} catch {
+		return true;
+	}
+}
+
+// The actor's combatant in the running combat (null outside combat).
+function engineerCombatant(actor, combat = game.combat) {
+	if (!actor || !combat?.started) return null;
+	return combat.combatants?.find?.((entry) => entry?.actorId === actor.id || entry?.actor === actor) ?? null;
+}
+
+function combatantActions(combatant) {
+	return Math.max(0, Math.floor(Number(foundry.utils.getProperty(combatant ?? {}, ENGINEER_ACTIONS_PATH)) || 0));
+}
+
+// Whether the actor's Actions are charged right now.
+function engineerActionsTracked(actor) {
+	return engineerActionTracking() && !!engineerCombatant(actor);
+}
+
+// Nimble's soft-block: ask before overspending Actions (never refuses outright).
+async function confirmEngineerActions(actor, cost, what) {
+	if (!(cost > 0) || !engineerActionsTracked(actor)) return true;
+	const current = combatantActions(engineerCombatant(actor));
+	if (current >= cost) return true;
+	const ok = await foundry.applications.api.DialogV2.confirm({
+		window: { title: `${actor.name} — not enough actions` },
+		content: `<p>${escapeHtml(what)} costs <strong>${cost} Action${cost === 1 ? '' : 's'}</strong>, but ${escapeHtml(actor.name)} has only <strong>${current}</strong> left. Use it anyway?</p>`,
+		rejectClose: false,
+		modal: true,
+	}).catch(() => false);
+	return ok === true;
+}
+
+// Out of Toolbelt scrap: always a warning, then the same soft-block — "use it
+// anyway?" (the counter may be wrong; no scrap is spent then). False = cancelled.
+async function confirmEngineerScrap(actor, scrap, what, cost = 1) {
+	const left = scrap ? `${scrap.current}/${scrap.max}` : 'none';
+	ui.notifications?.warn(
+		`${actor.name} has no Toolbelt scrap left (${left}) — ${what} costs ${cost}. If that is wrong, click the Toolbelt counter on the sheet to fix it.`,
+	);
+	const ok = await foundry.applications.api.DialogV2.confirm({
+		window: { title: `${actor.name} — not enough Toolbelt scrap` },
+		content: `<p>${escapeHtml(what)} costs <strong>${cost} Toolbelt scrap</strong>, but ${escapeHtml(actor.name)} has <strong>${escapeHtml(left)}</strong> left. Use it anyway? (No scrap is spent.)</p>`,
+		rejectClose: false,
+		modal: true,
+	}).catch(() => false);
+	return ok === true;
+}
+
+// A chat card in the undo-card format (the generic Undo wiring picks it up),
+// optionally with extra buttons/flags (the turret Fire button).
+async function postEngineerCard(actor, { text = '', flavor, undoAction = null, flags = null, buttons = '' } = {}) {
+	const moduleFlags = { ...(flags ?? {}) };
+	let undoButton = '';
+	if (undoAction) {
+		moduleFlags[UNDO_FLAG] = { type: undoAction.type, data: undoAction.data ?? {}, actorUuid: actor?.uuid ?? null, done: false };
+		undoButton = '<button type="button" class="bcx-undo-button" data-bcx-undo><i class="fa-solid fa-rotate-left"></i> Undo</button>';
+	}
+	const data = {
+		content: `<div class="bcx-undo-card">${text}${buttons}${undoButton}</div>`,
+		flags: { [MODULE_ID]: moduleFlags },
+	};
+	if (actor) data.speaker = ChatMessage.getSpeaker({ actor });
+	if (flavor) data.flavor = `<strong>${escapeHtml(flavor)}</strong>`;
+	try {
+		return await ChatMessage.create(data);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post an Engineer card`, error);
+		return null;
+	}
+}
+
+/**
+ * Pay one Engineer step and post ONE card whose Undo refunds all of it.
+ * @param {Actor} actor
+ * @param {object} spec
+ * @param {number} [spec.actions]  combat Actions (charged only while tracked)
+ * @param {{key: string, amount: number, item?: Item, label?: string}[]} [spec.pools]  amount < 0 refills
+ * @param {string} [spec.text]     trusted HTML lead
+ * @param {string} [spec.flavor]
+ * @param {object} [spec.undoExtra]  { removeTokens: uuid[], restoreTokens: [{sceneId, tokenData}], clearDeployTurn }
+ * @param {object} [spec.flags]    extra module flags on the card
+ * @param {string} [spec.buttons]  trusted HTML before the Undo button
+ * @returns {Promise<object|null>}  the card (or { relayed: true })
+ */
+async function payEngineerCosts(actor, { actions = 0, pools = [], text = '', flavor, undoExtra = null, flags = null, buttons = '' } = {}) {
+	if (!actor) return null;
+	if (!actor.isOwner && !game.user?.isGM && game.users?.activeGM) {
+		await runAsGM('payEngineerCosts', {
+			actorUuid: actor.uuid,
+			actions,
+			pools: pools.map((pool) => ({ key: pool.key, amount: pool.amount, itemId: pool.item?.id ?? null, label: pool.label ?? null })),
+			text,
+			flavor,
+			undoExtra,
+			flags,
+			buttons,
+		});
+		return { relayed: true };
+	}
+	const lines = [];
+	const undoPools = [];
+	let actionUndo = null;
+	const cost = Math.max(0, Math.floor(Number(actions) || 0));
+	if (cost > 0 && engineerActionsTracked(actor)) {
+		const combatant = engineerCombatant(actor);
+		const before = combatantActions(combatant);
+		const after = Math.max(0, before - cost);
+		if (after !== before) await combatant.update({ [ENGINEER_ACTIONS_PATH]: after });
+		lines.push(`${cost} Action${cost === 1 ? '' : 's'} (${before} → ${after})`);
+		actionUndo = { combatId: combatant.parent?.id ?? game.combat?.id ?? null, combatantId: combatant.id, delta: before - after };
+	}
+	for (const pool of pools) {
+		const entry = getChargePoolEntry(actor, pool.key, { item: pool.item ?? undefined });
+		const name = pool.label ?? entry?.label ?? pool.key;
+		if (!entry) {
+			lines.push(`${escapeHtml(name)}: <em>no counter on the sheet — adjust it by hand</em>`);
+			continue;
+		}
+		// eslint-disable-next-line no-await-in-loop
+		const after = await setChargePoolCurrent(entry, entry.current - (Number(pool.amount) || 0));
+		if (after === entry.current) continue;
+		lines.push(`${escapeHtml(name)} (${entry.current} → ${after})`);
+		undoPools.push({ poolKey: pool.key, itemId: entry.document === actor ? null : entry.document.id, delta: entry.current - after, label: name });
+	}
+	const extraUndo = undoExtra && (undoExtra.removeTokens?.length || undoExtra.restoreTokens?.length || undoExtra.clearDeployTurn);
+	const undoable = undoPools.length || actionUndo?.delta || extraUndo;
+	return postEngineerCard(actor, {
+		flavor,
+		flags,
+		buttons,
+		text: `${text}${lines.length ? `<p><em>${lines.join(' · ')}</em></p>` : ''}`,
+		undoAction: undoable
+			? {
+					type: ENGINEER_COSTS_UNDO,
+					data: { actorUuid: actor.uuid, actions: actionUndo, pools: undoPools, extra: extraUndo ? undoExtra : null },
+				}
+			: null,
+	});
+}
+
+registerGMRelayOp('payEngineerCosts', ({ actorUuid, pools, ...rest }, { user } = {}) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('payEngineerCosts', user, actor?.name ?? actorUuid);
+	const resolved = (pools ?? []).map((pool) => ({ ...pool, item: pool.itemId ? actor.items?.get?.(pool.itemId) : undefined }));
+	return payEngineerCosts(actor, { ...rest, pools: resolved });
+});
+
+// Undo of an Engineer cost card: Actions back, pools back, then the extras.
+registerUndoHandler(ENGINEER_COSTS_UNDO, async ({ actorUuid, actions, pools, extra }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const notes = [];
+	if (actions?.delta) {
+		const combat =
+			game.combats?.get?.(actions.combatId) ?? (game.combat?.id === actions.combatId ? game.combat : null);
+		const combatant = combat?.combatants?.get?.(actions.combatantId);
+		if (combatant) {
+			const before = combatantActions(combatant);
+			await combatant.update({ [ENGINEER_ACTIONS_PATH]: before + actions.delta });
+			notes.push(`Actions ${before} → ${before + actions.delta}`);
+		}
+	}
+	for (const pool of pools ?? []) {
+		const entry = getChargePoolEntry(actor, pool.poolKey, { item: pool.itemId ?? undefined });
+		if (!entry) continue;
+		// eslint-disable-next-line no-await-in-loop
+		const after = await setChargePoolCurrent(entry, entry.current + (Number(pool.delta) || 0));
+		notes.push(`${pool.label ?? entry.label}: ${entry.current} → ${after}`);
+	}
+	if (extra) notes.push(...(await undoEngineerExtras(actor, extra)));
+	return notes.length ? `${notes.join('; ')}.` : 'Nothing left to undo.';
+});
+
+async function undoEngineerExtras(actor, { removeTokens, restoreTokens, clearDeployTurn } = {}) {
+	const notes = [];
+	for (const uuid of removeTokens ?? []) {
+		const token = uuid ? fromUuidSync(uuid) : null;
+		if (!token) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await dismissSummon(token, {});
+		notes.push(`${token.name ?? 'Turret'} removed`);
+	}
+	for (const { sceneId, tokenData } of restoreTokens ?? []) {
+		const scene = game.scenes?.get?.(sceneId);
+		if (!scene || !tokenData) continue;
+		if (tokenData._id && scene.tokens?.get?.(tokenData._id)) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await scene.createEmbeddedDocuments('Token', [tokenData], { keepId: true });
+		notes.push(`${tokenData.name ?? 'Turret'} restored`);
+	}
+	if (clearDeployTurn && actor) {
+		try {
+			await actor.unsetFlag(MODULE_ID, TURRET_DEPLOY_TURN_FLAG);
+		} catch {
+			/* nothing to clear */
+		}
+	}
+	return notes;
+}
+
+/* ── Turret deploy: GM relay, ownership, activation on deploy ── */
+
+// The Engineer's players own the turret (the actor delta's ownership merges into
+// the synthetic actor's): they open its sheet and use its actions themselves.
+function turretOwnershipOverrides(caster) {
+	const ownership = {};
+	for (const user of game.users ?? []) {
+		if (!user || user.isGM) continue;
+		if (caster?.testUserPermission?.(user, 'OWNER')) ownership[user.id] = CONST.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3;
+	}
+	return Object.keys(ownership).length ? { delta: { ownership } } : null;
+}
+
+function findTurretByDeployId(deployId) {
+	if (!deployId) return null;
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			if (getTokenSummonFlag(token)?.deployId === deployId) return token;
+		}
+	}
+	return null;
+}
+
+// Resolve once the GM-spawned turret tagged `deployId` is fully set up (its last
+// write is `setupDone`, see applyTurretHp); null after the timeout.
+function waitForTurretReady(deployId, timeoutMs = TURRET_READY_TIMEOUT_MS) {
+	return new Promise((resolve) => {
+		const hookIds = [];
+		let timer = null;
+		let done = false;
+		const finish = (token) => {
+			if (done) return;
+			done = true;
+			for (const [hook, id] of hookIds) Hooks.off(hook, id);
+			clearTimeout(timer);
+			resolve(token ?? null);
+		};
+		const check = (tokenDoc) => {
+			const flag = getTokenSummonFlag(tokenDoc);
+			if (flag?.deployId === deployId && flag.setupDone === true) finish(tokenDoc);
+		};
+		hookIds.push(['createToken', Hooks.on('createToken', check)]);
+		hookIds.push(['updateToken', Hooks.on('updateToken', check)]);
+		timer = setTimeout(() => {
+			const token = findTurretByDeployId(deployId);
+			finish(getTokenSummonFlag(token)?.setupDone === true ? token : null);
+		}, timeoutMs);
+		const existing = findTurretByDeployId(deployId);
+		if (existing) check(existing);
+	});
+}
+
+// Spawn a turret with GM authority: directly on a GM client (or with no GM
+// online), else relayed to the active GM while this client waits for it.
+async function deployTurretToken(caster, template, summon, { extraFlag = {}, position = null } = {}) {
+	const deployId = foundry.utils.randomID();
+	const flag = { ...extraFlag, deployId };
+	if (game.user?.isGM || !game.users?.activeGM) return spawnTurret(caster, template, summon, { extraFlag: flag, position });
+	const ready = waitForTurretReady(deployId);
+	await runAsGM('spawnTurret', { casterUuid: caster.uuid, template, summon, extraFlag: flag, position });
+	return ready;
+}
+
+registerGMRelayOp('spawnTurret', async ({ casterUuid, template, summon, extraFlag, position }, { user } = {}) => {
+	const caster = resolveActorByUuid(casterUuid);
+	if (!caster || !userMayActFor(user, caster)) return relayDenied('spawnTurret', user, caster?.name ?? casterUuid);
+	if (!TURRET_TEMPLATE_SET.has(template)) return relayDenied('spawnTurret', user, `an unknown turret "${template}"`);
+	return spawnTurret(caster, template, summon ?? {}, { extraFlag: extraFlag ?? {}, position: position ?? null });
+});
+
+// The turret's basic action (the one that is not its Toolbelt special).
+function turretBasicItem(tokenDoc) {
+	return (
+		listEmbeddedItems(tokenDoc?.actor).find(
+			(item) => item?.system?.activation && getItemAutomationFlag(item, 'turretToolbelt') !== true,
+		) ?? null
+	);
+}
+
+// The Engineer's Actions an activation of a turret item costs (its own cost).
+function turretActionCost(item) {
+	const cost = item?.system?.activation?.cost;
+	return cost?.type === 'action' ? Math.max(0, Math.floor(Number(cost.quantity) || 0)) : 0;
+}
+
+// Card flags + the Fire button for a freshly deployed turret.
+function turretFireCardParts(tokenDoc, caster) {
+	const basic = turretBasicItem(tokenDoc);
+	if (!tokenDoc?.uuid || !basic) return {};
+	return {
+		flags: { [TURRET_FIRE_FLAG]: { tokenUuid: tokenDoc.uuid, actorUuid: caster?.uuid ?? null } },
+		buttons: `<button type="button" class="bcx-turret-fire" data-bcx-turret-fire><i class="fa-solid fa-crosshairs"></i> ${escapeHtml(basic.name)} (free — activates on deploy)</button>`,
+	};
+}
+
+// "Turrets activate when deployed": run the basic action now (free — the token
+// still carries `freeActivation`). A single-target action waits for a target:
+// without one, the deploy card's Fire button does it later.
+async function autoFireOnDeploy(tokenDoc) {
+	const basic = turretBasicItem(tokenDoc);
+	if (!basic || typeof basic.activate !== 'function') return null;
+	const needsTarget = !basic.system?.activation?.acquireTargetsFromTemplate;
+	if (needsTarget && !(game.user?.targets?.size > 0)) {
+		ui.notifications?.info(
+			`${tokenDoc.name} is deployed — target a creature, then press "${basic.name}" on the deploy card (it activates for free once).`,
+		);
+		return null;
+	}
+	try {
+		return await basic.activate({});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] ${tokenDoc.name}: activation on deploy failed`, error);
+		return null;
+	}
+}
+
+async function fireTurretFromCard(tokenUuid) {
+	const tokenDoc = tokenUuid ? fromUuidSync(tokenUuid) : null;
+	const basic = turretBasicItem(tokenDoc);
+	if (!tokenDoc || !basic || typeof basic.activate !== 'function') {
+		ui.notifications?.warn('That turret is no longer on the scene.');
+		return null;
+	}
+	if (getTokenSummonFlag(tokenDoc)?.freeActivation !== true) {
+		ui.notifications?.info(`${tokenDoc.name} already activated on deploy — use Activate Turret (1 Action) to fire it again.`);
+		return null;
+	}
+	return basic.activate({});
+}
+
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		const fire = message?.flags?.[MODULE_ID]?.[TURRET_FIRE_FLAG];
+		const button = fire ? html.querySelector?.('[data-bcx-turret-fire]') : null;
+		if (!button) return;
+		const summoner = resolveActorByUuid(fire.actorUuid);
+		if (!game.user?.isGM && !summoner?.isOwner) {
+			button.remove();
+			return;
+		}
+		const token = fire.tokenUuid ? fromUuidSync(fire.tokenUuid) : null;
+		if (!token || getTokenSummonFlag(token)?.freeActivation !== true) {
+			const note = document.createElement('p');
+			note.className = 'bcx-turret-fired';
+			note.innerHTML = `<em>${token ? 'Activated on deploy.' : 'The turret is gone.'}</em>`;
+			button.replaceWith(note);
+			return;
+		}
+		button.addEventListener('click', (event) => {
+			event.preventDefault();
+			button.disabled = true;
+			void fireTurretFromCard(fire.tokenUuid)
+				.then((card) => {
+					if (!card) button.disabled = false;
+				})
+				.catch((error) => {
+					button.disabled = false;
+					console.error(`[${MODULE_ID}] turret Fire button failed`, error);
+				});
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not wire the turret Fire button`, error);
+	}
+});
+
+async function setTurretFreeActivation(tokenDoc, value) {
+	if (!tokenDoc) return;
+	const path = `flags.${MODULE_ID}.${SUMMON_FLAG}.freeActivation`;
+	try {
+		if (tokenDoc.isOwner || game.user?.isGM || !game.users?.activeGM) await tokenDoc.update({ [path]: value === true });
+		else await runAsGM('turretFreeActivation', { tokenUuid: tokenDoc.uuid, value: value === true });
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not update ${tokenDoc.name}'s activation on deploy`, error);
+	}
+}
+
+registerGMRelayOp('turretFreeActivation', async ({ tokenUuid, value }, { user } = {}) => {
+	const tokenDoc = tokenUuid ? fromUuidSync(tokenUuid) : null;
+	if (!getTurretTokenDoc(tokenDoc?.actor) || !userMayActForSummon(user, tokenDoc)) {
+		return relayDenied('turretFreeActivation', user, tokenDoc?.name ?? 'an unknown turret');
+	}
+	await tokenDoc.update({ [`flags.${MODULE_ID}.${SUMMON_FLAG}.freeActivation`]: value === true });
+	return true;
+});
+
+// Activate wrap, turret items: a Toolbelt special → prepareTurretToolbelt (its
+// dialog, scrap, 2 Actions, destruction); a basic action → the Engineer's
+// Action(s) after it resolved, unless it is the free activation on deploy or a
+// free shot (Coordinated Assault: `bcxTurretFree`). `bcxActionsConfirmed`: the
+// caller already cleared the soft-block (Activate Turret).
+async function prepareTurretActivation(item, options = {}) {
+	const tokenDoc = getTurretTokenDoc(item?.actor);
+	if (!tokenDoc) return null;
+	const { bcxTurretFree = false, bcxActionsConfirmed = false, ...rest } = options ?? {};
+	const stripped = 'bcxTurretFree' in (options ?? {}) || 'bcxActionsConfirmed' in (options ?? {}) ? rest : undefined;
+	if (getItemAutomationFlag(item, 'turretToolbelt') === true) {
+		const plan = await prepareTurretToolbelt(item);
+		if (plan && stripped) plan.options = stripped;
+		return plan ?? (stripped ? { options: stripped } : null);
+	}
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	if (!summoner) return stripped ? { options: stripped } : null;
+	const freeOnDeploy = !bcxTurretFree && getTokenSummonFlag(tokenDoc)?.freeActivation === true;
+	const cost = bcxTurretFree || freeOnDeploy ? 0 : turretActionCost(item);
+	if (cost > 0 && !bcxActionsConfirmed && !(await confirmEngineerActions(summoner, cost, `${tokenDoc.name}: ${item.name}`))) {
+		return { blocked: true };
+	}
+	return {
+		options: stripped,
+		complete: async () => {
+			if (freeOnDeploy) await setTurretFreeActivation(tokenDoc, false);
+			if (cost > 0 && engineerActionsTracked(summoner)) {
+				await payEngineerCosts(summoner, {
+					actions: cost,
+					flavor: item.name,
+					text: `<p><strong>${escapeHtml(tokenDoc.name)}</strong> activates (${escapeHtml(item.name)}).</p>`,
+				});
+			}
+		},
+	};
+}
+
+// Auto Deploy! used by hand (the combat-start deploy has not happened): free, not
+// counted against the cap, activates on deploy.
+async function manualAutoDeploy(item, actor, summon) {
+	const created = await deployTurretToken(actor, summon.template, summon, {
+		extraFlag: { excludeFromCap: true, combatId: game.combat?.id ?? null, freeActivation: true },
+	});
+	if (!created) {
+		ui.notifications?.warn(`${item?.name ?? AUTO_DEPLOY_NAME}: the turret could not be deployed (or the GM's client did not answer).`);
+		return;
+	}
+	await postEngineerCard(actor, {
+		flavor: item?.name ?? AUTO_DEPLOY_NAME,
+		text: `<p>${escapeHtml(actor.name)} deploys a <strong>${escapeHtml(created.name ?? 'Rifle Turret')}</strong> (destroyed by a single hit of ${turretHpForCaster(actor)}+ damage). It does not count against the turret limit and costs no scrap.</p>`,
+		...turretFireCardParts(created, actor),
+	});
+	await autoFireOnDeploy(created);
+}
+
+/* ── Activate Turret (Engineer action) ── */
+
+function listDeployedTurrets(actor) {
+	const out = [];
+	for (const { template } of TURRET_TEMPLATES) {
+		for (const token of findLiveSummons(actor, template)) if (!isTokenDefeated(token)) out.push(token);
+	}
+	return out;
+}
+
+// Pick one live turret action (basic or Toolbelt special) and run it. The
+// turret item's own activation charges the Actions (see prepareTurretActivation).
+async function runActivateTurret(feature, actor) {
+	const turrets = listDeployedTurrets(actor);
+	if (!turrets.length) {
+		ui.notifications?.warn(`${actor.name} has no deployed turret to activate (nothing was spent).`);
+		return null;
+	}
+	const choices = [];
+	for (const token of turrets) {
+		const free = getTokenSummonFlag(token)?.freeActivation === true;
+		for (const turretItem of listEmbeddedItems(token.actor)) {
+			if (!turretItem?.system?.activation || typeof turretItem.activate !== 'function') continue;
+			const special = getItemAutomationFlag(turretItem, 'turretToolbelt') === true;
+			const actions = turretActionCost(turretItem);
+			let cost;
+			if (special) cost = `${actions} Actions + 1 Toolbelt scrap, destroys the turret`;
+			else cost = free ? 'free — activates on deploy' : `${actions} Action${actions === 1 ? '' : 's'}`;
+			choices.push({ key: `${token.id}.${turretItem.id}`, item: turretItem, special, label: `${token.name}: ${turretItem.name}`, cost });
+		}
+	}
+	if (!choices.length) {
+		ui.notifications?.warn(`${actor.name}'s turrets have no actions to use.`);
+		return null;
+	}
+	const defaultIndex = Math.max(0, choices.findIndex((choice) => !choice.special));
+	const rows = choices
+		.map(
+			(choice, i) => `
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="bcx-turret-action" value="${escapeHtml(choice.key)}" ${i === defaultIndex ? 'checked' : ''}>
+				<span>${escapeHtml(choice.label)} <em>(${escapeHtml(choice.cost)})</em></span>
+			</label>`,
+		)
+		.join('');
+	const picked = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${feature?.name ?? 'Activate Turret'}` },
+		content: `<form class="blue-codex-turret-form"><p>Which turret action?</p><div>${rows}</div></form>
+			<style>.blue-codex-turret-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}</style>`,
+		buttons: [
+			{
+				action: 'activate',
+				label: 'Activate',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-turret-action"]:checked')?.value ?? null;
+				},
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	const choice = choices.find((entry) => entry.key === picked);
+	if (!choice) return null;
+	// Nimble's soft-block already ran for this feature's 1 Action.
+	return choice.item.activate({ bcxActionsConfirmed: true });
+}
+
+/* ── Firearms: Reload ── */
+
+// The item-scope Ammo pool of a firearm object (identifier "<firearm>-ammo").
+function firearmAmmoPoolId(item) {
+	if (item?.type !== 'object') return null;
+	const rules = Array.isArray(item.system?.rules) ? item.system.rules : [];
+	const rule = rules.find(
+		(entry) => entry?.type === 'chargePool' && typeof entry.identifier === 'string' && entry.identifier.endsWith(FIREARM_AMMO_SUFFIX),
+	);
+	return rule?.identifier ?? null;
+}
+
+// { item, poolId, entry } for an EQUIPPED firearm with an Ammo counter (Nimble
+// switches an unequipped object's rules off), else null.
+function firearmAmmo(actor, item) {
+	const poolId = firearmAmmoPoolId(item);
+	if (!poolId || item.system?.equipped !== true) return null;
+	const entry = getChargePoolEntry(actor, poolId, { item });
+	return entry ? { item, poolId, entry } : null;
+}
+
+function engineerFirearms(actor) {
+	return listEmbeddedItems(actor)
+		.map((item) => firearmAmmo(actor, item))
+		.filter(Boolean);
+}
+
+async function pickFirearm(actor, candidates, title) {
+	const rows = candidates
+		.map(
+			(candidate, i) => `
+			<label class="blue-codex-turret-pick">
+				<input type="radio" name="bcx-reload" value="${escapeHtml(candidate.item.id)}" ${i === 0 ? 'checked' : ''}>
+				<span>${escapeHtml(candidate.item.name)} <em>(Ammo ${candidate.entry.current}/${candidate.entry.max})</em></span>
+			</label>`,
+		)
+		.join('');
+	const id = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${title}` },
+		content: `<form><p>Reload which firearm?</p><div>${rows}</div></form>
+			<style>.blue-codex-turret-pick{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}</style>`,
+		buttons: [
+			{
+				action: 'reload',
+				label: 'Reload',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-reload"]:checked')?.value ?? null;
+				},
+			},
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return candidates.find((candidate) => candidate.item.id === id) ?? null;
+}
+
+// Refill a firearm's Ammo and spend 1 Action — one card, one Undo.
+async function reloadFirearm(actor, ammo, flavor = 'Reload') {
+	return payEngineerCosts(actor, {
+		actions: 1,
+		pools: [{ key: ammo.poolId, item: ammo.item, amount: ammo.entry.current - ammo.entry.max, label: ammo.entry.label }],
+		flavor,
+		text: `<p>${escapeHtml(actor.name)} reloads the <strong>${escapeHtml(ammo.item.name)}</strong>.</p>`,
+	});
+}
+
+// The Reload action: the firearm that needs it (asks when several do).
+async function runReload(feature, actor) {
+	const firearms = engineerFirearms(actor);
+	const candidates = firearms.filter((candidate) => candidate.entry.current < candidate.entry.max);
+	if (!candidates.length) {
+		ui.notifications?.info(
+			firearms.length
+				? `${actor.name}'s firearms are fully loaded — nothing was spent.`
+				: `${actor.name} has no equipped firearm with an Ammo counter — nothing was spent.`,
+		);
+		return null;
+	}
+	const pick = candidates.length === 1 ? candidates[0] : await pickFirearm(actor, candidates, feature?.name ?? 'Reload');
+	if (!pick) return null;
+	return reloadFirearm(actor, pick, feature?.name ?? 'Reload');
+}
+
+// Firing an empty firearm: offer "Reload & fire" / "Reload only" instead of the
+// system's refusal. Returns true when the attack must not go ahead.
+async function prepareEmptyFirearm(item, actor) {
+	const ammo = firearmAmmo(actor, item);
+	if (!ammo || ammo.entry.current >= 1) return false;
+	const choice = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${item.name} — out of Ammo` },
+		content: `<p>The <strong>${escapeHtml(item.name)}</strong> is empty (Ammo 0/${ammo.entry.max}). Reloading costs <strong>1 Action</strong>.</p>`,
+		buttons: [
+			{ action: 'fire', label: 'Reload & fire', default: true },
+			{ action: 'reload', label: 'Reload only' },
+			{ action: 'cancel', label: 'Cancel' },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	if (choice !== 'fire' && choice !== 'reload') return true;
+	// The attack's own Action already passed Nimble's soft-block; ask only about
+	// the extra one when that is what runs short.
+	const needed = choice === 'fire' ? 2 : 1;
+	const current = engineerActionsTracked(actor) ? combatantActions(engineerCombatant(actor)) : needed;
+	if (current >= 1 && current < needed && !(await confirmEngineerActions(actor, needed, `Reloading and firing the ${item.name}`))) {
+		return true;
+	}
+	await reloadFirearm(actor, ammo);
+	return choice === 'reload';
+}
+
+/* ── Activation riders: Enhanced Formula, Electro Baton, Flamethrower ── */
+
+// Enhanced Formula (Alchemist L7): +3 on every damage / healing roll of the
+// flagged Med Kit, Elixir Gun, option and gadget items.
+function applyEnhancedFormula(item, actor, plan) {
+	if (getItemAutomationFlag(item, 'enhancedFormula') !== true) return;
+	if (!actorOwnsFeature(actor, 'enhanced-formula', 'Enhanced Formula')) return;
+	const restore = patchItemActivation(item, (activation) => {
+		let changed = false;
+		forEachEffectNode(activation.effects, (node) => {
+			if ((node.type === 'damage' || node.type === 'healing') && typeof node.formula === 'string' && node.formula) {
+				node.formula = `${node.formula} + ${ENHANCED_FORMULA_BONUS}`;
+				changed = true;
+			}
+		});
+		return changed;
+	});
+	if (restore) plan.restores.push(restore);
+}
+
+async function setEngineerStatus(actor, status, active, note, flavor) {
+	if (!actor || actorHasStatus(actor, status) === active) return false;
+	try {
+		if (actor.isOwner || game.user?.isGM || !game.users?.activeGM) await actor.toggleStatusEffect?.(status, { active });
+		else await runAsGM('engineerStatus', { actorUuid: actor.uuid, status, active });
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not ${active ? 'apply' : 'remove'} ${status} on ${actor.name}`, error);
+		return false;
+	}
+	if (note) postSummonChat(actor, `<p>${note}</p>`, flavor);
+	return true;
+}
+
+registerGMRelayOp('engineerStatus', async ({ actorUuid, status, active }, { user } = {}) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('engineerStatus', user, actor?.name ?? actorUuid);
+	if (status !== 'charged') return relayDenied('engineerStatus', user, `the ${status} condition`);
+	await actor.toggleStatusEffect?.(status, { active: active === true });
+	return true;
+});
+
+// Tokens in Burst `radius` around the actor's own token that are not its allies.
+function engineerBurstTargets(actor, radius) {
+	const own = findActorTokenDoc(actor);
+	const scene = own?.parent;
+	if (!own || !scene) return [];
+	return Array.from(scene.tokens ?? []).filter(
+		(doc) =>
+			doc?.id !== own.id &&
+			doc?.actor &&
+			!doc.hidden &&
+			doc.disposition !== own.disposition &&
+			!isTokenDefeated(doc) &&
+			tokenDistanceSpaces(own, doc) <= radius,
+	);
+}
+
+// The Electro Baton's Charged loop: Strike at advantage while Charged (a crit
+// gives Charged); System Shock and Discharge spend Charged (no Charged: no save /
+// single target; Charged: the save / every non-ally in Burst 2); Arc Leap, AED
+// and Amp Armor (and their Toolbelt versions) give Charged.
+function applyElectroBaton(item, actor, plan, options) {
+	if (!isCodexEngineerItem(item)) return;
+	const charged = actorHasStatus(actor, 'charged');
+	const name = escapeHtml(actor.name);
+	if (item.type === 'object' && engineerItemIs(item, 'electro-baton')) {
+		if (charged) {
+			const base = plan.options ?? options ?? {};
+			plan.options = { ...base, rollMode: (base.rollMode ?? 0) + 1 };
+			ui.notifications?.info(`${actor.name} is Charged: the Electro Baton strike has advantage.`);
+		}
+		plan.completes.push(async (result) => {
+			if (result?.system?.isCritical === true) {
+				await setEngineerStatus(actor, 'charged', true, `${name} crits with the Electro Baton and becomes <strong>Charged</strong>.`, item.name);
+			}
+		});
+		return;
+	}
+	if (item.type === 'feature' && engineerItemIs(item, 'system-shock', 'electro-baton-system-shock')) {
+		if (charged) {
+			plan.completes.push(() =>
+				setEngineerStatus(actor, 'charged', false, `${name} loses <strong>Charged</strong>: the target makes the STR save on the card.`, item.name),
+			);
+			return;
+		}
+		const restore = patchItemActivation(item, (activation) => {
+			const before = activation.effects?.length ?? 0;
+			activation.effects = (activation.effects ?? []).filter((node) => node?.type !== 'savingThrow');
+			return activation.effects.length !== before;
+		});
+		if (restore) {
+			plan.restores.push(restore);
+			ui.notifications?.info(`${actor.name} is not Charged: ${item.name} deals its damage without the STR save.`);
+		}
+		return;
+	}
+	if (item.type === 'feature' && engineerItemIs(item, 'discharge', 'electro-baton-discharge')) {
+		if (!charged) return;
+		const current = Array.from(game.user?.targets ?? []).map((target) => target?.document ?? target).filter(Boolean);
+		const byUuid = new Map(current.map((doc) => [doc.uuid ?? doc.id, doc]));
+		for (const doc of engineerBurstTargets(actor, 2)) byUuid.set(doc.uuid ?? doc.id, doc);
+		const targets = [...byUuid.values()];
+		if (targets.length) plan.targets = targets;
+		plan.completes.push(() =>
+			setEngineerStatus(
+				actor,
+				'charged',
+				false,
+				`${name} loses <strong>Charged</strong>: Discharge hits everything in Burst 2${
+					targets.length ? ` (${targets.map((doc) => escapeHtml(doc.name ?? '?')).join(', ')})` : ''
+				}.`,
+				item.name,
+			),
+		);
+		return;
+	}
+	const givesCharged =
+		(item.type === 'object' && engineerItemIs(item, 'aed', 'amp-armor')) ||
+		(item.type === 'feature' && engineerItemIs(item, 'arc-leap', 'electro-baton-arc-leap', 'aed-toolbelt', 'amp-armor-toolbelt'));
+	if (givesCharged) {
+		plan.completes.push(() =>
+			setEngineerStatus(actor, 'charged', true, `${name} becomes <strong>Charged</strong> (${escapeHtml(item.name)}).`, item.name),
+		);
+	}
+}
+
+// "1d8 + X" → "1d8 * 2 + (0 + X) * 2": the whole roll doubled, the primary die
+// (crit/miss) intact. Null for anything else.
+function doubleSingleDieFormula(formula) {
+	const match = /^\s*1?d(\d+)\s*([+-].*)?$/i.exec(String(formula ?? ''));
+	if (!match) return null;
+	const rest = (match[2] ?? '').trim();
+	return rest ? `1d${match[1]} * 2 + (0 ${rest}) * 2` : `1d${match[1]} * 2`;
+}
+
+function firstSmolderingTarget() {
+	const doc = firstUserTargetDoc();
+	return actorHasStatus(doc?.actor, 'smoldering') ? doc : null;
+}
+
+// Flame Jet deals double damage to a Smoldering target; Air Blast can't miss one
+// and it fails the save automatically.
+function applyFlamethrower(item, actor, plan) {
+	if (!isCodexEngineerItem(item)) return;
+	if (item.type === 'object' && engineerItemIs(item, 'flamethrower')) {
+		const target = firstSmolderingTarget();
+		if (!target) return;
+		const restore = patchItemActivation(item, (activation) => {
+			const node = firstDamageNode(activation.effects);
+			const doubled = node ? doubleSingleDieFormula(node.formula) : null;
+			if (!doubled) return false;
+			node.formula = doubled;
+			return true;
+		});
+		if (restore) {
+			plan.restores.push(restore);
+			ui.notifications?.info(`${target.name} is Smoldering: ${item.name} deals double damage.`);
+		}
+		return;
+	}
+	if (item.type === 'feature' && engineerItemIs(item, 'air-blast', 'flamethrower-air-blast')) {
+		const target = firstSmolderingTarget();
+		if (!target) return;
+		const restore = patchItemActivation(item, (activation) => {
+			let changed = false;
+			forEachEffectNode(activation.effects, (node) => {
+				if (node.type === 'damage' && node.canMiss !== false) {
+					node.canMiss = false;
+					changed = true;
+				}
+			});
+			return changed;
+		});
+		if (restore) plan.restores.push(restore);
+		const pushed = Math.max(0, getAbilityMod(actor, 'intelligence'));
+		plan.completes.push(async () =>
+			postSummonChat(
+				actor,
+				`<p><strong>${escapeHtml(target.name)}</strong> is Smoldering: ${escapeHtml(item.name)} can't miss it and it <strong>automatically fails</strong> the STR save (Large or smaller: pushed back ${pushed} space${pushed === 1 ? '' : 's'}).</p>`,
+				item.name,
+			),
+		);
+	}
+}
+
+/**
+ * Activate-wrap entry for the Engineer's own items. Returns null (nothing to do),
+ * { blocked: true } (the module ran the whole flow, or the player cancelled), or
+ * { options?, targets?, restore(), complete(result) }.
+ */
+async function prepareEngineerActivation(item, options = {}) {
+	const actor = item?.actor;
+	if (!actor || actor.type !== 'character') return null;
+	if (getItemAutomationFlag(item, 'turretActivate') === true) {
+		await runActivateTurret(item, actor);
+		return { blocked: true };
+	}
+	if (getItemAutomationFlag(item, 'reload') === true) {
+		await runReload(item, actor);
+		return { blocked: true };
+	}
+	if (await prepareEmptyFirearm(item, actor)) return { blocked: true };
+	const plan = { restores: [], completes: [], options: null, targets: null };
+	applyEnhancedFormula(item, actor, plan);
+	applyElectroBaton(item, actor, plan, options);
+	applyFlamethrower(item, actor, plan);
+	if (!plan.restores.length && !plan.completes.length && !plan.options && !plan.targets) return null;
+	return {
+		options: plan.options ?? undefined,
+		targets: plan.targets ?? undefined,
+		restore: () => {
+			for (const restore of [...plan.restores].reverse()) restore();
+		},
+		complete: async (result) => {
+			for (const fn of plan.completes) {
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					await fn(result);
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] Engineer follow-up failed`, error);
+				}
+			}
+		},
+	};
+}
+
+/* ── Coordinated Assault (Mechanist L11) ── */
+
+function isFirearmAttack(item) {
+	if (!item || !itemDealsDamage(item)) return false;
+	return !!firearmAmmoPoolId(item) || engineerItemIs(item, ...FIREARM_ATTACK_IDS);
+}
+
+function primaryDieFaces(item) {
+	const node = firstDamageNode(item?.system?.activation?.effects);
+	const match = /\d*d(\d+)/i.exec(String(node?.formula ?? ''));
+	return match ? Number(match[1]) : 0;
+}
+
+// One free Rifle Turret shot sharing the Engineer's outcome: the primary die is
+// preset — its maximum on a crit, a uniform 2…max-1 on a hit (never a miss/crit).
+async function fireCoordinatedShot(rifleToken, targetDoc, outcome) {
+	const fire = turretBasicItem(rifleToken);
+	if (!fire || typeof fire.activate !== 'function') return null;
+	const faces = primaryDieFaces(fire);
+	const options = { fastForward: true, bcxTurretFree: true };
+	if (faces) options.primaryDieValue = outcome === 'crit' || faces <= 2 ? faces : 2 + Math.floor(Math.random() * (faces - 2));
+	return withUserTargets([targetDoc], () => fire.activate(options));
+}
+
+// "(1/turn) Whenever you attack with a firearm, all Rifle Turrets in range of the
+// target fire as well … hit if your attack hits, crit if it crits, miss if it
+// misses." Runs from useItem on the attacking client.
+async function coordinatedAssault(item, context) {
+	const actor = item?.actor;
+	if (!actor || actor.type !== 'character' || !isFirearmAttack(item)) return;
+	const feature = findOwnedFeature(actor, 'coordinated-assault', 'Coordinated Assault');
+	if (!feature) return;
+	const first = Array.from(context?.targets ?? [])[0];
+	const targetDoc = first?.document ?? first ?? null;
+	if (!targetDoc?.actor) return;
+	const rifles = findLiveSummons(actor, 'turret-rifle').filter((token) => !isTokenDefeated(token));
+	if (!rifles.length) return;
+	const turnKey = combatTurnKey(game.combat);
+	const pool = getChargePoolEntry(actor, COORDINATED_ASSAULT_POOL, { item: feature });
+	if (turnKey && (pool ? pool.current < 1 : actor.getFlag?.(MODULE_ID, COORDINATED_ASSAULT_TURN_FLAG) === turnKey)) return;
+
+	const inRange = [];
+	const outOfRange = [];
+	for (const rifle of rifles) {
+		const distance = rifle.parent === targetDoc.parent ? tokenDistanceSpaces(rifle, targetDoc) : Infinity;
+		(distance <= COORDINATED_ASSAULT_RANGE ? inRange : outOfRange).push({ rifle, distance });
+	}
+	if (!inRange.length) return; // nothing fires — the 1/turn use is kept
+	const outcome = context?.isMiss === true ? 'miss' : context?.isCritical === true ? 'crit' : 'hit';
+	const names = inRange.map(({ rifle }) => `<strong>${escapeHtml(rifle.name ?? 'Rifle Turret')}</strong>`).join(', ');
+	let text = `<p>${escapeHtml(actor.name)}'s ${escapeHtml(item.name)} ${
+		{ miss: 'misses', crit: 'crits', hit: 'hits' }[outcome]
+	} ${escapeHtml(targetDoc.name ?? 'the target')} — ${names} ${outcome === 'miss' ? 'miss as well' : `fire${outcome === 'crit' ? ' and crit' : ' and hit'} too (free)`}.</p>`;
+	if (outOfRange.length) {
+		text += `<p><em>Out of range (${COORDINATED_ASSAULT_RANGE}): ${outOfRange
+			.map(({ rifle, distance }) => `${escapeHtml(rifle.name ?? 'Rifle Turret')}${Number.isFinite(distance) ? ` (${distance} spaces)` : ''}`)
+			.join(', ')}.</em></p>`;
+	}
+	await payEngineerCosts(actor, {
+		flavor: feature.name,
+		text,
+		pools: turnKey && pool ? [{ key: COORDINATED_ASSAULT_POOL, amount: 1, item: feature, label: 'Coordinated Assault (1/turn)' }] : [],
+	});
+	if (turnKey && !pool) {
+		try {
+			await actor.setFlag(MODULE_ID, COORDINATED_ASSAULT_TURN_FLAG, turnKey);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not record the Coordinated Assault 1/turn marker`, error);
+		}
+	}
+	if (outcome === 'miss') return;
+	for (const { rifle } of inRange) {
+		// eslint-disable-next-line no-await-in-loop
+		await fireCoordinatedShot(rifle, targetDoc, outcome);
+	}
+}
+
+/* ── Healing Turret: Enhanced Formula; Overflow's temp HP = its healing ── */
+
+function enhancedFormulaTurretBonus(tokenDoc, caster) {
+	if (getTokenSummonFlag(tokenDoc)?.template !== 'turret-healing') return 0;
+	return actorOwnsFeature(caster, 'enhanced-formula', 'Enhanced Formula') ? ENHANCED_FORMULA_BONUS : 0;
+}
+
+// Overflow: "Restore INTd4 HP. Allies gain temp HP equal to the total." The temp
+// line of an item flagged automation.tempEqualsHealing takes the healing roll —
+// also the Healing Turret's Toolbelt special of a world turret actor imported
+// before the flag existed (imported companions are never re-read from the pack).
+function onOverflowPreCreate(message, data, _options, userId) {
+	try {
+		if (userId && userId !== game.user?.id) return;
+		const sys = game.system?.id ?? 'nimble';
+		const itemUuid = data?.flags?.[sys]?.itemUuid ?? message?.flags?.[sys]?.itemUuid;
+		if (!itemUuid) return;
+		const item = fromUuidSync(itemUuid);
+		const healingTurretSpecial =
+			getItemAutomationFlag(item, 'turretToolbelt') === true &&
+			getTokenSummonFlag(getTurretTokenDoc(item?.actor))?.template === 'turret-healing';
+		if (getItemAutomationFlag(item, 'tempEqualsHealing') !== true && !healingTurretSpecial) return;
+		const effects = foundry.utils.deepClone(data?.system?.activation?.effects ?? message?.system?.activation?.effects ?? []);
+		let heal = null;
+		forEachEffectNode(effects, (node) => {
+			if (!heal && node.type === 'healing' && node.healingType !== 'tempHealing' && node.roll) heal = node;
+		});
+		if (!heal) return;
+		let changed = false;
+		forEachEffectNode(effects, (node) => {
+			if (node.type !== 'healing' || node.healingType !== 'tempHealing') return;
+			node.roll = foundry.utils.deepClone(heal.roll);
+			node.formula = heal.formula;
+			changed = true;
+		});
+		if (changed) message.updateSource({ 'system.activation.effects': effects });
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Overflow temp HP link failed`, error);
+	}
+}
+Hooks.on('preCreateChatMessage', onOverflowPreCreate);
+
+/* ── Fumigate (and any `ignoreAllies` damage node): allies take no damage ── */
+
+function activationIgnoresAllies(activation) {
+	let found = false;
+	forEachEffectNode(activation?.effects, (node) => {
+		if (node.type === 'damage' && node.ignoreAllies === true) found = true;
+	});
+	return found;
+}
+
+function messageSourceActor(message, data = null) {
+	const sys = game.system?.id ?? 'nimble';
+	const flags = data?.flags?.[sys] ?? message?.flags?.[sys] ?? {};
+	const tokenDoc = flags.tokenUuid ? fromUuidSync(flags.tokenUuid) : null;
+	const turret = getTurretTokenDoc(tokenDoc?.actor);
+	if (turret) return { actor: tokenDoc.actor, engineer: resolveSummonerFromToken(turret), tokenDoc };
+	const actor = tokenDoc?.actor ?? game.actors?.get?.(flags.actorId) ?? null;
+	return { actor, engineer: actor, tokenDoc: tokenDoc ?? findActorTokenDoc(actor) };
+}
+
+// Split `targetUuids` into kept targets and the caster's allies (same disposition
+// as the caster's token, the caster included).
+function splitAllyTargets(targetUuids, casterToken) {
+	const friendly = CONST.TOKEN_DISPOSITIONS?.FRIENDLY ?? 1;
+	const allyDisposition = casterToken?.disposition ?? friendly;
+	const kept = [];
+	const allies = [];
+	for (const uuid of targetUuids ?? []) {
+		const doc = uuid ? fromUuidSync(uuid) : null;
+		const isAlly = !!doc && (doc.id === casterToken?.id || doc.disposition === allyDisposition);
+		(isAlly ? allies : kept).push(isAlly ? doc : uuid);
+	}
+	return { kept, allies };
+}
+
+function negativeConditions(actor) {
+	return Array.from(actor?.statuses ?? []).filter((status) => !NOT_NEGATIVE_CONDITIONS.has(status));
+}
+
+// "Remove 1 negative condition from each ally": done when an ally has exactly
+// one (Undo card); several are listed for the player to pick by hand.
+async function spareAndCleanseAllies(source, allies, itemName) {
+	if (!allies.length) return;
+	const caster = source.engineer ?? source.actor;
+	const removed = [];
+	const listed = [];
+	for (const doc of allies) {
+		const actor = doc.actor;
+		if (!actor || getTurretTokenDoc(actor)) continue;
+		const conditions = negativeConditions(actor);
+		if (conditions.length === 1) {
+			try {
+				// eslint-disable-next-line no-await-in-loop
+				if (actor.isOwner || game.user?.isGM || !game.users?.activeGM) await actor.toggleStatusEffect?.(conditions[0], { active: false });
+				// eslint-disable-next-line no-await-in-loop
+				else await runAsGM('fumigateCleanse', { casterUuid: caster?.uuid, actorUuid: actor.uuid, status: conditions[0], active: false });
+				removed.push({ actorUuid: actor.uuid, name: actor.name, status: conditions[0] });
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not remove ${conditions[0]} from ${actor.name}`, error);
+			}
+		} else if (conditions.length > 1) {
+			listed.push(`${escapeHtml(actor.name)}: ${conditions.map(conditionLabel).map(escapeHtml).join(', ')}`);
+		}
+	}
+	let text = `<p>Allies in the area take no damage: ${allies.map((doc) => `<strong>${escapeHtml(doc.name ?? '?')}</strong>`).join(', ')}.</p>`;
+	if (removed.length) text += `<p>Cleansed: ${removed.map((entry) => `${escapeHtml(entry.name)} (${escapeHtml(conditionLabel(entry.status))})`).join(', ')}.</p>`;
+	if (listed.length) text += `<p><em>Remove one negative condition by hand — ${listed.join('; ')}.</em></p>`;
+	await postEngineerCard(caster, {
+		flavor: itemName,
+		text,
+		undoAction: removed.length ? { type: 'fumigateCleanse', data: { removed } } : null,
+	});
+}
+
+registerGMRelayOp('fumigateCleanse', async ({ casterUuid, actorUuid, status, active }, { user } = {}) => {
+	const caster = resolveActorByUuid(casterUuid);
+	if (!userMayActFor(user, caster)) return relayDenied('fumigateCleanse', user, caster?.name ?? casterUuid);
+	const actor = resolveActorByUuid(actorUuid);
+	await actor?.toggleStatusEffect?.(status, { active: active === true });
+	return true;
+});
+
+registerUndoHandler('fumigateCleanse', async ({ removed }) => {
+	const back = [];
+	for (const { actorUuid, status, name } of removed ?? []) {
+		const actor = resolveActorByUuid(actorUuid);
+		if (!actor) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await actor.toggleStatusEffect?.(status, { active: true });
+		back.push(`${name} (${conditionLabel(status)})`);
+	}
+	return back.length ? `Restored: ${back.join(', ')}.` : 'Nothing to restore.';
+});
+
+function itemNameFromMessage(message, data) {
+	const sys = game.system?.id ?? 'nimble';
+	const uuid = data?.flags?.[sys]?.itemUuid ?? message?.flags?.[sys]?.itemUuid;
+	const item = uuid ? fromUuidSync(uuid) : null;
+	return item?.name ?? 'Allies spared';
+}
+
+function onAllyTargetsPreCreate(message, data, _options, userId) {
+	try {
+		if (userId && userId !== game.user?.id) return;
+		const activation = data?.system?.activation ?? message?.system?.activation;
+		if (!activationIgnoresAllies(activation)) return;
+		const targets = data?.system?.targets ?? message?.system?.targets;
+		if (!Array.isArray(targets) || !targets.length) return;
+		const source = messageSourceActor(message, data);
+		const { kept, allies } = splitAllyTargets(targets, source.tokenDoc);
+		if (!allies.length) return;
+		message.updateSource({ 'system.targets': kept });
+		void spareAndCleanseAllies(source, allies, itemNameFromMessage(message, data));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] ally exclusion (create) failed`, error);
+	}
+}
+Hooks.on('preCreateChatMessage', onAllyTargetsPreCreate);
+
+function onAllyTargetsPreUpdate(message, changes, _options, userId) {
+	try {
+		if (userId && userId !== game.user?.id) return;
+		const targets = foundry.utils.getProperty(changes ?? {}, 'system.targets');
+		if (!Array.isArray(targets) || !activationIgnoresAllies(message?.system?.activation)) return;
+		const source = messageSourceActor(message);
+		const { kept, allies } = splitAllyTargets(targets, source.tokenDoc);
+		if (!allies.length) return;
+		foundry.utils.setProperty(changes, 'system.targets', kept);
+		// Only allies this update added are announced (the earlier ones were already).
+		const before = new Set(message?.system?.targets ?? []);
+		const fresh = allies.filter((doc) => !before.has(doc.uuid));
+		if (fresh.length) void spareAndCleanseAllies(source, fresh, itemNameFromMessage(message));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] ally exclusion (update) failed`, error);
+	}
+}
+Hooks.on('preUpdateChatMessage', onAllyTargetsPreUpdate);
+
+/* ── Potent Concoction (Alchemist L11): +INT Armor while the temp HP lasts ── */
+
+function potentConcoctionCarriers(actor) {
+	return listEmbeddedItems(actor).filter((item) => item?.flags?.[MODULE_ID]?.[POTENT_CONCOCTION_FLAG]);
+}
+
+function potentConcoctionSource(alchemist, armor) {
+	return {
+		name: `Potent Concoction (+${armor} Armor)`,
+		type: 'feature',
+		img: POTENT_CONCOCTION_IMG,
+		system: {
+			description: `<p>+${armor} Armor while the temp HP from ${escapeHtml(alchemist.name)} lasts (Potent Concoction). Removed automatically when the temp HP runs out; delete it by hand to correct it.</p>`,
+			rules: [
+				{
+					type: 'armorClass',
+					disabled: false,
+					id: 'bcx-potent-concoction-armor',
+					identifier: '',
+					label: `Potent Concoction: +${armor} Armor`,
+					predicate: {},
+					priority: 1,
+					formula: String(armor),
+					mode: 'add',
+				},
+			],
+		},
+		flags: { [MODULE_ID]: { [POTENT_CONCOCTION_FLAG]: { sourceUuid: alchemist.uuid, armor } } },
+	};
+}
+
+// Create (or raise) the carrier on `target`. Returns true when something changed.
+async function applyPotentConcoction(alchemist, target) {
+	const armor = getAbilityMod(alchemist, 'intelligence');
+	if (!target || armor <= 0) return false;
+	const existing = potentConcoctionCarriers(target);
+	if (existing.some((item) => Number(item.flags[MODULE_ID][POTENT_CONCOCTION_FLAG].armor) >= armor)) return false;
+	if (existing.length) await target.deleteEmbeddedDocuments('Item', existing.map((item) => item.id));
+	await target.createEmbeddedDocuments('Item', [potentConcoctionSource(alchemist, armor)]);
+	return true;
+}
+
+registerGMRelayOp('potentConcoction', async ({ alchemistUuid, targetUuid }, { user } = {}) => {
+	const alchemist = resolveActorByUuid(alchemistUuid);
+	if (!userMayActFor(user, alchemist)) return relayDenied('potentConcoction', user, alchemist?.name ?? alchemistUuid);
+	return grantPotentConcoction(alchemist, resolveActorByUuid(targetUuid));
+});
+
+async function grantPotentConcoction(alchemist, target) {
+	if (!target || target.type !== 'character' || target.id === alchemist?.id) return false;
+	if (!target.isOwner && !game.user?.isGM && game.users?.activeGM) {
+		await runAsGM('potentConcoction', { alchemistUuid: alchemist.uuid, targetUuid: target.uuid });
+		return true;
+	}
+	if (!(await applyPotentConcoction(alchemist, target))) return false;
+	await postEngineerCard(alchemist, {
+		flavor: 'Potent Concoction',
+		text: `<p><strong>${escapeHtml(target.name)}</strong> gains <strong>+${getAbilityMod(alchemist, 'intelligence')} Armor</strong> while the temp HP lasts.</p>`,
+		undoAction: { type: 'removePotentConcoction', data: { targetUuid: target.uuid } },
+	});
+	return true;
+}
+
+registerUndoHandler('removePotentConcoction', async ({ targetUuid }) => {
+	const target = resolveActorByUuid(targetUuid);
+	const carriers = potentConcoctionCarriers(target);
+	if (carriers.length) await target.deleteEmbeddedDocuments('Item', carriers.map((item) => item.id));
+	return carriers.length ? 'Armor bonus removed.' : 'Already gone.';
+});
+
+const potentConcoctionHandled = new Set(); // `${messageId}:${effectId}:${appliedAt}`
+
+// Nimble records every applied heal on the card (system.appliedHealing): a temp
+// HP record from an Alchemist (or their Healing Turret) arms the carrier on each
+// ally whose temp HP went up.
+function onPotentConcoctionMessageUpdate(message, changes, _options, userId) {
+	try {
+		if (userId && userId !== game.user?.id) return;
+		const applied = foundry.utils.getProperty(changes ?? {}, 'system.appliedHealing');
+		if (!applied || typeof applied !== 'object') return;
+		const source = messageSourceActor(message);
+		const alchemist = source.engineer;
+		if (!alchemist || !actorOwnsFeature(alchemist, 'potent-concoction', 'Potent Concoction')) return;
+		const grants = [];
+		for (const [effectId, record] of Object.entries(applied)) {
+			if (effectId.startsWith('-=') || record?.healingType !== 'tempHealing') continue;
+			const key = `${message.id}:${effectId}:${record.appliedAt ?? ''}`;
+			if (potentConcoctionHandled.has(key)) continue;
+			potentConcoctionHandled.add(key);
+			for (const entry of record.targets ?? []) {
+				if (!(Number(entry?.newTempHp) > Number(entry?.previousTempHp))) continue;
+				const target = resolveActorByUuid(entry.uuid);
+				grants.push(
+					grantPotentConcoction(alchemist, target).catch((error) =>
+						console.warn(`[${MODULE_ID}] Potent Concoction failed`, error),
+					),
+				);
+			}
+		}
+		return Promise.all(grants);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Potent Concoction check failed`, error);
+	}
+}
+Hooks.on('updateChatMessage', onPotentConcoctionMessageUpdate);
+
+// The armor lasts as long as the temp HP: gone at 0 (acting GM removes it).
+function onPotentConcoctionTempGone(actor, changes) {
+	try {
+		if (!isActingGM() || !foundry.utils.hasProperty(changes ?? {}, 'system.attributes.hp.temp')) return;
+		if (Number(actor?.system?.attributes?.hp?.temp) > 0) return;
+		const carriers = potentConcoctionCarriers(actor);
+		if (!carriers.length) return;
+		return actor
+			.deleteEmbeddedDocuments('Item', carriers.map((item) => item.id))
+			.then(() => postSummonChat(actor, `<p><strong>${escapeHtml(actor.name)}</strong>'s temp HP is gone — so is the Potent Concoction Armor.</p>`, 'Potent Concoction'))
+			.catch((error) => console.warn(`[${MODULE_ID}] Could not remove Potent Concoction`, error));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Potent Concoction cleanup failed`, error);
+	}
+}
+Hooks.on('updateActor', onPotentConcoctionTempGone);
+
+/* ── Kinetic Stabilizers (Scrapper L11): an equipped-mail tag ── */
+// Nimble's `armor:equipped` is set by any OWNED armor with an armor rule (every
+// Engineer owns Cheap Hides), so the feature predicates on `self:mailArmorEquipped`:
+// an equipped armor named like mail (Chain Shirt, Rusty/Scale Mail, Dragonscale)
+// or whose Armor formula caps DEX at 2 (the mail pattern).
+function isEquippedMailArmor(item) {
+	if (item?.type !== 'object' || item.system?.objectType !== 'armor' || item.system?.equipped !== true) return false;
+	if (MAIL_ARMOR_NAME.test(item.name ?? '')) return true;
+	const rules = Array.isArray(item.system?.rules) ? item.system.rules : [];
+	return rules.some((rule) => rule?.type === 'armorClass' && /min\(\s*@dexterity\s*,\s*2\s*\)/i.test(String(rule.formula ?? '')));
+}
+
+function installMailArmorTag() {
+	const proto = CONFIG?.NIMBLE?.Actor?.documentClasses?.character?.prototype;
+	if (!proto?._populateDerivedTags || Object.prototype.hasOwnProperty.call(proto, '__blueCodexMailArmorTag')) return false;
+	const original = proto._populateDerivedTags;
+	proto._populateDerivedTags = function blueCodexMailArmorTag(...args) {
+		const result = original.apply(this, args);
+		try {
+			if (this.tags?.add && listEmbeddedItems(this).some(isEquippedMailArmor)) this.tags.add(MAIL_ARMOR_TAG);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not tag equipped mail armor`, error);
+		}
+		return result;
+	};
+	proto.__blueCodexMailArmorTag = true;
+	return true;
+}
+
+Hooks.once('init', () => {
+	try {
+		installMailArmorTag();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not install the mail-armor tag`, error);
+	}
+});
+
+// Late only if the system registered its classes after our `init` ran.
+Hooks.once('setup', () => {
+	try {
+		if (installMailArmorTag()) for (const actor of game.actors ?? []) if (actor?.type === 'character') actor.reset?.();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not install the mail-armor tag`, error);
+	}
+});
+
+/* ── New characters: what the character creator leaves behind ── */
+// Nimble's creator (CharacterCreationDialog#submitCharacterCreation) creates the
+// origin items (class + what its grantItem rules grant), then "auto-equips" every
+// object by TOGGLING it, and writes the chosen ability scores last. So:
+//   • a Codex object granted already equipped — the Engineer's Pistol, whose Ammo
+//     counter only exists while equipped — is toggled OFF → equipped again (rules
+//     back on) once the creator is done, only if it is still unequipped;
+//   • a Codex pool whose max reads a stat (Toolbelt: (INT+STR)×2) is created at
+//     0/0 and only its max grows → 0/4. Nim+ fills a new character's pools itself;
+//     without it, the new character's Codex pools that start full (`initial` other
+//     than "zero") are filled once the system's late pool syncs have landed.
+// Each dialog's own submit is wrapped as it renders, around whatever is there
+// (Nim+ wraps it too), so the modules' render order does not matter. Only the
+// creating client acts: it owns the new character.
+const CREATION_SETTLE_MS = 2000;
+
+function isCodexCompendiumItem(item) {
+	return String(itemSourceUuid(item) ?? '').startsWith(`Compendium.${MODULE_ID}.`);
+}
+
+function wrapCreatorSubmit(app) {
+	if (!app || app.__blueCodexCreatorWrapped || typeof app.submitCharacterCreation !== 'function') return false;
+	app.__blueCodexCreatorWrapped = true;
+	const inner = app.submitCharacterCreation.bind(app);
+	app.submitCharacterCreation = async function blueCodexCreatorSubmit(...args) {
+		const created = [];
+		const preEquipped = new Set(); // Codex objects created already equipped
+		const onActor = (actor, _options, userId) => {
+			if (userId === game.user?.id && actor?.type === 'character') created.push(actor);
+		};
+		const onItem = (item, _options, userId) => {
+			if (userId !== game.user?.id || item?.type !== 'object' || item.system?.equipped !== true) return;
+			if (!created.some((actor) => actor.id === item.parent?.id) || !isCodexCompendiumItem(item)) return;
+			preEquipped.add(item.id);
+		};
+		Hooks.on('createActor', onActor);
+		Hooks.on('createItem', onItem);
+		try {
+			return await inner(...args);
+		} finally {
+			Hooks.off('createActor', onActor);
+			Hooks.off('createItem', onItem);
+			for (const actor of created) {
+				finishCreatedCharacter(actor, { preEquipped }).catch((error) =>
+					console.warn(`[${MODULE_ID}] Could not finish the new character ${actor.name}`, error),
+				);
+			}
+		}
+	};
+	return true;
+}
+
+// Equip the creator's toggled-off Codex grants, then (no Nim+) fill the pools.
+async function finishCreatedCharacter(actor, { preEquipped = new Set(), settleMs = CREATION_SETTLE_MS } = {}) {
+	const equipped = await equipCreatorGrants(actor, preEquipped);
+	if (game.modules?.get?.(NIM_PLUS_ID)?.active) return { equipped, filled: [] };
+	if (settleMs > 0) await new Promise((resolve) => setTimeout(resolve, settleMs));
+	return { equipped, filled: await fillNewCharacterPools(actor) };
+}
+
+async function equipCreatorGrants(actor, ids) {
+	const equipped = [];
+	for (const id of ids ?? []) {
+		const item = actor?.items?.get?.(id);
+		if (!item || item.type !== 'object' || item.system?.equipped === true) continue;
+		// toggleEquipment = Nimble's own equip: rules back on, then `equipped`.
+		if (typeof item.toggleEquipment === 'function') await item.toggleEquipment();
+		else await item.update({ 'system.equipped': true });
+		equipped.push(item.name);
+	}
+	return equipped;
+}
+
+// Fill the character's Codex charge pools (item pools on Codex items, actor pools
+// whose source item is one) that start full and are short of their max.
+async function fillNewCharacterPools(actor) {
+	const scope = chargePoolScope();
+	const filled = [];
+	for (const document of [actor, ...listEmbeddedItems(actor)]) {
+		const pools = document?.flags?.[scope]?.chargePools;
+		if (!pools || typeof pools !== 'object') continue;
+		const isActor = document === actor;
+		const changes = {};
+		for (const [key, pool] of Object.entries(pools)) {
+			if (!pool || typeof pool !== 'object' || isActor !== key.startsWith('actor:')) continue;
+			const source = isActor ? actor.items?.get?.(pool.sourceItemId) : document;
+			if (!source || !isCodexCompendiumItem(source)) continue;
+			const identifier = isActor ? key.slice('actor:'.length) : key;
+			const rules = source._source?.system?.rules ?? source.system?.rules;
+			const rule = Array.isArray(rules) ? rules.find((r) => r?.type === 'chargePool' && (r.identifier || r.id) === identifier) : null;
+			if (!rule || rule.initial === 'zero') continue;
+			const max = Math.floor(Number(pool.max) || 0);
+			const current = Math.max(0, Math.floor(Number(pool.current) || 0));
+			if (current >= max) continue;
+			changes[key] = { current: max };
+			filled.push(`${pool.label || identifier} ${current} → ${max}`);
+		}
+		if (Object.keys(changes).length) await document.update({ flags: { [scope]: { chargePools: changes } } });
+	}
+	return filled;
+}
+
+Hooks.on('renderCharacterCreationDialog', (app) => {
+	try {
+		wrapCreatorSubmit(app);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not wrap the character creator`, error);
+	}
+});
 
 // Every embedded item on `actorLike` as a plain array, spanning both the live
 // client (Foundry Collection → `.contents`) and the test harness (a plain array
@@ -5224,6 +7028,11 @@ async function consumeSummonCharge(item, _context) {
 // a cast one via spawnSummonedToken.
 const SWARMING_SHADOWS_FEATURE = 'Swarming Shadows';
 const SHADOW_MINION_TEMPLATE = 'shadow-minion';
+// Eldritch Usurper's 5d12 Greater Shadow (companion `greater-shadow`): a Shadow for
+// Command Shadows, max-roll triggers, Hyperfixation and Armor of Shadows, but not
+// for the Shadow Limit (it is summoned "instead" of the cast's Shadows).
+const GREATER_SHADOW_TEMPLATE = 'greater-shadow';
+const SHADOW_TEMPLATES = new Set([SHADOW_MINION_TEMPLATE, GREATER_SHADOW_TEMPLATE]);
 
 // "Would crit": an active, non-discarded result on the primary (first) die term
 // equals its faces. Works on a live DamageRoll (primaryDie accessor / .terms) and
@@ -5307,7 +7116,7 @@ async function spawnSwarmingShadow(caster, summon, targetToken, scene, { ignoreC
 	if (!(caster instanceof Actor) || !summon || !scene) return null;
 
 	const cap = summonCountCap(caster, summon);
-	const count = findLiveSummons(caster, summon.template).length;
+	const count = findActiveSummons(caster, summon.template).length;
 	if (!ignoreCap && count >= cap) {
 		postSwarmAtCapWhisper(caster);
 		return null;
@@ -5336,8 +7145,15 @@ async function spawnSwarmingShadow(caster, summon, targetToken, scene, { ignoreC
 // roll "would crit" and the summoner owns Swarming Shadows. Shared by both paths.
 async function maybeSwarmFromMinionAttack(minionTokenDoc, rollLikes, targetToken, scene) {
 	const flag = getTokenSummonFlag(minionTokenDoc);
-	if (flag?.template !== SHADOW_MINION_TEMPLATE) return;
+	if (!SHADOW_TEMPLATES.has(flag?.template)) return;
 	if (!Array.isArray(rollLikes) || !rollLikes.some(rollHasPrimaryMaxFace)) return;
+
+	// Hungering Shadows: the same max roll banks a free tiered cast.
+	try {
+		await maybeGrantHungeringShadows(minionTokenDoc);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Hungering Shadows grant failed`, error);
+	}
 
 	const caster = resolveSummonerFromToken(minionTokenDoc);
 	const swarming = caster ? findOwnedFeature(caster, null, SWARMING_SHADOWS_FEATURE) : null;
@@ -5512,11 +7328,13 @@ function isTokenDefeated(tokenDoc) {
 	return typeof hp === 'number' && hp <= 0;
 }
 
-// The caster's live Shadows on `scene` (never defeated ones).
+// The caster's live Shadows on `scene` (never defeated ones). "ALL your Shadows"
+// includes an Eldritch Usurper Greater Shadow.
 function findCommandableShadows(caster, template, scene) {
-	return findLiveSummons(caster, template).filter(
-		(token) => (!scene || token.parent?.id === scene.id) && !isTokenDefeated(token),
-	);
+	const templates = template === SHADOW_MINION_TEMPLATE ? [...SHADOW_TEMPLATES] : [template];
+	return templates
+		.flatMap((tmpl) => findLiveSummons(caster, tmpl))
+		.filter((token) => (!scene || token.parent?.id === scene.id) && !isTokenDefeated(token));
 }
 
 // Even round-robin split: Shadow i → target i mod n.
@@ -5612,11 +7430,17 @@ async function commandShadowsActivationBlocked(item) {
 	}
 
 	let picks = defaultShadowAssignment(shadows.length, targets.length);
-	if (targets.length > 1) {
+	let rush = shadows.map(() => false);
+	if (ownsFeature(caster, SHADOW_RUSH)) {
+		// Shadow Rush: which Shadows deal their max and die is a choice every command.
+		const answer = await promptShadowRush(caster, shadows, targets, picks);
+		if (!answer) return true;
+		({ picks, rush } = answer);
+	} else if (targets.length > 1) {
 		picks = await promptShadowAssignment(caster, shadows, targets);
 		if (!picks) return true;
 	}
-	const assignments = shadows.map((shadow, i) => ({ shadow, target: targets[picks[i]] ?? targets[0] }));
+	const assignments = shadows.map((shadow, i) => ({ shadow, target: targets[picks[i]] ?? targets[0], rush: rush[i] === true }));
 
 	pendingCommandShadows.set(item.uuid, {
 		casterUuid: caster.uuid,
@@ -5625,7 +7449,11 @@ async function commandShadowsActivationBlocked(item) {
 		move: cfg.move,
 		template: cfg.template,
 		inCombat,
-		assignments: assignments.map(({ shadow, target }) => ({ shadowId: shadow.id, targetId: target.id })),
+		assignments: assignments.map(({ shadow, target, rush: rushed }) => ({
+			shadowId: shadow.id,
+			targetId: target.id,
+			...(rushed ? { rush: true } : {}),
+		})),
 	});
 	return false;
 }
@@ -5673,7 +7501,7 @@ async function withUserTargets(tokenDocs, fn) {
 // shadow-minion) — these never keep a combatant.
 function isShadowSummonToken(tokenDoc, template = SHADOW_MINION_TEMPLATE) {
 	const summonTemplate = getTokenSummonFlag(tokenDoc)?.template;
-	return Boolean(summonTemplate) && (summonTemplate === template || summonTemplate === SHADOW_MINION_TEMPLATE);
+	return Boolean(summonTemplate) && (summonTemplate === template || SHADOW_TEMPLATES.has(summonTemplate));
 }
 
 function combatantTokenDoc(combatant) {
@@ -5780,14 +7608,21 @@ async function executeCommandShadows(plan, { user } = {}) {
 
 	const skipped = [];
 	const resolved = [];
-	for (const { shadowId, targetId } of plan.assignments ?? []) {
+	for (const { shadowId, targetId, rush } of plan.assignments ?? []) {
 		const shadow = tokenOf(shadowId);
 		const target = tokenOf(targetId);
 		if (!shadow || !target || isTokenDefeated(shadow)) {
 			skipped.push({ name: shadow?.name ?? 'Shadow', reason: 'missing' });
 			continue;
 		}
-		resolved.push({ shadow, target });
+		resolved.push({ shadow, target, rush: rush === true });
+	}
+	// Shadow Rush: a rushing Shadow's attack deals its max (a flat formula: no roll,
+	// so no max-roll triggers), then it dies once the attacks are done.
+	const rushed = [];
+	for (const entry of resolved) {
+		// eslint-disable-next-line no-await-in-loop
+		if (entry.rush && (await rushShadowAttack(entry.shadow))) rushed.push(entry.shadow);
 	}
 	// One group per target, in first-assignment order. No distance gate.
 	const groups = [];
@@ -5822,6 +7657,10 @@ async function executeCommandShadows(plan, { user } = {}) {
 				console.warn(`[${MODULE_ID}] Command Shadows: could not remove the Shadow combatants`, error);
 			}
 		}
+		for (const shadow of rushed) {
+			// eslint-disable-next-line no-await-in-loop
+			await dismissSummon(shadow, { summonerActor: caster });
+		}
 	}
 
 	const summary = {
@@ -5835,6 +7674,7 @@ async function executeCommandShadows(plan, { user } = {}) {
 		})),
 		skipped,
 	};
+	if (rushed.length) summary.rushed = rushed.map((shadow) => shadow.name ?? 'Shadow');
 	await postCommandShadowsCard(caster, plan, summary);
 	return summary;
 }
@@ -5914,6 +7754,9 @@ async function postCommandShadowsCard(caster, plan, summary) {
 				.map((s) => `${escapeHtml(s.name)} (${escapeHtml(COMMAND_SHADOWS_SKIP_LABELS[s.reason] ?? s.reason)})`)
 				.join('; ')}.</p>`;
 		}
+		if (summary.rushed?.length) {
+			content += `<p><strong>Shadow Rush:</strong> ${plural(summary.rushed.length, 'Shadow')} dealt max damage, then died.</p>`;
+		}
 		await ChatMessage.create({
 			content,
 			speaker: ChatMessage.getSpeaker({ actor: caster }),
@@ -5931,12 +7774,17 @@ async function cleanupCombatSummons(combat) {
 	const combatId = combat?.id;
 	if (!combatId) return;
 
-	const hits = [];
+	let hits = [];
 	for (const scene of game.scenes ?? []) {
 		for (const token of scene.tokens ?? []) {
 			if (getTokenSummonFlag(token)?.combatId === combatId) hits.push({ scene, token });
 		}
 	}
+	if (!hits.length) return;
+
+	// My Favored Pet: one Shadow per owning summoner stays (flag-driven exception).
+	const kept = await keepFavoredPets(hits);
+	if (kept.size) hits = hits.filter(({ token }) => !kept.has(token.id));
 	if (!hits.length) return;
 
 	// Clear any unique-tracking flags pointing at the doomed tokens.
@@ -6029,8 +7877,929 @@ function installSummonAutomation() {
 	// Swarming Shadows group-attack path: minion group attacks bypass `useItem`
 	// and post a single `minionGroupAttack` chat card instead.
 	Hooks.on('createChatMessage', onCreateChatMessage);
+	// Fallen summons: a summoned minion at 0 HP is removed (acting GM, Undo card).
+	Hooks.on('updateActor', onFallenSummonActorUpdate);
+	Hooks.on('updateToken', onFallenSummonTokenUpdate);
 	summonAutomationInstalled = true;
 }
+
+// ── Fallen summons (0 HP) ────────────────────────────────────────────────────
+// Nimble never removes a minion token at 0 HP, so a dead Shadow used to linger,
+// keep its slot under the Shadow Limit and inflate every count. Generic for every
+// summoned MINION (a `minion` actor on a summon-flagged token: Shadows, the
+// Greater Shadow, undead minions): when it drops to 0 HP the acting GM deletes the
+// token (dismissSummon — clears a unique-tracking flag, like the combat-end
+// cleanup) and posts ONE Undo card per summoner that recreates the token(s) at
+// full HP; deaths landing together (an area attack, a group card) share it.
+// Turrets keep their own destruction flow; non-minion companions (the
+// Lifebinding Spirits) are left alone. A Greater Shadow explodes into 5 Shadows
+// beside the spot where it fell, ignoring the Shadow Limit (Eldritch Usurper).
+// Counting never waits for the removal: findActiveSummons skips 0-HP tokens.
+const FALLEN_SUMMON_DELAY_MS = 150;
+const pendingFallenSummons = new Map(); // summoner uuid ('' = unknown) → { summoner, tokens: Map(uuid → tokenDoc), timer }
+
+// The summoned minion token behind `tokenDoc`, when it is dead (0 HP).
+function isFallenSummonToken(tokenDoc) {
+	const flag = getTokenSummonFlag(tokenDoc);
+	if (!flag?.template || TURRET_TEMPLATE_SET.has(flag.template)) return false;
+	if (tokenDoc.actor?.type !== 'minion') return false;
+	return isTokenDefeated(tokenDoc);
+}
+
+function queueFallenSummon(tokenDoc) {
+	if (!tokenDoc?.uuid || !isFallenSummonToken(tokenDoc)) return;
+	const summoner = resolveSummonerFromToken(tokenDoc);
+	const key = summoner?.uuid ?? '';
+	let batch = pendingFallenSummons.get(key);
+	if (!batch) {
+		batch = { summoner, tokens: new Map(), timer: null };
+		pendingFallenSummons.set(key, batch);
+	}
+	if (batch.tokens.has(tokenDoc.uuid)) return;
+	batch.tokens.set(tokenDoc.uuid, tokenDoc);
+	clearTimeout(batch.timer);
+	batch.timer = setTimeout(() => {
+		if (pendingFallenSummons.get(key) === batch) pendingFallenSummons.delete(key);
+		removeFallenSummons(batch).catch((error) => console.warn(`[${MODULE_ID}] fallen-summon cleanup failed`, error));
+	}, FALLEN_SUMMON_DELAY_MS);
+}
+
+// updateActor (a synthetic token actor's HP changed) and updateToken (its delta
+// changed) — whichever reaches the acting GM first queues it; the queue dedupes.
+function onFallenSummonActorUpdate(actor, changes) {
+	try {
+		if (!isActingGM() || !actor?.isToken) return;
+		if (!foundry.utils.hasProperty(changes ?? {}, 'system.attributes.hp')) return;
+		queueFallenSummon(actor.token);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] fallen-summon check failed`, error);
+	}
+}
+
+function onFallenSummonTokenUpdate(tokenDoc, changes) {
+	try {
+		if (!isActingGM() || !changes || !('delta' in changes)) return;
+		queueFallenSummon(tokenDoc);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] fallen-summon check failed`, error);
+	}
+}
+
+// Delete a batch of fallen summons (still-dead, still-present ones), burst any
+// Greater Shadow, and post the Undo card.
+async function removeFallenSummons({ summoner, tokens }) {
+	const fallen = [...tokens.values()].filter(
+		(token) => token?.parent?.tokens?.get?.(token.id) === token && isFallenSummonToken(token),
+	);
+	if (!fallen.length) return [];
+	const restore = [];
+	const bursts = [];
+	for (const token of fallen) {
+		const flag = getTokenSummonFlag(token);
+		restore.push({ sceneId: token.parent?.id ?? null, tokenData: token.toObject() });
+		if (flag?.template === GREATER_SHADOW_TEMPLATE) bursts.push({ scene: token.parent, x: token.x, y: token.y });
+		// eslint-disable-next-line no-await-in-loop
+		await dismissSummon(token, { summonerActor: summoner ?? undefined, template: flag?.template });
+	}
+	const spawned = [];
+	for (const burst of bursts) {
+		// eslint-disable-next-line no-await-in-loop
+		spawned.push(...(await greaterShadowBurst(summoner, burst)));
+	}
+	const names = fallen.map((token) => `<strong>${escapeHtml(token.name ?? 'Summon')}</strong>`);
+	let text = `<p>${names.join(', ')} ${fallen.length === 1 ? 'drops' : 'drop'} to 0 HP and ${
+		fallen.length === 1 ? 'is' : 'are'
+	} gone${summoner ? ` — no longer counted among ${escapeHtml(summoner.name)}'s summons` : ''}.</p>`;
+	if (spawned.length) {
+		text += `<p>The Greater Shadow explodes into <strong>${spawned.length}</strong> Shadows beside where it fell (ignoring the Shadow Limit) — move them anywhere within Reach 6.</p>`;
+	}
+	await postUndoCard({
+		actor: summoner ?? null,
+		flavor: 'Fallen summons',
+		text,
+		undoAction: {
+			type: 'restoreFallenSummons',
+			data: { tokens: restore, spawnedUuids: spawned.map((token) => token.uuid) },
+		},
+	});
+	return fallen;
+}
+
+// Undo: recreate the removed tokens (same ids) at full HP; remove a burst's Shadows.
+registerUndoHandler('restoreFallenSummons', async ({ tokens, spawnedUuids }) => {
+	let restored = 0;
+	for (const { sceneId, tokenData } of tokens ?? []) {
+		const scene = game.scenes?.get?.(sceneId);
+		if (!scene || !tokenData) continue;
+		if (tokenData._id && scene.tokens?.get?.(tokenData._id)) continue;
+		// eslint-disable-next-line no-await-in-loop
+		const [created] = (await scene.createEmbeddedDocuments('Token', [tokenData], { keepId: true })) ?? [];
+		const hp = created?.actor?.system?.attributes?.hp;
+		if (hp && Number(hp.value) <= 0) {
+			try {
+				// eslint-disable-next-line no-await-in-loop
+				await created.actor.update({ 'system.attributes.hp.value': Math.max(1, Number(hp.max) || 1) });
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not restore a summon's HP`, error);
+			}
+		}
+		if (created) restored += 1;
+	}
+	for (const uuid of spawnedUuids ?? []) {
+		const token = uuid ? fromUuidSync(uuid) : null;
+		// eslint-disable-next-line no-await-in-loop
+		if (token) await dismissSummon(token, {});
+	}
+	return `${restored} summon${restored === 1 ? '' : 's'} restored.`;
+});
+
+// Test/diagnostic: process every queued batch now instead of after the delay.
+async function flushFallenSummons() {
+	const batches = [...pendingFallenSummons.values()];
+	pendingFallenSummons.clear();
+	for (const batch of batches) {
+		clearTimeout(batch.timer);
+		// eslint-disable-next-line no-await-in-loop
+		await removeFallenSummons(batch);
+	}
+}
+
+// Undo of a module-spawned summon (Know Your Limits' free Shadow, a Greater
+// Shadow): remove the listed tokens.
+registerUndoHandler('dismissSummonTokens', async ({ tokenUuids }) => {
+	let removed = 0;
+	for (const uuid of tokenUuids ?? []) {
+		const token = uuid ? fromUuidSync(uuid) : null;
+		if (!token) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await dismissSummon(token, {});
+		removed += 1;
+	}
+	return removed ? `${removed} summon${removed === 1 ? '' : 's'} dismissed.` : 'Already gone.';
+});
+
+// ── Tools of the Deadeye (Cheat subclass) ─────────────────────────────────────
+// The Deadeye's bookkeeping, on top of Nim+'s Cheat automation when it is active
+// (Sneak Attack prompt, Vicious Opportunist) and on its own otherwise:
+//
+//   • Counters — Ricochet Shot and Interceptive Shot (INT/Safe Rest) and
+//     Impossible Angle (1/Field Rest) are native chargePool + chargeConsumer
+//     pairs on the features (pack JSON); the sheet shows and corrects them.
+//   • "Thrown attack?" — thrown weapons of a Deadeye get a checkbox in the
+//     activation dialog (the system cannot tell a thrown dagger from a stabbed
+//     one). It starts ticked for the Improvised Weapon, for Impossible Angle's
+//     attack and when the first target stands beyond the weapon's reach.
+//   • Ricochet Shot — after a thrown hit, with uses left: pick the second
+//     target (creatures within Range 4 of the first listed first, out-of-range
+//     ones selectable but flagged — never blocked) and the feature itself rolls
+//     ONE Sneak Attack die of the current size against it (its own damage card
+//     and Apply button; its consumer spends a use; an Undo card follows). A
+//     manual use from the sheet rolls the same die (fast-forwarded).
+//   • Impossible Angle — using it picks the thrown weapon and makes that attack
+//     at advantage FIRST (cancel = nothing spent); only then does the feature's
+//     own activation run (spends the 1/Field Rest use, the action). With Nim+,
+//     the hit carries the MAXIMUM Sneak Attack on the same roll without using
+//     the 1/turn Sneak Attack; without Nim+ a card states the number.
+//   • Interceptive Shot — target the attacker and use it: the attacker gets
+//     the on-hit framework's "disadvantage on next attack" mark (GM-relayed),
+//     tagged with the Cheat. When that attack misses, a card offers the Cheat a
+//     free thrown attack against it (button → weapon pick → attack, no actions).
+//   • Press the Advantage — a "Press the Advantage?" box (starts ticked when the
+//     target is Distracted/Taunted and follows Nim+'s Vicious Opportunist box).
+//     On a hit: ONE free second attack with the same weapon on the same creature;
+//     that follow-up cannot trigger another.
+//   • Hamstringer / Temple Strike — options in Nim+'s Sneak Attack prompt
+//     (hook `nim-plus-package.sneakAttackOptions`): each forgoes ⌊dice/2⌋ dice
+//     and applies its effect (speed 0 for 1 turn / Blinded + Stunned + a
+//     Deafened reminder for 2 turns) with an Undo card. Without Nim+ they stay
+//     manual ([M] lines).
+//   • Master Thrower — thrown weapons of its owner show Thrown range +4
+//     (derived data only; the stored item is untouched).
+//
+// The follow-ups (Ricochet, Press) run from the activate wrap AFTER the weapon's
+// own activation has fully resolved — Nim+'s lifecycle (its Sneak Attack card)
+// included — so a nested attack never interleaves with the first one.
+const DEADEYE_RICOCHET = 'ricochet-shot';
+const DEADEYE_INTERCEPT = 'interceptive-shot';
+const DEADEYE_ANGLE = 'impossible-angle';
+const DEADEYE_MASTER_THROWER = 'master-thrower';
+const DEADEYE_PRESS = 'press-the-advantage';
+const DEADEYE_HAMSTRINGER = 'hamstringer';
+const DEADEYE_TEMPLE = 'temple-strike';
+const DEADEYE_IMPROVISED = 'improvised-weapon';
+const DEADEYE_RICOCHET_POOL = 'ricochet-shot-uses';
+const DEADEYE_ANGLE_POOL = 'impossible-angle-uses';
+const DEADEYE_RICOCHET_RANGE = 4;
+const DEADEYE_THROWN_BONUS = 4;
+const DEADEYE_FIELD_CLASS = 'bcx-deadeye-field';
+const DEADEYE_EFFECT_FLAG = 'deadeyeEffect';
+const DEADEYE_INTERCEPT_FLAG = 'deadeyeIntercept';
+const NIM_PLUS_SNEAK_OPTIONS_HOOK = `${NIM_PLUS_ID}.sneakAttackOptions`;
+const DEADEYE_SNEAK_FALLBACK = [
+	[1, '1d6'],
+	[3, '1d8'],
+	[7, '2d8'],
+	[9, '2d10'],
+	[11, '2d12'],
+	[15, '2d20'],
+	[17, '3d20'],
+];
+
+// weapon uuid → { thrown, press } as the activation dialog left them.
+const deadeyeDialogState = new Map();
+// Weapons whose current attack is thrown by definition (Impossible Angle).
+const deadeyeForcedThrown = new Set();
+// Weapons making Press the Advantage's free attack (no second follow-up).
+const deadeyePressFollowUps = new Set();
+// Dialog roots already listening for the Vicious Opportunist box.
+const deadeyeWiredRoots = new WeakSet();
+
+function isWeaponObject(item) {
+	return item?.type === 'object' && item.system?.objectType === 'weapon';
+}
+
+function isThrownWeapon(item) {
+	const selected = item?.system?.properties?.selected;
+	return isWeaponObject(item) && Array.isArray(selected) && selected.includes('thrown');
+}
+
+function deadeyeOwns(actor, identifier) {
+	return actorOwnsFeature(actor, identifier, null);
+}
+
+// Nim+'s Cheat API while its class automation is on, else null (degrade).
+function nimPlusCheatApi() {
+	const mod = game.modules?.get?.(NIM_PLUS_ID);
+	if (!mod?.active) return null;
+	try {
+		if (game.settings.get(NIM_PLUS_ID, 'enableClassAutomation') === false) return null;
+	} catch {
+		// Setting not registered (older Nim+): trust the api's presence.
+	}
+	return mod.api?.cheat ?? null;
+}
+
+// The Cheat's current Sneak Attack dice { formula, count, faces } — Nim+'s own
+// reading when available, else the feature's "Level N: XdY" table.
+function deadeyeSneakDice(actor) {
+	const fromNimPlus = nimPlusCheatApi()?.sneakAttackDice?.(actor);
+	if (fromNimPlus?.faces) return fromNimPlus;
+	const feature = findOwnedFeature(actor, 'sneak-attack', 'Sneak Attack');
+	if (!feature) return null;
+	const plain = String(feature.system?.description ?? '').replace(/<[^>]+>/g, ' ');
+	const parsed = [...plain.matchAll(/level\s*(\d+)\s*:\s*(\d*d\d+)/gi)].map((m) => [Number(m[1]), m[2]]);
+	const table = parsed.length ? parsed : DEADEYE_SNEAK_FALLBACK;
+	const level = Math.max(1, getCharacterLevel(actor));
+	let best = null;
+	for (const [threshold, formula] of table) {
+		if (threshold <= level && (!best || threshold >= best[0])) best = [threshold, formula];
+	}
+	const match = /^(\d*)d(\d+)$/i.exec(best?.[1] ?? '');
+	return match ? { formula: best[1], count: Number(match[1] || 1), faces: Number(match[2]) } : null;
+}
+
+function deadeyeTokenDoc(token) {
+	return token?.document ?? token ?? null;
+}
+
+function deadeyeTargetDocs() {
+	return Array.from(game.user?.targets ?? [])
+		.map(deadeyeTokenDoc)
+		.filter((doc) => doc?.id);
+}
+
+function deadeyeStatuses(actor) {
+	const statuses = actor?.statuses;
+	if (statuses instanceof Set) return statuses;
+	return new Set(Array.isArray(statuses) ? statuses : []);
+}
+
+function deadeyeTargetDistracted(doc) {
+	const statuses = deadeyeStatuses(doc?.actor);
+	return statuses.has('distracted') || statuses.has('taunted');
+}
+
+// Thrown unless the first target is within the weapon's melee reach.
+function deadeyeDefaultThrown(actor, item, targetDoc = deadeyeTargetDocs()[0] ?? null) {
+	if (deadeyeForcedThrown.has(item?.uuid)) return true;
+	if (item?.system?.identifier === DEADEYE_IMPROVISED) return true;
+	if (!targetDoc) return false;
+	const ownToken = findActorTokenDoc(actor, targetDoc.parent ?? null);
+	if (!ownToken) return false;
+	const reach = Math.max(1, Number(item?.system?.properties?.reach?.max) || 1);
+	return tokenDistanceSpaces(ownToken, targetDoc) > reach;
+}
+
+function deadeyeShowsThrown(actor, item) {
+	return isThrownWeapon(item) && (deadeyeOwns(actor, DEADEYE_RICOCHET) || deadeyeOwns(actor, DEADEYE_MASTER_THROWER));
+}
+
+function deadeyeShowsPress(actor, item) {
+	return isWeaponObject(item) && deadeyeOwns(actor, DEADEYE_PRESS) && !deadeyePressFollowUps.has(item?.uuid);
+}
+
+// Checkbox rows in the system's activation dialog — same placement rules as
+// Nim+'s Vicious Opportunist box: appended last in the dialog body, borrowing a
+// native sibling's svelte-scoped class so the dialog's own styles apply.
+function injectDeadeyeControls(app, root) {
+	const actor = app?.actor;
+	const item = app?.item;
+	if (!actor || actor.type !== 'character' || !isWeaponObject(item)) return;
+	root.querySelectorAll(`.${DEADEYE_FIELD_CLASS}`).forEach((el) => el.remove());
+	const showThrown = deadeyeShowsThrown(actor, item);
+	const showPress = deadeyeShowsPress(actor, item);
+	if (!showThrown && !showPress) return;
+
+	const sibling = root.querySelector('.nimble-roll-modifiers-container');
+	const body = sibling?.parentElement ?? root.querySelector('.nimble-sheet__body');
+	if (!body) return;
+	const scoped = Array.from(sibling?.classList ?? []).find((name) => name.startsWith('svelte-')) ?? '';
+
+	const state = deadeyeDialogState.get(item.uuid) ?? { thrown: null, press: null };
+	if (showThrown && state.thrown === null) state.thrown = deadeyeDefaultThrown(actor, item);
+	if (showPress && state.press === null) {
+		const vicious = root.querySelector('[data-nim-plus-vicious]');
+		state.press = deadeyeTargetDistracted(deadeyeTargetDocs()[0]) || Boolean(vicious?.checked && !vicious.disabled);
+	}
+	deadeyeDialogState.set(item.uuid, state);
+
+	const row = (key, label, tooltip) => {
+		const container = document.createElement('div');
+		container.className = `nimble-roll-modifiers-container ${DEADEYE_FIELD_CLASS} ${scoped}`.trim();
+		container.innerHTML = `
+			<label class="${scoped}" data-tooltip="${escapeHtml(tooltip)}">
+				${label}
+				<input type="checkbox" class="modifier-item__checkbox ${scoped}" data-bcx-deadeye="${key}" ${state[key] ? 'checked' : ''} />
+			</label>`;
+		container.querySelector('input')?.addEventListener('change', (event) => {
+			state[key] = Boolean(event.target?.checked);
+		});
+		body.append(container);
+	};
+	if (showThrown) {
+		row(
+			'thrown',
+			'Thrown attack?',
+			'Tools of the Deadeye: this attack is thrown (Ricochet Shot after a hit; Trickshot blocks Twist the Blade).',
+		);
+	}
+	if (showPress) {
+		row(
+			'press',
+			'Press the Advantage?',
+			'Target is Distracted — on a hit, make one free second attack with this weapon against it.',
+		);
+		if (!deadeyeWiredRoots.has(root)) {
+			deadeyeWiredRoots.add(root);
+			root.addEventListener('change', (event) => {
+				if (!event.target?.matches?.('[data-nim-plus-vicious]') || !event.target.checked) return;
+				const box = root.querySelector('[data-bcx-deadeye="press"]');
+				if (box && !box.checked) {
+					box.checked = true;
+					const current = deadeyeDialogState.get(item.uuid);
+					if (current) current.press = true;
+				}
+			});
+		}
+	}
+}
+
+Hooks.on('renderItemActivationConfigDialog', (app, element) => {
+	try {
+		const root = element instanceof HTMLElement ? element : (element?.[0] ?? app?.element);
+		if (root) injectDeadeyeControls(app, root);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not add the Deadeye attack options`, error);
+	}
+});
+
+// Pick one weapon (auto when there is one). Resolves the item or null.
+async function pickDeadeyeWeapon(actor, weapons, title) {
+	if (!weapons.length) return null;
+	if (weapons.length === 1) return weapons[0];
+	const rows = weapons
+		.map(
+			(weapon, i) => `
+			<label class="bcx-deadeye-pick" style="display:flex;gap:8px;align-items:center;padding:3px 0">
+				<input type="radio" name="bcx-deadeye-weapon" value="${escapeHtml(weapon.id)}" ${i === 0 ? 'checked' : ''}>
+				<span>${escapeHtml(weapon.name)}</span>
+			</label>`,
+		)
+		.join('');
+	const id = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${title}` },
+		content: `<p>Throw which weapon?</p><div>${rows}</div>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Throw',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-deadeye-weapon"]:checked')?.value ?? weapons[0].id;
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return typeof id === 'string' ? (weapons.find((weapon) => weapon.id === id) ?? null) : null;
+}
+
+function deadeyeThrownWeapons(actor) {
+	const thrown = listEmbeddedItems(actor).filter(isThrownWeapon);
+	const equipped = thrown.filter((weapon) => weapon.system?.equipped === true);
+	return equipped.length ? equipped : thrown;
+}
+
+// Pre-activation half of the activate wrap. Returns null (nothing to do),
+// { blocked: true }, { options } (replacement activation options) and/or
+// { complete(result) } (run after the activation resolved).
+async function prepareDeadeyeActivation(item, options = {}) {
+	const actor = item?.actor;
+	if (!actor || actor.type !== 'character') return null;
+	if (isWeaponObject(item)) {
+		const followUps = deadeyeOwns(actor, DEADEYE_RICOCHET) || deadeyeOwns(actor, DEADEYE_PRESS);
+		if (!followUps && !deadeyeOwns(actor, DEADEYE_MASTER_THROWER)) return null;
+		// A fresh dialog state per attack (a cancelled dialog must not leak into the next).
+		deadeyeDialogState.delete(item.uuid);
+		if (!followUps) return null;
+		const targets = deadeyeTargetDocs();
+		return { complete: (result) => deadeyeWeaponFollowUps(item, result, targets) };
+	}
+	if (item.type !== 'feature') return null;
+	const identifier = item.system?.identifier;
+	if (identifier === DEADEYE_RICOCHET) {
+		const dice = deadeyeSneakDice(actor);
+		return dice ? { options: { ...options, fastForward: true, rollFormula: `1d${dice.faces}` } } : null;
+	}
+	if (identifier === DEADEYE_INTERCEPT && !deadeyeTargetDocs().length) {
+		ui.notifications?.warn(`Target the attacker, then use ${item.name} again (nothing was spent).`);
+		return { blocked: true };
+	}
+	if (identifier === DEADEYE_ANGLE) return prepareImpossibleAngle(item, actor);
+	return null;
+}
+
+// Impossible Angle: the attack first; the feature (use + action) only if it was made.
+async function prepareImpossibleAngle(item, actor) {
+	const pool = getChargePoolEntry(actor, DEADEYE_ANGLE_POOL, { item });
+	// Out of uses: let the system refuse the activation with its own message.
+	if (pool && pool.current < 1) return null;
+	const weapon = await pickDeadeyeWeapon(actor, deadeyeThrownWeapons(actor), item.name);
+	if (!weapon) {
+		if (!deadeyeThrownWeapons(actor).length) {
+			ui.notifications?.warn(`${actor.name} has no thrown weapon for ${item.name} (nothing was spent).`);
+		}
+		return { blocked: true };
+	}
+	if (!deadeyeTargetDocs().length) {
+		ui.notifications?.info(`${item.name}: no target selected — the attack card will have nobody to apply damage to.`);
+	}
+	const card = await runImpossibleAngleAttack(actor, weapon, item);
+	return card ? null : { blocked: true };
+}
+
+async function runImpossibleAngleAttack(actor, weapon, angleItem) {
+	const api = nimPlusCheatApi();
+	deadeyeForcedThrown.add(weapon.uuid);
+	api?.armSneakAttack?.(weapon, { maximize: true, consumeUse: false, source: angleItem?.name ?? 'Impossible Angle' });
+	let card = null;
+	try {
+		card = await weapon.activate({ rollMode: 1 });
+	} finally {
+		api?.disarmSneakAttack?.(weapon);
+		deadeyeForcedThrown.delete(weapon.uuid);
+	}
+	if (card && !api && card.system?.isMiss !== true) {
+		const dice = deadeyeSneakDice(actor);
+		if (dice) {
+			await ChatMessage.create({
+				speaker: ChatMessage.getSpeaker({ actor }),
+				flavor: `<strong>${escapeHtml(angleItem?.name ?? 'Impossible Angle')}</strong>`,
+				content: `<p>Hit! Add your <strong>maximum Sneak Attack damage</strong>: ${escapeHtml(dice.formula)} = <strong>${dice.count * dice.faces}</strong>.</p>`,
+			});
+		}
+	}
+	return card;
+}
+
+// After a Deadeye's weapon attack resolved: Ricochet Shot, then Press the Advantage.
+async function deadeyeWeaponFollowUps(item, result, targets) {
+	const state = deadeyeDialogState.get(item.uuid) ?? {};
+	deadeyeDialogState.delete(item.uuid);
+	if (!result || result.system?.isMiss === true) return;
+	const actor = item.actor;
+	const first = targets[0] ?? null;
+	if (!actor || !first) return;
+	const thrown =
+		deadeyeForcedThrown.has(item.uuid) ||
+		(state.thrown ?? (deadeyeShowsThrown(actor, item) && deadeyeDefaultThrown(actor, item, first))) === true;
+	if (thrown) {
+		try {
+			await offerRicochetShot(actor, first);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Ricochet Shot failed`, error);
+		}
+	}
+	const press = state.press ?? deadeyeTargetDistracted(first);
+	if (press === true && deadeyeOwns(actor, DEADEYE_PRESS) && !deadeyePressFollowUps.has(item.uuid)) {
+		await pressTheAdvantage(item, first);
+	}
+}
+
+function deadeyeRicochetCandidates(actor, firstDoc) {
+	const scene = firstDoc?.parent ?? canvas?.scene ?? null;
+	const ownToken = findActorTokenDoc(actor, scene);
+	const friendly = CONST.TOKEN_DISPOSITIONS?.FRIENDLY ?? 1;
+	return Array.from(scene?.tokens ?? [])
+		.filter((doc) => doc?.id && doc.id !== firstDoc.id && doc.id !== ownToken?.id && !doc.hidden && doc.actor)
+		.filter((doc) => doc.disposition !== friendly && !isTokenDefeated(doc))
+		.map((doc) => ({ doc, distance: tokenDistanceSpaces(firstDoc, doc) }))
+		.sort((a, b) => a.distance - b.distance);
+}
+
+// Ricochet Shot: pick the second target, then roll the feature against it.
+async function offerRicochetShot(actor, firstDoc) {
+	const feature = findOwnedFeature(actor, DEADEYE_RICOCHET, 'Ricochet Shot');
+	if (!feature) return false;
+	const pool = getChargePoolEntry(actor, DEADEYE_RICOCHET_POOL, { item: feature });
+	if (!pool || pool.current < 1) return false;
+	const dice = deadeyeSneakDice(actor);
+	if (!dice) return false;
+	const candidates = deadeyeRicochetCandidates(actor, firstDoc);
+	if (!candidates.length) return false;
+
+	const rows = candidates
+		.map(({ doc, distance }, i) => {
+			const far = distance > DEADEYE_RICOCHET_RANGE;
+			return `
+			<label class="bcx-deadeye-pick" style="display:flex;gap:8px;align-items:center;padding:3px 0">
+				<input type="radio" name="bcx-ricochet-target" value="${escapeHtml(doc.id)}" ${i === 0 ? 'checked' : ''}>
+				<span>${escapeHtml(doc.name)} — ${distance} space${distance === 1 ? '' : 's'} from ${escapeHtml(firstDoc.name)}${far ? ' <em>(beyond Range 4)</em>' : ''}</span>
+			</label>`;
+		})
+		.join('');
+	const picked = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — Ricochet Shot` },
+		content:
+			`<p>Thrown hit! Ricochet into a second creature within Range 4 of ${escapeHtml(firstDoc.name)} for <strong>1d${dice.faces}</strong> (one Sneak Attack die)?</p>` +
+			`<div>${rows}</div><p><em>${pool.current}/${pool.max} uses left (INT/Safe Rest).</em></p>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Ricochet',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-ricochet-target"]:checked')?.value ?? candidates[0].doc.id;
+				},
+			},
+			{ action: 'cancel', label: 'Not now', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	const target = typeof picked === 'string' ? candidates.find((c) => c.doc.id === picked)?.doc : null;
+	if (!target) return false;
+
+	const card = await withUserTargets([target], () => feature.activate({}));
+	if (!card) return false;
+	await postUndoCard({
+		actor,
+		flavor: feature.name,
+		text: `<p>${escapeHtml(actor.name)} ricochets into <strong>${escapeHtml(target.name)}</strong> (1d${dice.faces}), spending <strong>1 ${escapeHtml(feature.name)}</strong> use.</p>`,
+		undoAction: {
+			type: 'poolDelta',
+			data: { actorUuid: actor.uuid, poolKey: DEADEYE_RICOCHET_POOL, itemId: feature.id, delta: 1, label: feature.name },
+		},
+	});
+	return true;
+}
+
+// Press the Advantage: one free follow-up attack (no action spent: the item is
+// activated directly, not through the sheet's action-charging path).
+async function pressTheAdvantage(item, targetDoc) {
+	deadeyePressFollowUps.add(item.uuid);
+	try {
+		await ChatMessage.create({
+			speaker: ChatMessage.getSpeaker({ actor: item.actor }),
+			flavor: '<strong>Press the Advantage</strong>',
+			content: `<p>Hit on a Distracted target — a free second attack with ${escapeHtml(item.name)} against ${escapeHtml(targetDoc.name)}.</p>`,
+		});
+		return await withUserTargets([targetDoc], () => item.activate({}));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Press the Advantage failed`, error);
+		return null;
+	} finally {
+		deadeyePressFollowUps.delete(item.uuid);
+	}
+}
+
+// ── Interceptive Shot ──
+async function handleDeadeyeUseItem(item, context) {
+	if (item?.type !== 'feature' || item.system?.identifier !== DEADEYE_INTERCEPT) return;
+	const actor = item.actor;
+	if (!actor) return;
+	const targets = Array.from(context?.targets ?? game.user?.targets ?? []).map(deadeyeTokenDoc).filter((doc) => doc?.uuid);
+	for (const doc of targets) {
+		await runAsGM('deadeyeInterceptMark', { tokenUuid: doc.uuid, cheatUuid: actor.uuid, name: item.name, img: item.img });
+	}
+}
+
+registerGMRelayOp('deadeyeInterceptMark', async ({ tokenUuid, cheatUuid, name, img }, { user } = {}) => {
+	const cheat = resolveActorByUuid(cheatUuid);
+	if (!userMayActFor(user, cheat)) return relayDenied('deadeyeInterceptMark', user, cheat?.name ?? cheatUuid);
+	const target = resolveActorByUuid(tokenUuid);
+	if (!target) return false;
+	await target.createEmbeddedDocuments('ActiveEffect', [
+		{
+			name: `${name} (disadvantage on next attack)`,
+			img: img || 'icons/svg/downgrade.svg',
+			description: `<p>Disadvantage on your next attack (${escapeHtml(cheat?.name ?? 'the Cheat')}'s ${escapeHtml(name)}).</p>`,
+			disabled: false,
+			transfer: false,
+			flags: {
+				[MODULE_ID]: {
+					[DISADVANTAGE_MARK_FLAG]: true,
+					sourceName: name,
+					[DEADEYE_INTERCEPT_FLAG]: { cheatUuid },
+				},
+			},
+		},
+	]);
+	await ChatMessage.create({
+		speaker: ChatMessage.getSpeaker({ actor: cheat }),
+		flavor: `<strong>${escapeHtml(name)}</strong>`,
+		content: `<p><strong>${escapeHtml(target.name)}</strong>'s next attack has disadvantage. If it misses, ${escapeHtml(cheat?.name ?? 'the Cheat')} gets a free thrown attack against it.</p>`,
+	});
+	return true;
+});
+
+// Called by the activate wrap once an attacker's disadvantage marks were used.
+async function notifyInterceptiveMiss(item, marks, result) {
+	if (result?.system?.isMiss !== true) return;
+	const attacker = item?.actor;
+	const attackerToken = attacker?.token ?? findActorTokenDoc(attacker) ?? null;
+	for (const mark of marks) {
+		const info = mark?.flags?.[MODULE_ID]?.[DEADEYE_INTERCEPT_FLAG];
+		const cheat = info?.cheatUuid ? resolveActorByUuid(info.cheatUuid) : null;
+		if (!cheat) continue;
+		await ChatMessage.create({
+			speaker: ChatMessage.getSpeaker({ actor: cheat }),
+			flavor: '<strong>Interceptive Shot</strong>',
+			content:
+				`<p><strong>${escapeHtml(attacker?.name ?? 'The attacker')}</strong> missed — ${escapeHtml(cheat.name)} may make a free thrown weapon attack against it.</p>` +
+				'<button type="button" class="bcx-intercept-attack" data-bcx-intercept><i class="fa-solid fa-bullseye"></i> Free thrown attack</button>',
+			flags: {
+				[MODULE_ID]: {
+					[DEADEYE_INTERCEPT_FLAG]: { cheatUuid: info.cheatUuid, attackerTokenUuid: attackerToken?.uuid ?? null, done: false },
+				},
+			},
+		});
+	}
+}
+
+async function interceptFreeAttack(message) {
+	const info = message?.flags?.[MODULE_ID]?.[DEADEYE_INTERCEPT_FLAG];
+	if (!info || info.done) return false;
+	const cheat = resolveActorByUuid(info.cheatUuid);
+	if (!cheat) return false;
+	let attackerToken = null;
+	try {
+		attackerToken = info.attackerTokenUuid ? fromUuidSync(info.attackerTokenUuid) : null;
+	} catch {
+		attackerToken = null;
+	}
+	const weapon = await pickDeadeyeWeapon(cheat, deadeyeThrownWeapons(cheat), 'Interceptive Shot');
+	if (!weapon) {
+		if (!deadeyeThrownWeapons(cheat).length) ui.notifications?.warn(`${cheat.name} has no thrown weapon.`);
+		return false;
+	}
+	deadeyeForcedThrown.add(weapon.uuid);
+	let card = null;
+	try {
+		card = attackerToken
+			? await withUserTargets([attackerToken], () => weapon.activate({}))
+			: await weapon.activate({});
+	} finally {
+		deadeyeForcedThrown.delete(weapon.uuid);
+	}
+	if (!card) return false;
+	if (game.user?.isGM || message.isAuthor) {
+		await message.update({ [`flags.${MODULE_ID}.${DEADEYE_INTERCEPT_FLAG}.done`]: true });
+	} else {
+		await runAsGM('deadeyeInterceptDone', { messageId: message.id });
+	}
+	return true;
+}
+
+registerGMRelayOp('deadeyeInterceptDone', async ({ messageId }, { user } = {}) => {
+	const message = game.messages?.get(messageId);
+	const info = message?.flags?.[MODULE_ID]?.[DEADEYE_INTERCEPT_FLAG];
+	if (!info) return false;
+	const cheat = resolveActorByUuid(info.cheatUuid);
+	if (!userMayActFor(user, cheat)) return relayDenied('deadeyeInterceptDone', user, cheat?.name ?? info.cheatUuid);
+	await message.update({ [`flags.${MODULE_ID}.${DEADEYE_INTERCEPT_FLAG}.done`]: true });
+	return true;
+});
+
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		const info = message?.flags?.[MODULE_ID]?.[DEADEYE_INTERCEPT_FLAG];
+		const button = info ? html.querySelector?.('[data-bcx-intercept]') : null;
+		if (!button) return;
+		if (info.done) {
+			const note = document.createElement('p');
+			note.innerHTML = '<em>Free attack made.</em>';
+			button.replaceWith(note);
+			return;
+		}
+		const cheat = resolveActorByUuid(info.cheatUuid);
+		if (!game.user?.isGM && !cheat?.isOwner) {
+			button.remove();
+			return;
+		}
+		button.addEventListener('click', (event) => {
+			event.preventDefault();
+			button.disabled = true;
+			void interceptFreeAttack(message)
+				.catch((error) => console.warn(`[${MODULE_ID}] Interceptive Shot attack failed`, error))
+				.finally(() => {
+					button.disabled = false;
+				});
+		});
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not wire the Interceptive Shot card`, error);
+	}
+});
+
+// ── Hamstringer / Temple Strike (Nim+ Sneak Attack prompt options) ──
+function addDeadeyeSneakOptions(context) {
+	const actor = context?.actor;
+	if (!actor) return;
+	const item = context.item;
+	if (item?.uuid) {
+		const state = deadeyeDialogState.get(item.uuid);
+		if (deadeyeForcedThrown.has(item.uuid) || state?.thrown === true) context.thrown = true;
+		else if (state?.thrown === false && context.thrown === null) context.thrown = false;
+	}
+	const half = (count) => Math.floor(Number(count) / 2);
+	if (deadeyeOwns(actor, DEADEYE_HAMSTRINGER)) {
+		context.options.push({
+			id: 'bcx-hamstringer',
+			label: 'Hamstringer',
+			hint: "the target's speed is 0 for 1 turn",
+			forgoDice: half,
+			apply: ({ targets }) => applyDeadeyeRider(actor, 'hamstringer', targets),
+		});
+	}
+	if (deadeyeOwns(actor, DEADEYE_TEMPLE)) {
+		context.options.push({
+			id: 'bcx-temple-strike',
+			label: 'Temple Strike',
+			hint: 'the target is Blinded, Stunned and Deafened for 2 turns',
+			forgoDice: half,
+			apply: ({ targets }) => applyDeadeyeRider(actor, 'temple', targets),
+		});
+	}
+}
+
+Hooks.on(NIM_PLUS_SNEAK_OPTIONS_HOOK, (context) => {
+	try {
+		addDeadeyeSneakOptions(context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not add the Deadeye Sneak Attack options`, error);
+	}
+});
+
+async function applyDeadeyeRider(actor, kind, targets) {
+	const docs = Array.from(targets ?? []).map(deadeyeTokenDoc).filter((doc) => doc?.uuid);
+	if (!docs.length) {
+		ui.notifications?.info(`${kind === 'temple' ? 'Temple Strike' : 'Hamstringer'}: no target — apply the effect by hand.`);
+		return;
+	}
+	for (const doc of docs) await runAsGM('deadeyeRider', { kind, tokenUuid: doc.uuid, cheatUuid: actor.uuid });
+}
+
+function deadeyeConditionImg(condition, fallback) {
+	return CONFIG.NIMBLE?.conditionDefaultImages?.[condition] ?? fallback;
+}
+
+function deadeyeRiderEffects(kind) {
+	if (kind === 'hamstringer') {
+		return [
+			{
+				name: 'Hamstrung (speed 0)',
+				img: 'icons/svg/leg.svg',
+				description: '<p>Speed 0 for 1 turn (Hamstringer).</p>',
+				duration: { value: 1, units: 'rounds' },
+				system: {
+					changes: ['walk', 'climb', 'fly', 'swim', 'burrow'].map((mode) => ({
+						key: `system.attributes.movement.${mode}`,
+						type: 'override',
+						value: '0',
+						phase: 'initial',
+					})),
+				},
+				flags: { [MODULE_ID]: { [DEADEYE_EFFECT_FLAG]: 'hamstringer' } },
+			},
+		];
+	}
+	const duration = { value: 2, units: 'rounds' };
+	return [
+		{
+			name: `${conditionLabel('blinded')} (Temple Strike)`,
+			img: deadeyeConditionImg('blinded', 'icons/svg/blind.svg'),
+			statuses: ['blinded'],
+			duration,
+			flags: { [MODULE_ID]: { [DEADEYE_EFFECT_FLAG]: 'temple' } },
+		},
+		{
+			name: `${conditionLabel('stunned')} (Temple Strike)`,
+			img: deadeyeConditionImg('stunned', 'icons/svg/daze.svg'),
+			statuses: ['stunned'],
+			duration,
+			flags: { [MODULE_ID]: { [DEADEYE_EFFECT_FLAG]: 'temple' } },
+		},
+		{
+			// Not a Nimble condition: a reminder only, no mechanics attached.
+			name: 'Deafened (Temple Strike)',
+			img: 'icons/svg/deaf.svg',
+			description: '<p>Deafened for 2 turns (Temple Strike). Not a Nimble condition — the GM rules what it means.</p>',
+			duration,
+			flags: { [MODULE_ID]: { [DEADEYE_EFFECT_FLAG]: 'temple' } },
+		},
+	];
+}
+
+registerGMRelayOp('deadeyeRider', async ({ kind, tokenUuid, cheatUuid }, { user } = {}) => {
+	const cheat = resolveActorByUuid(cheatUuid);
+	if (!userMayActFor(user, cheat)) return relayDenied('deadeyeRider', user, cheat?.name ?? cheatUuid);
+	const target = resolveActorByUuid(tokenUuid);
+	if (!target) return false;
+	const created = (await target.createEmbeddedDocuments('ActiveEffect', deadeyeRiderEffects(kind))) ?? [];
+	const label = kind === 'temple' ? 'Temple Strike' : 'Hamstringer';
+	const what =
+		kind === 'temple'
+			? 'is <strong>Blinded</strong> and <strong>Stunned</strong> for 2 turns (and Deafened — not a Nimble condition, a reminder only)'
+			: "has <strong>speed 0</strong> for 1 turn";
+	await postUndoCard({
+		actor: cheat,
+		flavor: label,
+		text: `<p><strong>${escapeHtml(target.name)}</strong> ${what}.</p>`,
+		undoAction: {
+			type: 'deadeyeRiderEffects',
+			data: { actorUuid: target.uuid, effectIds: created.map((effect) => effect.id).filter(Boolean) },
+		},
+	});
+	return true;
+});
+
+registerUndoHandler('deadeyeRiderEffects', async ({ actorUuid, effectIds }) => {
+	const target = resolveActorByUuid(actorUuid);
+	if (!target) return false;
+	const ids = (effectIds ?? []).filter((id) => target.effects?.get?.(id));
+	if (ids.length) await target.deleteEmbeddedDocuments('ActiveEffect', ids);
+	return `${ids.length} effect${ids.length === 1 ? '' : 's'} removed.`;
+});
+
+// ── Master Thrower: +4 thrown range (derived data) ──
+function applyMasterThrowerRange(item) {
+	if (!isThrownWeapon(item)) return;
+	const actor = item.actor ?? item.parent;
+	if (!actor || actor.type !== 'character' || !deadeyeOwns(actor, DEADEYE_MASTER_THROWER)) return;
+	const properties = item.system?.properties;
+	const base = Number(properties?.thrownRange);
+	if (!properties || !Number.isFinite(base)) return;
+	properties.thrownRange = base + DEADEYE_THROWN_BONUS;
+}
+
+function installMasterThrowerRange() {
+	const proto = CONFIG?.NIMBLE?.Item?.documentClasses?.object?.prototype;
+	if (!proto || Object.prototype.hasOwnProperty.call(proto, '__blueCodexMasterThrower')) return false;
+	const original = proto.prepareDerivedData;
+	proto.prepareDerivedData = function blueCodexMasterThrowerDerived(...args) {
+		const result = original?.apply(this, args);
+		try {
+			applyMasterThrowerRange(this);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Master Thrower range failed for ${this?.name}`, error);
+		}
+		return result;
+	};
+	proto.__blueCodexMasterThrower = true;
+	return true;
+}
+
+Hooks.once('init', () => {
+	try {
+		installMasterThrowerRange();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not install the Master Thrower range`, error);
+	}
+});
 
 // ── Specter: Soul Touched workflow ───────────────────────────────────────────
 // Soul Twist carries a native `markTarget` rule (flagKey `soul-touched`). Nimble
@@ -6572,7 +9341,12 @@ function levelScaledSummonCount(caster) {
 // past the live limit (summonCountCap). Fans out beside the caster like the
 // Reanimated Soul spawn; each token gets the usual provenance and feature boosts.
 async function spawnLevelScaledSummons(item, caster, summon, baseActor, scene) {
-	const live = findLiveSummons(caster, summon.template).length;
+	// Outside combat only My Favored Pet's single Shadow may be summoned.
+	if (summon.combatOnly && !game.combat?.started) {
+		await spawnFavoredPet(item, caster, summon, baseActor, scene);
+		return;
+	}
+	const live = findActiveSummons(caster, summon.template).length;
 	const cap = summonCountCap(caster, summon);
 	const wanted = levelScaledSummonCount(caster);
 	const count = Math.max(0, Math.min(wanted, cap - live));
@@ -6609,7 +9383,7 @@ async function spawnLevelScaledSummons(item, caster, summon, baseActor, scene) {
 }
 
 async function spawnSoulPowerMinions(item, caster, summon, baseActor, scene) {
-	const live = findLiveSummons(caster, summon.template).length;
+	const live = findActiveSummons(caster, summon.template).length;
 	const count = Math.max(0, Math.min(soulPowerDice(caster), summonCountCap(caster, summon) - live));
 	if (count <= 0) return;
 	const origin = computeSummonSpawnPosition(caster, scene);
@@ -7199,6 +9973,39 @@ function isShadowmancerActor(actor) {
 	return false;
 }
 
+// Nimble system 0.9+ runs Pilfered Power itself: the Shadowmancer class item
+// declares `system.spellcasting` = { castAtHighestTier, cost: { poolIdentifier:
+// 'pilfered-power', amount, overdraftConsequence: 'halfMaxHpDamage',
+// overdraftMaxLevel } } (src/utils/spell/spellCost.ts), the tier cap comes from
+// the grant thresholds, and the Shadowmancer has no mana at all. With that
+// declaration present the legacy mana model below (cap table, flat 1-mana cost,
+// mana fudge, forced-tier dialog, backlash) stands down, and only the invocations
+// the system does not know are layered on its pool and overdraft: Hungering
+// Shadows' free cast and Greedy Pact's save. Returns the declaration, or null
+// (an older system: the legacy model runs as before).
+function nativePilferedPower(actor) {
+	if (!actor) return null;
+	for (const item of actor.items ?? []) {
+		if (item.type !== 'class') continue;
+		const id = item.system?.identifier || item.name?.slugify?.({ strict: true }) || '';
+		if (id !== 'shadowmancer') continue;
+		const cost = item.system?.spellcasting?.cost;
+		const poolIdentifier = String(cost?.poolIdentifier ?? '').trim();
+		if (!poolIdentifier) return null;
+		const classLevel = Number(actor.levels?.classes?.shadowmancer ?? item.system?.classLevel ?? 0);
+		const maxLevel = cost?.overdraftMaxLevel;
+		const amount = Math.floor(Number(cost?.amount));
+		return {
+			poolIdentifier,
+			amount: Number.isFinite(amount) && amount > 0 ? amount : 1,
+			consequence: cost?.overdraftConsequence ?? '',
+			// Past the declared level the system leaves the consequence to the table.
+			atTable: typeof maxLevel === 'number' && classLevel > maxLevel,
+		};
+	}
+	return null;
+}
+
 // Pre-cast mana snapshot per caster (uuid → mana.current before the system's own
 // deduction), written in preUseItem and consumed in useItem. Single-user casting
 // means one live entry at a time; keyed by uuid to stay safe across actors.
@@ -7242,11 +10049,18 @@ function onRenderUpcastDialog(app) {
 		if (tier < 1) return;
 		if (app.__blueCodexUpcastPrepared) return;
 		app.__blueCodexUpcastPrepared = true;
+		// System 0.9+ pins the tier itself (castAtHighestTier): only the notice.
+		if (nativePilferedPower(actor)) {
+			injectPilferedPowerNotice(app, shadowmancerCastPlans.get(actor.uuid));
+			return;
+		}
 
 		const cap = Number(actor.system?.resources?.highestUnlockedSpellTier) || 0;
 		const scaling = item.system?.scaling;
 		const canScale = !!scaling && scaling.mode && scaling.mode !== 'none';
 		const doUpcast = canScale && cap > tier;
+		// Free cast (Hungering Shadows) / overdraft warning (+ Greedy Pact result).
+		injectPilferedPowerNotice(app, shadowmancerCastPlans.get(actor.uuid));
 		const choices =
 			doUpcast && scaling.mode === 'upcastChoice' && Array.isArray(scaling.choices)
 				? scaling.choices
@@ -7339,12 +10153,17 @@ function onSpellPreUse(item, context) {
 		const actor = item.actor;
 		if (!isShadowmancerActor(actor)) return true;
 		if ((Number(item.system?.tier) || 0) < 1) return true; // cantrips are free/untouched
-		const fudge = shadowmancerManaFudge.get(actor.uuid);
+		if (nativePilferedPower(actor)) return true; // the system charges the pool itself
+		// The fudge stores the plain real value (see runWrappedActivate) — 0 at an
+		// overdraft, so test presence, not truthiness: reading the fudged in-memory
+		// mana instead would hide the overdraft and skip the patron's backlash.
 		let realMana;
-		if (fudge) {
+		if (shadowmancerManaFudge.has(actor.uuid)) {
+			const fudge = shadowmancerManaFudge.get(actor.uuid);
 			shadowmancerManaFudge.delete(actor.uuid);
-			if (fudge.resources?.mana) fudge.resources.mana.current = fudge.realMana;
-			realMana = fudge.realMana;
+			realMana = typeof fudge === 'number' ? fudge : Number(fudge?.realMana) || 0;
+			const mana = actor.system?.resources?.mana;
+			if (mana) mana.current = realMana;
 		} else {
 			realMana = Number(actor.system?.resources?.mana?.current) || 0;
 		}
@@ -7360,11 +10179,16 @@ function onSpellPreUse(item, context) {
 
 // Overdraft (Pilfered Power): a tiered cast made with no remaining uses draws the
 // patron's notice — take floor(maxHP/2) damage via the system's own applyDamage
-// (temp-then-value), with a plain HP update as a fallback.
-async function applyPatronBacklash(actor) {
+// (temp-then-value), with a plain HP update as a fallback. `plan` is the cast's
+// pre-activate plan (preparePilferedPowerCast): its `damage` already reflects a
+// Greedy Pact save (10–19: only 10; 20+: none). The damage posts an Undo card that
+// gives the HP back.
+async function applyPatronBacklash(actor, plan = null) {
 	try {
-		const maxHp = Number(actor.system?.attributes?.hp?.max) || 0;
-		const damage = Math.floor(maxHp / 2);
+		const damage = Math.max(0, Math.floor(plan?.overdraft ? Number(plan.damage) || 0 : patronBacklashFullDamage(actor)));
+		const hp = actor.system?.attributes?.hp ?? {};
+		const beforeValue = Number(hp.value) || 0;
+		const beforeTemp = Number(hp.temp) || 0;
 		if (damage > 0) {
 			if (typeof actor.applyDamage === 'function') {
 				await actor.applyDamage(damage);
@@ -7379,15 +10203,49 @@ async function applyPatronBacklash(actor) {
 				});
 			}
 		}
-		postSummonChat(
-			actor,
-			`<p><em>Your patron takes notice.</em> ${escapeHtml(actor.name)} suffers <strong>${damage}</strong> damage (half max HP) for casting beyond Pilfered Power's limit.</p>`,
-			'Pilfered Power',
-		);
+		// The banked Greedy Pact save is spent on this backlash.
+		greedyPactSaves.delete(actor.uuid);
+		const after = actor.system?.attributes?.hp ?? {};
+		const lostValue = Math.max(0, beforeValue - (Number(after.value) || 0));
+		const lostTemp = Math.max(0, beforeTemp - (Number(after.temp) || 0));
+		let text = `<p><em>Your patron takes notice.</em> ${escapeHtml(actor.name)} suffers <strong>${damage}</strong> damage${
+			plan?.save ? '' : ' (half max HP)'
+		} for casting beyond Pilfered Power's limit.</p>`;
+		if (plan?.save) text += `<p>${greedyPactOutcomeText(plan)}</p>`;
+		else if (findGreedyPact(actor)) {
+			text += '<p>Greedy Pact: roll the STR save by hand (10–19: only 10 damage; 20+: none) and Undo/adjust.</p>';
+		}
+		if (damage > 0 && (lostValue || lostTemp)) {
+			text += '<p><em>Undo gives the HP back (adjust Wounds by hand if one was taken).</em></p>';
+			await postUndoCard({
+				actor,
+				flavor: 'Pilfered Power',
+				text,
+				undoAction: { type: 'patronBacklash', data: { actorUuid: actor.uuid, lostValue, lostTemp } },
+			});
+		} else {
+			postSummonChat(actor, text, 'Pilfered Power');
+		}
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] patron backlash failed`, error);
 	}
 }
+
+// Undo of a patron backlash: give the lost HP (and temp HP) back, capped at max.
+registerUndoHandler('patronBacklash', async ({ actorUuid, lostValue, lostTemp }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	const hp = actor.system?.attributes?.hp ?? {};
+	const max = Number(hp.max) || 0;
+	const back = Math.max(0, Number(lostValue) || 0);
+	const backTemp = Math.max(0, Number(lostTemp) || 0);
+	const value = (Number(hp.value) || 0) + back;
+	await actor.update({
+		'system.attributes.hp.value': max > 0 ? Math.min(max, value) : value,
+		'system.attributes.hp.temp': (Number(hp.temp) || 0) + backTemp,
+	});
+	return `${back + backTemp} HP given back.`;
+});
 
 // useItem correction: enforce the flat 1-mana cost regardless of the tier the
 // system deducted for, and apply overdraft damage when the caster had no uses
@@ -7399,15 +10257,99 @@ async function applyShadowmancerFlatCost(item, _context) {
 	// against a snapshot leaked by a tiered cast that aborted after onSpellPreUse).
 	if ((Number(item.system?.tier) || 0) < 1) return;
 	const actor = item.actor;
+	const native = nativePilferedPower(actor);
+	if (native) {
+		await settleNativePilferedPower(item, actor, native);
+		return;
+	}
 	if (!actor || !shadowmancerPreCastMana.has(actor.uuid)) return;
-	const preMana = shadowmancerPreCastMana.get(actor.uuid);
+	const preMana = Number(shadowmancerPreCastMana.get(actor.uuid)) || 0;
 	shadowmancerPreCastMana.delete(actor.uuid);
-	const desired = Math.max(0, preMana - 1);
+	// The plan the activate wrap made before the dialog: a Hungering Shadows free
+	// cast, or an overdraft (with its Greedy Pact outcome). No plan (a cast that
+	// bypassed the wrap): decide the free cast now, a backlash at full damage.
+	const plan = shadowmancerCastPlans.get(actor.uuid) ?? null;
+	shadowmancerCastPlans.delete(actor.uuid);
+	const hungering = !plan || plan.free ? findHungeringShadowsCharge(actor) : null;
+	const desired = hungering ? Math.max(0, preMana) : Math.max(0, preMana - 1);
 	const current = Number(actor.system?.resources?.mana?.current) || 0;
 	if (current !== desired) {
 		await actor.update({ 'system.resources.mana.current': desired });
 	}
-	if (preMana <= 0) await applyPatronBacklash(actor);
+	if (hungering) {
+		await spendPoolWithUndo(actor, HUNGERING_SHADOWS_POOL, 1, {
+			item: hungering.feature,
+			label: 'Hungering Shadows free cast',
+			reason: `${item.name} cost no use of Pilfered Power`,
+			flavor: 'Hungering Shadows',
+		});
+		return;
+	}
+	if (preMana <= 0) await applyPatronBacklash(actor, plan?.overdraft ? plan : null);
+}
+
+// A cancelled cast gives back the Hungering Shadows top-up of the system's pool.
+async function revertPilferedPowerTopUp(actor, plan) {
+	if (!actor || !plan?.bumpedPool) return;
+	const native = nativePilferedPower(actor);
+	const pool = native ? getChargePoolEntry(actor, native.poolIdentifier) : null;
+	if (pool) await setChargePoolCurrent(pool, plan.bumpedPool.before);
+}
+
+// useItem, system 0.9+ (the system has already charged the pool and, on an
+// overdraw, dealt its half-max-HP backlash):
+//   • Hungering Shadows free cast — the charge the system took is given back
+//     (or was topped up beforehand, for an empty pool), and the banked free cast
+//     is spent with an Undo card;
+//   • Greedy Pact — the save rolled before the cast caps the backlash: 10–19
+//     keeps only 10 damage, 20+ none (the spell was already cast 1 tier higher);
+//     the difference is given back as HP, reported on a card.
+async function settleNativePilferedPower(item, actor, native) {
+	const plan = shadowmancerCastPlans.get(actor.uuid) ?? null;
+	shadowmancerCastPlans.delete(actor.uuid);
+	if (!plan) return;
+	if (plan.free) {
+		const hungering = findHungeringShadowsCharge(actor);
+		if (!plan.bumpedPool) {
+			const pool = getChargePoolEntry(actor, native.poolIdentifier);
+			if (pool) await setChargePoolCurrent(pool, pool.current + native.amount);
+		}
+		if (hungering) {
+			await spendPoolWithUndo(actor, HUNGERING_SHADOWS_POOL, 1, {
+				item: hungering.feature,
+				label: 'Hungering Shadows free cast',
+				reason: `${item.name} cost no use of Pilfered Power`,
+				flavor: 'Hungering Shadows',
+			});
+		}
+		return;
+	}
+	if (!plan.overdraft) return;
+	greedyPactSaves.delete(actor.uuid);
+	if (!plan.save) return; // the system's own backlash stands
+	const giveBack = Math.max(0, (Number(plan.fullDamage) || 0) - (Number(plan.damage) || 0));
+	const before = plan.hpBefore ?? null;
+	const hp = actor.system?.attributes?.hp ?? {};
+	let restoredValue = 0;
+	let restoredTemp = 0;
+	if (giveBack > 0 && before) {
+		const lostValue = Math.max(0, before.value - (Number(hp.value) || 0));
+		const lostTemp = Math.max(0, before.temp - (Number(hp.temp) || 0));
+		restoredValue = Math.min(lostValue, giveBack);
+		restoredTemp = Math.min(lostTemp, giveBack - restoredValue);
+		if (restoredValue || restoredTemp) {
+			await actor.update({
+				'system.attributes.hp.value': (Number(hp.value) || 0) + restoredValue,
+				'system.attributes.hp.temp': (Number(hp.temp) || 0) + restoredTemp,
+			});
+		}
+	}
+	const back = restoredValue + restoredTemp;
+	postSummonChat(
+		actor,
+		`<p>${greedyPactOutcomeText(plan)}${back ? ` ${escapeHtml(actor.name)} gets <strong>${back}</strong> HP of the patron's backlash back.` : ''}</p>`,
+		'Pilfered Power',
+	);
 }
 
 // Install: (1) custom cap table via a prepareDerivedData wrap on the character
@@ -7432,7 +10374,8 @@ function installShadowmancerCasting() {
 					if (isShadowmancerActor(this)) {
 						const resources = this.system?.resources;
 						// Only for spellcasters (mana.max > 0), matching core semantics.
-						if (resources && (Number(resources.mana?.max) || 0) > 0) {
+						// System 0.9+ derives the same ladder from the grant thresholds.
+						if (resources && (Number(resources.mana?.max) || 0) > 0 && !nativePilferedPower(this)) {
 							resources.highestUnlockedSpellTier = shadowmancerHighestTier(getCharacterLevel(this));
 						}
 					}
@@ -7470,6 +10413,1017 @@ function installShadowmancerCasting() {
 	Hooks.on('renderSpellUpcastDialog', onRenderUpcastDialog);
 
 	shadowmancerCastingInstalled = true;
+}
+
+// ── Shadowmancer invocations & Pact of the Id (Nimble 0.2, via Nim+) ──────────
+// Blue Codex owns the Shadow tokens (the summon framework above), so every
+// Shadow-token mechanic of the 0.2 Shadowmancer lives here. Each one is keyed
+// on the OWNED feature — its prepared `system.identifier` (always the name slug)
+// or its exact name — so without Nim+ the Nim+-only features are simply never
+// owned and nothing fires:
+//   • Know Your Limits (Pact of the Id, L11): +WIL Shadow Limit (a Summon Shadow
+//     featureBoost — see summonCountCap) and a free Shadow at the start of each
+//     of your turns (acting GM; Undo card dismisses it).
+//   • Hyperfixation (L7): +1 advantage per own Shadow adjacent to the target;
+//     Shadow Spear: Shadow Blast vs a Prone target at advantage. Both pre-set in
+//     the roll dialog by the activate wrap (with a toast saying why).
+//   • Shadow Blast: the official 0.2 card (1d12+DEX, +1d12 every 5 levels); a
+//     card after each cast with the Repelling Blast / Shadow Spear reminders.
+//   • Armor of Shadows: flat damage reduction = your living summoned minions,
+//     pushed into the system's `damageReductions` after every prepare and
+//     re-prepared whenever one of your summons appears, dies or leaves.
+//   • Hungering Shadows: a Shadow's max roll fills the feature's
+//     `hungering-shadows` pool (Undo card); the next tiered cast spends it
+//     instead of Pilfered Power (Undo card).
+//   • Pilfered Power overdraft: a warning before the cast; Greedy Pact's STR save
+//     (1–9 full, 10–19 only 10, 20+ none and the spell cast 1 tier higher) is
+//     rolled then (cancel = no cast; the result is kept until a backlash uses it,
+//     so cancelling cannot reroll it); the backlash posts an Undo card.
+//   • My Favored Pet: one Shadow stays after combat and one may be summoned
+//     outside it (flag `favoredPet`, no combat tag).
+//   • Eldritch Usurper (0.2, L20): Summon Shadow offers a Greater Shadow instead
+//     while its 1/encounter pool has a charge (spent with an Undo card); using the
+//     feature itself (its own chargeConsumer) summons one too. It explodes into 5
+//     Shadows when it dies (see "Fallen summons").
+//   • Dire Shadows: each spawned Shadow gets a monster feature carrying
+//     modifyIncomingAttack(disadvantage).
+//   • Unified Psyche (L15): one dialog (target + attack per Shadow), then per
+//     Shadow: dismiss it, teleport onto its space, attack for free (item.activate
+//     spends no action).
+//   • Defense Mechanism (L3): swap places with a Shadow (the nearest is
+//     pre-picked; a dialog only with several), plus a card for the Reaction case.
+const KNOW_YOUR_LIMITS = ['know-your-limits', 'Know Your Limits'];
+const HYPERFIXATION = ['hyperfixation', 'Hyperfixation'];
+const SHADOW_SPEAR = ['shadow-spear', 'Shadow Spear'];
+const SHADOW_RUSH = ['shadow-rush', 'Shadow Rush'];
+const REPELLING_BLAST = ['repelling-blast', 'Repelling Blast'];
+const ARMOR_OF_SHADOWS = ['armor-of-shadows', 'Armor of Shadows'];
+const HUNGERING_SHADOWS = ['hungering-shadows', 'Hungering Shadows'];
+const HUNGERING_SHADOWS_POOL = 'hungering-shadows';
+const GREEDY_PACT = ['greedy-pact', 'Greedy Pact'];
+const MY_FAVORED_PET = ['my-favored-pet', 'My Favored Pet'];
+const ELDRITCH_USURPER = ['eldritch-usurper', 'Eldritch Usurper'];
+const ELDRITCH_USURPER_POOL = 'eldritch-usurper';
+const DIRE_SHADOWS = ['dire-shadows', 'Dire Shadows'];
+const UNIFIED_PSYCHE = ['unified-psyche', 'Unified Psyche'];
+const UNIFIED_PSYCHE_POOL = 'unified-psyche';
+const DEFENSE_MECHANISM = ['defense-mechanism', 'Defense Mechanism'];
+const DEFENSE_MECHANISM_POOL = 'defense-mechanism';
+const ARMOR_OF_SHADOWS_MARK = 'bcxArmorOfShadows'; // marks our damageReductions entry
+// Summon config for module-spawned Shadows when the caster owns no Summon Shadow copy.
+const DEFAULT_SHADOW_SUMMON = { template: SHADOW_MINION_TEMPLATE, combatOnly: true, expireOnCombatEnd: true, maxCount: 'intMod' };
+
+function ownedFeature(actor, [identifier, name]) {
+	return actor ? findOwnedFeature(actor, identifier, name) : null;
+}
+
+function ownsFeature(actor, pair) {
+	return ownedFeature(actor, pair) !== null;
+}
+
+function firstUserTargetDoc() {
+	for (const target of game.user?.targets ?? []) return target?.document ?? target ?? null;
+	return null;
+}
+
+function isShadowBlastItem(item) {
+	return item?.type === 'spell' && item.system?.identifier === 'shadow-blast';
+}
+
+function tokenIsProne(tokenDoc) {
+	const actor = tokenDoc?.actor;
+	if (actor?.statuses?.has?.('prone')) return true;
+	return [...(actor?.effects ?? [])].some((effect) => {
+		const statuses = effect?.statuses;
+		return statuses?.has?.('prone') || (Array.isArray(statuses) && statuses.includes('prone'));
+	});
+}
+
+// ── Hyperfixation / Shadow Spear ──
+
+// The caster's living Shadows (incl. a Greater Shadow) adjacent to `targetDoc`.
+function countAdjacentShadows(caster, targetDoc) {
+	let count = 0;
+	for (const template of SHADOW_TEMPLATES) {
+		for (const token of findActiveSummons(caster, template)) {
+			if (token.id === targetDoc.id) continue;
+			if (targetDoc.parent?.id && token.parent?.id && token.parent.id !== targetDoc.parent.id) continue;
+			if (tokenDistanceSpaces(token, targetDoc) <= 1) count += 1;
+		}
+	}
+	return count;
+}
+
+// Advantage stacks one attack by a Shadowmancer at `targetDoc` gains, with why.
+function shadowmancerAttackAdvantage(item, targetDoc) {
+	const out = { stacks: 0, notes: [] };
+	const actor = item?.actor;
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !targetDoc || !isAttackItem(item)) return out;
+	const targetName = targetDoc.name ?? 'the target';
+	if (ownsFeature(actor, HYPERFIXATION)) {
+		const adjacent = countAdjacentShadows(actor, targetDoc);
+		if (adjacent > 0) {
+			out.stacks += adjacent;
+			out.notes.push(`Hyperfixation: +${adjacent} advantage (${adjacent} Shadow${adjacent === 1 ? '' : 's'} next to ${targetName})`);
+		}
+	}
+	if (isShadowBlastItem(item) && ownsFeature(actor, SHADOW_SPEAR) && tokenIsProne(targetDoc)) {
+		out.stacks += 1;
+		out.notes.push(`Shadow Spear: advantage vs Prone ${targetName}`);
+	}
+	return out;
+}
+
+function announceAttackAdvantage(bonus) {
+	if (bonus?.notes?.length) ui.notifications?.info(bonus.notes.join(' · '));
+}
+
+// ── Shadow Blast ──
+
+function shadowBlastInvocationNotes(actor) {
+	const notes = [];
+	if (ownsFeature(actor, REPELLING_BLAST)) notes.push('<p><strong>Repelling Blast:</strong> each hit knocks the target back 2 spaces.</p>');
+	if (ownsFeature(actor, SHADOW_SPEAR)) {
+		notes.push('<p><strong>Shadow Spear:</strong> Range 16, ignores cover (advantage vs Prone targets is pre-set).</p>');
+	}
+	return notes;
+}
+
+// ── Shadow Rush (Command Shadows) ──
+
+// The maximum of a baked minion damage formula ("1d12" → 12, "5d10" → 50, "1d8 + 2"
+// → 10); null when it is not plain dice/number arithmetic.
+function formulaMaxValue(formula) {
+	const text = String(formula ?? '').replace(/(\d*)d(\d+)/gi, (_m, count, faces) => String((Number(count) || 1) * Number(faces)));
+	if (!/^[\d\s+\-*()]+$/.test(text)) return null;
+	try {
+		// eslint-disable-next-line no-new-func
+		const value = Number(new Function(`return (${text});`)());
+		return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : null;
+	} catch {
+		return null;
+	}
+}
+
+// Command Shadows for a Shadow Rush owner: the target split plus, per Shadow, a
+// "Rush" box (deal max damage instead of rolling, then die). Resolves
+// { picks, rush } or null (cancelled).
+async function promptShadowRush(caster, shadows, targets, defaults) {
+	const rows = shadows
+		.map((shadow, i) => {
+			const options = targets
+				.map(
+					(target, t) =>
+						`<option value="${t}" ${defaults[i] === t ? 'selected' : ''}>${escapeHtml(target.name ?? `Target ${t + 1}`)} (${tokenDistanceSpaces(shadow, target)} spaces)</option>`,
+				)
+				.join('');
+			return `<div class="bcx-command-row"><span>${escapeHtml(shadow.name ?? 'Shadow')} #${i + 1}</span>
+				<select name="bcx-command-${i}">${options}</select>
+				<label><input type="checkbox" name="bcx-rush-${i}"> Rush</label></div>`;
+		})
+		.join('');
+	return foundry.applications.api.DialogV2.wait({
+		window: { title: `${caster.name} — Command Shadows` },
+		content: `<div class="bcx-command-form"><p>Choose each Shadow's target. <strong>Shadow Rush:</strong> a Shadow marked Rush deals its max damage instead of rolling, then dies.</p>
+			<div class="bcx-command-list">${rows}</div></div>
+			<style>.bcx-command-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}.bcx-command-row select{flex:0 1 50%}</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Attack',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? null;
+					return {
+						picks: defaults.map((fallback, i) => {
+							const value = Number(root?.querySelector?.(`select[name="bcx-command-${i}"]`)?.value);
+							return Number.isInteger(value) && value >= 0 && value < targets.length ? value : fallback;
+						}),
+						rush: defaults.map((_d, i) => Boolean(root?.querySelector?.(`input[name="bcx-rush-${i}"]`)?.checked)),
+					};
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	})
+		.then((result) => (result && Array.isArray(result.picks) ? result : null))
+		.catch(() => null);
+}
+
+// Make a rushing Shadow's attack deal its max: its damage node becomes the flat
+// maximum (a no-die formula cannot miss and triggers no max-roll feature, as the
+// 0.2 FAQ rules). True when patched.
+async function rushShadowAttack(shadowToken) {
+	const synth = shadowToken?.actor;
+	const attack = synth ? findMinionAttackItem(synth) : null;
+	if (!attack) return false;
+	const effects = foundry.utils.deepClone(attack.system?.activation?.effects ?? []);
+	const node = effects.find((entry) => entry?.type === 'damage');
+	const max = formulaMaxValue(node?.formula);
+	if (!node || max === null) return false;
+	node.formula = String(max);
+	try {
+		await synth.updateEmbeddedDocuments('Item', [{ _id: attack.id ?? attack._id, 'system.activation.effects': effects }]);
+		return true;
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Shadow Rush: could not set ${shadowToken.name}'s max damage`, error);
+		return false;
+	}
+}
+
+// ── Hungering Shadows ──
+
+// The Hungering Shadows feature and its pool, when it holds a free cast.
+function findHungeringShadowsCharge(actor) {
+	const feature = ownedFeature(actor, HUNGERING_SHADOWS);
+	if (!feature) return null;
+	const entry = getChargePoolEntry(actor, HUNGERING_SHADOWS_POOL, { item: feature });
+	return entry && entry.current >= 1 ? { feature, entry } : null;
+}
+
+// A Shadow of this summoner rolled its max: bank the free cast (pool, Undo card).
+async function maybeGrantHungeringShadows(minionTokenDoc) {
+	if (!SHADOW_TEMPLATES.has(getTokenSummonFlag(minionTokenDoc)?.template)) return false;
+	const caster = resolveSummonerFromToken(minionTokenDoc);
+	const feature = caster ? ownedFeature(caster, HUNGERING_SHADOWS) : null;
+	if (!feature) return false;
+	const entry = getChargePoolEntry(caster, HUNGERING_SHADOWS_POOL, { item: feature });
+	if (!entry || entry.current >= entry.max) return false;
+	return grantPoolWithUndo(caster, HUNGERING_SHADOWS_POOL, 1, {
+		item: feature,
+		label: 'Hungering Shadows free cast',
+		reason: `${minionTokenDoc?.name ?? 'a Shadow'} rolled the max`,
+		flavor: 'Hungering Shadows',
+	});
+}
+
+// ── Pilfered Power: free casts, overdraft warning, Greedy Pact ──
+
+const shadowmancerCastPlans = new Map(); // actor uuid → the plan of the tiered cast in progress
+const greedyPactSaves = new Map(); // actor uuid → { total } until a backlash spends it
+
+function patronBacklashFullDamage(actor) {
+	return Math.floor((Number(actor?.system?.attributes?.hp?.max) || 0) / 2);
+}
+
+function findGreedyPact(actor) {
+	return ownedFeature(actor, GREEDY_PACT);
+}
+
+// Greedy Pact's STR save through the system's own save roll (dialog + card). A
+// banked result is reused, so cancelling the spell cannot reroll the save.
+// Resolves { total } or null (the save dialog was dismissed).
+async function rollGreedyPactSave(actor) {
+	const banked = greedyPactSaves.get(actor.uuid);
+	if (banked) return banked;
+	let total = null;
+	if (typeof actor.rollSavingThrowToChat === 'function') {
+		const message = await actor.rollSavingThrowToChat('strength', {});
+		if (!message) return null;
+		total = Number(message.rolls?.[0]?.total);
+	} else {
+		const roll = await new Roll('1d20 + @strength', actor.getRollData?.() ?? {}).evaluate();
+		total = Number(roll.total);
+	}
+	if (!Number.isFinite(total)) return null;
+	const save = { total };
+	greedyPactSaves.set(actor.uuid, save);
+	return save;
+}
+
+function greedyPactOutcomeText(plan) {
+	const total = plan.save.total;
+	if (total >= 20) return `Greedy Pact — STR save <strong>${total}</strong> (20+): no damage, and the spell is cast 1 tier higher.`;
+	if (total >= 10) return `Greedy Pact — STR save <strong>${total}</strong> (10–19): only ${plan.damage} damage.`;
+	return `Greedy Pact — STR save <strong>${total}</strong> (1–9): full damage.`;
+}
+
+function pilferedPowerNoticeText(actor, plan) {
+	if (plan.free) return 'Hungering Shadows: this cast costs no use of Pilfered Power.';
+	const base = `${actor.name} has no Pilfered Power left — the patron takes notice`;
+	if (!plan.save) return `${base}: ${plan.damage} damage (half max HP) when this spell resolves.`;
+	if (plan.damage <= 0) return `${base}, but Greedy Pact's STR save (${plan.save.total}) pays nothing and the spell is cast 1 tier higher.`;
+	return `${base}: Greedy Pact's STR save ${plan.save.total} → ${plan.damage} damage when this spell resolves.`;
+}
+
+// Before a Shadowmancer's tiered cast (activate wrap, before the dialog): note a
+// Hungering Shadows free cast, or — with no Pilfered Power left — warn about the
+// backlash and roll Greedy Pact's save. Resolves the plan (null = not a tiered
+// Shadowmancer cast; { blocked } = the save was dismissed, cancel the cast).
+async function preparePilferedPowerCast(item) {
+	if (item?.type !== 'spell' || (Number(item.system?.tier) || 0) < 1) return null;
+	const actor = item.actor;
+	if (!isShadowmancerActor(actor)) return null;
+	shadowmancerCastPlans.delete(actor.uuid);
+	const plan = { free: false, overdraft: false, damage: 0, save: null, tierBump: false };
+	const native = nativePilferedPower(actor);
+	const pool = native ? getChargePoolEntry(actor, native.poolIdentifier) : null;
+	if (findHungeringShadowsCharge(actor)) {
+		plan.free = true;
+		// System 0.9+: an empty pool would make the system overdraw — top it up by
+		// the cast's cost first (reverted if the cast is cancelled).
+		if (pool && pool.current < native.amount) {
+			plan.bumpedPool = { before: pool.current };
+			await setChargePoolCurrent(pool, pool.current + native.amount);
+		}
+	} else if (
+		native
+			? !!pool && pool.current < native.amount && native.consequence === 'halfMaxHpDamage' && !native.atTable
+			: (Number(actor.system?.resources?.mana?.current) || 0) <= 0
+	) {
+		plan.overdraft = true;
+		plan.damage = patronBacklashFullDamage(actor);
+		plan.fullDamage = plan.damage;
+		if (findGreedyPact(actor)) {
+			const save = await rollGreedyPactSave(actor);
+			if (!save) {
+				ui.notifications?.warn(`${actor.name}: Greedy Pact's STR save was not rolled — ${item.name} was not cast.`);
+				return { blocked: true };
+			}
+			plan.save = save;
+			if (save.total >= 20) {
+				plan.damage = 0;
+				plan.tierBump = true;
+			} else if (save.total >= 10) {
+				plan.damage = Math.min(plan.damage, 10);
+			}
+		}
+		// System 0.9+ deals the backlash during the cast: remember the HP so the
+		// Greedy Pact give-back can be measured against what it actually took.
+		if (native) {
+			const hp = actor.system?.attributes?.hp ?? {};
+			plan.hpBefore = { value: Number(hp.value) || 0, temp: Number(hp.temp) || 0 };
+		}
+		ui.notifications?.warn(pilferedPowerNoticeText(actor, plan));
+	}
+	shadowmancerCastPlans.set(actor.uuid, plan);
+	return plan;
+}
+
+// The same notice as a line at the top of the cast dialog.
+function injectPilferedPowerNotice(app, plan) {
+	if (!plan || (!plan.free && !plan.overdraft)) return;
+	const root = app?.element instanceof HTMLElement ? app.element : app?.element?.[0];
+	if (!(root instanceof HTMLElement) || root.querySelector('.bcx-pilfer-notice')) return;
+	const note = document.createElement('p');
+	note.className = 'bcx-pilfer-notice';
+	note.style.cssText = plan.free
+		? 'margin:0.25rem 0;color:hsl(275 60% 60%);font-weight:600'
+		: 'margin:0.25rem 0;color:#c0392b;font-weight:600';
+	note.textContent = pilferedPowerNoticeText(app.actor, plan);
+	(root.querySelector('.nimble-sheet__body') ?? root).prepend(note);
+}
+
+// ── Armor of Shadows ──
+
+// Every living summoned minion of `actor` (Shadows, a Greater Shadow, undead…).
+function countLivingMinions(actor) {
+	let count = 0;
+	const uuid = actor?.uuid;
+	if (!uuid) return 0;
+	for (const scene of game.scenes ?? []) {
+		for (const token of scene.tokens ?? []) {
+			if (getTokenSummonFlag(token)?.summonerActorUuid !== uuid) continue;
+			if (token.actor?.type !== 'minion' || isTokenDefeated(token)) continue;
+			count += 1;
+		}
+	}
+	return count;
+}
+
+// Push "reduce all damage by the number of your minions" into the system's
+// derived `damageReductions` (read when damage is applied). Our previous entry is
+// dropped first, so a re-used system object never stacks it.
+function applyArmorOfShadows(actor) {
+	const system = actor?.system;
+	if (!system || actor.type !== 'character') return;
+	if (Array.isArray(system.damageReductions)) {
+		system.damageReductions = system.damageReductions.filter((entry) => !entry?.[ARMOR_OF_SHADOWS_MARK]);
+	}
+	if (!ownsFeature(actor, ARMOR_OF_SHADOWS)) return;
+	const count = countLivingMinions(actor);
+	if (count <= 0) return;
+	if (!Array.isArray(system.damageReductions)) system.damageReductions = [];
+	system.damageReductions.push({
+		value: count,
+		damageTypes: [],
+		mode: 'flat',
+		label: `Armor of Shadows (${count} minion${count === 1 ? '' : 's'})`,
+		[ARMOR_OF_SHADOWS_MARK]: true,
+	});
+}
+
+// After the rule sweep of every prepare (`_onAfterPrepareData`: the system resets
+// its accumulator arrays just before that sweep, so an earlier push would be lost).
+function installArmorOfShadowsPrep() {
+	const proto = CONFIG?.NIMBLE?.Actor?.documentClasses?.character?.prototype;
+	if (!proto || Object.prototype.hasOwnProperty.call(proto, '__blueCodexArmorOfShadows')) return;
+	const hook = typeof proto._onAfterPrepareData === 'function' ? '_onAfterPrepareData' : 'prepareDerivedData';
+	const original = proto[hook];
+	proto[hook] = function blueCodexArmorOfShadows(...args) {
+		const result = original?.apply(this, args);
+		try {
+			applyArmorOfShadows(this);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Armor of Shadows prep failed`, error);
+		}
+		return result;
+	};
+	proto.__blueCodexArmorOfShadows = true;
+}
+
+// A summon of an Armor of Shadows owner appeared, changed HP or left: re-prepare
+// the owner (every client, locally) so the reduction matches.
+function refreshArmorOfShadows(tokenDoc) {
+	try {
+		const summoner = getTokenSummonFlag(tokenDoc) ? resolveSummonerFromToken(tokenDoc) : null;
+		if (summoner && ownsFeature(summoner, ARMOR_OF_SHADOWS)) summoner.prepareData();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Armor of Shadows refresh failed`, error);
+	}
+}
+
+// ── Dire Shadows ──
+
+// Give a spawned Shadow the "attacks against it have disadvantage" rule.
+async function applyDireShadows(tokenDoc, summon, caster) {
+	if (!SHADOW_TEMPLATES.has(summon?.template) || !ownsFeature(caster, DIRE_SHADOWS)) return;
+	const synth = tokenDoc?.actor;
+	if (!synth || listEmbeddedItems(synth).some((item) => item?.name === 'Dire Shadows')) return;
+	try {
+		await synth.createEmbeddedDocuments('Item', [
+			{
+				name: 'Dire Shadows',
+				type: 'monsterFeature',
+				img: `modules/${MODULE_ID}/assets/spells/ruin/shadow/summon-shadow.webp`,
+				system: {
+					identifier: 'dire-shadows',
+					subtype: 'feature',
+					description:
+						'<p>Attacks against this Shadow are made with disadvantage. It takes no damage from successful saves.</p><p>[M] A successful save: apply no damage to it.</p>',
+					rules: [
+						{
+							id: 'bcxDireShadows01',
+							type: 'modifyIncomingAttack',
+							disabled: false,
+							identifier: '',
+							label: 'Dire Shadows',
+							predicate: {},
+							priority: 1,
+							modifier: 'disadvantage',
+							range: 2,
+							automatic: false,
+							rerollTrigger: 'always',
+							rerollWithDisadvantage: false,
+						},
+					],
+				},
+			},
+		]);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not give ${tokenDoc?.name} Dire Shadows`, error);
+	}
+}
+
+// ── My Favored Pet ──
+
+function findFavoredPet(caster) {
+	return findActiveSummons(caster, SHADOW_MINION_TEMPLATE).find((token) => getTokenSummonFlag(token)?.favoredPet === true) ?? null;
+}
+
+// Outside combat: 'allowed' (owns My Favored Pet, no pet yet), 'taken' (already
+// has one) or null (not a Shadow summon / no My Favored Pet).
+function favoredPetSummonCheck(actor, summon) {
+	if (summon?.template !== SHADOW_MINION_TEMPLATE || !ownsFeature(actor, MY_FAVORED_PET)) return null;
+	return findFavoredPet(actor) ? 'taken' : 'allowed';
+}
+
+// A Summon Shadow cast outside combat by a My Favored Pet owner: exactly one
+// Shadow, flagged as the pet and never tied to a combat.
+async function spawnFavoredPet(item, caster, summon, baseActor, scene) {
+	if (favoredPetSummonCheck(caster, summon) !== 'allowed') return null;
+	const { x, y } = computeSummonSpawnPosition(caster, scene);
+	const created = await spawnSummonedToken({
+		caster,
+		summon,
+		baseActor,
+		scene,
+		x,
+		y,
+		extraFlag: { favoredPet: true, combatId: null },
+	});
+	if (!created) return null;
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} summons <strong>${escapeHtml(created.name ?? 'a Shadow')}</strong> — My Favored Pet: this one Shadow tolerates them outside combat.</p>`,
+		item?.name,
+	);
+	return created;
+}
+
+// Combat end: per summoner owning My Favored Pet and without a pet yet, the first
+// living Shadow among `hits` becomes the pet (combat tag cleared). Returns the
+// kept token ids.
+async function keepFavoredPets(hits) {
+	const kept = new Set();
+	const handled = new Set();
+	for (const { token } of hits) {
+		if (getTokenSummonFlag(token)?.template !== SHADOW_MINION_TEMPLATE || isTokenDefeated(token)) continue;
+		const summoner = resolveSummonerFromToken(token);
+		if (!summoner || handled.has(summoner.uuid) || !ownsFeature(summoner, MY_FAVORED_PET)) continue;
+		handled.add(summoner.uuid);
+		if (findFavoredPet(summoner)) continue;
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			await token.update({
+				[`flags.${MODULE_ID}.${SUMMON_FLAG}.combatId`]: null,
+				[`flags.${MODULE_ID}.${SUMMON_FLAG}.favoredPet`]: true,
+			});
+			kept.add(token.id);
+			postSummonChat(
+				summoner,
+				`<p><strong>${escapeHtml(token.name ?? 'A Shadow')}</strong> stays with ${escapeHtml(summoner.name)} after the fight — My Favored Pet.</p>`,
+				'My Favored Pet',
+			);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not keep the favored pet Shadow`, error);
+		}
+	}
+	return kept;
+}
+
+// ── Eldritch Usurper: the Greater Shadow ──
+
+const pendingGreaterShadows = new Set(); // Summon Shadow item uuids whose cast chose a Greater Shadow
+
+// The owned 0.2 Eldritch Usurper and its 1/encounter pool (the 2.0 system feature
+// has no pool — different rule — and is left alone).
+function eldritchUsurperCharge(actor) {
+	const feature = ownedFeature(actor, ELDRITCH_USURPER);
+	const entry = feature ? getChargePoolEntry(actor, ELDRITCH_USURPER_POOL, { item: feature }) : null;
+	return entry ? { feature, entry } : null;
+}
+
+// Summon Shadow gate, after the limit check: with a charge left, ask whether this
+// cast summons a Greater Shadow instead. True = cancelled (close/Cancel).
+async function greaterShadowOfferCancelled(item, actor, summon) {
+	pendingGreaterShadows.delete(item.uuid);
+	if (summon?.template !== SHADOW_MINION_TEMPLATE || !game.combat?.started) return false;
+	const usurper = eldritchUsurperCharge(actor);
+	if (!usurper || usurper.entry.current < 1) return false;
+	const count = levelScaledSummonCount(actor);
+	const choice = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — Eldritch Usurper` },
+		content: `<p>Summon a <strong>Greater Shadow</strong> (a 5d12 minion that explodes into 5 Shadows when it dies) instead of ${count} Shadow${count === 1 ? '' : 's'}?</p><p>Eldritch Usurper: <strong>${usurper.entry.current}/${usurper.entry.max}</strong> this encounter.</p>`,
+		buttons: [
+			{ action: 'shadows', label: `Summon ${count === 1 ? 'a Shadow' : `${count} Shadows`}`, default: true },
+			{ action: 'greater', label: 'Greater Shadow' },
+			{ action: 'cancel', label: 'Cancel' },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	if (!choice || choice === 'cancel') return true;
+	if (choice === 'greater') pendingGreaterShadows.add(item.uuid);
+	return false;
+}
+
+// The Summon Shadow flag re-aimed at the Greater Shadow: same combat expiry and
+// feature boosts, Shadow Magus' die override kept at five dice (5d10).
+function greaterShadowSummonConfig(summon) {
+	const base = summon ?? DEFAULT_SHADOW_SUMMON;
+	const boosts = Array.isArray(base.featureBoosts) ? base.featureBoosts : [];
+	return {
+		...base,
+		template: GREATER_SHADOW_TEMPLATE,
+		combatOnly: true,
+		expireOnCombatEnd: true,
+		featureBoosts: boosts.map((entry) =>
+			typeof entry?.formulaOverride === 'string'
+				? { ...entry, formulaOverride: entry.formulaOverride.replace(/^\s*1d/i, '5d') }
+				: entry,
+		),
+	};
+}
+
+// Spawn the Greater Shadow beside the caster. `spendFrom: 'cast'` = the Summon
+// Shadow path, which spends the Eldritch Usurper charge here (Undo card); the
+// feature's own use was already charged by its chargeConsumer.
+async function spawnGreaterShadow(caster, summon, scene, { spendFrom = null, flavor } = {}) {
+	if (!(caster instanceof Actor) || !scene) return null;
+	const baseActor = await resolveCompanionBaseActor(GREATER_SHADOW_TEMPLATE);
+	if (!baseActor) {
+		ui.notifications?.warn('Blue Codex: the Greater Shadow companion is missing — place a 5d12 Shadow by hand.');
+		return null;
+	}
+	const { x, y } = computeSummonSpawnPosition(caster, scene);
+	const created = await spawnSummonedToken({ caster, summon: greaterShadowSummonConfig(summon), baseActor, scene, x, y });
+	if (!created) return null;
+	if (spendFrom === 'cast') {
+		const usurper = eldritchUsurperCharge(caster);
+		if (usurper) {
+			await spendPoolWithUndo(caster, ELDRITCH_USURPER_POOL, 1, {
+				item: usurper.feature,
+				label: 'Eldritch Usurper: Greater Shadow',
+				reason: 'Greater Shadow summoned',
+				flavor: 'Eldritch Usurper',
+			});
+		}
+	}
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(caster.name)} summons a <strong>${escapeHtml(created.name ?? 'Greater Shadow')}</strong> (5d12 minion). When it dies it explodes into 5 Shadows, ignoring the Shadow Limit.</p>`,
+		flavor ?? 'Eldritch Usurper',
+	);
+	return created;
+}
+
+// A fallen Greater Shadow's 5 Shadows, around the spot where it fell (the player
+// moves them anywhere within Reach 6). Ignores the Shadow Limit.
+async function greaterShadowBurst(summoner, { scene, x, y }) {
+	if (!(summoner instanceof Actor) || !scene) return [];
+	const summon = findSummonConfigForTemplate(summoner, SHADOW_MINION_TEMPLATE) ?? DEFAULT_SHADOW_SUMMON;
+	const baseActor = await resolveCompanionBaseActor(SHADOW_MINION_TEMPLATE);
+	if (!baseActor) return [];
+	const created = [];
+	for (let i = 0; i < 5; i += 1) {
+		const spot = findFreeAdjacentPosition(scene, { x, y });
+		// eslint-disable-next-line no-await-in-loop
+		const token = await spawnSummonedToken({ caster: summoner, summon, baseActor, scene, x: spot.x, y: spot.y });
+		if (token) created.push(token);
+	}
+	return created;
+}
+
+// ── Know Your Limits: a free Shadow at the start of your turn ──
+
+const knowYourLimitsTurns = new Set();
+
+async function onKnowYourLimitsTurnStart(combat, changes) {
+	if (!isActingGM() || !combat?.started) return null;
+	if (!('turn' in (changes ?? {})) && !('round' in (changes ?? {}))) return null;
+	const round = Number(combat.round) || 0;
+	const turn = Number(combat.turn) || 0;
+	const prev = combat.previous;
+	// Only a forward step starts a turn (not Previous Turn/Round).
+	if (prev && prev.round !== null && prev.round !== undefined) {
+		const prevRound = Number(prev.round) || 0;
+		const prevTurn = Number(prev.turn) || 0;
+		if (round < prevRound || (round === prevRound && turn <= prevTurn)) return null;
+	}
+	const combatant = combat.combatant;
+	const key = `${combat.id}:${round}:${turn}:${combatant?.id}`;
+	if (!combatant || knowYourLimitsTurns.has(key)) return null;
+	knowYourLimitsTurns.add(key);
+	return knowYourLimitsFreeSummon(combatant, combat);
+}
+
+// "You may summon a shadow minion for free at the start of your turn": spawned
+// automatically while under the limit (Undo card dismisses it).
+async function knowYourLimitsFreeSummon(combatant, combat) {
+	const actor = combatant?.actor;
+	if (!(actor instanceof Actor) || actor.type !== 'character' || !ownsFeature(actor, KNOW_YOUR_LIMITS)) return null;
+	const summon = findSummonConfigForTemplate(actor, SHADOW_MINION_TEMPLATE);
+	if (!summon) return null;
+	const ownToken = combatant.token ?? findActorTokenDoc(actor);
+	const scene = ownToken?.parent ?? combat?.scene ?? null;
+	if (!scene) return null;
+	const cap = summonCountCap(actor, summon);
+	const live = findActiveSummons(actor, SHADOW_MINION_TEMPLATE).length;
+	if (live >= cap) return null; // at the limit, a summon has no effect
+	const baseActor = await resolveCompanionBaseActor(SHADOW_MINION_TEMPLATE);
+	if (!baseActor) return null;
+	const { x, y } = ownToken ? findFreeAdjacentPosition(scene, ownToken) : computeSummonSpawnPosition(actor, scene);
+	const created = await spawnSummonedToken({
+		caster: actor,
+		summon,
+		baseActor,
+		scene,
+		x,
+		y,
+		extraFlag: summon.expireOnCombatEnd ? { combatId: combat?.id ?? null } : undefined,
+	});
+	if (!created) return null;
+	await postUndoCard({
+		actor,
+		flavor: 'Know Your Limits',
+		text: `<p>${escapeHtml(actor.name)} summons a free <strong>${escapeHtml(created.name ?? 'Shadow')}</strong> at the start of their turn (${live + 1}/${cap} Shadows).</p>`,
+		undoAction: { type: 'dismissSummonTokens', data: { tokenUuids: [created.uuid] } },
+	});
+	return created;
+}
+
+// ── Unified Psyche / Defense Mechanism / Eldritch Usurper (feature use) ──
+
+const pendingShadowmancerFeatures = new Map(); // feature item uuid → the plan its gate prepared
+
+function shadowmancerFeatureKind(item) {
+	if (item?.type !== 'feature' || !(item.actor instanceof Actor)) return null;
+	const is = ([identifier, name]) => item.system?.identifier === identifier || item.name === name;
+	if (is(UNIFIED_PSYCHE)) return 'unifiedPsyche';
+	if (is(DEFENSE_MECHANISM)) return 'defenseMechanism';
+	if (is(ELDRITCH_USURPER) && getChargePoolEntry(item.actor, ELDRITCH_USURPER_POOL, { item })) return 'eldritchUsurper';
+	return null;
+}
+
+// The feature's own pool is empty: let the system's charge check refuse the use
+// (its own notification) instead of prompting first.
+function featurePoolEmpty(item, poolId) {
+	const entry = getChargePoolEntry(item.actor, poolId, { item });
+	return Boolean(entry) && entry.current < 1 && isResourceSpendingAutomationOn();
+}
+
+// Weapons and attack cantrips a Unified Psyche step may use (equipped first).
+function listFreeAttackItems(actor) {
+	const out = listEmbeddedItems(actor).filter(
+		(item) =>
+			isAttackItem(item) &&
+			(item.type === 'object' || (item.type === 'spell' && (Number(item.system?.tier) || 0) === 0)),
+	);
+	const rank = (item) => (item.type === 'object' ? (item.system?.equipped ? 0 : 1) : 2);
+	return out.sort((a, b) => rank(a) - rank(b));
+}
+
+// Unified Psyche's candidate targets: the user's targets, else every hostile
+// token on the scene (never the caster's own summons).
+function unifiedPsycheTargets(scene, actor) {
+	const own = (doc) => getTokenSummonFlag(doc)?.summonerActorUuid === actor.uuid || doc.actor === actor;
+	const targeted = Array.from(game.user?.targets ?? [])
+		.map((placeable) => placeable?.document ?? placeable)
+		.filter((doc) => doc?.id && !own(doc));
+	if (targeted.length) return uniqueList(targeted);
+	const hostile = CONST.TOKEN_DISPOSITIONS?.HOSTILE ?? -1;
+	return Array.from(scene?.tokens ?? []).filter((doc) => doc?.disposition === hostile && !own(doc));
+}
+
+// One row per Shadow: the target (nearest pre-picked, or skip) and the attack.
+// Resolves [{ shadowId, targetId|null, attackId }] or null (cancelled).
+async function promptUnifiedPsyche(actor, item, shadows, targets, attacks) {
+	const byDistance = shadows.map((shadow) =>
+		[...targets].sort((a, b) => tokenDistanceSpaces(shadow, a) - tokenDistanceSpaces(shadow, b)),
+	);
+	const attackOptions = attacks.map((attack) => `<option value="${attack.id}">${escapeHtml(attack.name)}</option>`).join('');
+	const rows = shadows
+		.map((shadow, i) => {
+			const targetOptions = byDistance[i]
+				.map(
+					(target, t) =>
+						`<option value="${target.id}" ${t === 0 ? 'selected' : ''}>${escapeHtml(target.name ?? 'Target')} (${tokenDistanceSpaces(shadow, target)} spaces)</option>`,
+				)
+				.join('');
+			return `<div class="bcx-psyche-row"><span>${escapeHtml(shadow.name ?? 'Shadow')} #${i + 1}</span>
+				<select name="bcx-psyche-target-${i}">${targetOptions}<option value="">— dispel, no attack —</option></select>
+				<select name="bcx-psyche-attack-${i}">${attackOptions}</select></div>`;
+		})
+		.join('');
+	const defaults = shadows.map((shadow, i) => ({
+		shadowId: shadow.id,
+		targetId: byDistance[i][0]?.id ?? null,
+		attackId: attacks[0]?.id ?? null,
+	}));
+	return foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${item.name}` },
+		content: `<form class="bcx-psyche-form"><p>For each Shadow: dispel it, teleport to its space and make a free attack (no Rushed Attacks penalty).</p>${rows}</form>
+			<style>.bcx-psyche-row{display:flex;gap:6px;align-items:center;justify-content:space-between;padding:3px 0}.bcx-psyche-row select{flex:1 1 40%}</style>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Go',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? null;
+					return defaults.map((row, i) => {
+						const targetSel = root?.querySelector?.(`select[name="bcx-psyche-target-${i}"]`);
+						const attackSel = root?.querySelector?.(`select[name="bcx-psyche-attack-${i}"]`);
+						return {
+							shadowId: row.shadowId,
+							targetId: targetSel ? targetSel.value || null : row.targetId,
+							attackId: attackSel?.value || row.attackId,
+						};
+					});
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	})
+		.then((result) => (Array.isArray(result) ? result : null))
+		.catch(() => null);
+}
+
+// Which Shadow to swap with (several): the nearest pre-selected. Resolves the
+// token or null (cancelled).
+async function promptShadowPick(actor, item, shadows, ownToken) {
+	const sorted = [...shadows].sort((a, b) => tokenDistanceSpaces(ownToken, a) - tokenDistanceSpaces(ownToken, b));
+	const options = sorted
+		.map(
+			(shadow, i) =>
+				`<option value="${shadow.id}" ${i === 0 ? 'selected' : ''}>${escapeHtml(shadow.name ?? 'Shadow')} (${tokenDistanceSpaces(ownToken, shadow)} spaces away)</option>`,
+		)
+		.join('');
+	const picked = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${item.name}` },
+		content: `<p>Swap places with which Shadow?</p><select name="bcx-swap-shadow">${options}</select>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Swap',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? null;
+					return root?.querySelector?.('select[name="bcx-swap-shadow"]')?.value || sorted[0].id;
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return typeof picked === 'string' ? (sorted.find((shadow) => shadow.id === picked) ?? null) : null;
+}
+
+// Pre-activate gate (activate wrap): true = blocked (warned; nothing spent).
+async function shadowmancerFeatureActivationBlocked(item) {
+	const kind = shadowmancerFeatureKind(item);
+	if (!kind) return false;
+	pendingShadowmancerFeatures.delete(item.uuid);
+	const actor = item.actor;
+	if (kind === 'eldritchUsurper') {
+		if (featurePoolEmpty(item, ELDRITCH_USURPER_POOL)) return false;
+		if (!game.combat?.started) {
+			ui.notifications?.warn(`${item.name}: a Greater Shadow can only be summoned during combat.`);
+			return true;
+		}
+		pendingShadowmancerFeatures.set(item.uuid, { kind });
+		return false;
+	}
+	const poolId = kind === 'unifiedPsyche' ? UNIFIED_PSYCHE_POOL : DEFENSE_MECHANISM_POOL;
+	if (featurePoolEmpty(item, poolId)) return false;
+	const ownToken = findActorTokenDoc(actor);
+	const scene = ownToken?.parent ?? canvas?.scene ?? null;
+	const shadows = scene ? findCommandableShadows(actor, SHADOW_MINION_TEMPLATE, scene) : [];
+	if (!ownToken || !shadows.length) {
+		ui.notifications?.warn(`${actor.name} has no Shadow on this scene — ${item.name} was not used.`);
+		return true;
+	}
+	if (kind === 'defenseMechanism') {
+		const shadow = shadows.length === 1 ? shadows[0] : await promptShadowPick(actor, item, shadows, ownToken);
+		if (!shadow) return true;
+		pendingShadowmancerFeatures.set(item.uuid, { kind, sceneId: scene.id, casterTokenId: ownToken.id, shadowId: shadow.id });
+		return false;
+	}
+	const attacks = listFreeAttackItems(actor);
+	if (!attacks.length) {
+		ui.notifications?.warn(`${actor.name} has no weapon or attack cantrip to strike with — ${item.name} was not used.`);
+		return true;
+	}
+	const targets = unifiedPsycheTargets(scene, actor);
+	if (!targets.length) {
+		ui.notifications?.warn(`Target the enemies to strike (or mark them hostile), then use ${item.name} again.`);
+		return true;
+	}
+	const rows = await promptUnifiedPsyche(actor, item, shadows, targets, attacks);
+	if (!rows) return true;
+	pendingShadowmancerFeatures.set(item.uuid, { kind, sceneId: scene.id, casterTokenId: ownToken.id, rows });
+	return false;
+}
+
+// Swap a caster's token with one of its summoned Shadows (GM authority: the
+// Shadow token is usually not the player's to move).
+async function swapSummonPlaces({ casterTokenUuid, shadowTokenUuid }, { user } = {}) {
+	const own = casterTokenUuid ? fromUuidSync(casterTokenUuid) : null;
+	const shadow = shadowTokenUuid ? fromUuidSync(shadowTokenUuid) : null;
+	if (!own || !shadow) return false;
+	if (getTokenSummonFlag(shadow)?.summonerActorUuid !== own.actor?.uuid) {
+		return relayDenied('swapSummonPlaces', user, `${shadow.name} (not ${own.name}'s summon)`);
+	}
+	if (user && !userMayActForSummon(user, shadow)) return relayDenied('swapSummonPlaces', user, shadow.name);
+	const ownSpot = { x: own.x, y: own.y };
+	const shadowSpot = { x: shadow.x, y: shadow.y };
+	await own.update(shadowSpot, { animate: false, teleport: true });
+	await shadow.update(ownSpot, { animate: false, teleport: true });
+	return true;
+}
+registerGMRelayOp('swapSummonPlaces', swapSummonPlaces);
+
+// Teleport the caster's own token (the player owns it; the GM relay otherwise).
+registerGMRelayOp('teleportOwnToken', async ({ tokenUuid, x, y }, { user } = {}) => {
+	const token = tokenUuid ? fromUuidSync(tokenUuid) : null;
+	if (!token) return false;
+	if (user && !userMayActFor(user, token.actor)) return relayDenied('teleportOwnToken', user, token.name);
+	await token.update({ x, y }, { animate: false, teleport: true });
+	return true;
+});
+
+async function teleportOwnToken(token, spot) {
+	if (token.isOwner) await token.update(spot, { animate: false, teleport: true });
+	else await runAsGM('teleportOwnToken', { tokenUuid: token.uuid, ...spot });
+}
+
+async function runDefenseMechanism(actor, item, plan) {
+	const scene = game.scenes?.get?.(plan.sceneId);
+	const own = scene?.tokens?.get?.(plan.casterTokenId);
+	const shadow = scene?.tokens?.get?.(plan.shadowId);
+	if (!own || !shadow) {
+		ui.notifications?.warn(`${item.name}: the Shadow is gone — swap the tokens by hand.`);
+		return;
+	}
+	await runAsGM('swapSummonPlaces', { casterTokenUuid: own.uuid, shadowTokenUuid: shadow.uuid });
+	postSummonChat(
+		actor,
+		`<p>${escapeHtml(actor.name)} swaps places with <strong>${escapeHtml(shadow.name ?? 'a Shadow')}</strong>.</p><p>Used as a <strong>Reaction</strong>: the attack aimed at ${escapeHtml(actor.name)} hits ${escapeHtml(shadow.name ?? 'the Shadow')} instead — apply its damage to the Shadow.</p>`,
+		item.name,
+	);
+}
+
+async function runUnifiedPsyche(actor, item, plan) {
+	const scene = game.scenes?.get?.(plan.sceneId);
+	const own = scene?.tokens?.get?.(plan.casterTokenId) ?? null;
+	const lines = [];
+	for (const row of plan.rows ?? []) {
+		const shadow = scene?.tokens?.get?.(row.shadowId);
+		if (!shadow) {
+			lines.push('<li>a Shadow was already gone</li>');
+			continue;
+		}
+		const spot = { x: shadow.x, y: shadow.y };
+		const shadowName = shadow.name ?? 'Shadow';
+		// eslint-disable-next-line no-await-in-loop
+		await removeTurretToken(shadow, actor);
+		// eslint-disable-next-line no-await-in-loop
+		if (own) await teleportOwnToken(own, spot);
+		const target = row.targetId ? scene?.tokens?.get?.(row.targetId) : null;
+		const attack = row.attackId ? actor.items?.get?.(row.attackId) : null;
+		if (!target || typeof attack?.activate !== 'function') {
+			lines.push(`<li>${escapeHtml(shadowName)} dispelled — no attack</li>`);
+			continue;
+		}
+		let card = null;
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			card = await withUserTargets([target], () => attack.activate({}));
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Unified Psyche attack failed`, error);
+		}
+		lines.push(
+			`<li>${escapeHtml(shadowName)} dispelled → ${escapeHtml(attack.name)} at <strong>${escapeHtml(target.name ?? 'target')}</strong>${card ? '' : ' (cancelled)'}</li>`,
+		);
+		if (!card) break;
+	}
+	postSummonChat(
+		actor,
+		`<p>${escapeHtml(actor.name)} strikes from every Shadow (free attacks, no Rushed Attacks penalty):</p><ul>${lines.join('')}</ul>`,
+		item.name,
+	);
+}
+
+// useItem half: run the plan the gate prepared (the chargeConsumer has spent the
+// feature's charge by now).
+async function handleShadowmancerFeatureUsed(item) {
+	const plan = pendingShadowmancerFeatures.get(item?.uuid);
+	if (!plan) return;
+	pendingShadowmancerFeatures.delete(item.uuid);
+	const actor = item.actor;
+	if (plan.kind === 'eldritchUsurper') {
+		const scene = findActorTokenDoc(actor)?.parent ?? canvas?.scene ?? null;
+		const summon = findSummonConfigForTemplate(actor, SHADOW_MINION_TEMPLATE);
+		await spawnGreaterShadow(actor, summon, scene, { flavor: item.name });
+		return;
+	}
+	if (plan.kind === 'defenseMechanism') await runDefenseMechanism(actor, item, plan);
+	else if (plan.kind === 'unifiedPsyche') await runUnifiedPsyche(actor, item, plan);
+}
+
+let shadowmancerInvocationsInstalled = false;
+function installShadowmancerInvocations() {
+	if (shadowmancerInvocationsInstalled) return;
+	shadowmancerInvocationsInstalled = true;
+	installArmorOfShadowsPrep();
+	Hooks.on('updateCombat', (combat, changes) => {
+		onKnowYourLimitsTurnStart(combat, changes).catch((error) =>
+			console.warn(`[${MODULE_ID}] Know Your Limits free summon failed`, error),
+		);
+	});
+	// Armor of Shadows follows its owner's summons on every client.
+	Hooks.on('createToken', refreshArmorOfShadows);
+	Hooks.on('deleteToken', refreshArmorOfShadows);
+	Hooks.on('updateToken', (tokenDoc, changes) => {
+		if (changes && 'delta' in changes) refreshArmorOfShadows(tokenDoc);
+	});
+	Hooks.on('updateActor', (actor, changes) => {
+		if (actor?.isToken && foundry.utils.hasProperty(changes ?? {}, 'system.attributes.hp')) refreshArmorOfShadows(actor.token);
+	});
+	for (const actor of game.actors ?? []) {
+		if (actor?.type !== 'character' || !ownsFeature(actor, ARMOR_OF_SHADOWS)) continue;
+		try {
+			actor.prepareData();
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not refresh Armor of Shadows`, error);
+		}
+	}
 }
 
 // ── Shadowmancer "Fiendish Boon" invocation ──────────────────────────────────
@@ -7847,7 +11801,8 @@ function syncPilferedPower(app) {
 	if (!(root instanceof HTMLElement)) return;
 	if (!(actor instanceof Actor) || actor.type !== 'character') return;
 
-	if (!isShadowmancerActor(actor)) {
+	// System 0.9+: Pilfered Power is its own pool in the sheet header, not mana.
+	if (!isShadowmancerActor(actor) || nativePilferedPower(actor)) {
 		root.classList.remove('bcx-shadowmancer');
 		return;
 	}
@@ -7929,7 +11884,7 @@ function isManaBar(data) {
 
 function pilferedPowerBarColors(token, data, fallback) {
 	try {
-		if (!isManaBar(data) || !isShadowmancerActor(token?.actor)) return fallback();
+		if (!isManaBar(data) || !isShadowmancerActor(token?.actor) || nativePilferedPower(token?.actor)) return fallback();
 		const ColorClass = foundry.utils.Color;
 		return { empty: ColorClass.from(PILFERED_POWER_BAR_EMPTY), full: ColorClass.from(PILFERED_POWER_BAR_FULL) };
 	} catch (error) {
@@ -8110,7 +12065,11 @@ Hooks.on('renderCompendium', (application, element) => {
 // fire natively. Nimble tags no granter on the stored child (its `grantedBy` is
 // in-memory only; deletes do not cascade), so neither do we. Idempotent: a
 // second run finds nothing to do.
-const CLASS_REFRESH_CLASSES = new Set(['engineer', 'specter']);
+// The Cheat joined for Tools of the Deadeye's counters and Improviser's weapon
+// grant: refreshing touches only the Codex's own Cheat documents.
+// The Berserker joined for the Codex subclasses (Skald / Lycan / Cinderheart:
+// counters, toggles, Lycan Fury's Bite and Claws): only Codex documents change.
+const CLASS_REFRESH_CLASSES = new Set(['engineer', 'specter', 'the-cheat', 'berserker']);
 const CODEX_ITEMS_PACK = `${MODULE_ID}.blue-codex-items`;
 const CODEX_SUBCLASSES_PACK = `${MODULE_ID}.blue-codex-subclasses`;
 // Module flag keys that are content (authored in pack-sources), not actor state.
@@ -9489,6 +13448,2417 @@ export const __classRefresh__ = {
 	startup: () => classContentRefreshStartup,
 };
 
+// ── Berserker (Codex subclasses) ─────────────────────────────────────────────
+// Path of the Skald, Path of the Lycan, Path of the Cinderheart and their Savage
+// Arsenal options. The Berserker core (Rage, Fury Dice, free Rages, over-max
+// dice, Death Blow) is the system's plus Nim+'s; this section only adds what the
+// Codex subclasses change. With Nim+'s Berserker API (`api.berserker`, class
+// automation on) the Fury Dice are read/written through it; without it the same
+// pool storage is used directly, so everything degrades to the system alone.
+//
+//   Skald       Battle Hymn: when you Rage, expend a Fury Die (two with Saga of
+//               Battles) for a verse — a dialog, or a card button when the Rage
+//               ran on the GM's client (a free Rage). Allies in Burst 4 get it at
+//               once, allies who start their turn in Burst 4 get it then; it ends
+//               at the start of the Skald's next turn. Violence: +die on the ally's
+//               next damage/healing roll (in-memory formula patch, consumed by that
+//               roll). Pride: +die Armor (character armor prep). Survival: temp HP
+//               = half the die. While the Skald Rages: allies in Burst 4 roll STR
+//               saves with advantage (rollSavingThrow wrap); Saga of Battles +2
+//               speed to allies starting their turn in Burst 4. Warrior Poet: 1/turn
+//               (visible counter, refilled at every turn start) a Fury Die when an
+//               ally in the hymn area deals damage. Boltering Howl banks That all
+//               you got?!'s reduction on an ally. Thunderous Bellow fires on Rage,
+//               Brothers in Blood is offered on a Wound, Deafening Rebuke deals the
+//               highest die just expended.
+//   Lycan       Bite/Claws (granted items, `automation.naturalWeapon`), +1 damage
+//               die with Apex Lycan (derived data). Reminders (never blocks) for a
+//               weapon while Raging / a natural weapon out of form. Lunar
+//               Regeneration heals STR at turn start while Bloodied. Howl in the
+//               Night targets Burst 3 and expends the lowest die; attacks against a
+//               Frightened target count two Fury Dice at max. Feral Pounce: 3+
+//               spaces moved while Raging → next attack +LVL, Prone offer on a hit.
+//   Cinderheart Ablaze (a toggleEffect on Immolating Fury): offered on Rage (or by
+//               using the feature), STR fire to self at once and at the start of
+//               each later turn, +1 per Fury Die on attacks, KEY fire aura (armor
+//               ignored, Smoldering with King of Fires) at turn end; ends with the
+//               Rage. Heat of the Soul / Blaze Breaker expend chosen dice; Flaming
+//               Heart fires on Rage / Fury gain, Burn Together on a Wound, Last
+//               Blaze sacrifices HP; Cleansing Fire removes a condition.
+//
+// Every module-side spend or write posts an Undo card. Turn-bound work runs on
+// the acting GM (`nimbleCombatTurnStart` / `nimbleCombatTurnEnd`); a player's
+// write to a creature they do not own goes through runAsGM.
+const CBZ_FLAG = 'codexBerserker';
+const CBZ_CARD_FLAG = 'codexBerserkerCard';
+const CBZ_FURY_POOL = 'fury';
+const CBZ_RAGE = 'rage';
+const CBZ_ABLAZE = 'ablaze';
+const CBZ_BEAST_FORM = 'beast-form';
+const CBZ_HYMN_RANGE = 4;
+const CBZ_WARRIOR_POET_POOL = 'warrior-poet-uses';
+const CBZ_VERSES = { violence: 'Verse of Violence', pride: 'Verse of Pride', survival: 'Verse of Survival' };
+const CBZ_VERSE_IMG = {
+	violence: 'icons/skills/melee/strike-sword-slashing-red.webp',
+	pride: 'icons/equipment/shield/heater-steel-worn.webp',
+	survival: 'icons/magic/life/heart-cross-strong-green.webp',
+};
+// Conditions Cleansing Fire may drop ("negative condition, not including Wounds").
+const CBZ_NEGATIVE_CONDITIONS = [
+	'blinded',
+	'charmed',
+	'confused',
+	'dazed',
+	'distracted',
+	'frightened',
+	'grappled',
+	'hampered',
+	'incapacitated',
+	'paralyzed',
+	'petrified',
+	'poisoned',
+	'prone',
+	'restrained',
+	'silenced',
+	'slowed',
+	'smoldering',
+	'stunned',
+	'taunted',
+];
+// Features whose damage the prompt settles (formula patched to a number).
+const CBZ_SETTLED_DAMAGE = new Set(['blaze-breaker', 'heat-of-the-soul', 'deafening-rebuke', 'last-blaze']);
+const CBZ_REBUKE_MEMORY_MS = 120000;
+const CBZ_FLAMING_HEART_DEBOUNCE_MS = 1500;
+const CBZ_FLAMING_HEART_DELAY_MS = 250;
+const CBZ_POUNCE_SPACES = 3;
+
+// Activations in flight whose damage roll the Codex adjusts: { actor, ablaze, howl }.
+const cbzRollContexts = [];
+// actor uuid → { faces, at }: the Fury Dice last expended on this client (Deafening Rebuke).
+const cbzLastExpended = new Map();
+// actor uuid → ms of the last Flaming Heart (one per Rage / gain burst).
+const cbzFlamingHeartAt = new Map();
+// `${actorUuid}|${turnKey}` → spaces moved this turn (Feral Pounce, acting GM).
+const cbzPounceMoves = new Map();
+// Card button handlers: action → async (data, ctx) => note string | true | false.
+const CBZ_CARD_ACTIONS = new Map();
+
+/* ── Lookups ── */
+
+function cbzSys() {
+	return game.system?.id ?? 'nimble';
+}
+
+// The item's rules: the live RulesManager when prepared, else the source array.
+function cbzItemRules(item) {
+	const rules = item?.rules;
+	if (rules && typeof rules.values === 'function') {
+		try {
+			return Array.from(rules.values());
+		} catch {
+			/* fall through to the source */
+		}
+	}
+	return Array.isArray(item?.system?.rules) ? item.system.rules : [];
+}
+
+// The actor's Berserker feature with this identifier (name slug).
+function cbzFeature(actor, identifier) {
+	for (const item of listEmbeddedItems(actor)) {
+		if (item?.type !== 'feature' || item.system?.identifier !== identifier) continue;
+		const cls = item.system?.class;
+		if (!cls || cls === 'berserker') return item;
+	}
+	return null;
+}
+
+function cbzOwns(actor, identifier) {
+	return cbzFeature(actor, identifier) !== null;
+}
+
+function cbzEffects(actor) {
+	const effects = actor?.effects;
+	if (!effects) return [];
+	if (Array.isArray(effects)) return effects;
+	if (Array.isArray(effects.contents)) return effects.contents;
+	try {
+		return Array.from(effects);
+	} catch {
+		return [];
+	}
+}
+
+function cbzEffectData(effect) {
+	return effect?.flags?.[MODULE_ID]?.[CBZ_FLAG] ?? null;
+}
+
+// { item, rule } of the owned toggleEffect with this identifier (rage, ablaze, beast-form).
+function cbzToggle(actor, identifier) {
+	for (const item of listEmbeddedItems(actor)) {
+		if (item?.type !== 'feature') continue;
+		const rule = cbzItemRules(item).find(
+			(r) => r?.type === 'toggleEffect' && String(r.identifier ?? '').trim() === identifier,
+		);
+		if (rule) return { item, rule };
+	}
+	return null;
+}
+
+// The toggle's backing ActiveEffect (the system's flag shape), if any.
+function cbzToggleEffect(actor, identifier) {
+	const ruleId = cbzToggle(actor, identifier)?.rule?.id;
+	if (!ruleId) return null;
+	const scope = cbzSys();
+	return cbzEffects(actor).find((effect) => effect?.flags?.[scope]?.toggleEffectRuleId === ruleId) ?? null;
+}
+
+function cbzToggleOn(actor, identifier, tag) {
+	if (tag && actor?.tags?.has?.(tag)) return true;
+	const effect = cbzToggleEffect(actor, identifier);
+	return !!effect && !effect.disabled;
+}
+
+function cbzIsRaging(actor) {
+	return cbzToggleOn(actor, CBZ_RAGE, 'self:raging');
+}
+
+function cbzIsAblaze(actor) {
+	return cbzToggleOn(actor, CBZ_ABLAZE, 'self:ablaze');
+}
+
+function cbzInBeastForm(actor) {
+	return cbzToggleOn(actor, CBZ_BEAST_FORM, 'self:beast-form');
+}
+
+function cbzIsRageEffect(effect) {
+	const actor = effect?.parent;
+	if (actor?.type !== 'character') return false;
+	const ruleId = cbzToggle(actor, CBZ_RAGE)?.rule?.id;
+	return !!ruleId && effect?.flags?.[cbzSys()]?.toggleEffectRuleId === ruleId;
+}
+
+// KEY: the highest key-stat modifier (the system's `@key`).
+function cbzKeyMod(actor) {
+	try {
+		const key = Number(actor?.getRollData?.()?.key);
+		if (Number.isFinite(key)) return key;
+	} catch {
+		/* no roll data */
+	}
+	return Math.max(getAbilityMod(actor, 'strength'), getAbilityMod(actor, 'dexterity'));
+}
+
+function cbzHp(actor) {
+	const hp = actor?.system?.attributes?.hp ?? {};
+	return { value: Number(hp.value) || 0, temp: Number(hp.temp) || 0, max: Number(hp.max) || 0 };
+}
+
+// Roll data with the ability shortcuts (`@strength`…) the system adds.
+function cbzRollData(actor) {
+	let data = {};
+	try {
+		data = { ...(actor?.getRollData?.() ?? {}) };
+	} catch {
+		data = {};
+	}
+	for (const key of Object.keys(actor?.system?.abilities ?? {})) data[key] ??= getAbilityMod(actor, key);
+	data.key ??= cbzKeyMod(actor);
+	return data;
+}
+
+function cbzBloodied(actor) {
+	if (actor?.tags?.has?.('self:bloodied') || actorHasStatus(actor, 'bloodied')) return true;
+	const { value, max } = cbzHp(actor);
+	return max > 0 && value > 0 && value <= max / 2;
+}
+
+// Deterministic formula (roll data + @n/@sum spend tokens) → number, else null.
+function cbzEvalFormula(formula, data = {}, extra = {}) {
+	let text = String(formula ?? '');
+	for (const [key, value] of Object.entries(extra)) {
+		text = text.replace(new RegExp(`@${key}(?![\\w.])`, 'g'), String(Number(value) || 0));
+	}
+	text = text.replace(/@([A-Za-z_][\w.]*)/g, (_m, path) => {
+		const value = Number(foundry.utils.getProperty(data, path));
+		return Number.isFinite(value) ? String(value) : '0';
+	});
+	if (!/^[\d\s+\-*/().]*$/.test(text) || !text.trim()) return null;
+	try {
+		// eslint-disable-next-line no-new-func
+		const value = Number(Function(`"use strict"; return (${text});`)());
+		return Number.isFinite(value) ? Math.floor(value) : null;
+	} catch {
+		return null;
+	}
+}
+
+/* ── Tokens ── */
+
+function cbzOwnToken(actor) {
+	return actor?.token ?? findActorTokenDoc(actor);
+}
+
+function cbzIsHostileTo(own, doc) {
+	const mine = Number(own?.disposition ?? 1);
+	const theirs = Number(doc?.disposition ?? 0);
+	return mine >= 0 ? theirs < 0 : theirs > 0;
+}
+
+function cbzIsAllyOf(own, doc) {
+	return Number(doc?.disposition) === Number(own?.disposition);
+}
+
+function cbzTokensNear(actor, radius, keep) {
+	const own = cbzOwnToken(actor);
+	const scene = own?.parent;
+	if (!own || !scene) return [];
+	return Array.from(scene.tokens ?? []).filter(
+		(doc) =>
+			doc?.id &&
+			doc.id !== own.id &&
+			doc.actor &&
+			doc.actor !== actor &&
+			!doc.hidden &&
+			!isTokenDefeated(doc) &&
+			keep(own, doc) &&
+			tokenDistanceSpaces(own, doc) <= radius,
+	);
+}
+
+function cbzEnemiesNear(actor, radius) {
+	return cbzTokensNear(actor, radius, cbzIsHostileTo);
+}
+
+function cbzAlliesNear(actor, radius) {
+	return cbzTokensNear(actor, radius, cbzIsAllyOf);
+}
+
+function cbzUserTargets() {
+	return Array.from(game.user?.targets ?? [])
+		.map((target) => target?.document ?? target)
+		.filter((doc) => doc?.id);
+}
+
+/* ── Fury Dice ── */
+
+// Nim+'s Berserker API while its class automation is on, else null.
+function cbzBerserkerApi() {
+	const mod = game.modules?.get?.(NIM_PLUS_ID);
+	if (!mod?.active) return null;
+	try {
+		if (game.settings.get(NIM_PLUS_ID, 'enableClassAutomation') === false) return null;
+	} catch {
+		// Setting not registered (older Nim+): trust the api's presence.
+	}
+	return mod.api?.berserker ?? null;
+}
+
+function cbzFuryEntry(actor) {
+	const api = cbzBerserkerApi();
+	if (typeof api?.findFuryPool === 'function') {
+		try {
+			const entry = api.findFuryPool(actor);
+			if (entry) return entry;
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Nim+ findFuryPool failed`, error);
+		}
+	}
+	const scope = cbzSys();
+	for (const item of listEmbeddedItems(actor)) {
+		const pools = item?.flags?.[scope]?.dicePools;
+		if (!pools || typeof pools !== 'object') continue;
+		for (const [key, pool] of Object.entries(pools)) {
+			if (pool && typeof pool === 'object' && (key === CBZ_FURY_POOL || String(pool.identifier ?? '') === CBZ_FURY_POOL)) {
+				return { document: item, key, pool, scope: 'item' };
+			}
+		}
+	}
+	return null;
+}
+
+function cbzCleanFaces(faces) {
+	return Array.isArray(faces)
+		? faces.map((face) => Math.floor(Number(face))).filter((face) => Number.isFinite(face) && face > 0)
+		: [];
+}
+
+function cbzFuryFaces(actor, entry = cbzFuryEntry(actor)) {
+	return cbzCleanFaces(entry?.pool?.faces);
+}
+
+function cbzFuryMax(entry) {
+	const max = Math.floor(Number(entry?.pool?.max));
+	return Number.isFinite(max) && max > 0 ? max : 0;
+}
+
+function cbzFuryDieFaces(entry) {
+	const match = /^d(\d+)$/.exec(String(entry?.pool?.dieSize ?? '').trim());
+	const faces = match ? Number(match[1]) : 4;
+	return Number.isFinite(faces) && faces > 1 ? faces : 4;
+}
+
+function cbzListFaces(faces) {
+	return faces?.length ? faces.join(', ') : 'none';
+}
+
+// Write the pool's faces (Nim+'s writer when present) and announce the change.
+async function cbzWriteFury(actor, entry, faces, { announce = true } = {}) {
+	const api = cbzBerserkerApi();
+	if (typeof api?.writeFuryFaces === 'function') return api.writeFuryFaces(actor, entry, faces, { announce });
+	if (!entry?.document) return false;
+	const scope = cbzSys();
+	const previous = cbzFuryFaces(actor, entry);
+	const next = cbzCleanFaces(faces);
+	await entry.document.update(
+		{ flags: { [scope]: { dicePools: { [entry.key]: { faces: next } } } } },
+		{ [scope]: { skipDicePoolSync: true } },
+	);
+	if (announce) {
+		try {
+			Hooks.call(`${scope}.dicePool.changed`, {
+				actor,
+				poolId: entry.key,
+				poolLabel: entry.pool?.label || 'Fury Dice',
+				previousFaces: previous,
+				newFaces: [...next],
+				reason: 'manual',
+				trigger: 'manual',
+			});
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] A Fury Dice change listener failed`, error);
+		}
+	}
+	return true;
+}
+
+// Roll `count` Fury Dice of the pool's size (and floor). Faces only.
+async function cbzRollFaces(entry, count) {
+	const n = Math.max(0, Math.floor(Number(count) || 0));
+	if (n < 1) return [];
+	const roll = await new Roll(`${n}d${cbzFuryDieFaces(entry)}`).evaluate();
+	const floor = Math.floor(Number(entry?.pool?.minFace));
+	const faces = [];
+	for (const die of roll.dice ?? []) {
+		for (const result of die.results ?? []) {
+			if (result.active === false || result.discarded) continue;
+			const face = Number(result.result);
+			if (Number.isFinite(face)) faces.push(Number.isFinite(floor) && floor > face ? floor : face);
+		}
+	}
+	return faces;
+}
+
+/**
+ * Roll Fury Dice into the pool with an Undo card. Dice over the max are
+ * reported (and offered to Nim+'s keep-the-best swap). `poolRestore` =
+ * { poolKey, itemId, delta } is put back too when the card is undone.
+ */
+async function cbzRollFuryIntoPool(actor, count, { flavor = 'Fury Dice', why = '', poolRestore = null } = {}) {
+	const entry = cbzFuryEntry(actor);
+	if (!entry) {
+		ui.notifications?.warn(`${actor?.name ?? 'Actor'} has no Fury Dice pool (Rage) — roll the die by hand.`);
+		return null;
+	}
+	const previous = cbzFuryFaces(actor, entry);
+	const rolled = await cbzRollFaces(entry, count);
+	if (!rolled.length) return null;
+	const room = Math.max(0, cbzFuryMax(entry) - previous.length);
+	const kept = rolled.slice(0, room);
+	const discarded = rolled.slice(room);
+	if (kept.length) await cbzWriteFury(actor, entry, [...previous, ...kept]);
+	const api = cbzBerserkerApi();
+	const overMax = discarded.length
+		? `<p><em>Over your max: ${escapeHtml(cbzListFaces(discarded))}${api ? '' : ' — decide by hand which dice to keep'}.</em></p>`
+		: '';
+	await postUndoCard({
+		actor,
+		flavor,
+		text:
+			`<p>${escapeHtml(why)}${kept.length ? `+${kept.length} Fury ${kept.length === 1 ? 'Die' : 'Dice'}: <strong>${escapeHtml(cbzListFaces(kept))}</strong>.` : 'No room for another Fury Die.'}</p>` +
+			`${overMax}<p><em>Fury Dice: ${escapeHtml(cbzListFaces([...previous, ...kept]))}.</em></p>`,
+		undoAction: {
+			type: 'codexFuryFaces',
+			data: { actorUuid: actor.uuid, faces: previous, pool: poolRestore },
+		},
+	});
+	if (discarded.length && typeof api?.offerOverMax === 'function') {
+		try {
+			await api.offerOverMax(actor, discarded, { flavor: `${flavor} (over your max)` });
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Nim+ offerOverMax failed`, error);
+		}
+	}
+	return { entry, previous, rolled, kept, discarded };
+}
+
+// Remove these face values (one each) from the pool. No card — callers post it.
+async function cbzRemoveFury(actor, spend) {
+	const entry = cbzFuryEntry(actor);
+	if (!entry) return null;
+	const previous = cbzFuryFaces(actor, entry);
+	const next = [...previous];
+	const spent = [];
+	for (const face of spend ?? []) {
+		const index = next.indexOf(Math.floor(Number(face)));
+		if (index < 0) continue;
+		next.splice(index, 1);
+		spent.push(Math.floor(Number(face)));
+	}
+	if (!spent.length) return null;
+	await cbzWriteFury(actor, entry, next);
+	cbzLastExpended.set(actor.uuid, { faces: [...spent], at: Date.now() });
+	return { entry, previous, spent, next };
+}
+
+// Expend these faces with an Undo card that restores the pool.
+async function cbzSpendFury(actor, spend, { flavor, reason = '' } = {}) {
+	const out = await cbzRemoveFury(actor, spend);
+	if (!out) return null;
+	await postUndoCard({
+		actor,
+		flavor,
+		text: `<p>${escapeHtml(actor.name)} expends <strong>${out.spent.length} Fury ${out.spent.length === 1 ? 'Die' : 'Dice'}</strong> (${escapeHtml(cbzListFaces(out.spent))})${reason ? ` — ${escapeHtml(reason)}` : ''}. Left: ${escapeHtml(cbzListFaces(out.next))}.</p>`,
+		undoAction: { type: 'codexFuryFaces', data: { actorUuid: actor.uuid, faces: out.previous } },
+	});
+	return out;
+}
+
+// Lowest / highest `count` faces of the pool.
+function cbzPickFaces(faces, count, { highest = false } = {}) {
+	const sorted = [...faces].sort((a, b) => (highest ? b - a : a - b));
+	return sorted.slice(0, Math.max(0, count));
+}
+
+registerUndoHandler('codexFuryFaces', async ({ actorUuid, faces, pool }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const entry = actor ? cbzFuryEntry(actor) : null;
+	if (!entry) return false;
+	await cbzWriteFury(actor, entry, faces ?? [], { announce: false });
+	let note = `Fury Dice: ${cbzListFaces(cbzCleanFaces(faces))}.`;
+	if (pool?.poolKey) {
+		const counter = getChargePoolEntry(actor, pool.poolKey, { item: pool.itemId ?? undefined });
+		if (counter) {
+			const after = await setChargePoolCurrent(counter, counter.current + (Number(pool.delta) || 0));
+			note += ` ${counter.label}: ${counter.current} → ${after}.`;
+		}
+	}
+	return note;
+});
+
+registerUndoHandler('codexHpRestore', async ({ actorUuid, value, temp }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	await actor.update({ 'system.attributes.hp.value': Number(value) || 0, 'system.attributes.hp.temp': Number(temp) || 0 });
+	return `HP restored to ${value}${temp ? ` (+${temp} temp)` : ''}.`;
+});
+
+registerUndoHandler('codexStatusRestore', async ({ actorUuid, status, active }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor || !status) return false;
+	await actor.toggleStatusEffect?.(status, { active: active !== false });
+	return `${conditionLabel(status)} ${active !== false ? 'restored' : 'removed'}.`;
+});
+
+/* ── Chat card buttons ── */
+
+// The client that decides for `actor`: a player's own client, or the GM's when
+// no player owning the actor is online.
+function cbzDecidesHere(actor) {
+	if (!game.user?.isGM) return true;
+	const players = Array.from(game.users ?? []).filter(
+		(user) => !user.isGM && user.active && actor?.testUserPermission?.(user, 'OWNER'),
+	);
+	return players.length === 0;
+}
+
+function cbzRegisterCardAction(action, handler) {
+	if (typeof action === 'string' && typeof handler === 'function') CBZ_CARD_ACTIONS.set(action, handler);
+}
+
+// A card with buttons (each `{ action, label, icon, data }`); using one retires the others.
+async function cbzPostCard({ actor, flavor, html, buttons = [] } = {}) {
+	const actions = {};
+	let row = '';
+	buttons.forEach((button, index) => {
+		const key = `a${index}`;
+		actions[key] = { action: button.action, data: button.data ?? {}, done: false, note: '' };
+		row += `<button type="button" class="bcx-berserker-action" data-bcx-berserker="${key}"><i class="${escapeHtml(button.icon ?? 'fa-solid fa-hand-fist')}"></i> ${escapeHtml(button.label)}</button>`;
+	});
+	const data = {
+		content: `<div class="bcx-berserker-card">${html ?? ''}${row}</div>`,
+		flags: { [MODULE_ID]: { [CBZ_CARD_FLAG]: { actorUuid: actor?.uuid ?? null, actions } } },
+	};
+	if (actor) data.speaker = ChatMessage.getSpeaker({ actor });
+	if (flavor) data.flavor = `<strong>${escapeHtml(flavor)}</strong>`;
+	try {
+		return await ChatMessage.create(data);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not post a Berserker card`, error);
+		return null;
+	}
+}
+
+async function cbzMarkCardDone(message, key, note = '') {
+	const card = message?.flags?.[MODULE_ID]?.[CBZ_CARD_FLAG];
+	if (!card?.actions?.[key]) return false;
+	const base = `flags.${MODULE_ID}.${CBZ_CARD_FLAG}.actions`;
+	const updates = { [`${base}.${key}.done`]: true, [`${base}.${key}.note`]: note };
+	for (const other of Object.keys(card.actions)) {
+		if (other === key || card.actions[other]?.done) continue;
+		updates[`${base}.${other}.done`] = true;
+		updates[`${base}.${other}.note`] = 'Not chosen.';
+	}
+	await message.update(updates);
+	return true;
+}
+
+async function cbzRunCardAction(message, key) {
+	const card = message?.flags?.[MODULE_ID]?.[CBZ_CARD_FLAG];
+	const entry = card?.actions?.[key];
+	if (!entry || entry.done) return false;
+	const handler = CBZ_CARD_ACTIONS.get(entry.action);
+	if (!handler) return false;
+	const result = await handler(entry.data ?? {}, { message, key, actorUuid: card.actorUuid });
+	if (!result) return false;
+	const note = typeof result === 'string' ? result : '';
+	if (game.user?.isGM || message.isAuthor) await cbzMarkCardDone(message, key, note);
+	else await runAsGM('codexBerserkerCardDone', { messageId: message.id, key, note });
+	return true;
+}
+
+registerGMRelayOp('codexBerserkerCardDone', async ({ messageId, key, note }, { user } = {}) => {
+	const message = game.messages?.get(messageId);
+	const card = message?.flags?.[MODULE_ID]?.[CBZ_CARD_FLAG];
+	if (!card) return false;
+	const actor = resolveActorByUuid(card.actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('codexBerserkerCardDone', user, actor?.name ?? card.actorUuid);
+	return cbzMarkCardDone(message, key, note);
+});
+
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		const card = message?.flags?.[MODULE_ID]?.[CBZ_CARD_FLAG];
+		if (!card) return;
+		const actor = resolveActorByUuid(card.actorUuid);
+		for (const button of html.querySelectorAll?.('[data-bcx-berserker]') ?? []) {
+			const key = button.dataset?.bcxBerserker;
+			const entry = card.actions?.[key];
+			if (!entry) continue;
+			if (entry.done) {
+				const note = document.createElement('p');
+				note.innerHTML = `<em>${escapeHtml(entry.note || 'Done.')}</em>`;
+				button.replaceWith(note);
+				continue;
+			}
+			if (!game.user?.isGM && !actor?.isOwner) {
+				button.remove();
+				continue;
+			}
+			button.addEventListener('click', (event) => {
+				event.preventDefault();
+				button.disabled = true;
+				void cbzRunCardAction(message, key)
+					.catch((error) => console.warn(`[${MODULE_ID}] Berserker card action failed`, error))
+					.finally(() => {
+						button.disabled = false;
+					});
+			});
+		}
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not wire a Berserker card`, error);
+	}
+});
+
+/* ── Small dialogs ── */
+
+// Choose how many Fury Dice to expend. `describe(count, faces)` labels each option.
+async function cbzAskDiceCount(actor, title, prompt, faces, describe, { defaultCount = 1 } = {}) {
+	if (!faces.length) return null;
+	const pick = Math.min(Math.max(1, defaultCount), faces.length);
+	const rows = faces
+		.map((_face, index) => {
+			const count = index + 1;
+			return `<label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="radio" name="bcx-fury-count" value="${count}" ${count === pick ? 'checked' : ''}><span>${escapeHtml(describe(count))}</span></label>`;
+		})
+		.join('');
+	const value = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${title}` },
+		content: `<p>${prompt}</p><div>${rows}</div><p><em>Fury Dice: ${escapeHtml(cbzListFaces(faces))}.</em></p>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Expend',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-fury-count"]:checked')?.value ?? String(pick);
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	const count = Math.floor(Number(value));
+	return Number.isFinite(count) && count >= 1 ? Math.min(count, faces.length) : null;
+}
+
+async function cbzAskNumber(actor, title, prompt, { value = 1, min = 1, max = 99 } = {}) {
+	const answer = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${title}` },
+		content: `<p>${prompt}</p><p><input type="number" name="bcx-berserker-number" value="${value}" min="${min}" max="${max}"></p>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'OK',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-berserker-number"]')?.value ?? String(value);
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	const number = Math.floor(Number(answer));
+	if (answer === null || answer === 'cancel' || !Number.isFinite(number)) return null;
+	return Math.max(min, Math.min(max, number));
+}
+
+// Pick one entry (`{ id, label }`); auto when there is one.
+async function cbzPickOne(actor, title, prompt, entries) {
+	if (!entries.length) return null;
+	if (entries.length === 1) return entries[0];
+	const rows = entries
+		.map(
+			(entry, index) =>
+				`<label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="radio" name="bcx-berserker-pick" value="${escapeHtml(entry.id)}" ${index === 0 ? 'checked' : ''}><span>${escapeHtml(entry.label)}</span></label>`,
+		)
+		.join('');
+	const id = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — ${title}` },
+		content: `<p>${prompt}</p><div>${rows}</div>`,
+		buttons: [
+			{
+				action: 'confirm',
+				label: 'Choose',
+				default: true,
+				callback: (_event, button, dialog) => {
+					const root = dialog?.element ?? button?.form ?? document;
+					return root.querySelector('input[name="bcx-berserker-pick"]:checked')?.value ?? entries[0].id;
+				},
+			},
+			{ action: 'cancel', label: 'Cancel', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return entries.find((entry) => entry.id === id) ?? null;
+}
+
+/* ── Auto-used features (Thunderous Bellow, Flaming Heart, Burn Together) ── */
+
+// Use the feature for its owner against every enemy within `radius` (no dialog,
+// no action). Nothing happens when no enemy is in range.
+async function cbzAutoUse(actor, identifier, radius) {
+	const item = cbzFeature(actor, identifier);
+	if (!item) return null;
+	const targets = cbzEnemiesNear(actor, radius);
+	if (!targets.length) return null;
+	try {
+		return await withUserTargets(targets, () => item.activate({ fastForward: true }));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] ${item.name} could not be used`, error);
+		return null;
+	}
+}
+
+async function cbzFlamingHeart(actor) {
+	if (!cbzOwns(actor, 'flaming-heart')) return null;
+	const now = Date.now();
+	if (now - (cbzFlamingHeartAt.get(actor.uuid) ?? 0) < CBZ_FLAMING_HEART_DEBOUNCE_MS) return null;
+	cbzFlamingHeartAt.set(actor.uuid, now);
+	return cbzAutoUse(actor, 'flaming-heart', 1);
+}
+
+/* ── After a Rage ── */
+
+async function cbzAfterRage(actor) {
+	if (actor?.type !== 'character') return;
+	await cbzAutoUse(actor, 'thunderous-bellow', 1);
+	await cbzFlamingHeart(actor);
+	if (cbzOwns(actor, 'immolating-fury') && !cbzIsAblaze(actor)) await cbzOfferAblaze(actor);
+	if (cbzOwns(actor, 'battle-hymn')) await cbzOfferBattleHymn(actor);
+}
+
+async function cbzOfferAblaze(actor) {
+	const damage = Math.max(0, getAbilityMod(actor, 'strength'));
+	if (cbzDecidesHere(actor)) {
+		const yes = await foundry.applications.api.DialogV2.confirm({
+			window: { title: `${actor.name} — Immolating Fury` },
+			content: `<p>Set yourself <strong>Ablaze</strong>? You take <strong>${damage}</strong> fire damage (STR).</p>`,
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (yes === true) await cbzSetAblaze(actor);
+		return;
+	}
+	await cbzPostCard({
+		actor,
+		flavor: 'Immolating Fury',
+		html: `<p>${escapeHtml(actor.name)} Rages: set yourself <strong>Ablaze</strong>? (${damage} fire damage)</p>`,
+		buttons: [{ action: 'ablaze', label: 'Set yourself Ablaze', icon: 'fa-solid fa-fire', data: { actorUuid: actor.uuid } }],
+	});
+}
+
+cbzRegisterCardAction('ablaze', async ({ actorUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	return (await cbzSetAblaze(actor)) ? 'Ablaze.' : false;
+});
+
+/* ── Cinderheart: Ablaze ── */
+
+// Fire damage `actor` takes from `amount` (immunity, resistance, flat reductions).
+function cbzFireTaken(actor, amount) {
+	let value = Math.max(0, Math.floor(Number(amount) || 0));
+	if (!value) return 0;
+	const attributes = actor?.system?.attributes ?? {};
+	if (Array.isArray(attributes.damageImmunities) && attributes.damageImmunities.includes('fire')) return 0;
+	const reductions = Array.isArray(actor?.system?.damageReductions) ? actor.system.damageReductions : [];
+	const fire = (entry) => !Array.isArray(entry?.damageTypes) || !entry.damageTypes.length || entry.damageTypes.includes('fire');
+	const resists =
+		(Array.isArray(attributes.damageResistances) && attributes.damageResistances.includes('fire')) ||
+		reductions.some((entry) => entry?.mode === 'half' && fire(entry));
+	if (resists) value = Math.ceil(value * 0.5);
+	for (const entry of reductions) {
+		if (entry?.mode === 'half' || !fire(entry)) continue;
+		value -= Math.max(0, Math.floor(Number(entry.value) || 0));
+	}
+	return Math.max(0, value);
+}
+
+// Deal `amount` fire damage to `actor` through its fire defenses. { taken, before, after }
+async function cbzBurn(actor, amount) {
+	const before = cbzHp(actor);
+	const taken = cbzFireTaken(actor, amount);
+	if (taken > 0) await actor.applyDamage(taken);
+	return { taken, before, after: cbzHp(actor) };
+}
+
+async function cbzSetAblaze(actor) {
+	if (cbzIsAblaze(actor)) {
+		ui.notifications?.info(`${actor.name} is already Ablaze (end it from the effects panel).`);
+		return false;
+	}
+	const found = cbzToggle(actor, CBZ_ABLAZE);
+	if (!found?.rule?.id) {
+		ui.notifications?.warn(`${actor.name}'s Immolating Fury has no Ablaze toggle — refresh the Codex class content.`);
+		return false;
+	}
+	const combat = game.combat?.started ? game.combat : null;
+	const mark = { combatId: combat?.id ?? null, round: combat?.round ?? null };
+	const scope = cbzSys();
+	const existing = cbzToggleEffect(actor, CBZ_ABLAZE);
+	let effectId = existing?.id ?? null;
+	if (existing) {
+		await existing.update({ disabled: false, [`flags.${MODULE_ID}.${CBZ_FLAG}.ablaze`]: mark });
+	} else {
+		const [created] =
+			(await actor.createEmbeddedDocuments('ActiveEffect', [
+				{
+					name: found.rule.label || 'Ablaze',
+					img: found.item.img,
+					disabled: false,
+					origin: found.item.uuid,
+					flags: {
+						[scope]: { toggleEffectRuleId: found.rule.id, toggleEffectItemId: found.item.id },
+						[MODULE_ID]: { [CBZ_FLAG]: { ablaze: mark } },
+					},
+				},
+			])) ?? [];
+		effectId = created?.id ?? null;
+	}
+	const amount = Math.max(0, getAbilityMod(actor, 'strength'));
+	const hit = await cbzBurn(actor, amount);
+	await postUndoCard({
+		actor,
+		flavor: 'Immolating Fury',
+		text:
+			`<p>${escapeHtml(actor.name)} is <strong>Ablaze</strong> and takes <strong>${hit.taken}</strong> fire damage` +
+			`${hit.taken < amount ? ` (${amount} before fire defenses)` : ''}. HP ${hit.before.value} → ${hit.after.value}.</p>` +
+			'<p><em>Burns at the start of each later turn; fiery aura at the end of your turns; +1 per Fury Die. Ends with your Rage.</em></p>',
+		undoAction: {
+			type: 'codexAblazeUndo',
+			data: { actorUuid: actor.uuid, effectId, value: hit.before.value, temp: hit.before.temp },
+		},
+	});
+	return true;
+}
+
+registerUndoHandler('codexAblazeUndo', async ({ actorUuid, effectId, value, temp }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	const effect = effectId ? (actor.effects?.get?.(effectId) ?? null) : null;
+	if (effect) await effect.delete();
+	await actor.update({ 'system.attributes.hp.value': Number(value) || 0, 'system.attributes.hp.temp': Number(temp) || 0 });
+	return `No longer Ablaze; HP restored to ${value}.`;
+});
+
+// Start of the Cinderheart's turn: burn, unless this is the first turn Ablaze.
+async function cbzAblazeTurnStart(actor, combat) {
+	const effect = cbzToggleEffect(actor, CBZ_ABLAZE);
+	if (!effect || effect.disabled || !combat?.id) return null;
+	const mark = cbzEffectData(effect)?.ablaze ?? {};
+	if (mark.combatId !== combat.id) {
+		// Lit outside this combat: this is its first turn in it.
+		await effect.update({ [`flags.${MODULE_ID}.${CBZ_FLAG}.ablaze`]: { combatId: combat.id, round: combat.round } });
+		return null;
+	}
+	if (!(Number(combat.round) > Number(mark.round))) return null;
+	const amount = Math.max(0, getAbilityMod(actor, 'strength'));
+	if (!amount) return null;
+	const hit = await cbzBurn(actor, amount);
+	if (hit.taken <= 0) {
+		postSummonChat(actor, `<p>Ablaze: ${amount} fire damage, reduced to 0 by your fire defenses.</p>`, 'Ablaze');
+		return hit;
+	}
+	await postUndoCard({
+		actor,
+		flavor: 'Ablaze',
+		text:
+			`<p>${escapeHtml(actor.name)} burns: <strong>${hit.taken}</strong> fire damage` +
+			`${hit.taken < amount ? ` (${amount} before fire defenses)` : ''}. HP ${hit.before.value} → ${hit.after.value}.</p>`,
+		undoAction: { type: 'codexHpRestore', data: { actorUuid: actor.uuid, value: hit.before.value, temp: hit.before.temp } },
+	});
+	return hit;
+}
+
+// End of the Cinderheart's turn: KEY fire (armor ignored) to every enemy in Reach 1.
+async function cbzAblazeAura(actor) {
+	if (!cbzIsAblaze(actor)) return null;
+	const amount = Math.max(0, cbzKeyMod(actor));
+	if (!amount) return null;
+	const targets = cbzEnemiesNear(actor, 1);
+	if (!targets.length) return null;
+	const smolder = cbzOwns(actor, 'king-of-fires');
+	const entries = [];
+	const lines = [];
+	for (const doc of targets) {
+		const target = doc.actor;
+		const before = cbzHp(target);
+		const taken = cbzFireTaken(target, amount);
+		// eslint-disable-next-line no-await-in-loop
+		if (taken > 0) await target.applyDamage?.(taken);
+		let smoldering = false;
+		if (smolder && taken > 0 && !actorHasStatus(target, 'smoldering')) {
+			// eslint-disable-next-line no-await-in-loop
+			await target.toggleStatusEffect?.('smoldering', { active: true });
+			smoldering = true;
+		}
+		entries.push({ actorUuid: target.uuid, value: before.value, temp: before.temp, smoldering });
+		lines.push(`${escapeHtml(doc.name ?? target.name)} ${taken}${smoldering ? ' + Smoldering' : ''}`);
+	}
+	await postUndoCard({
+		actor,
+		flavor: 'Ablaze — fiery aura',
+		text: `<p>${escapeHtml(actor.name)}'s fiery aura (KEY ${amount} fire, armor ignored): ${lines.join('; ')}.</p>`,
+		undoAction: { type: 'codexAuraUndo', data: { entries } },
+	});
+	return entries;
+}
+
+registerUndoHandler('codexAuraUndo', async ({ entries }) => {
+	let restored = 0;
+	for (const entry of entries ?? []) {
+		const actor = resolveActorByUuid(entry.actorUuid);
+		if (!actor) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await actor.update({ 'system.attributes.hp.value': Number(entry.value) || 0, 'system.attributes.hp.temp': Number(entry.temp) || 0 });
+		// eslint-disable-next-line no-await-in-loop
+		if (entry.smoldering) await actor.toggleStatusEffect?.('smoldering', { active: false });
+		restored += 1;
+	}
+	return restored ? `Restored ${restored} creature${restored === 1 ? '' : 's'}.` : false;
+});
+
+// The Rage ended (effect deleted or switched off): Ablaze goes with it.
+async function cbzOnRageEnded(actor) {
+	const ablaze = cbzToggleEffect(actor, CBZ_ABLAZE);
+	if (!ablaze || ablaze.disabled) return false;
+	await ablaze.delete();
+	postSummonChat(actor, `<p>${escapeHtml(actor.name)}'s Rage ends — no longer <strong>Ablaze</strong>.</p>`, 'Immolating Fury');
+	return true;
+}
+
+/* ── Lycan ── */
+
+async function cbzLunarRegeneration(actor) {
+	if (!cbzOwns(actor, 'lunar-regeneration') || !cbzBloodied(actor)) return null;
+	const amount = Math.max(0, getAbilityMod(actor, 'strength'));
+	const before = cbzHp(actor);
+	const next = before.max > 0 ? Math.min(before.max, before.value + amount) : before.value + amount;
+	if (!amount || next <= before.value) return null;
+	await actor.update({ 'system.attributes.hp.value': next });
+	await postUndoCard({
+		actor,
+		flavor: 'Lunar Regeneration',
+		text: `<p>${escapeHtml(actor.name)} is Bloodied and regains <strong>${next - before.value}</strong> HP (STR). HP ${before.value} → ${next}.</p>`,
+		undoAction: { type: 'codexHpRestore', data: { actorUuid: actor.uuid, value: before.value, temp: before.temp } },
+	});
+	return next - before.value;
+}
+
+function cbzIsNaturalWeapon(item) {
+	return getItemAutomationFlag(item, 'naturalWeapon') === 'lycan';
+}
+
+// Apex Lycan: one more damage die on the natural weapons (derived data only).
+function cbzApplyApexLycan(item) {
+	if (!cbzIsNaturalWeapon(item)) return;
+	const actor = item.actor ?? item.parent;
+	if (!actor || actor.type !== 'character' || !cbzOwns(actor, 'apex-lycan')) return;
+	const sourceNodes = item._source?.system?.activation?.effects ?? [];
+	const nodes = item.system?.activation?.effects ?? [];
+	for (const node of nodes) {
+		if (node?.type !== 'damage') continue;
+		const source = sourceNodes.find((entry) => entry?.id === node.id)?.formula ?? node.formula;
+		const match = /^(\s*)(\d*)d(\d+)/.exec(String(source ?? ''));
+		if (!match) continue;
+		const count = (Number(match[2]) || 1) + 1;
+		node.formula = `${match[1]}${count}d${match[3]}${String(source).slice(match[0].length)}`;
+	}
+}
+
+// Feral Pounce: moving 3+ spaces in your turn while Raging readies the pounce.
+async function cbzTrackPounce(tokenDoc, from) {
+	const actor = tokenDoc?.actor;
+	const combat = game.combat;
+	if (!actor || actor.type !== 'character' || !combat?.started || !from) return null;
+	if (!cbzOwns(actor, 'feral-pounce') || !cbzIsRaging(actor)) return null;
+	const current = combat.combatant;
+	if (current && current.actorId !== actor.id && current.actor !== actor) return null;
+	const size = tokenDoc.parent?.grid?.size ?? canvas?.grid?.size ?? 100;
+	const spaces = Math.round(Math.max(Math.abs((tokenDoc.x ?? 0) - (from.x ?? 0)), Math.abs((tokenDoc.y ?? 0) - (from.y ?? 0))) / size);
+	if (!(spaces > 0)) return null;
+	const key = `${actor.uuid}|${combatTurnKey(combat)}`;
+	const total = (cbzPounceMoves.get(key) ?? 0) + spaces;
+	cbzPounceMoves.set(key, total);
+	if (total < CBZ_POUNCE_SPACES || cbzEffects(actor).some((effect) => cbzEffectData(effect)?.pounce)) return total;
+	const item = cbzFeature(actor, 'feral-pounce');
+	await actor.createEmbeddedDocuments('ActiveEffect', [
+		{
+			name: `Feral Pounce (next attack +${getCharacterLevel(actor)})`,
+			img: item?.img ?? 'icons/svg/paw.svg',
+			duration: { value: 1, units: 'rounds' },
+			flags: { [MODULE_ID]: { [CBZ_FLAG]: { pounce: true } } },
+		},
+	]);
+	postSummonChat(
+		actor,
+		`<p>${escapeHtml(actor.name)} moved ${total} spaces while Raging: the next attack deals <strong>+${getCharacterLevel(actor)}</strong> damage (Feral Pounce).</p>`,
+		'Feral Pounce',
+	);
+	return total;
+}
+
+cbzRegisterCardAction('pounceProne', async ({ actorUuid, tokenUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		ui.notifications?.warn(`${actor.name} has no Fury Die to expend.`);
+		return false;
+	}
+	const target = resolveActorByUuid(tokenUuid);
+	if (!target) return false;
+	const out = await cbzRemoveFury(actor, cbzPickFaces(faces, 1));
+	if (!out) return false;
+	await runAsGM('codexApplyStatus', { actorUuid: target.uuid, sourceUuid: actor.uuid, status: 'prone', active: true });
+	await postUndoCard({
+		actor,
+		flavor: 'Feral Pounce',
+		text: `<p>${escapeHtml(actor.name)} expends a Fury Die (${out.spent[0]}) and knocks <strong>${escapeHtml(target.name)}</strong> Prone.</p>`,
+		undoAction: { type: 'codexPounceUndo', data: { actorUuid: actor.uuid, faces: out.previous, targetUuid: target.uuid } },
+	});
+	return `${target.name} is Prone.`;
+});
+
+registerUndoHandler('codexPounceUndo', async ({ actorUuid, faces, targetUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const entry = actor ? cbzFuryEntry(actor) : null;
+	if (entry) await cbzWriteFury(actor, entry, faces ?? [], { announce: false });
+	const target = resolveActorByUuid(targetUuid);
+	await target?.toggleStatusEffect?.('prone', { active: false });
+	return 'Fury Die back; Prone removed.';
+});
+
+registerGMRelayOp('codexApplyStatus', async ({ actorUuid, sourceUuid, status, active }, { user } = {}) => {
+	const source = resolveActorByUuid(sourceUuid);
+	if (!userMayActFor(user, source)) return relayDenied('codexApplyStatus', user, source?.name ?? sourceUuid);
+	if (!['prone', 'frightened', 'smoldering'].includes(status)) return relayDenied('codexApplyStatus', user, `the ${status} condition`);
+	const target = resolveActorByUuid(actorUuid);
+	if (!target) return false;
+	await target.toggleStatusEffect?.(status, { active: active !== false });
+	return true;
+});
+
+/* ── Skald: Battle Hymn ── */
+
+function cbzActiveHymn(skald) {
+	const hymn = skald?.flags?.[MODULE_ID]?.[CBZ_FLAG]?.hymn;
+	return hymn?.id && Array.isArray(hymn.verses) && hymn.verses.length ? hymn : null;
+}
+
+async function cbzOfferBattleHymn(actor) {
+	if (!cbzFuryFaces(actor).length) return null;
+	if (cbzDecidesHere(actor)) return cbzBattleHymnPrompt(actor);
+	return cbzPostCard({
+		actor,
+		flavor: 'Battle Hymn',
+		html: `<p>${escapeHtml(actor.name)} Rages: expend a Fury Die for a Battle Hymn verse?</p>`,
+		buttons: [{ action: 'hymn', label: 'Sing a verse', icon: 'fa-solid fa-music', data: { actorUuid: actor.uuid } }],
+	});
+}
+
+cbzRegisterCardAction('hymn', async ({ actorUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	return (await cbzBattleHymnPrompt(actor)) ? 'Verse sung.' : false;
+});
+
+// One verse pick: { verse, index } (index into the faces) or null.
+async function cbzAskVerse(actor, faces, { ordinal = '' } = {}) {
+	const best = faces.indexOf(Math.max(...faces));
+	const size = cbzFuryDieFaces(cbzFuryEntry(actor));
+	const allies = cbzAlliesNear(actor, CBZ_HYMN_RANGE).map((doc) => doc.name ?? doc.actor?.name ?? '');
+	const rows = faces
+		.map(
+			(face, index) =>
+				`<label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="radio" name="bcx-hymn-die" value="${index}" ${index === best ? 'checked' : ''}><span>d${size}: <strong>${face}</strong></span></label>`,
+		)
+		.join('');
+	const pick = (verse) => (_event, button, dialog) => {
+		const root = dialog?.element ?? button?.form ?? document;
+		const index = Number(root.querySelector('input[name="bcx-hymn-die"]:checked')?.value ?? best);
+		return { verse, index: Number.isInteger(index) ? index : best };
+	};
+	const result = await foundry.applications.api.DialogV2.wait({
+		window: { title: `${actor.name} — Battle Hymn${ordinal}` },
+		content:
+			`<p>Expend a Fury Die and choose a verse (until the start of your next turn).</p><div>${rows}</div>` +
+			`<p><em>Allies in Burst 4 now: ${escapeHtml(allies.length ? allies.join(', ') : 'none')}.</em></p>` +
+			'<p><em>Violence: +die to the next damage/healing roll · Pride: +die Armor · Survival: half the die as temp HP.</em></p>',
+		buttons: [
+			{ action: 'violence', label: 'Violence', icon: 'fa-solid fa-khanda', callback: pick('violence') },
+			{ action: 'pride', label: 'Pride', icon: 'fa-solid fa-shield', callback: pick('pride') },
+			{ action: 'survival', label: 'Survival', icon: 'fa-solid fa-heart', callback: pick('survival') },
+			{ action: 'none', label: 'No verse', callback: () => null },
+		],
+		rejectClose: false,
+		modal: true,
+	}).catch(() => null);
+	return result && typeof result === 'object' && CBZ_VERSES[result.verse] ? result : null;
+}
+
+async function cbzBattleHymnPrompt(actor) {
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		ui.notifications?.info(`${actor.name} has no Fury Die to expend for Battle Hymn.`);
+		return null;
+	}
+	const first = await cbzAskVerse(actor, faces);
+	if (!first) return null;
+	const picks = [first];
+	if (cbzOwns(actor, 'saga-of-battles') && faces.length > 1) {
+		const rest = faces.filter((_face, index) => index !== first.index);
+		const second = await cbzAskVerse(actor, rest, { ordinal: ' (second die)' });
+		if (second) {
+			const face = rest[second.index];
+			const index = faces.findIndex((value, i) => value === face && i !== first.index);
+			if (index >= 0) picks.push({ verse: second.verse, index });
+		}
+	}
+	return cbzSingBattleHymn(actor, picks);
+}
+
+// Expend the picked dice, record the hymn and give it to allies in Burst 4.
+async function cbzSingBattleHymn(actor, picks) {
+	const entry = cbzFuryEntry(actor);
+	const previous = cbzFuryFaces(actor, entry);
+	const used = new Set();
+	const verses = [];
+	for (const pick of picks ?? []) {
+		const index = Number(pick?.index);
+		if (!Number.isInteger(index) || index < 0 || index >= previous.length || used.has(index) || !CBZ_VERSES[pick.verse]) continue;
+		used.add(index);
+		verses.push({ verse: pick.verse, value: previous[index] });
+	}
+	if (!verses.length || !entry) return null;
+	await cbzExpireHymn(actor);
+	await cbzWriteFury(
+		actor,
+		entry,
+		previous.filter((_face, index) => !used.has(index)),
+	);
+	const combat = game.combat?.started ? game.combat : null;
+	const hymn = { id: foundry.utils.randomID(), verses, combatId: combat?.id ?? null, round: combat?.round ?? null };
+	await actor.setFlag(MODULE_ID, `${CBZ_FLAG}.hymn`, hymn);
+	const recipients = cbzAlliesNear(actor, CBZ_HYMN_RANGE);
+	if (recipients.length) {
+		await runAsGM('codexHymnApply', {
+			skaldUuid: actor.uuid,
+			hymnId: hymn.id,
+			verses,
+			actorUuids: recipients.map((doc) => doc.actor?.uuid).filter(Boolean),
+		});
+	}
+	const sung = verses.map(({ verse, value }) => `${CBZ_VERSES[verse]} (${value})`).join(' and ');
+	await postUndoCard({
+		actor,
+		flavor: 'Battle Hymn',
+		text:
+			`<p>${escapeHtml(actor.name)} sings the <strong>${escapeHtml(sung)}</strong>, expending ${verses.length === 1 ? 'a Fury Die' : `${verses.length} Fury Dice`}.</p>` +
+			`<p>${recipients.length ? `Allies in Burst 4: ${escapeHtml(recipients.map((doc) => doc.name ?? doc.actor?.name ?? '').join(', '))}.` : 'No ally in Burst 4 yet.'} ` +
+			'Allies who start their turn in Burst 4 join in; it ends at the start of your next turn.</p>',
+		undoAction: { type: 'codexHymnUndo', data: { actorUuid: actor.uuid, faces: previous, hymnId: hymn.id } },
+	});
+	return hymn;
+}
+
+function cbzVerseEffect(skald, hymnId, verse, value, extra = {}) {
+	const bonus = verse === 'survival' ? Math.floor(value / 2) : value;
+	const what = {
+		violence: `+${bonus} to the next damage, healing or temp HP roll`,
+		pride: `+${bonus} Armor`,
+		survival: `${bonus} temp HP`,
+	}[verse];
+	return {
+		name: `${CBZ_VERSES[verse]} (${what})`,
+		img: CBZ_VERSE_IMG[verse],
+		description: `<p>${CBZ_VERSES[verse]} from ${escapeHtml(skald.name)}'s Battle Hymn: ${what}. Ends at the start of ${escapeHtml(skald.name)}'s next turn.</p>`,
+		duration: { value: 1, units: 'rounds' },
+		flags: { [MODULE_ID]: { [CBZ_FLAG]: { hymn: { hymnId, skaldUuid: skald.uuid, verse, value: bonus, ...extra } } } },
+	};
+}
+
+function cbzHasHymn(actor, hymnId) {
+	return cbzEffects(actor).some((effect) => cbzEffectData(effect)?.hymn?.hymnId === hymnId);
+}
+
+// Give the hymn's verses to one ally (writer client). Returns the verses given.
+async function cbzApplyVerses(skald, hymnId, verses, target) {
+	if (!target || cbzHasHymn(target, hymnId)) return [];
+	const effects = [];
+	const given = [];
+	const survival = Math.max(0, ...verses.filter((v) => v.verse === 'survival').map((v) => Number(v.value) || 0));
+	for (const { verse, value } of verses) {
+		if (verse === 'survival') {
+			if (value !== survival || given.includes('survival')) continue;
+			const grant = Math.floor(value / 2);
+			const temp = cbzHp(target).temp;
+			const extra = { prevTemp: temp, granted: 0 };
+			if (grant > temp) {
+				// eslint-disable-next-line no-await-in-loop
+				await target.update({ 'system.attributes.hp.temp': grant });
+				extra.granted = grant;
+			}
+			effects.push(cbzVerseEffect(skald, hymnId, verse, value, extra));
+		} else {
+			effects.push(cbzVerseEffect(skald, hymnId, verse, value));
+		}
+		given.push(verse);
+	}
+	if (effects.length) await target.createEmbeddedDocuments('ActiveEffect', effects);
+	return given;
+}
+
+registerGMRelayOp('codexHymnApply', async ({ skaldUuid, hymnId, verses, actorUuids }, { user } = {}) => {
+	const skald = resolveActorByUuid(skaldUuid);
+	if (!userMayActFor(user, skald)) return relayDenied('codexHymnApply', user, skald?.name ?? skaldUuid);
+	for (const uuid of actorUuids ?? []) {
+		// eslint-disable-next-line no-await-in-loop
+		await cbzApplyVerses(skald, hymnId, verses ?? [], resolveActorByUuid(uuid));
+	}
+	return true;
+});
+
+// Every actor that may carry a Codex Berserker effect (scene tokens + world characters).
+function cbzEffectActors() {
+	const seen = new Map();
+	const add = (actor) => {
+		if (actor?.uuid && !seen.has(actor.uuid)) seen.set(actor.uuid, actor);
+	};
+	const scenes = [canvas?.scene, game.combat?.scene, game.scenes?.active].filter(Boolean);
+	for (const scene of new Set(scenes)) for (const doc of scene.tokens ?? []) add(doc.actor);
+	for (const actor of game.actors ?? []) if (actor?.type === 'character') add(actor);
+	return [...seen.values()];
+}
+
+async function cbzDeleteEffectsWhere(test) {
+	let removed = 0;
+	for (const actor of cbzEffectActors()) {
+		const ids = cbzEffects(actor)
+			.filter((effect) => test(cbzEffectData(effect) ?? {}, effect))
+			.map((effect) => effect.id)
+			.filter(Boolean);
+		if (!ids.length) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await actor.deleteEmbeddedDocuments('ActiveEffect', ids);
+		removed += ids.length;
+	}
+	return removed;
+}
+
+// The hymn ends: its verse effects go (Survival's temp HP stays), the flag clears
+// (only while it still names this hymn). A player's client asks the GM.
+async function cbzExpireHymn(skald, hymnId = null) {
+	const current = skald?.flags?.[MODULE_ID]?.[CBZ_FLAG]?.hymn ?? null;
+	const id = hymnId ?? current?.id ?? null;
+	if (!id) return false;
+	if (!game.user?.isGM && game.users?.activeGM) {
+		await runAsGM('codexHymnExpire', { skaldUuid: skald.uuid, hymnId: id });
+		return true;
+	}
+	await cbzDeleteEffectsWhere((data) => data.hymn?.hymnId === id);
+	if (current?.id === id) await skald.unsetFlag(MODULE_ID, `${CBZ_FLAG}.hymn`);
+	return true;
+}
+
+registerGMRelayOp('codexHymnExpire', async ({ skaldUuid, hymnId }, { user } = {}) => {
+	const skald = resolveActorByUuid(skaldUuid);
+	if (!userMayActFor(user, skald)) return relayDenied('codexHymnExpire', user, skald?.name ?? skaldUuid);
+	return cbzExpireHymn(skald, hymnId);
+});
+
+registerUndoHandler('codexHymnUndo', async ({ actorUuid, faces, hymnId }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	// Survival's temp HP back to what it was, where it was not spent since.
+	for (const target of cbzEffectActors()) {
+		for (const effect of cbzEffects(target)) {
+			const data = cbzEffectData(effect)?.hymn;
+			if (data?.hymnId !== hymnId || data.verse !== 'survival' || !data.granted) continue;
+			// eslint-disable-next-line no-await-in-loop
+			if (cbzHp(target).temp === data.granted) await target.update({ 'system.attributes.hp.temp': Number(data.prevTemp) || 0 });
+		}
+	}
+	await cbzDeleteEffectsWhere((data) => data.hymn?.hymnId === hymnId);
+	if (actor.flags?.[MODULE_ID]?.[CBZ_FLAG]?.hymn?.id === hymnId) await actor.unsetFlag(MODULE_ID, `${CBZ_FLAG}.hymn`);
+	const entry = cbzFuryEntry(actor);
+	if (entry) await cbzWriteFury(actor, entry, faces ?? [], { announce: false });
+	return `Verses removed; Fury Dice: ${cbzListFaces(cbzCleanFaces(faces))}.`;
+});
+
+// An ally starting their turn: the hymn (if they are in Burst 4 and lack it) and
+// Saga of Battles' +2 speed (while that Skald Rages).
+async function cbzHymnTurnStart(actor, token) {
+	const own = token ?? cbzOwnToken(actor);
+	if (!own?.parent) return [];
+	const notes = [];
+	for (const doc of Array.from(own.parent.tokens ?? [])) {
+		const skald = doc.actor;
+		if (!skald || skald === actor || skald.type !== 'character' || doc.id === own.id) continue;
+		if (!cbzIsAllyOf(doc, own) || isTokenDefeated(doc) || tokenDistanceSpaces(doc, own) > CBZ_HYMN_RANGE) continue;
+		const hymn = cbzActiveHymn(skald);
+		if (hymn) {
+			// eslint-disable-next-line no-await-in-loop
+			const given = await cbzApplyVerses(skald, hymn.id, hymn.verses, actor);
+			if (given.length) notes.push(`${given.map((verse) => CBZ_VERSES[verse]).join(' and ')} (${skald.name}'s Battle Hymn)`);
+		}
+		if (cbzOwns(skald, 'saga-of-battles') && cbzIsRaging(skald) && !cbzEffects(actor).some((e) => cbzEffectData(e)?.saga)) {
+			// eslint-disable-next-line no-await-in-loop
+			await actor.createEmbeddedDocuments('ActiveEffect', [
+				{
+					name: 'Saga of Battles (+2 speed)',
+					img: cbzFeature(skald, 'saga-of-battles')?.img ?? 'icons/svg/wingfoot.svg',
+					duration: { value: 1, units: 'rounds' },
+					system: { changes: [{ key: 'system.attributes.movement.walk', type: 'add', value: '2', phase: 'initial' }] },
+					flags: { [MODULE_ID]: { [CBZ_FLAG]: { saga: skald.uuid } } },
+				},
+			]);
+			notes.push(`+2 speed this turn (${skald.name}'s Saga of Battles)`);
+		}
+	}
+	if (notes.length) postSummonChat(actor, `<p>${escapeHtml(actor.name)} starts the turn in the Battle Hymn: ${escapeHtml(notes.join('; '))}.</p>`, 'Battle Hymn');
+	return notes;
+}
+
+// Verse of Pride: +die Armor on characters (after the system's armor sweep).
+function cbzApplyPrideArmor(actor) {
+	if (actor?.type !== 'character') return;
+	const armor = actor.system?.attributes?.armor;
+	if (!armor || typeof armor.value !== 'number') return;
+	let bonus = 0;
+	for (const effect of cbzEffects(actor)) {
+		const data = cbzEffectData(effect)?.hymn;
+		if (!effect.disabled && data?.verse === 'pride') bonus += Number(data.value) || 0;
+	}
+	if (bonus <= 0) return;
+	armor.value += bonus;
+	armor.hint = `${armor.hint ?? ''} + Verse of Pride `;
+}
+
+// Battle Hymn: an ally within Burst 4 of a Raging Skald gets advantage on STR saves.
+function cbzHymnSaveSource(actor, saveKey) {
+	if (saveKey !== 'strength' || !actor) return null;
+	const own = cbzOwnToken(actor);
+	if (!own?.parent) return null;
+	for (const doc of Array.from(own.parent.tokens ?? [])) {
+		const skald = doc.actor;
+		if (!skald || skald === actor || skald.type !== 'character' || doc.id === own.id) continue;
+		if (!cbzOwns(skald, 'battle-hymn') || !cbzIsAllyOf(doc, own) || isTokenDefeated(doc)) continue;
+		if (tokenDistanceSpaces(doc, own) > CBZ_HYMN_RANGE || !cbzIsRaging(skald)) continue;
+		return skald;
+	}
+	return null;
+}
+
+/* ── Skald: Warrior Poet ── */
+
+// An ally's damaging use resolved (their client): every Raging Warrior Poet
+// within Burst 4 of them rolls a Fury Die (1/turn, on the GM).
+async function cbzWarriorPoetCheck(item, context) {
+	const ally = item?.actor;
+	if (!ally || !game.combat?.started || context?.isMiss === true || !itemDealsDamage(item)) return 0;
+	const allyToken = cbzOwnToken(ally);
+	if (!allyToken?.parent) return 0;
+	let asked = 0;
+	for (const doc of Array.from(allyToken.parent.tokens ?? [])) {
+		const skald = doc.actor;
+		if (!skald || skald === ally || skald.type !== 'character' || doc.id === allyToken.id) continue;
+		if (!cbzOwns(skald, 'warrior-poet') || !cbzIsAllyOf(doc, allyToken) || isTokenDefeated(doc)) continue;
+		if (tokenDistanceSpaces(doc, allyToken) > CBZ_HYMN_RANGE || !cbzIsRaging(skald)) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await runAsGM('codexWarriorPoet', { skaldUuid: skald.uuid, allyUuid: ally.uuid, allyName: ally.name });
+		asked += 1;
+	}
+	return asked;
+}
+
+async function cbzWarriorPoetRoll(skald, allyName) {
+	const feature = cbzFeature(skald, 'warrior-poet');
+	if (!feature) return false;
+	const counter = getChargePoolEntry(skald, CBZ_WARRIOR_POET_POOL, { item: feature });
+	if (counter && counter.current < 1) return false;
+	if (counter) await setChargePoolCurrent(counter, counter.current - 1);
+	const out = await cbzRollFuryIntoPool(skald, 1, {
+		flavor: feature.name,
+		why: `${allyName} dealt damage in your Battle Hymn — `,
+		poolRestore: counter ? { poolKey: CBZ_WARRIOR_POET_POOL, itemId: feature.id, delta: 1 } : null,
+	});
+	return !!out;
+}
+
+registerGMRelayOp('codexWarriorPoet', async ({ skaldUuid, allyUuid, allyName }, { user } = {}) => {
+	const skald = resolveActorByUuid(skaldUuid);
+	const ally = resolveActorByUuid(allyUuid);
+	if (!skald) return false;
+	if (user && !userMayActFor(user, ally) && !userMayActFor(user, skald)) {
+		return relayDenied('codexWarriorPoet', user, ally?.name ?? allyUuid);
+	}
+	return cbzWarriorPoetRoll(skald, allyName ?? ally?.name ?? 'An ally');
+});
+
+// Every turn start: Warrior Poet's 1/turn use comes back.
+async function cbzRefreshWarriorPoet(combat) {
+	for (const combatant of combat?.combatants ?? []) {
+		const actor = combatant?.actor;
+		const feature = actor?.type === 'character' ? cbzFeature(actor, 'warrior-poet') : null;
+		if (!feature) continue;
+		const counter = getChargePoolEntry(actor, CBZ_WARRIOR_POET_POOL, { item: feature });
+		// eslint-disable-next-line no-await-in-loop
+		if (counter && counter.current < counter.max) await setChargePoolCurrent(counter, counter.max);
+	}
+}
+
+/* ── Skald: Boltering Howl, Deafening Rebuke ── */
+
+// That all you got?!'s reduction formula for this actor (with its modifiers).
+function cbzTaygFormula(actor) {
+	let formula = null;
+	const appends = [];
+	for (const item of listEmbeddedItems(actor)) {
+		for (const rule of cbzItemRules(item)) {
+			if (!rule || rule.disabled || String(rule.poolIdentifier ?? '').trim() !== CBZ_FURY_POOL) continue;
+			if (typeof rule.appliesTo === 'function' && !rule.appliesTo()) continue;
+			if (rule.type === 'diceConsumer' && rule.mode === 'manual' && rule.effectType === 'damageReduction' && !formula) {
+				formula = String(rule.effectFormula ?? '').trim() || null;
+			} else if (rule.type === 'modifyConsumer' && ['', 'damageReduction'].includes(String(rule.effectTypeFilter ?? ''))) {
+				const append = String(rule.appendFormula ?? '').trim();
+				if (append) appends.push(append);
+			}
+		}
+	}
+	return [formula ?? '(@strength + @dexterity) * @n', ...appends.map((append) => `(${append})`)].join(' + ');
+}
+
+function cbzTaygAmount(actor, spent) {
+	const data = cbzRollData(actor);
+	const sum = spent.reduce((total, face) => total + face, 0);
+	return cbzEvalFormula(cbzTaygFormula(actor), data, { n: spent.length, sum }) ?? 0;
+}
+
+async function cbzAddBankedReduction(actor, amount, source, img) {
+	const scope = cbzSys();
+	const add = Math.floor(Number(amount));
+	if (!actor || !(add > 0)) return false;
+	const label = (value) => {
+		const text = game.i18n?.format?.('NIMBLE.ui.bankedDamageReduction', { value: String(value) });
+		return text && !text.startsWith('NIMBLE.') ? text : `Damage Reduction (${value})`;
+	};
+	const existing = cbzEffects(actor).find((effect) => !effect.disabled && Number(effect.flags?.[scope]?.bankedDamageReduction) > 0);
+	if (existing) {
+		const total = Number(existing.flags[scope].bankedDamageReduction) + add;
+		await existing.update({ name: label(total), [`flags.${scope}.bankedDamageReduction`]: total });
+		return true;
+	}
+	await actor.createEmbeddedDocuments('ActiveEffect', [
+		{
+			name: label(add),
+			img: img || 'icons/svg/shield.svg',
+			disabled: false,
+			flags: { [scope]: { bankedDamageReduction: add, bankedDamageReductionSource: source ?? '' } },
+		},
+	]);
+	return true;
+}
+
+async function cbzRemoveBankedReduction(actor, amount) {
+	const scope = cbzSys();
+	const effect = cbzEffects(actor).find((e) => Number(e.flags?.[scope]?.bankedDamageReduction) > 0);
+	if (!effect) return false;
+	const left = Number(effect.flags[scope].bankedDamageReduction) - (Number(amount) || 0);
+	if (left > 0) await effect.update({ [`flags.${scope}.bankedDamageReduction`]: left, name: `Damage Reduction (${left})` });
+	else await effect.delete();
+	return true;
+}
+
+registerGMRelayOp('codexBankReduction', async ({ actorUuid, skaldUuid, amount, source, img }, { user } = {}) => {
+	const skald = resolveActorByUuid(skaldUuid);
+	if (!userMayActFor(user, skald)) return relayDenied('codexBankReduction', user, skald?.name ?? skaldUuid);
+	return cbzAddBankedReduction(resolveActorByUuid(actorUuid), amount, source, img);
+});
+
+registerUndoHandler('codexBolteringUndo', async ({ actorUuid, faces, allyUuid, amount }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const entry = actor ? cbzFuryEntry(actor) : null;
+	if (entry) await cbzWriteFury(actor, entry, faces ?? [], { announce: false });
+	await cbzRemoveBankedReduction(resolveActorByUuid(allyUuid), amount);
+	return `Reduction removed; Fury Dice: ${cbzListFaces(cbzCleanFaces(faces))}.`;
+});
+
+async function cbzPrepareBolteringHowl(item, actor, plan) {
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		ui.notifications?.warn(`${actor.name} has no Fury Die to expend for ${item.name} (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const own = cbzOwnToken(actor);
+	let ally = cbzUserTargets().find((doc) => doc.actor && doc.actor !== actor && (!own || cbzIsAllyOf(own, doc))) ?? null;
+	if (!ally) {
+		const allies = cbzAlliesNear(actor, CBZ_HYMN_RANGE);
+		const picked = await cbzPickOne(
+			actor,
+			item.name,
+			'Which ally does That all you got?! protect?',
+			allies.map((doc) => ({ id: doc.id, label: doc.name ?? doc.actor?.name ?? doc.id, doc })),
+		);
+		ally = picked?.doc ?? null;
+	}
+	if (!ally) {
+		ui.notifications?.warn(`${item.name}: target the attacked ally (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const highest = cbzTaygFormula(actor).includes('@sum');
+	const count = await cbzAskDiceCount(
+		actor,
+		item.name,
+		`That all you got?! for <strong>${escapeHtml(ally.name ?? ally.actor?.name ?? '')}</strong>: how many Fury Dice?`,
+		faces,
+		(n) => `${n} ${n === 1 ? 'die' : 'dice'}: reduce by ${cbzTaygAmount(actor, cbzPickFaces(faces, n, { highest }))}`,
+	);
+	if (!count) {
+		plan.blocked = true;
+		return;
+	}
+	const spend = cbzPickFaces(faces, count, { highest });
+	const amount = cbzTaygAmount(actor, spend);
+	plan.targets = [ally];
+	plan.completes.push(async () => {
+		const out = await cbzRemoveFury(actor, spend);
+		if (!out) return;
+		await runAsGM('codexBankReduction', {
+			actorUuid: ally.actor.uuid,
+			skaldUuid: actor.uuid,
+			amount,
+			source: item.name,
+			img: item.img,
+		});
+		await postUndoCard({
+			actor,
+			flavor: item.name,
+			text: `<p>${escapeHtml(actor.name)} expends ${out.spent.length} Fury ${out.spent.length === 1 ? 'Die' : 'Dice'} (${escapeHtml(cbzListFaces(out.spent))}): the next damage <strong>${escapeHtml(ally.name ?? ally.actor.name)}</strong> takes is reduced by <strong>${amount}</strong>.</p>`,
+			undoAction: {
+				type: 'codexBolteringUndo',
+				data: { actorUuid: actor.uuid, faces: out.previous, allyUuid: ally.actor.uuid, amount },
+			},
+		});
+	});
+}
+
+async function cbzPrepareDeafeningRebuke(item, actor, plan) {
+	const last = cbzLastExpended.get(actor.uuid);
+	let value = last && Date.now() - last.at < CBZ_REBUKE_MEMORY_MS && last.faces.length ? Math.max(...last.faces) : null;
+	if (value === null) {
+		value = await cbzAskNumber(actor, item.name, 'Highest Fury Die you just expended for That all you got?!', { value: 1, min: 1, max: 20 });
+		if (value === null) {
+			plan.blocked = true;
+			return;
+		}
+	}
+	const restore = patchItemActivation(item, (activation) => {
+		const node = firstDamageNode(activation.effects);
+		if (!node) return false;
+		node.formula = String(value);
+		return true;
+	});
+	if (restore) plan.restores.push(restore);
+	if (!cbzUserTargets().length) ui.notifications?.info(`${item.name}: target the attacker so the card can apply the damage.`);
+	plan.completes.push(() => cbzLastExpended.delete(actor.uuid));
+}
+
+/* ── Lycan: Howl in the Night ── */
+
+async function cbzPrepareHowl(item, actor, plan) {
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		const go = await foundry.applications.api.DialogV2.confirm({
+			window: { title: `${actor.name} — ${item.name}` },
+			content: `<p>${escapeHtml(actor.name)} has no Fury Die to spend. Howl anyway?</p>`,
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (go !== true) {
+			plan.blocked = true;
+			return;
+		}
+	}
+	if (!cbzUserTargets().length) {
+		const enemies = cbzEnemiesNear(actor, 3);
+		if (enemies.length) plan.targets = enemies;
+		else ui.notifications?.info(`${item.name}: no enemy in Burst 3.`);
+	}
+	if (faces.length) {
+		plan.completes.push(() =>
+			cbzSpendFury(actor, cbzPickFaces(cbzFuryFaces(actor), 1), { flavor: item.name, reason: 'a blood-freezing howl' }),
+		);
+	}
+}
+
+/* ── Cinderheart: Heat of the Soul, Blaze Breaker, Last Blaze, Cleansing Fire ── */
+
+async function cbzPrepareHeatOfTheSoul(item, actor, plan) {
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		ui.notifications?.warn(`${actor.name} has no Fury Die to expend for ${item.name} (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const enemies = cbzEnemiesNear(actor, 1);
+	if (!enemies.length) {
+		ui.notifications?.info(`${item.name}: no enemy in Burst 1 (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const per = getAbilityMod(actor, 'strength') + getAbilityMod(actor, 'dexterity');
+	const count = await cbzAskDiceCount(
+		actor,
+		item.name,
+		`STR+DEX fire damage per expended die to every enemy in Burst 1 (${enemies.length}), armor ignored.`,
+		faces,
+		(n) => `${n} ${n === 1 ? 'die' : 'dice'}: ${per * n} fire damage`,
+	);
+	if (!count) {
+		plan.blocked = true;
+		return;
+	}
+	const restore = patchItemActivation(item, (activation) => {
+		const node = firstDamageNode(activation.effects);
+		if (!node) return false;
+		node.formula = `(@strength + @dexterity) * ${count}`;
+		return true;
+	});
+	if (restore) plan.restores.push(restore);
+	plan.targets = enemies;
+	const spend = cbzPickFaces(faces, count);
+	plan.completes.push(() => cbzSpendFury(actor, spend, { flavor: item.name, reason: 'Heat of the Soul' }));
+}
+
+async function cbzPrepareBlazeBreaker(item, actor, plan) {
+	const faces = cbzFuryFaces(actor);
+	if (!faces.length) {
+		ui.notifications?.warn(`${item.name} needs at least 1 Fury Die (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const key = cbzKeyMod(actor);
+	const sumOf = (n) => cbzPickFaces(faces, n, { highest: true }).reduce((total, face) => total + face, 0);
+	const count = await cbzAskDiceCount(
+		actor,
+		item.name,
+		'Expend how many Fury Dice (your highest)? Fire damage = their sum + KEY, half on a passed DEX save.',
+		faces,
+		(n) => `${n} ${n === 1 ? 'die' : 'dice'}: ${sumOf(n)} + ${key} = ${sumOf(n) + key} fire`,
+		{ defaultCount: faces.length },
+	);
+	if (!count) {
+		plan.blocked = true;
+		return;
+	}
+	const spend = cbzPickFaces(faces, count, { highest: true });
+	const sum = spend.reduce((total, face) => total + face, 0);
+	const smolder = cbzOwns(actor, 'king-of-fires');
+	const restore = patchItemActivation(item, (activation) => {
+		const node = firstDamageNode(activation.effects);
+		if (!node) return false;
+		node.formula = `${sum} + @key`;
+		if (smolder) {
+			forEachEffectNode(activation.effects, (save) => {
+				if (save.type !== 'savingThrow') return;
+				save.on ??= {};
+				for (const outcome of ['failedSave', 'passedSave']) {
+					save.on[outcome] ??= [];
+					if (save.on[outcome].some((child) => child?.type === 'condition' && child.condition === 'smoldering')) continue;
+					save.on[outcome].push({
+						id: `bcxKingOfFires${outcome}`,
+						type: 'condition',
+						condition: 'smoldering',
+						parentContext: outcome,
+						parentNode: save.id,
+					});
+				}
+			});
+		}
+		return true;
+	});
+	if (restore) plan.restores.push(restore);
+	plan.completes.push(() => cbzSpendFury(actor, spend, { flavor: item.name, reason: `${sum} + KEY fire damage` }));
+}
+
+async function cbzPrepareLastBlaze(item, actor, plan) {
+	const hp = cbzHp(actor);
+	if (hp.value <= 0) {
+		ui.notifications?.warn(`${actor.name} has no HP to sacrifice.`);
+		plan.blocked = true;
+		return;
+	}
+	const amount = await cbzAskNumber(actor, item.name, `Sacrifice how much HP (1–${hp.value})? Your Rage ends; adjacent enemies take that much fire damage, armor ignored.`, {
+		value: Math.max(1, Math.min(hp.value, getCharacterLevel(actor) || 1)),
+		min: 1,
+		max: hp.value,
+	});
+	if (!amount) {
+		plan.blocked = true;
+		return;
+	}
+	const restore = patchItemActivation(item, (activation) => {
+		const node = firstDamageNode(activation.effects);
+		if (!node) return false;
+		node.formula = String(amount);
+		return true;
+	});
+	if (restore) plan.restores.push(restore);
+	const enemies = cbzEnemiesNear(actor, 1);
+	if (enemies.length) plan.targets = enemies;
+	else ui.notifications?.info(`${item.name}: no adjacent enemy.`);
+	plan.completes.push(() => cbzSacrificeForLastBlaze(actor, amount, item.name));
+}
+
+async function cbzSacrificeForLastBlaze(actor, amount, flavor) {
+	const before = cbzHp(actor);
+	const entry = cbzFuryEntry(actor);
+	const faces = cbzFuryFaces(actor, entry);
+	const rage = cbzToggleEffect(actor, CBZ_RAGE);
+	const rageData = rage ? rage.toObject?.() ?? null : null;
+	if (entry && faces.length) await cbzWriteFury(actor, entry, [], { announce: false });
+	if (rage) await rage.delete();
+	await actor.update({ 'system.attributes.hp.value': Math.max(0, before.value - amount) });
+	await postUndoCard({
+		actor,
+		flavor,
+		text: `<p>${escapeHtml(actor.name)} ends the Rage and sacrifices <strong>${amount}</strong> HP (HP ${before.value} → ${Math.max(0, before.value - amount)}).</p>`,
+		undoAction: {
+			type: 'codexLastBlazeUndo',
+			data: { actorUuid: actor.uuid, value: before.value, temp: before.temp, faces, rage: rageData },
+		},
+	});
+}
+
+registerUndoHandler('codexLastBlazeUndo', async ({ actorUuid, value, temp, faces, rage }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!actor) return false;
+	await actor.update({ 'system.attributes.hp.value': Number(value) || 0, 'system.attributes.hp.temp': Number(temp) || 0 });
+	if (rage && !cbzIsRaging(actor)) {
+		const { _id: _drop, ...data } = rage;
+		await actor.createEmbeddedDocuments('ActiveEffect', [data]);
+	}
+	const entry = cbzFuryEntry(actor);
+	if (entry) await cbzWriteFury(actor, entry, faces ?? [], { announce: false });
+	return `HP ${value}; Rage and Fury Dice (${cbzListFaces(cbzCleanFaces(faces))}) restored.`;
+});
+
+async function cbzPrepareCleansingFire(item, actor, plan) {
+	const present = CBZ_NEGATIVE_CONDITIONS.filter((status) => actorHasStatus(actor, status));
+	if (!present.length) {
+		ui.notifications?.info(`${actor.name} has no negative condition to lose (nothing was spent).`);
+		plan.blocked = true;
+		return;
+	}
+	const picked = await cbzPickOne(
+		actor,
+		item.name,
+		'Lose which condition?',
+		present.map((status) => ({ id: status, label: conditionLabel(status) })),
+	);
+	if (!picked) {
+		plan.blocked = true;
+		return;
+	}
+	plan.completes.push(async () => {
+		await actor.toggleStatusEffect?.(picked.id, { active: false });
+		await postUndoCard({
+			actor,
+			flavor: item.name,
+			text: `<p>${escapeHtml(actor.name)} burns away <strong>${escapeHtml(picked.label)}</strong>.</p>`,
+			undoAction: { type: 'codexStatusRestore', data: { actorUuid: actor.uuid, status: picked.id, active: true } },
+		});
+	});
+}
+
+/* ── The activation wrap ── */
+
+// Plan an activation: { blocked, options, targets, context, restores[], completes[] } or null.
+async function prepareCodexBerserkerActivation(item, options = {}) {
+	const actor = item?.actor;
+	if (!actor) return null;
+	const plan = { blocked: false, options: null, targets: null, context: null, restores: [], completes: [] };
+
+	cbzPlanViolence(item, actor, plan);
+
+	if (actor.type === 'character') {
+		if (item.type === 'feature') {
+			switch (item.system?.identifier) {
+				case 'immolating-fury':
+					plan.blocked = true;
+					await cbzUseImmolatingFury(actor);
+					return plan;
+				case 'blaze-breaker':
+					await cbzPrepareBlazeBreaker(item, actor, plan);
+					break;
+				case 'heat-of-the-soul':
+					await cbzPrepareHeatOfTheSoul(item, actor, plan);
+					break;
+				case 'howl-in-the-night':
+					await cbzPrepareHowl(item, actor, plan);
+					break;
+				case 'boltering-howl':
+					await cbzPrepareBolteringHowl(item, actor, plan);
+					break;
+				case 'deafening-rebuke':
+					await cbzPrepareDeafeningRebuke(item, actor, plan);
+					break;
+				case 'last-blaze':
+					await cbzPrepareLastBlaze(item, actor, plan);
+					break;
+				case 'cleansing-fire':
+					await cbzPrepareCleansingFire(item, actor, plan);
+					break;
+				case 'warrior-poet':
+					plan.completes.push(() => cbzRollFuryIntoPool(actor, 1, { flavor: item.name, why: 'Warrior Poet — ' }));
+					break;
+				default:
+			}
+			if (plan.blocked) return plan;
+			// Their damage was settled by the prompt: no roll dialog to click through.
+			if (CBZ_SETTLED_DAMAGE.has(item.system?.identifier)) plan.options = { ...options, fastForward: true };
+		}
+		if (isWeaponObject(item)) cbzNaturalWeaponReminder(item, actor);
+		if (isAttackItem(item)) {
+			cbzPlanPounce(item, actor, plan);
+			const targets = plan.targets ?? cbzUserTargets();
+			const ablaze = cbzIsAblaze(actor);
+			const howl = cbzOwns(actor, 'howl-in-the-night') && targets.some((doc) => actorHasStatus(doc.actor, 'frightened'));
+			if (ablaze || howl) plan.context = { actor, ablaze, howl, dieFaces: cbzFuryDieFaces(cbzFuryEntry(actor)) };
+		}
+	}
+	const busy = plan.blocked || plan.options || plan.targets || plan.context || plan.restores.length || plan.completes.length;
+	return busy ? plan : null;
+}
+
+async function cbzUseImmolatingFury(actor) {
+	if (!cbzIsRaging(actor)) {
+		const go = await foundry.applications.api.DialogV2.confirm({
+			window: { title: `${actor.name} — Immolating Fury` },
+			content: `<p>${escapeHtml(actor.name)} is not Raging (Ablaze is lit when you Rage and ends with it). Set yourself Ablaze anyway?</p>`,
+			rejectClose: false,
+			modal: true,
+		}).catch(() => false);
+		if (go !== true) return false;
+	}
+	return cbzSetAblaze(actor);
+}
+
+function cbzNaturalWeaponReminder(item, actor) {
+	if (!cbzOwns(actor, 'lycan-fury')) return;
+	if (cbzIsNaturalWeapon(item)) {
+		if (!cbzIsRaging(actor) && !cbzInBeastForm(actor)) {
+			ui.notifications?.info(`${item.name}: your natural weapons are for your hybrid form (Rage) or Beast Form.`);
+		}
+	} else if (cbzIsRaging(actor)) {
+		ui.notifications?.info(`Lycan Fury: you cannot wield weapons while Raging — use your Bite or Claws.`);
+	}
+}
+
+// Verse of Violence: +die on this activation's first damage (else healing) node.
+// The verse is then marked spent (kept until the hymn ends, so an ally starting
+// their turn in the area does not get it a second time).
+function cbzPlanViolence(item, actor, plan) {
+	const marks = cbzEffects(actor).filter((effect) => {
+		const hymn = cbzEffectData(effect)?.hymn;
+		return !effect.disabled && hymn?.verse === 'violence' && !hymn.spent;
+	});
+	if (!marks.length) return;
+	const bonus = marks.reduce((total, effect) => total + (Number(cbzEffectData(effect).hymn.value) || 0), 0);
+	if (bonus <= 0) return;
+	const restore = patchItemActivation(item, (activation) => {
+		let node = firstDamageNode(activation.effects);
+		if (!node) {
+			forEachEffectNode(activation.effects, (candidate) => {
+				if (!node && candidate.type === 'healing' && candidate.formula) node = candidate;
+			});
+		}
+		if (!node?.formula) return false;
+		node.formula = `${node.formula} + ${bonus}`;
+		return true;
+	});
+	if (!restore) return;
+	plan.restores.push(restore);
+	plan.completes.push(async () => {
+		const ids = marks.map((effect) => effect.id).filter(Boolean);
+		if (actor.isOwner || game.user?.isGM) await cbzSpendVerses(actor, ids);
+		else await runAsGM('codexSpendVerses', { actorUuid: actor.uuid, ids });
+		postSummonChat(actor, `<p>Verse of Violence: <strong>+${bonus}</strong> on this roll.</p>`, 'Battle Hymn');
+	});
+}
+
+async function cbzSpendVerses(actor, ids) {
+	for (const id of ids ?? []) {
+		const effect = actor?.effects?.get?.(id);
+		if (!cbzEffectData(effect)?.hymn) continue;
+		// eslint-disable-next-line no-await-in-loop
+		await effect.update({
+			disabled: true,
+			name: `${CBZ_VERSES.violence} (spent)`,
+			[`flags.${MODULE_ID}.${CBZ_FLAG}.hymn.spent`]: true,
+		});
+	}
+	return true;
+}
+
+registerGMRelayOp('codexSpendVerses', async ({ actorUuid, ids }, { user } = {}) => {
+	const actor = resolveActorByUuid(actorUuid);
+	if (!userMayActFor(user, actor)) return relayDenied('codexSpendVerses', user, actor?.name ?? actorUuid);
+	return cbzSpendVerses(actor, ids);
+});
+
+// Feral Pounce: +LVL on the next attack; on a hit, offer the Prone.
+function cbzPlanPounce(item, actor, plan) {
+	const marks = cbzEffects(actor).filter((effect) => cbzEffectData(effect)?.pounce);
+	if (!marks.length) return;
+	const level = getCharacterLevel(actor);
+	const restore = patchItemActivation(item, (activation) => {
+		const node = firstDamageNode(activation.effects);
+		if (!node?.formula) return false;
+		node.formula = `${node.formula} + ${level}`;
+		return true;
+	});
+	if (!restore) return;
+	plan.restores.push(restore);
+	const targets = cbzUserTargets();
+	plan.completes.push(async (result) => {
+		await actor.deleteEmbeddedDocuments('ActiveEffect', marks.map((effect) => effect.id).filter(Boolean));
+		const target = targets[0];
+		if (result?.system?.isMiss === true || !target?.actor || !cbzFuryFaces(actor).length) return;
+		await cbzPostCard({
+			actor,
+			flavor: 'Feral Pounce',
+			html: `<p>Pounce! Expend 1 Fury Die to knock <strong>${escapeHtml(target.name ?? target.actor.name)}</strong> Prone (Large or smaller)?</p>`,
+			buttons: [
+				{ action: 'pounceProne', label: 'Knock Prone', icon: 'fa-solid fa-person-falling', data: { actorUuid: actor.uuid, tokenUuid: target.uuid } },
+			],
+		});
+	});
+}
+
+async function runCodexBerserkerActivate(original, options = {}) {
+	if (options?.executeMacro) return original.call(this, options);
+	let plan = null;
+	try {
+		plan = await prepareCodexBerserkerActivation(this, options);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Codex Berserker pre-activate failed`, error);
+	}
+	if (plan?.blocked) {
+		for (const restore of [...(plan.restores ?? [])].reverse()) restore();
+		return null;
+	}
+	const next = plan?.options ?? options;
+	if (plan?.context) cbzRollContexts.push(plan.context);
+	try {
+		const result = plan?.targets
+			? await withUserTargets(plan.targets, () => original.call(this, next))
+			: await original.call(this, next);
+		if (result && plan?.completes?.length) {
+			for (const complete of plan.completes) {
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					await complete(result);
+				} catch (error) {
+					console.warn(`[${MODULE_ID}] Codex Berserker follow-up failed`, error);
+				}
+			}
+		}
+		return result;
+	} finally {
+		if (plan?.context) {
+			const index = cbzRollContexts.lastIndexOf(plan.context);
+			if (index >= 0) cbzRollContexts.splice(index, 1);
+		}
+		for (const restore of [...(plan?.restores ?? [])].reverse()) {
+			try {
+				restore();
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Could not restore a Codex Berserker activation patch`, error);
+			}
+		}
+	}
+}
+
+/* ── Fury Dice on the damage roll: Ablaze (+1 per die), Howl (two at max) ── */
+
+function cbzIsFuryTerm(term, NumericTerm) {
+	return !!NumericTerm && term instanceof NumericTerm && /fury/i.test(String(term.options?.flavor ?? ''));
+}
+
+function cbzAdjustFuryRoll(roll, context = cbzRollContexts.at(-1), terms = foundry.dice?.terms) {
+	if (!roll || !context || !Array.isArray(roll.terms)) return 0;
+	const { NumericTerm, OperatorTerm } = terms ?? {};
+	if (!NumericTerm) return 0;
+	const fury = roll.terms.filter((term, index) => {
+		if (!cbzIsFuryTerm(term, NumericTerm)) return false;
+		const previous = roll.terms[index - 1];
+		return !(OperatorTerm && previous instanceof OperatorTerm && previous.operator !== '+');
+	});
+	if (!fury.length) return 0;
+	let delta = 0;
+	if (context.howl) {
+		const max = Number(context.dieFaces) || 4;
+		const lowest = [...fury].sort((a, b) => Number(a.number) - Number(b.number)).slice(0, 2);
+		for (const term of lowest) {
+			const face = Number(term.number);
+			if (!Number.isFinite(face) || face >= max) continue;
+			delta += max - face;
+			term.number = max;
+		}
+	}
+	let ablaze = 0;
+	if (context.ablaze) {
+		ablaze = fury.length;
+		const plus = new OperatorTerm({ operator: '+' });
+		plus._evaluated = true;
+		const bonus = new NumericTerm({ number: ablaze, options: { flavor: 'Ablaze' } });
+		bonus._evaluated = true;
+		roll.terms.push(plus, bonus);
+	}
+	// Death Blow / Sickening Blow already doubled the Fury on a crit: keep it in step.
+	const doubled = roll.terms.find((term) => term instanceof NumericTerm && /death blow|sickening blow/i.test(String(term.options?.flavor ?? '')));
+	let doubling = 0;
+	if (doubled && (delta || ablaze)) {
+		doubling = delta + ablaze;
+		doubled.number = Number(doubled.number) + doubling;
+	}
+	const total = delta + ablaze + doubling;
+	if (total) {
+		roll._total = (Number(roll._total) || 0) + total;
+		roll.resetFormula?.();
+	}
+	return total;
+}
+
+function cbzDamageRollClass() {
+	const registered = CONFIG?.Dice?.rolls;
+	if (!Array.isArray(registered)) return null;
+	return (
+		registered.find(
+			(cls) =>
+				typeof cls?.prototype?._evaluate === 'function' &&
+				typeof cls?.prototype?._finalizeOutcome === 'function' &&
+				typeof cls?.prototype?._recalculateTotal === 'function',
+		) ?? null
+	);
+}
+
+/* ── Hook handlers ── */
+
+function cbzOnUseItem(item, _card, context) {
+	void (async () => {
+		const actor = item?.actor;
+		const isRage =
+			actor?.type === 'character' &&
+			cbzItemRules(item).some((rule) => rule?.type === 'toggleEffect' && String(rule.identifier ?? '').trim() === CBZ_RAGE);
+		if (isRage) await cbzAfterRage(actor);
+		await cbzWarriorPoetCheck(item, context);
+	})().catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker item follow-up failed`, error));
+}
+
+function cbzOnFuryChanged(payload) {
+	const actor = payload?.actor;
+	if (actor?.type !== 'character') return;
+	const poolId = String(payload.poolId ?? '');
+	if (poolId !== CBZ_FURY_POOL && poolId !== `actor:${CBZ_FURY_POOL}`) return;
+	const previous = cbzCleanFaces(payload.previousFaces);
+	const next = cbzCleanFaces(payload.newFaces);
+	if (next.length > previous.length) {
+		// A Rage's own dice land mid-activation: let its card post first (the Rage's
+		// useItem follow-up usually fires Flaming Heart before this; debounced).
+		if (cbzOwns(actor, 'flaming-heart')) {
+			setTimeout(() => {
+				void cbzFlamingHeart(actor).catch((error) => console.warn(`[${MODULE_ID}] Flaming Heart failed`, error));
+			}, CBZ_FLAMING_HEART_DELAY_MS);
+		}
+		return;
+	}
+	if (next.length < previous.length) {
+		const left = [...next];
+		const removed = [];
+		for (const face of previous) {
+			const index = left.indexOf(face);
+			if (index >= 0) left.splice(index, 1);
+			else removed.push(face);
+		}
+		if (removed.length) cbzLastExpended.set(actor.uuid, { faces: removed, at: Date.now() });
+	}
+}
+
+async function cbzOnTurnStart(combatant) {
+	const combat = combatant?.parent ?? game.combat;
+	const actor = combatant?.actor;
+	await cbzRefreshWarriorPoet(combat);
+	if (!actor) return;
+	await cbzExpireHymn(actor);
+	if (actor.type === 'character') {
+		await cbzAblazeTurnStart(actor, combat);
+		await cbzLunarRegeneration(actor);
+	}
+	await cbzHymnTurnStart(actor, combatant?.token ?? null);
+}
+
+async function cbzOnTurnEnd(combatant) {
+	const actor = combatant?.actor;
+	if (!actor) return;
+	const mine = cbzEffects(actor).filter((effect) => {
+		const data = cbzEffectData(effect);
+		return data?.saga || data?.pounce;
+	});
+	if (mine.length) await actor.deleteEmbeddedDocuments('ActiveEffect', mine.map((effect) => effect.id).filter(Boolean));
+	if (actor.type === 'character') await cbzAblazeAura(actor);
+}
+
+async function cbzOnCombatEnded() {
+	cbzPounceMoves.clear();
+	for (const actor of cbzEffectActors()) {
+		// eslint-disable-next-line no-await-in-loop
+		if (actor?.flags?.[MODULE_ID]?.[CBZ_FLAG]?.hymn) await cbzExpireHymn(actor);
+	}
+	await cbzDeleteEffectsWhere((data) => data.saga || data.pounce);
+}
+
+async function cbzOnWound(actor) {
+	await cbzAutoUse(actor, 'burn-together', 1);
+	const brothers = cbzFeature(actor, 'brothers-in-blood');
+	if (!brothers || !cbzAlliesNear(actor, CBZ_HYMN_RANGE).length) return;
+	await cbzPostCard({
+		actor,
+		flavor: brothers.name,
+		html: `<p>${escapeHtml(actor.name)} gains a Wound: bellow a rallying cry? One ally in Range 4 moves for free and gains <strong>${Math.max(0, getAbilityMod(actor, 'strength'))}</strong> temp HP.</p>`,
+		buttons: [{ action: 'brothers', label: 'Rally an ally', icon: 'fa-solid fa-people-group', data: { actorUuid: actor.uuid } }],
+	});
+}
+
+cbzRegisterCardAction('brothers', async ({ actorUuid }) => {
+	const actor = resolveActorByUuid(actorUuid);
+	const item = actor ? cbzFeature(actor, 'brothers-in-blood') : null;
+	if (!item) return false;
+	const allies = cbzAlliesNear(actor, CBZ_HYMN_RANGE);
+	const picked = await cbzPickOne(
+		actor,
+		item.name,
+		'Which ally answers the rallying cry?',
+		allies.map((doc) => ({ id: doc.id, label: doc.name ?? doc.actor?.name ?? doc.id, doc })),
+	);
+	if (!picked) return false;
+	const card = await withUserTargets([picked.doc], () => item.activate({ fastForward: true }));
+	return card ? `${picked.label} rallies (free Move + temp HP).` : false;
+});
+
+function cbzWoundsIn(changes) {
+	const path = 'system.attributes.wounds.value';
+	const value = foundry.utils.getProperty(changes ?? {}, path) ?? changes?.[path];
+	return typeof value === 'number' ? value : null;
+}
+
+/* ── Install ── */
+
+// Wrap `activate` on every item class prototype that defines its own (outside the
+// on-hit wrap, which is installed earlier on `ready`).
+function installCodexBerserkerActivate() {
+	const classes = CONFIG?.NIMBLE?.Item?.documentClasses;
+	if (!classes) return false;
+	const seen = new Set();
+	for (const cls of Object.values(classes)) {
+		const proto = cls?.prototype;
+		if (!proto || seen.has(proto)) continue;
+		seen.add(proto);
+		if (!Object.prototype.hasOwnProperty.call(proto, 'activate') || typeof proto.activate !== 'function') continue;
+		if (Object.prototype.hasOwnProperty.call(proto, '__blueCodexBerserkerWrapped')) continue;
+		const original = proto.activate;
+		proto.activate = async function blueCodexBerserkerActivate(options = {}) {
+			return runCodexBerserkerActivate.call(this, original, options);
+		};
+		proto.__blueCodexBerserkerWrapped = true;
+	}
+	return true;
+}
+
+// After Nim+'s DamageRoll patch (setup), so its Fury terms are already on the roll.
+function installCodexBerserkerDamageRoll() {
+	const cls = cbzDamageRollClass();
+	const proto = cls?.prototype;
+	if (!proto || Object.prototype.hasOwnProperty.call(proto, '__blueCodexBerserkerRoll')) return false;
+	const original = proto._evaluate;
+	proto._evaluate = async function blueCodexBerserkerEvaluate(...args) {
+		const result = await original.apply(this, args);
+		try {
+			cbzAdjustFuryRoll(this);
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not adjust the Fury Dice on the roll`, error);
+		}
+		return result;
+	};
+	proto.__blueCodexBerserkerRoll = true;
+	return true;
+}
+
+// Prepare-time wraps (before actors are prepared): Pride armor, Apex Lycan dice.
+function installCodexBerserkerPrep() {
+	const character = CONFIG?.NIMBLE?.Actor?.documentClasses?.character?.prototype;
+	if (character && !Object.prototype.hasOwnProperty.call(character, '__blueCodexVerseOfPride')) {
+		const hook = typeof character._onAfterPrepareData === 'function' ? '_onAfterPrepareData' : 'prepareDerivedData';
+		const original = character[hook];
+		character[hook] = function blueCodexVerseOfPride(...args) {
+			const result = original?.apply(this, args);
+			try {
+				cbzApplyPrideArmor(this);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Verse of Pride armor failed`, error);
+			}
+			return result;
+		};
+		character.__blueCodexVerseOfPride = true;
+	}
+	const object = CONFIG?.NIMBLE?.Item?.documentClasses?.object?.prototype;
+	if (object && !Object.prototype.hasOwnProperty.call(object, '__blueCodexApexLycan')) {
+		const original = object.prepareDerivedData;
+		object.prepareDerivedData = function blueCodexApexLycan(...args) {
+			const result = original?.apply(this, args);
+			try {
+				cbzApplyApexLycan(this);
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Apex Lycan dice failed for ${this?.name}`, error);
+			}
+			return result;
+		};
+		object.__blueCodexApexLycan = true;
+	}
+}
+
+// Battle Hymn's STR-save advantage: wrap each actor class's own `rollSavingThrow`.
+function installCodexBerserkerSaves() {
+	const classes = CONFIG?.NIMBLE?.Actor?.documentClasses ?? {};
+	const seen = new Set();
+	for (const cls of Object.values(classes)) {
+		let proto = cls?.prototype;
+		while (proto && !Object.prototype.hasOwnProperty.call(proto, 'rollSavingThrow')) proto = Object.getPrototypeOf(proto);
+		if (!proto || proto === Object.prototype || seen.has(proto)) continue;
+		seen.add(proto);
+		if (Object.prototype.hasOwnProperty.call(proto, '__blueCodexBattleHymnSaves')) continue;
+		const original = proto.rollSavingThrow;
+		if (typeof original !== 'function') continue;
+		proto.rollSavingThrow = async function blueCodexBattleHymnSave(saveKey, options = {}) {
+			let next = options;
+			try {
+				const skald = cbzHymnSaveSource(this, saveKey);
+				if (skald) {
+					next = { ...(options ?? {}), rollModeModifier: (Number(options?.rollModeModifier) || 0) + 1 };
+					ui.notifications?.info(`${this.name}: advantage on the STR save (${skald.name}'s Battle Hymn).`);
+				}
+			} catch (error) {
+				console.warn(`[${MODULE_ID}] Battle Hymn save check failed`, error);
+			}
+			return original.call(this, saveKey, next);
+		};
+		proto.__blueCodexBattleHymnSaves = true;
+	}
+}
+
+let codexBerserkerInstalled = false;
+function installCodexBerserker() {
+	if (codexBerserkerInstalled) return;
+	codexBerserkerInstalled = true;
+	const sys = cbzSys();
+	installCodexBerserkerActivate();
+	installCodexBerserkerDamageRoll();
+	installCodexBerserkerSaves();
+	Hooks.on(`${sys}.useItem`, cbzOnUseItem);
+	Hooks.on(`${sys}.dicePool.changed`, cbzOnFuryChanged);
+	// Emitted with Hooks.call on the acting GM only: never return false here.
+	Hooks.on('nimbleCombatTurnStart', (combatant) => {
+		if (!isActingGM()) return;
+		void cbzOnTurnStart(combatant).catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker turn start failed`, error));
+	});
+	Hooks.on('nimbleCombatTurnEnd', (combatant) => {
+		if (!isActingGM()) return;
+		void cbzOnTurnEnd(combatant).catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker turn end failed`, error));
+	});
+	Hooks.on('deleteActiveEffect', (effect) => {
+		if (!isActingGM() || !cbzIsRageEffect(effect)) return;
+		void cbzOnRageEnded(effect.parent).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
+	});
+	Hooks.on('updateActiveEffect', (effect, changes) => {
+		if (!isActingGM() || changes?.disabled !== true || !cbzIsRageEffect(effect)) return;
+		void cbzOnRageEnded(effect.parent).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
+	});
+	Hooks.on('preUpdateActor', (actor, changes, options) => {
+		if (actor?.type !== 'character' || cbzWoundsIn(changes) === null || !options) return;
+		options.blueCodexPrevWounds = Number(actor.system?.attributes?.wounds?.value) || 0;
+	});
+	Hooks.on('updateActor', (actor, changes, options) => {
+		if (!isActingGM() || actor?.type !== 'character') return;
+		const next = cbzWoundsIn(changes);
+		const previous = options?.blueCodexPrevWounds;
+		if (next === null || typeof previous !== 'number' || next <= previous) return;
+		void cbzOnWound(actor).catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker wound follow-up failed`, error));
+	});
+	Hooks.on('preUpdateToken', (tokenDoc, changes, options) => {
+		if (!options || !changes || !('x' in changes || 'y' in changes)) return;
+		options.blueCodexMovedFrom = { x: tokenDoc?.x ?? 0, y: tokenDoc?.y ?? 0 };
+	});
+	Hooks.on('updateToken', (tokenDoc, changes, options) => {
+		if (!isActingGM() || !options?.blueCodexMovedFrom) return;
+		void cbzTrackPounce(tokenDoc, options.blueCodexMovedFrom).catch((error) =>
+			console.warn(`[${MODULE_ID}] Feral Pounce tracking failed`, error),
+		);
+	});
+	Hooks.on('deleteCombat', () => {
+		if (!isActingGM()) return;
+		void cbzOnCombatEnded().catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker combat cleanup failed`, error));
+	});
+	Hooks.on('updateCombat', (_combat, changes) => {
+		if (!isActingGM() || changes?.started !== false) return;
+		void cbzOnCombatEnded().catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker combat cleanup failed`, error));
+	});
+}
+
+Hooks.once('setup', () => {
+	try {
+		installCodexBerserkerPrep();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not install the Codex Berserker data prep`, error);
+	}
+});
+
+Hooks.once('ready', () => {
+	try {
+		installCodexBerserker();
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Could not install the Codex Berserker automation`, error);
+	}
+});
+
+// Test-only handles for the Codex Berserker subclasses (tests/berserker). Adds no behaviour.
+export const __codexBerserker__ = {
+	UNDO_HANDLERS,
+	GM_RELAY_OPS,
+	CBZ_CARD_ACTIONS,
+	cbzRollContexts,
+	cbzLastExpended,
+	cbzFlamingHeartAt,
+	cbzPounceMoves,
+	cbzFeature,
+	cbzIsRaging,
+	cbzIsAblaze,
+	cbzInBeastForm,
+	cbzFuryEntry,
+	cbzFuryFaces,
+	cbzWriteFury,
+	cbzRollFuryIntoPool,
+	cbzSpendFury,
+	cbzEvalFormula,
+	cbzFireTaken,
+	cbzSetAblaze,
+	cbzAblazeTurnStart,
+	cbzAblazeAura,
+	cbzOnRageEnded,
+	cbzLunarRegeneration,
+	cbzApplyApexLycan,
+	cbzTrackPounce,
+	cbzSingBattleHymn,
+	cbzBattleHymnPrompt,
+	cbzApplyVerses,
+	cbzExpireHymn,
+	cbzHymnTurnStart,
+	cbzApplyPrideArmor,
+	cbzHymnSaveSource,
+	cbzWarriorPoetCheck,
+	cbzWarriorPoetRoll,
+	cbzRefreshWarriorPoet,
+	cbzTaygFormula,
+	cbzTaygAmount,
+	cbzAfterRage,
+	cbzOnUseItem,
+	cbzOnFuryChanged,
+	cbzOnTurnStart,
+	cbzOnTurnEnd,
+	cbzOnWound,
+	cbzAdjustFuryRoll,
+	cbzRunCardAction,
+	cbzFlamingHeart,
+	cbzSacrificeForLastBlaze,
+	prepareCodexBerserkerActivation,
+	runCodexBerserkerActivate,
+	installCodexBerserkerActivate,
+	installCodexBerserkerDamageRoll,
+	installCodexBerserkerSaves,
+	installCodexBerserkerPrep,
+};
+
+// ── End Berserker (Codex subclasses) ─────────────────────────────────────────
+
 // ── Test-only export ─────────────────────────────────────────────────────────
 // Read-only handles on internal pure helpers and config tables for the vitest
 // suite (tests/). Adds no behaviour: nothing in the module reads it, and Foundry
@@ -9502,4 +15872,97 @@ export const __test__ = {
 	CLASS_FEATURE_SPELL_REWRITES,
 	SUBCLASS_SPELL_POLICY,
 	pilferedPowerBarColors,
+};
+
+// Test-only handles for the summon framework's fallen-summon cleanup and the
+// Shadowmancer 0.2 invocations / Pact of the Id (tests/summons,
+// tests/shadowmancer/invocations). Adds no behaviour.
+export const __shadowmancerInvocations__ = {
+	UNDO_HANDLERS,
+	summonCountCap,
+	getSummonFeatureBoosts,
+	findActiveSummons,
+	summonActivationBlocked,
+	handleSummonSpawn,
+	cleanupCombatSummons,
+	queueFallenSummon,
+	flushFallenSummons,
+	onFallenSummonActorUpdate,
+	pendingFallenSummons,
+	knowYourLimitsFreeSummon,
+	onKnowYourLimitsTurnStart,
+	shadowmancerAttackAdvantage,
+	runWrappedActivate,
+	maybeSwarmFromMinionAttack,
+	findHungeringShadowsCharge,
+	preparePilferedPowerCast,
+	onSpellPreUse,
+	applyShadowmancerFlatCost,
+	shadowmancerCastPlans,
+	shadowmancerPreCastMana,
+	shadowmancerManaFudge,
+	greedyPactSaves,
+	applyArmorOfShadows,
+	refreshArmorOfShadows,
+	favoredPetSummonCheck,
+	keepFavoredPets,
+	greaterShadowSummonConfig,
+	pendingGreaterShadows,
+	shadowmancerFeatureActivationBlocked,
+	handleShadowmancerFeatureUsed,
+	pendingShadowmancerFeatures,
+	featureNoteUpdate,
+};
+
+// Test-only handles for Tools of the Deadeye (tests/deadeye). Adds no behaviour.
+export const __deadeye__ = {
+	prepareDeadeyeActivation,
+	deadeyeWeaponFollowUps,
+	deadeyeDialogState,
+	deadeyeForcedThrown,
+	deadeyePressFollowUps,
+	deadeyeSneakDice,
+	deadeyeDefaultThrown,
+	injectDeadeyeControls,
+	offerRicochetShot,
+	addDeadeyeSneakOptions,
+	deadeyeRiderEffects,
+	handleDeadeyeUseItem,
+	notifyInterceptiveMiss,
+	interceptFreeAttack,
+	applyMasterThrowerRange,
+	runWrappedActivate,
+	DEADEYE_INTERCEPT_FLAG,
+};
+
+// Test-only handles for the Engineer automation (tests/engineer). Adds no behaviour.
+export const __engineer__ = {
+	UNDO_HANDLERS,
+	GM_RELAY_OPS,
+	summonActivationBlocked,
+	handleTurretDeploy,
+	spawnTurret,
+	deployTurretToken,
+	waitForTurretReady,
+	prepareTurretActivation,
+	prepareEngineerActivation,
+	runWrappedActivate,
+	autoDeployForCombatant,
+	payEngineerCosts,
+	coordinatedAssault,
+	doubleSingleDieFormula,
+	isEquippedMailArmor,
+	onOverflowPreCreate,
+	onAllyTargetsPreCreate,
+	onAllyTargetsPreUpdate,
+	onPotentConcoctionMessageUpdate,
+	onPotentConcoctionTempGone,
+	patchTurretScaling,
+	turretOwnershipOverrides,
+	TURRET_FIRE_FLAG,
+	MAIL_ARMOR_TAG,
+	wrapCreatorSubmit,
+	finishCreatedCharacter,
+	fillNewCharacterPools,
+	CREATION_SETTLE_MS,
 };

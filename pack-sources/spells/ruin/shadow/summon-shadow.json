@@ -33,7 +33,7 @@
 			}
 		},
 		"description": {
-			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon 1 adjacent Shadow (a d12 minion).</p><p><strong>Minions.</strong> They follow the minion rules (1 HP, no damage bonus, do not crit) and abandon you immediately outside of combat.</p><p><strong>Shadow Limit.</strong> You can have up to INT Shadows.</p><p>Command them with the <strong>Command Shadows</strong> cantrip.</p><p>[A] Casting summons the Shadows beside you, up to your Shadow Limit, and they vanish when combat ends.</p>",
+			"baseEffect": "<p><strong>Cantrip · 1 Action.</strong></p><p>Summon 1 adjacent Shadow (a d12 minion).</p><p><strong>Minions.</strong> They follow the minion rules (1 HP, no damage bonus, do not crit) and abandon you immediately outside of combat.</p><p><strong>Shadow Limit.</strong> You can have up to INT Shadows.</p><p>Command them with the <strong>Command Shadows</strong> cantrip.</p><p>[A] Casting summons the Shadows beside you, up to your Shadow Limit, and they vanish when combat ends. A Shadow that drops to 0 HP is removed and no longer counts (Undo card). Know Your Limits adds WIL to the limit and summons a free Shadow at the start of each of your turns; My Favored Pet keeps one Shadow after combat; Eldritch Usurper offers a Greater Shadow instead (1/encounter).</p>",
 			"higherLevelEffect": "<p><strong>High Levels:</strong> +1 Shadow every 5 levels.</p>",
 			"upcastEffect": ""
 		},
@@ -68,6 +68,11 @@
 							"name": "Shadow Magus",
 							"reachBonus": 4,
 							"formulaOverride": "1d10"
+						},
+						{
+							"feature": "know-your-limits",
+							"name": "Know Your Limits",
+							"limitBonusAbility": "will"
 						}
 					],
 					"spawnCount": "perFiveLevels"

@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you use On My Mark! your allies attack treats monster Armor as 1 tier less. If they are already unarmored, they deal bonus damage equal to two rolls of your combat die.</p>",
+		"description": "<p>When you use On My Mark! your allies attack treats monster Armor as 1 tier less. If they are already unarmored, they deal bonus damage equal to two rolls of your combat die.</p><hr><p><em>[A] With Nim+: an On My Mark! attack against a Medium-armored target ignores its armor, against an unarmored target adds two rolls of your Combat Die.</em></p><p><em>[M] Against Heavy armor (treated as Medium) the card says what to apply by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-watch",

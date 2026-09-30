@@ -24,7 +24,7 @@
 					"id": "thunderousBellowDmg",
 					"type": "damage",
 					"damageType": "thunder",
-					"formula": "@key",
+					"formula": "@strength",
 					"parentContext": null,
 					"parentNode": null,
 					"canCrit": false,
@@ -54,7 +54,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you Rage, enemies in Burst 1 take STR Thunder damage and are pushed 1 space away if they are Large or smaller.</p>",
+		"description": "<p>When you Rage, enemies in Burst 1 take STR Thunder damage and are pushed 1 space away if they are Large or smaller.</p><hr><p><em>[A] When you Rage (a free Rage included), this is used for you against every enemy in Burst 1: STR thunder damage on its card, Apply Damage per target.</em></p><p><em>[M] Push each Large or smaller target 1 space away.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

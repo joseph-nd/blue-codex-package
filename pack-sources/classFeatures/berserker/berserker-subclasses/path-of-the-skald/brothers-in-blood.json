@@ -24,7 +24,7 @@
 					"id": "brothersInBloodTemp",
 					"type": "healing",
 					"healingType": "tempHealing",
-					"formula": "@key",
+					"formula": "@strength",
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -36,12 +36,12 @@
 			},
 			"template": {
 				"length": 1,
-				"radius": 1,
+				"radius": 4,
 				"shape": "",
 				"width": 1
 			}
 		},
-		"description": "<p>Whenever you gain a Wound, you can bellow a rallying cry. One ally in Range 4 can immediately Move for free and gains STR temp HP, 1 round.</p>",
+		"description": "<p>Whenever you gain a Wound, you can bellow a rallying cry. One ally in Range 4 can immediately Move for free and gains STR temp HP, 1 round.</p><hr><p><em>[A] When you gain a Wound, a card offers the rallying cry: pick one ally in Range 4 and they gain STR temp HP.</em></p><p><em>[M] The ally’s free Move is theirs to take; the temp HP lasts 1 round — remove what is left by hand.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

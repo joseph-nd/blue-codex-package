@@ -1,0 +1,61 @@
+{
+	"name": "Reload",
+	"type": "feature",
+	"img": "modules/blue-codex-package/assets/items/engineer/firearms/pistol.webp",
+	"system": {
+		"macro": "",
+		"identifier": "reload",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "Refill one firearm's Ammo",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": "<p><strong>1 Action.</strong> Reload a firearm: its Ammo is full again.</p><hr><p><em>[A] Refills the Ammo counter of your equipped firearm (asks which one when several need it) and spends 1 Action, with an Undo card. Nothing is spent when every firearm is already loaded.</em></p><p><em>[A] Firing an empty firearm offers \"Reload &amp; fire\" instead.</em></p>",
+		"featureType": "class",
+		"class": "engineer",
+		"group": "engineer-actions",
+		"gainedAtLevels": [],
+		"selectionCountByLevel": {},
+		"subclass": false
+	},
+	"effects": [],
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"reload": true
+			}
+		}
+	},
+	"_stats": {
+		"coreVersion": "13",
+		"systemId": "nimble",
+		"systemVersion": "0.8.4",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "KjsYybFco5dV1tQ5",
+	"folder": "e2c8675a119379ac"
+}

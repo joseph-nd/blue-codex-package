@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Your attack deals extra damage equal to a roll of your Combat Die and the target is Maimed: Slowed and Dazed. Maimed cannot be removed until the target makes a STR save on its turn.</p>",
+		"description": "<p>Your attack deals extra damage equal to a roll of your Combat Die and the target is Maimed: Slowed and Dazed. Maimed cannot be removed until the target makes a STR save on its turn.</p><hr><p><em>[A] With Nim+ class automation on, pick it in the weapon dialog's Combat Tactic list: on a hit a Combat Die is added to the damage and spent, and the target is Maimed (Slowed and Dazed; a STR save card is posted at the end of each of its turns).</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "combat-tactics",

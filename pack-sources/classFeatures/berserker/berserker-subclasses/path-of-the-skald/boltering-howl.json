@@ -9,9 +9,9 @@
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "An ally in Reach 4 is attacked",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -27,12 +27,12 @@
 			},
 			"template": {
 				"length": 1,
-				"radius": 1,
+				"radius": 4,
 				"shape": "",
 				"width": 1
 			}
 		},
-		"description": "<p>Reaction: When an ally in Reach 4 is attacked. You may use That All You Got?! affecting that ally instead of yourself.</p>",
+		"description": "<p>Reaction: When an ally in Reach 4 is attacked. You may use That All You Got?! affecting that ally instead of yourself.</p><hr><p><em>[A] Target the ally (or pick one within Reach 4 when asked), then choose how many Fury Dice to expend: That all you got?!’s reduction (STR+DEX per die, plus your other TAYG bonuses) is banked on the ally and spent by the next damage they take. The dice leave your pool, with an Undo card.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-skald",

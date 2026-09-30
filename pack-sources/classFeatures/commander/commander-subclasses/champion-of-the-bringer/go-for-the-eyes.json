@@ -5,13 +5,47 @@
 	"system": {
 		"macro": "",
 		"identifier": "go-for-the-eyes",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "go-for-the-eyes-pool",
+				"identifier": "go-for-the-eyes-use",
+				"label": "Go for the Eyes! (1/encounter)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "go-for-the-eyes-use",
+				"identifier": "",
+				"label": "Go for the Eyes! use",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "go-for-the-eyes-use",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
 				"details": "",
-				"quantity": 1,
-				"type": "free",
+				"quantity": 0,
+				"type": "action",
 				"isReaction": false
 			},
 			"duration": {
@@ -32,12 +66,12 @@
 				"width": 1
 			}
 		},
-		"description": "<p>(1/encounter) <strong>Free Action.</strong> A target of your choice in Range 6 is inspired. Their attack inflicts Blinded on hit for 1 minute or until they make a STR save on their turn.</p>",
+		"description": "<p>(1/encounter) <strong>Free Action.</strong> A target of your choice in Range 6 is inspired. Their attack inflicts Blinded on hit for 1 minute or until they make a STR save on their turn.</p><hr><p><em>[A] The 1/encounter use is a counter on this feature. The targeted ally gets a mark: their next attack that hits Blinds its target (the Blinded effect asks for a STR save at the end of each of its turns).</em></p><p><em>[M] The 1-minute limit on Blinded is not tracked: remove it by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "commanders-orders",
 		"gainedAtLevels": [
-			1,
+			2,
 			6,
 			8,
 			10,
@@ -55,7 +89,7 @@
 				"name": "Commander's Order",
 				"group": "commanders-orders",
 				"levels": [
-					1,
+					2,
 					6,
 					8,
 					10,

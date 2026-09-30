@@ -9,9 +9,9 @@
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
-				"details": "",
+				"details": "When an enemy provokes an Opportunity Attack from an ally",
 				"quantity": 1,
-				"type": "reaction",
+				"type": "action",
 				"isReaction": true
 			},
 			"duration": {
@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When an enemy provokes an Opportunity Attack from an ally, you can make an Opportunity Attack with a ranged weapon against them if they are in your weapon's range. On hit: inflict Slowed, 2 turns.</p>",
+		"description": "<p>When an enemy provokes an Opportunity Attack from an ally, you can make an Opportunity Attack with a ranged weapon against them if they are in your weapon's range. On hit: inflict Slowed, 2 turns.</p><hr><p><em>[M] Make the ranged Opportunity Attack with your weapon; on a hit apply Slowed for 2 turns by hand.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-watch",

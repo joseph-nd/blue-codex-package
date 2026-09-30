@@ -2,11 +2,11 @@
  * The Shadowmancer's spell-tier ladder (tier T unlocks at [2,5,7,10,13,16,19][T-1])
  * vs every other caster, for both caps main.mjs owns:
  *   - the GRANT cap  `maxSpellTierForLevel(level, classId)` (Codex school grants);
- *   - the CASTING cap `system.resources.highestUnlockedSpellTier`, which main.mjs
- *     overrides for shadowmancers in a prepareDerivedData wrap (mana > 0 only).
+ *   - the CASTING cap `system.resources.highestUnlockedSpellTier`, which system 0.9
+ *     derives from the grant thresholds (main.mjs's override is legacy-only now).
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createCharacter, nimbleHighestSpellTier, setupWorld } from '../harness/index.mjs';
+import { createCharacter, findDoc, nimbleHighestSpellTier, setupWorld } from '../harness/index.mjs';
 
 /** Independent oracle: the Shadowmancer table from Blue's Codex / the Nimble class. */
 const LADDER = [2, 5, 7, 10, 13, 16, 19];
@@ -61,49 +61,64 @@ describe('grant cap — maxSpellTierForLevel', () => {
 	});
 });
 
-describe('casting cap — highestUnlockedSpellTier after prepareDerivedData', () => {
+/**
+ * Since Nimble system 0.9 the CASTING cap is the system's own: the highest tier
+ * the character's grantSpells level thresholds have reached (the Shadowmancer's
+ * come from Master of Darkness: 2/5/7/10/13/16/19), with no mana gate — the
+ * Shadowmancer has no mana at all (Pilfered Power is a charge pool). main.mjs's
+ * cap-table override stands down when the class declares Pilfered Power
+ * (`nativePilferedPower`), so these characters own the feature that grants the
+ * tiers, and the value must come out the same with or without the module.
+ */
+async function withFeature(actor, name, classId = 'shadowmancer') {
+	const { doc } = findDoc({ pack: 'nimble.nimble-class-features', name, type: 'feature', class: classId });
+	const source = structuredClone(doc);
+	delete source._id;
+	await actor.createEmbeddedDocuments('Item', [source]);
+	return actor;
+}
+
+describe('casting cap — highestUnlockedSpellTier after prepareDerivedData (system 0.9)', () => {
 	let env;
 	let T;
 	beforeAll(async () => {
 		({ env, main: { __test__: T } } = await setupWorld());
 	});
 
-	it.each(LEVELS)('shadowmancer (DEX 3) at L%i', async (level) => {
+	it.each(LEVELS)('shadowmancer at L%i: the Shadowmancer ladder, no mana', async (level) => {
 		const { actor } = await createCharacter(env, { classId: 'shadowmancer', abilities: { dexterity: 3 }, render: false });
+		await withFeature(actor, 'Master of Darkness');
 		await setLevel(actor, level);
 		const { mana, highestUnlockedSpellTier } = actor.system.resources;
-		if (level === 1) {
-			// Nimble: level-1 characters have only baseMax mana (0) → not a caster yet.
-			expect(mana.max).toBe(0);
-			expect(highestUnlockedSpellTier).toBeNull();
-		} else {
-			expect(mana.max).toBe(3); // Pilfered Power: mana = DEX
-			expect(highestUnlockedSpellTier).toBe(shadowmancerTier(level));
-		}
+		expect(mana.max).toBe(0); // Pilfered Power is a charge pool, not mana
+		expect(highestUnlockedSpellTier).toBe(shadowmancerTier(level));
 	});
 
-	it('shadowmancer with no mana (DEX 0) is left alone (null, core semantics)', async () => {
-		const { actor } = await createCharacter(env, { classId: 'shadowmancer', abilities: { dexterity: 0 }, render: false });
-		for (const level of [2, 5, 10, 20]) {
-			await setLevel(actor, level);
-			expect(actor.system.resources.mana.max).toBe(0);
-			expect(actor.system.resources.highestUnlockedSpellTier).toBeNull();
+	it('DEX does not matter and a stored (manual) cap wins, as in the system', async () => {
+		for (const dex of [0, 4]) {
+			const { actor } = await createCharacter(env, { classId: 'shadowmancer', abilities: { dexterity: dex }, render: false });
+			await withFeature(actor, 'Master of Darkness');
+			await setLevel(actor, 10);
+			expect(actor.system.resources.highestUnlockedSpellTier).toBe(4);
 		}
+		const { actor } = await createCharacter(env, { classId: 'shadowmancer', render: false });
+		await withFeature(actor, 'Master of Darkness');
+		await actor.update({ 'system.resources.highestUnlockedSpellTier': 2 });
+		await setLevel(actor, 20);
+		expect(actor.system.resources.highestUnlockedSpellTier).toBe(2);
 	});
 
-	it.each(LEVELS)('mage (INT 2) at L%i keeps the core Nimble ladder', async (level) => {
+	it.each(LEVELS.filter((l) => l > 1))('mage (INT 2) at L%i keeps the core Nimble ladder', async (level) => {
 		const { actor } = await createCharacter(env, { classId: 'mage', abilities: { intelligence: 2 }, render: false });
+		await withFeature(actor, 'Mana and Unlock Tier 1 Spells', 'mage');
 		await setLevel(actor, level);
-		const { mana, highestUnlockedSpellTier } = actor.system.resources;
-		if (level === 1) expect(highestUnlockedSpellTier).toBeNull();
-		else {
-			expect(mana.max).toBeGreaterThan(0);
-			expect(highestUnlockedSpellTier).toBe(nimbleHighestSpellTier(level));
-		}
+		expect(actor.system.resources.mana.max).toBeGreaterThan(0);
+		expect(actor.system.resources.highestUnlockedSpellTier).toBe(nimbleHighestSpellTier(level));
 	});
 
 	it.each(LEVELS.filter((l) => l > 1))('shadowmancer L%i: grant cap == casting cap (grants never outrun casting)', async (level) => {
 		const { actor } = await createCharacter(env, { classId: 'shadowmancer', abilities: { dexterity: 2 }, render: false });
+		await withFeature(actor, 'Master of Darkness');
 		await setLevel(actor, level);
 		expect(actor.system.resources.highestUnlockedSpellTier).toBe(T.maxSpellTierForLevel(level, 'shadowmancer'));
 	});

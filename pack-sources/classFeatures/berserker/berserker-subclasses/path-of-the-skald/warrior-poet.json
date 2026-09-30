@@ -5,7 +5,41 @@
 	"system": {
 		"macro": "",
 		"identifier": "warrior-poet",
-		"rules": [],
+		"rules": [
+			{
+				"type": "chargePool",
+				"disabled": false,
+				"id": "warrior-poet-pool",
+				"identifier": "warrior-poet-uses",
+				"label": "Warrior Poet (1/turn)",
+				"predicate": {},
+				"priority": 1,
+				"scope": "item",
+				"max": "1",
+				"dieSize": null,
+				"initial": "max",
+				"hidden": false,
+				"recoveries": [
+					{
+						"trigger": "encounterStart",
+						"mode": "refresh",
+						"value": "1"
+					}
+				]
+			},
+			{
+				"type": "chargeConsumer",
+				"disabled": false,
+				"id": "warrior-poet-use",
+				"identifier": "",
+				"label": "Warrior Poet",
+				"predicate": {},
+				"priority": 2,
+				"poolIdentifier": "warrior-poet-uses",
+				"poolScope": "item",
+				"cost": "1"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +66,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>1/turn, whenever an ally in the area of your Battle Hymn deals damage, you can roll a Fury Die.</p>",
+		"description": "<p>1/turn, whenever an ally in the area of your Battle Hymn deals damage, you can roll a Fury Die.</p><hr><p><em>[A] While you Rage, the first time each turn an ally within Burst 4 of you hits with an attack or ability that deals damage, a Fury Die is rolled into your pool (Undo card). The 1/turn use is a counter on this feature, refilled at every turn start.</em></p><p><em>[A] Using this feature by hand spends the use and rolls the Fury Die.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-skald",

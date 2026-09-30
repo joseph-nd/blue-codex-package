@@ -24,7 +24,7 @@
 					"id": "lunarRegenerationHeal",
 					"type": "healing",
 					"healingType": "healing",
-					"formula": "@key",
+					"formula": "@strength",
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -41,7 +41,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>While Bloodied, you regain STR HP at the start of each of your turns.</p>",
+		"description": "<p>While Bloodied, you regain STR HP at the start of each of your turns.</p><hr><p><em>[A] At the start of each of your turns in combat, while Bloodied, you regain STR HP automatically (Undo card). Using this feature heals the same amount by hand.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",

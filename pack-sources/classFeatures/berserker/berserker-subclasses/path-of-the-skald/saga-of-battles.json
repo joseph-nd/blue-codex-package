@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You can expend up to 2 Fury Die when you use Battle Hymn choosing the same or different verses. Additionally while your Rage is active, allies that start their turn in Burst 4 gain +2 speed.</p>",
+		"description": "<p>You can expend up to 2 Fury Die when you use Battle Hymn choosing the same or different verses. Additionally while your Rage is active, allies that start their turn in Burst 4 gain +2 speed.</p><hr><p><em>[A] The Battle Hymn prompt offers a second Fury Die and verse (the same or different).</em></p><p><em>[A] While you Rage, an ally who starts their turn in Burst 4 gets +2 speed for that turn.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-skald",

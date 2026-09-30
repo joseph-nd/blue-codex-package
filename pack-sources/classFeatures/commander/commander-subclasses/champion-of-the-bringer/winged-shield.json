@@ -5,7 +5,19 @@
 	"system": {
 		"macro": "",
 		"identifier": "winged-shield",
-		"rules": [],
+		"rules": [
+			{
+				"type": "modifyIncomingAttack",
+				"disabled": false,
+				"id": "winged-shield-interpose",
+				"identifier": "",
+				"label": "Winged Shield: Interpose up to 8 spaces away",
+				"predicate": {},
+				"priority": 1,
+				"modifier": "redirectToSelf",
+				"range": 8
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -41,7 +53,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You can Interpose up to 8 spaces away. When you Interpose, you gain LVL temp HP for that attack.</p>",
+		"description": "<p>You can Interpose up to 8 spaces away. When you Interpose, you gain LVL temp HP for that attack.</p><hr><p><em>[A] The Interpose offer on an attack card reaches allies up to 8 spaces away. When you Interpose, you gain LVL temp HP (Undo card).</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-bringer",

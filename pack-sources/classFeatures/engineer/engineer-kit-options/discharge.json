@@ -68,7 +68,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Discharge — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor, can still crit or miss.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6 Lightning (+4 per 5 levels), ignoring armor; it can crit or miss against each target.</em></p><p><em>[M] Remove your Charged. Target everything in Burst 2 only if you lost Charged; otherwise a single target in Reach 1.</em></p>",
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Discharge — 2 Actions, 1 Toolbelt scrap.</strong> Reach 1, Damage: 2d6 Lightning, lose Charged. If you lose Charged, deal damage in Burst 2 instead. Ignores armor, can still crit or miss.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls 2d6 Lightning (+4 per 5 levels), ignoring armor; it can crit or miss against each target.</em></p><p><em>[A] If you are Charged you lose it and every creature within Burst 2 of you (except your allies) is targeted; otherwise it is a single target in Reach 1.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-kit-options",

@@ -67,7 +67,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Toolbelt upgrade of your <strong>Amp Armor</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Electrified armor that shocks nearby foes.</em></p><p><strong>Free Reaction.</strong> When you Defend, gain Charged and adjacent enemies take STR Lightning damage.</p><p><strong>Toolbelt:</strong> Teleport up to your speed after the attack resolves.</p><p><strong>Passive:</strong> +1 Armor.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls STR Lightning against adjacent enemies.</em></p><p><em>[M] Give yourself Charged, then teleport up to your speed after the attack resolves.</em></p>",
+		"description": "<p><em>Toolbelt upgrade of your <strong>Amp Armor</strong> gadget — use this instead of the gadget item to activate it with the greater effect for 2 Toolbelt scraps total.</em></p><p><em>Gadget — Electrified armor that shocks nearby foes.</em></p><p><strong>Free Reaction.</strong> When you Defend, gain Charged and adjacent enemies take STR Lightning damage.</p><p><strong>Toolbelt:</strong> Teleport up to your speed after the attack resolves.</p><p><strong>Passive:</strong> +1 Armor.</p><hr><p><em>[A] Spends 2 Toolbelt scraps — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls STR Lightning against adjacent enemies.</em></p><p><em>[A] You gain Charged.</em></p><p><em>[M] Teleport up to your speed after the attack resolves.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-gadget-toolbelt",
@@ -76,7 +76,13 @@
 		"subclass": false
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"enhancedFormula": true
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",

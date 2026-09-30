@@ -11,7 +11,7 @@
 			"cost": {
 				"details": "",
 				"quantity": 1,
-				"type": "free",
+				"type": "none",
 				"isReaction": false
 			},
 			"duration": {
@@ -19,7 +19,30 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "lastBlazeDmg",
+					"type": "damage",
+					"damageType": "fire",
+					"formula": "0",
+					"parentContext": null,
+					"parentNode": null,
+					"canCrit": false,
+					"canMiss": false,
+					"ignoreArmor": true,
+					"on": {
+						"hit": [
+							{
+								"id": "lastBlazeDmgOutcome",
+								"type": "damageOutcome",
+								"outcome": "fullDamage",
+								"parentContext": "hit",
+								"parentNode": "lastBlazeDmg"
+							}
+						]
+					}
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -32,7 +55,7 @@
 				"width": 1
 			}
 		},
-		"description": "<strong>Free Action.</strong> You end your Rage and sacrifice HP. Adjacent enemies take Fire damage equal to the HP lost. Ignores Armor.",
+		"description": "<strong>Free Action.</strong> You end your Rage and sacrifice HP. Adjacent enemies take Fire damage equal to the HP lost. Ignores Armor.<hr><p><em>[A] Using it asks how much HP to sacrifice: your Rage ends (Fury Dice lost), you lose that HP, and every adjacent enemy is targeted for that much fire damage, armor ignored (Apply Damage on the card). Your HP and Rage come back with the Undo card.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "savage-arsenal",

@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you grant an ally temp HP, they also gain +INT Armor for as long as the temp HP lasts. Additionally, Stim Pack no longer applies Dazed when it ends.</p><hr><p><em>[M] Allies you grant temp HP gain +INT Armor while it lasts; skip Stim Pack's Dazed.</em></p>",
+		"description": "<p>When you grant an ally temp HP, they also gain +INT Armor for as long as the temp HP lasts. Additionally, Stim Pack no longer applies Dazed when it ends.</p><hr><p><em>[A] When temp HP from you (your Med Kit, gadgets or Healing Turret) is applied to an ally from the chat card, the ally gets a \"Potent Concoction (+INT Armor)\" feature that the module removes when their temp HP runs out (Undo card; delete it by hand to correct it).</em></p><p><em>[M] Stim Pack's Dazed is not automated — just skip it.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "alchemist",

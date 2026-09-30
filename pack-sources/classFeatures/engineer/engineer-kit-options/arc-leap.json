@@ -68,7 +68,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Arc Leap — 2 Actions, 1 Toolbelt scrap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, Damage: 2d6. Ignores armor.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls the Burst 1, 2d6 damage (+4 per 5 levels), ignoring armor. Lightning is assumed (the book omits the type).</em></p><p><em>[M] Teleport your token and give yourself Charged.</em></p>",
+		"description": "<p><em>Electro Baton — Toolbelt option.</em></p><p><strong>Arc Leap — 2 Actions, 1 Toolbelt scrap.</strong> Range 6. Gain Charged. Teleport to a spot in Range, then Burst 1, Damage: 2d6. Ignores armor.</p><p><strong>High Levels:</strong> +4 damage every 5 levels.</p><hr><p><em>[A] Spends 1 Toolbelt scrap — tracked on the sheet (click the counter to correct mistakes).</em></p><p><em>[A] Rolls the Burst 1, 2d6 damage (+4 per 5 levels), ignoring armor. Lightning is assumed (the book omits the type).</em></p><p><em>[A] You gain Charged.</em></p><p><em>[M] Teleport your token.</em></p>",
 		"featureType": "class",
 		"class": "engineer",
 		"group": "engineer-kit-options",

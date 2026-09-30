@@ -76,7 +76,13 @@
 		"subclass": false
 	},
 	"effects": [],
-	"flags": {},
+	"flags": {
+		"blue-codex-package": {
+			"automation": {
+				"enhancedFormula": true
+			}
+		}
+	},
 	"_stats": {
 		"coreVersion": "13",
 		"systemId": "nimble",

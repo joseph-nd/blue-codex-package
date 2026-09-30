@@ -5,7 +5,33 @@
 	"system": {
 		"macro": "",
 		"identifier": "advanced-combat-medic",
-		"rules": [],
+		"rules": [
+			{
+				"type": "modifyPool",
+				"disabled": false,
+				"id": "advanced-combat-medic-kits",
+				"identifier": "",
+				"label": "Advanced Combat Medic: +2 medic kits",
+				"predicate": {},
+				"priority": 3,
+				"poolType": "charge",
+				"poolIdentifier": "combat-medic-kits",
+				"dieSize": null,
+				"maxDelta": "2",
+				"addRefills": []
+			},
+			{
+				"type": "maxHitDice",
+				"disabled": false,
+				"id": "advanced-combat-medic-hit-dice",
+				"identifier": "",
+				"label": "Advanced Combat Medic",
+				"predicate": {},
+				"priority": 1,
+				"value": "2",
+				"dieSize": 0
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +58,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>You gain +2 medic kits and 2 max Hit Die. Additionally, when used, medic kits can remove 1 negative condition.</p>",
+		"description": "<p>You gain +2 medic kits and 2 max Hit Die. Additionally, when used, medic kits can remove 1 negative condition.</p><hr><p><em>[A] +2 medic kits on the Combat Medic counter and +2 max Hit Dice. A Combat Medic card offers to remove one of the ally's negative conditions.</em></p>",
 		"featureType": "class",
 		"class": "commander",
 		"group": "champion-of-the-broken",

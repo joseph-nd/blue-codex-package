@@ -5,6 +5,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-09-30
+
+Class automation pass for the Blue's Codex classes and subclasses, played L1→L20 in Foundry. Every spend the module
+makes posts an Undo card; counters stay hand-correctable. Uses the Nim+ 0.13.0 APIs when Nim+ is active and falls back
+to reminder notes without it. Existing characters pick up the new rules through the automatic content refresh.
+
+### Added
+- **Tools of the Deadeye**
+  - Ricochet Shot, Interceptive Shot and Impossible Angle have counters.
+  - Ricochet rolls one Sneak Attack die against a second target.
+  - Interceptive Shot gives the attacker disadvantage and offers a free thrown attack if it misses.
+  - Impossible Angle gives a maximized Sneak Attack.
+  - Hamstringer and Temple Strike appear as Sneak Attack options.
+  - Press the Advantage makes one free follow-up attack.
+  - Improviser grants an Improvised Weapon, and Master Thrower adds +4 thrown range.
+- **Shadowmancer (Codex magic)**
+  - Fallen Shadows (0 HP) are removed automatically, with an Undo, and no longer count toward the limit.
+  - Know Your Limits raises the cap to INT+WIL and gives a free Shadow at turn start.
+  - Hyperfixation and Shadow Spear set advantage automatically.
+  - Shadow Blast now matches the official 0.2 card: 1d12+DEX (1/round), +1d12 every 5 levels, one target (was 1d12+KEY with +1 blast every 5 levels).
+  - Greedy Pact: STR save and warning before the cast, and the backlash has an Undo.
+  - Armor of Shadows, Hungering Shadows, Dire Shadows and Shadow Rush are automated.
+  - My Favored Pet: one Shadow stays after combat.
+  - Eldritch Usurper summons a Greater Shadow that bursts into 5 Shadows when it dies.
+  - Pact of the Id: Defense Mechanism swaps places with a Shadow. Unified Psyche plans all your Shadows in one dialog.
+- **Engineer**
+  - Players deploy and fire their own turrets with no GM click.
+  - Deploying, firing and specials charge the Engineer's actions. The turret fires on deploy.
+  - New Activate Turret and Reload actions; "Reload & fire" when a firearm is empty.
+  - Alchemist Enhanced Formula and Potent Concoction are automated.
+  - Mechanist Coordinated Assault; Electro Baton Charged; Flamethrower Smoldering.
+  - Counters for limited features.
+  - New characters start with full Toolbelt scraps and an equipped Pistol. A deploy with no scrap warns and asks first.
+- **Berserker paths: Skald, Lycan, Cinderheart**
+  - Battle Hymn verses and Warrior Poet.
+  - Bite and Claws weapons, Beast Form, Apex Lycan, Lunar Regeneration, Howl in the Night and Feral Pounce.
+  - The Ablaze state with its burns and aura, Blaze Breaker, Heat of the Soul, King of Fires and Flames of War.
+  - Counters for Cleansing Fire, Phoenix Rising and Warrior Poet.
+- **Commander paths: Broken, Watch, Bringer**
+  - Native counters for their limited features.
+  - Corrected action costs.
+  - A Javelin of Light weapon item. Automation of these paths' tactics comes next.
+- **Oathsworn**: a Master of Radiance note explains why the Codex offers no radiant utility pick.
+- **Starting pools**: without Nim+, Codex pools on a newly created character start full.
+
+### Changed
+- **Nimble system 0.9: Pilfered Power is the system's.** The system now runs the Shadowmancer's Pilfered Power as a
+  charge pool: 1 charge per tiered cast, always at the highest tier, and a half-max-HP backlash when it runs out (up to
+  level 11). Its spell-tier ladder now comes from the class's own features. Blue Codex's older mana-based version
+  steps aside when the system declares it. On system 0.9 that version would have dealt the backlash on every tiered
+  cast, because the Shadowmancer no longer has mana. What Blue Codex keeps doing:
+  - **Hungering Shadows:** the free cast gives back the Pilfered Power charge the system took. With an empty pool it tops
+    the pool up first, so the system doesn't count an overdraft; a cancelled cast undoes the top-up.
+  - **Greedy Pact:** the STR save is still rolled before the cast. After the system's backlash, the HP above what the save
+    allows comes back (10–19: only 10 damage; 20+: none, and the spell is cast 1 tier higher). From level 12 the system
+    leaves the backlash to the table, so no save is rolled.
+  - The sheet and token "Pilfered Power" mana reskin is only used on older systems; on 0.9 the pool shows in the sheet
+    header.
+  - Known gap: with DEX 0 or lower, the Pilfered Power pool holds 0, so there's nothing to top up. A Hungering Shadows
+    free cast then still triggers the system's overdraft; give the HP back by hand.
+
+### Fixed
+- Engineer:
+  - Fumigate no longer hits allies.
+  - Kinetic Stabilizers requires equipped mail.
+  - Jumpstart can't be farmed by re-rolling Initiative.
+  - Overflow's temp HP equals its healing.
+- Deadeye Interceptive Shot now uses a valid reaction cost.
+- Lycan and Skald features use STR where the text says STR.
+
 ## [0.9.1] - 2026-09-24
 
 ### Added

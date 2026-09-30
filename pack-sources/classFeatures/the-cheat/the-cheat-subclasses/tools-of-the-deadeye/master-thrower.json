@@ -32,7 +32,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Your Vicious Opportunist feature now applies to attacks you make with thrown weapons against Distracted targets. Your thrown weapons gain +4 Reach. You may sheathe and draw daggers &amp; improvised weapons for free.</p>",
+		"description": "<p>Your Vicious Opportunist feature now applies to attacks you make with thrown weapons against Distracted targets. Your thrown weapons gain +4 Reach. You may sheathe and draw daggers &amp; improvised weapons for free.</p><hr><p><em>[A] Your thrown weapons show their Thrown range +4 on the sheet (a Dagger reads Thrown 8). With Nim+, the <em>Vicious Opportunist?</em> box appears on thrown weapons' attacks.</em></p><p><em>[M] Drawing and sheathing daggers and improvised weapons is free.</em></p>",
 		"featureType": "class",
 		"class": "the-cheat",
 		"group": "tools-of-the-deadeye",

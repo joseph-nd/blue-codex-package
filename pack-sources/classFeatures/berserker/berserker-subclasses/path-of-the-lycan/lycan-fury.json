@@ -5,7 +5,66 @@
 	"system": {
 		"macro": "",
 		"identifier": "lycan-fury",
-		"rules": [],
+		"rules": [
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "lycanFuryBiteGrant",
+				"identifier": "",
+				"label": "Bite",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.WKOIIg3vxVKd6Hnr"
+			},
+			{
+				"type": "grantItem",
+				"disabled": false,
+				"id": "lycanFuryClawsGrant",
+				"identifier": "",
+				"label": "Claws",
+				"predicate": {},
+				"priority": 1,
+				"allowDuplicate": false,
+				"inMemoryOnly": false,
+				"uuid": "Compendium.blue-codex-package.blue-codex-items.Item.GqVIxuys6WO5ndfc"
+			},
+			{
+				"type": "speedBonus",
+				"disabled": false,
+				"id": "lycanFurySpeed",
+				"identifier": "",
+				"label": "Lycan Fury (+DEX speed)",
+				"predicate": {
+					"$or": [
+						"self:raging",
+						"self:beast-form"
+					]
+				},
+				"priority": 2,
+				"value": "@dexterity",
+				"movementType": "walk"
+			},
+			{
+				"type": "modifyConsumer",
+				"disabled": false,
+				"id": "lycanFuryTayg",
+				"identifier": "",
+				"label": "Lycan Fury: That all you got?! is 2×STR+DEX per die",
+				"predicate": {
+					"$or": [
+						"self:raging",
+						"self:beast-form"
+					]
+				},
+				"priority": 2,
+				"poolIdentifier": "fury",
+				"poolScope": "item",
+				"effectTypeFilter": "damageReduction",
+				"appendFormula": "@strength * @n"
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -32,7 +91,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>When you Rage, you shift into a monstrous hybrid form for the duration. While in this form, you gain the following benefits:</p><ul><li>You cannot wield weapons, but you gain natural weapons you're proficient with: a Bite, 1d10 +STR, and Claws, 1d8 +STR.</li><li>+DEX speed and That All You Got?! is now 2xSTR+DEX per Fury Die spent.</li></ul>",
+		"description": "<p>When you Rage, you shift into a monstrous hybrid form for the duration. While in this form, you gain the following benefits:</p><ul><li>You cannot wield weapons, but you gain natural weapons you're proficient with: a Bite, 1d10 +STR, and Claws, 1d8 +STR.</li><li>+DEX speed and That All You Got?! is now 2xSTR+DEX per Fury Die spent.</li></ul><hr><p><em>[A] Grants the Bite (1d10+STR) and Claws (1d8+STR) natural weapons. While you Rage (or are in Beast Form) your speed is +DEX and That all you got?! reduces by 2×STR+DEX per die.</em></p><p><em>[A] Attacking with a weapon while Raging, or with a natural weapon while neither Raging nor in Beast Form, posts a reminder — it is never blocked.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",
