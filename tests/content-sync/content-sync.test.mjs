@@ -132,6 +132,26 @@ describe('applying', () => {
 		expect(again.status).toBe('nothing');
 	});
 
+	it('swaps an owned Codex Cryosleep for Omenrime in place (Core Books 3.0), identifier omenrime, no second copy', async () => {
+		const { main, env } = await setupWorld();
+		const omen = findDoc({ pkg: MODULE_ID, type: 'spell', name: 'Omenrime' });
+		expect(omen.doc.system.identifier).toBe('omenrime');
+		const old = currentCopy('Omenrime', 'ownedCryosleep01');
+		old.name = 'Cryosleep';
+		old.system.identifier = 'cryosleep';
+		old.system.description.baseEffect = '<p>Targets are Slowed, 1 round.</p>';
+		const actor = shadowmancer(env, [old]);
+		const result = await main.__contentSync__.syncCodexContent({ actors: [actor] });
+		expect(result.status).toBe('applied');
+		expect(actor.items.size).toBe(1);
+		const item = actor.items.get('ownedCryosleep01');
+		expect(item.name).toBe('Omenrime');
+		expect(item._source.system.identifier).toBe('omenrime');
+		expect(item._source.system.description).toEqual(omen.doc.system.description);
+		// Idempotent.
+		expect((await main.__contentSync__.syncCodexContent({ actors: [actor], silent: true })).status).toBe('nothing');
+	});
+
 	it('a dry run writes nothing', async () => {
 		const { main, env } = await setupWorld();
 		const actor = shadowmancer(env, [legacySummonShadow()]);
@@ -165,7 +185,7 @@ describe('startup (version gate)', () => {
 		expect(status).toBe('applied');
 		expect(env.dialogs.log).toEqual([]);
 		const version = env.game.modules.get(MODULE_ID).version;
-		expect(main.__contentSync__.stamp()).toBe(`${version}+sync2`);
+		expect(main.__contentSync__.stamp()).toBe(`${version}+sync4`);
 		expect(env.game.settings.get(MODULE_ID, 'codexContentSyncVersion')).toBe(main.__contentSync__.stamp());
 		expect(actor.items.get('ownedShadow00001')._source.flags[MODULE_ID].automation.summon.maxCount).toBe('intMod');
 

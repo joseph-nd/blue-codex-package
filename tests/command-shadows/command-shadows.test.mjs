@@ -1,22 +1,17 @@
 /**
- * Codex Command Shadows automation (scripts/main.mjs, "Command Shadows" section):
- * the pre-activate gate (Shadows, targets, the 1/turn charge, the per-target
- * split dialog; no distance gate) and the useItem half (pool spend, then every
- * commanded Shadow attacks through Combat#performMinionGroupAttack — one call per
- * target — or, outside combat, through each Shadow's own attack item). In combat
- * the Shadows are combatants ONLY during the group attack: added (fresh, full
- * action), rolled, removed — so they never get turns of their own.
+ * Codex Command Shadows (scripts/main.mjs, "Command Shadows" section) — a plain
+ * spell: the gate asks how many Shadows attack each target (pre-filled with an
+ * even split of the Shadows on the table, free to change; only Cancel blocks),
+ * the useItem half spends the 1/turn charge when there is one and rolls one row
+ * per Shadow onto a `minionGroupAttack` card per target. Nothing joins the
+ * combat tracker and nothing checks distance.
  *
  * The harness has no canvas/combat, so this file builds a minimal scene (token
- * documents carrying the summon flag), a started combat whose
- * performMinionGroupAttack mirrors the system contract (GM only; targets read from
- * game.user.targets, filtered by the requested ids; members must be minion
- * combatants with an action left; posts ONE `minionGroupAttack` card with a row
- * per member — src/documents/combat/combatMinionAttacks.ts; new npc combatants
- * start with 1 action — combat.svelte.ts #normalizeCombatantCreateData), and the
- * user's targets. The caster is the combat's only permanent combatant; `turns`
- * lists every combatant (a Shadow combatant WOULD be a turn of its own). A "cast" is the activate wrap's two halves: the gate, then (not
- * blocked) the useItem handler.
+ * documents carrying the summon flag), a started combat (the caster its only
+ * combatant; `turns` lists every combatant), a stand-in for the system
+ * DamageRoll (every die rolls `FakeDamageRoll.face`) and the user's targets. A
+ * "cast" is the activate wrap's two halves: the gate (its dialog answered), then
+ * (not blocked) the useItem handler.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -29,8 +24,32 @@ const SHADOW_ATTACK = JSON.parse(
 	fs.readFileSync(path.join(REPO_ROOT, 'pack-sources/companions/shadow-minion.json'), 'utf-8'),
 ).items[0];
 
+/** A stand-in for the system DamageRoll (found by its prototype methods). */
+class FakeDamageRoll {
+	static face = 7;
+	constructor(formula, data, options) {
+		Object.assign(this, { formula, data, options });
+	}
+	async evaluate() {
+		const flat = /^\d+$/.test(this.formula);
+		const [count, faces] = String(this.formula).split('d').map(Number);
+		this.terms = flat ? [] : [{ faces, results: Array.from({ length: count || 1 }, () => ({ result: FakeDamageRoll.face, active: true })) }];
+		this.total = flat ? Number(this.formula) : (count || 1) * FakeDamageRoll.face;
+		this.isMiss = !flat && this.options?.canMiss !== false && FakeDamageRoll.face === 1;
+		return this;
+	}
+	_evaluate() {}
+	_finalizeOutcome() {}
+	_recalculateTotal() {}
+	toJSON() {
+		return { formula: this.formula, total: this.total, terms: this.terms };
+	}
+}
+
 async function world({ combat = true, shadows = [[2, 0]], targets = [[3, 0]] } = {}) {
 	const { env, main } = await setupWorld();
+	FakeDamageRoll.face = 7;
+	CONFIG.Dice.rolls = [FakeDamageRoll];
 	const h = main.__commandShadows__;
 	const { actor: caster } = await createCharacter(env, { classId: 'shadowmancer', render: false });
 	const item = caster.items.find((i) => i._stats?.compendiumSource === h.CODEX_COMMAND_SHADOWS_UUID);
@@ -93,7 +112,9 @@ async function world({ combat = true, shadows = [[2, 0]], targets = [[3, 0]] } =
 	};
 	target(...targetTokens);
 
-	const cast = async () => {
+	// `answer`: the Command Shadows dialog's answer ('confirm' keeps the pre-filled split).
+	const cast = async (answer = 'confirm') => {
+		env.dialogs.answerWhen(/Command Shadows/, answer);
 		if (await h.commandShadowsActivationBlocked(item)) return { blocked: true };
 		return { blocked: false, summary: await h.handleCommandShadowsUsed(item, {}) };
 	};
@@ -101,10 +122,9 @@ async function world({ combat = true, shadows = [[2, 0]], targets = [[3, 0]] } =
 	return { env, main, h, caster, item, scene, shadowTokens, targetTokens, fight, target, cast, pool };
 }
 
-/** A started combat with the system's performMinionGroupAttack contract. */
+/** A started combat: the caster is its only combatant. */
 function installCombat(env, scene, caster) {
 	const combatants = new Collection();
-	const calls = [];
 	let serial = 0;
 	const combat = {
 		id: 'combatArena00001',
@@ -113,13 +133,11 @@ function installCombat(env, scene, caster) {
 		turn: 0,
 		scene,
 		combatants,
-		// Nimble's setupTurns: every living combatant is a turn unless grouped.
 		get turns() {
 			return combatants.contents;
 		},
-		async createEmbeddedDocuments(type, data) {
-			expect(type).toBe('Combatant');
-			return data.map((d) => {
+		createEmbeddedDocuments: vi.fn(async (type, data) =>
+			data.map((d) => {
 				const id = `combatant${serial++}`.padEnd(16, '0');
 				const c = {
 					id,
@@ -128,306 +146,127 @@ function installCombat(env, scene, caster) {
 					get token() {
 						return scene.tokens.get(this.tokenId);
 					},
-					get actor() {
-						return this.token?.actor ?? null;
-					},
 				};
 				combatants.set(id, c);
 				return c;
-			});
-		},
-		updateEmbeddedDocuments: vi.fn(async (type, updates) => {
-			expect(type).toBe('Combatant');
-			for (const u of updates) {
-				const c = combatants.get(u._id);
-				if (c && 'system.actions.base.current' in u) c.system.actions.base.current = u['system.actions.base.current'];
-			}
-			return updates;
-		}),
+			}),
+		),
 		deleteEmbeddedDocuments: vi.fn(async (type, ids) => {
-			expect(type).toBe('Combatant');
 			for (const id of ids) combatants.delete(id);
 			return ids;
 		}),
-		performMinionGroupAttack: vi.fn(async (params) => {
-			const result = { targetTokenId: '', rolledCombatantIds: [], skippedMembers: [], totalDamage: 0, chatMessageId: null };
-			if (!env.game.user.isGM) return result;
-			const selected = Array.from(env.game.user.targets ?? []).map((t) => t.id ?? t.document?.id);
-			calls.push({
-				params,
-				selected,
-				round: combat.round,
-				memberTokenIds: params.memberCombatantIds.map((id) => combatants.get(id)?.tokenId),
-				turnCount: combat.turns.length,
-			});
-			if (!selected.length) return result;
-			const requested = (params.targetTokenIds ?? []).filter((id) => selected.includes(id));
-			const active = requested.length ? requested : selected;
-			const rows = [];
-			for (const id of params.memberCombatantIds) {
-				const member = combatants.get(id);
-				if (member?.actor?.type !== 'minion') continue;
-				const actionId = params.selections.find((s) => s.memberCombatantId === id)?.actionId;
-				if (!member.actor.items.some((i) => i.id === actionId)) {
-					result.skippedMembers.push({ combatantId: id, reason: 'actionNotFound' });
-					continue;
-				}
-				if (member.system.actions.base.current < 1) {
-					result.skippedMembers.push({ combatantId: id, reason: 'noActionsRemaining' });
-					continue;
-				}
-				member.system.actions.base.current -= 1;
-				result.rolledCombatantIds.push(id);
-				rows.push({ memberCombatantId: id, actionId, formula: '1d12', totalDamage: 5, isMiss: false, roll: { terms: [{ faces: 12, results: [{ result: 5, active: true }] }] } });
-			}
-			if (!rows.length) return result;
-			const card = await env.ChatMessage.create({
-				type: 'minionGroupAttack',
-				system: { rows, targets: active.map((tid) => scene.tokens.get(tid).uuid) },
-			});
-			result.targetTokenId = active[0];
-			result.chatMessageId = card.id;
-			return result;
-		}),
+		performMinionGroupAttack: vi.fn(),
 	};
 	env.game.combat = combat;
 	env.game.combats.set(combat.id, combat);
-	// The caster's own combatant (its token is the first scene token).
 	const casterToken = scene.tokens.find((t) => t.actor === caster);
-	combatants.set('casterCombatant0', { id: 'casterCombatant0', type: 'character', tokenId: casterToken?.id, sceneId: scene.id, system: { actions: { base: { current: 3, max: 3 } } }, get token() { return scene.tokens.get(this.tokenId); }, get actor() { return caster; } });
-	const shadowCombatants = () => combatants.filter((c) => c.token?.flags?.[MODULE_ID]?.summon);
-	return { combat, calls, shadowCombatants };
+	combatants.set('casterCombatant0', { id: 'casterCombatant0', type: 'character', tokenId: casterToken?.id, sceneId: scene.id, get token() { return scene.tokens.get(this.tokenId); } });
+	return { combat };
 }
 
 const groupCards = (env) => env.ChatMessage.created.filter((m) => m.type === 'minionGroupAttack');
-const summaryCard = (env) => env.ChatMessage.created.findLast((m) => m.flags?.[MODULE_ID]?.commandShadows);
 
-describe('Command Shadows — nothing to do: warn and cost nothing', () => {
-	it('no targets: warns, blocks the cast, spends no charge, attacks nothing', async () => {
-		const w = await world();
-		w.target();
-		const result = await w.cast();
-		expect(result.blocked).toBe(true);
-		expect(w.env.notifications.messages('warn').some((m) => /Target the creature/.test(m))).toBe(true);
-		expect(w.pool()).toBe(1);
-		expect(w.h.pending.size).toBe(0);
-		expect(w.fight.combat.performMinionGroupAttack).not.toHaveBeenCalled();
-		expect(w.env.ChatMessage.created).toEqual([]);
-		expect(w.env.dialogs.log).toEqual([]);
-	});
-
-	it('no Shadows: warns and blocks', async () => {
-		const w = await world({ shadows: [] });
-		expect((await w.cast()).blocked).toBe(true);
-		expect(w.env.notifications.messages('warn').some((m) => /no Shadows to command/.test(m))).toBe(true);
-		expect(w.pool()).toBe(1);
-		expect(w.env.ChatMessage.created).toEqual([]);
-	});
-
-	it("another caster's Shadows are not commanded", async () => {
-		const w = await world();
-		w.shadowTokens[0].flags[MODULE_ID].summon.summonerActorUuid = 'Actor.someoneElse00001';
-		expect((await w.cast()).blocked).toBe(true);
-		expect(w.pool()).toBe(1);
-	});
-});
-
-describe('Command Shadows — one target', () => {
-	it('every Shadow attacks it through ONE system minion group attack', async () => {
+describe('Command Shadows — a plain spell: nothing joins the tracker', () => {
+	it('one target: one minion attack card, a row per Shadow, the charge spent', async () => {
 		const w = await world({ shadows: [[2, 0], [3, 1]] });
-		const ownTargets = w.env.game.user.targets;
 		const { blocked, summary } = await w.cast();
 		expect(blocked).toBe(false);
-		expect(w.env.dialogs.log).toEqual([]); // no split dialog for a single target
+		expect(w.env.dialogs.log).toHaveLength(1);
+		expect(w.env.dialogs.log[0].content).toMatch(/<strong>2<\/strong> Shadows on the table/);
 
-		const perform = w.fight.combat.performMinionGroupAttack;
-		expect(perform).toHaveBeenCalledTimes(1);
-		const [params] = perform.mock.calls[0];
-		expect(params.targetTokenIds).toEqual([w.targetTokens[0].id]);
-		expect(params.endTurn).toBe(false);
-		expect(params.memberCombatantIds).toHaveLength(2);
-		expect(params.selections.every((s) => s.actionId === SHADOW_ATTACK._id)).toBe(true);
-		// The Shadows joined the tracker only for the attack (npc combatants of their
-		// tokens, flagged transient) and were removed right after.
-		expect(w.fight.calls[0].memberTokenIds.sort()).toEqual(w.shadowTokens.map((t) => t.id).sort());
-		expect(w.fight.calls[0].turnCount).toBe(3);
-		expect(w.fight.shadowCombatants()).toEqual([]);
-		expect(w.fight.combat.turns.map((c) => c.id)).toEqual(['casterCombatant0']);
-		// The system saw exactly this target; the user's own targets are restored.
-		expect(w.fight.calls[0].selected).toEqual([w.targetTokens[0].id]);
-		expect(w.env.game.user.targets).toBe(ownTargets);
-
-		// The system's card: type minionGroupAttack, a row per Shadow, the target's uuid.
 		const cards = groupCards(w.env);
 		expect(cards).toHaveLength(1);
-		expect(cards[0].system.rows).toHaveLength(2);
-		expect(cards[0].system.targets).toEqual([w.targetTokens[0].uuid]);
+		const [card] = cards;
+		expect(card.system.targets).toEqual([w.targetTokens[0].uuid]);
+		expect(card.system.rows).toHaveLength(2);
+		expect(card.system.rows.map((r) => r.formula)).toEqual(['1d12', '1d12']);
+		expect(card.system.totalDamage).toBe(14);
+		expect(card.system.rows.map((r) => r.memberTokenUuid)).toEqual(w.shadowTokens.map((t) => t.uuid));
+		expect(new Set(card.system.rows.map((r) => r.memberCombatantId)).size).toBe(2);
+		expect(card.flags[MODULE_ID].commandShadows.casterUuid).toBe(w.caster.uuid);
+		expect(summary.cards).toEqual([expect.objectContaining({ targetId: w.targetTokens[0].id, rows: 2 })]);
+
+		// No combatant was ever added; the system's group attack is not used.
+		expect(w.fight.combat.createEmbeddedDocuments).not.toHaveBeenCalled();
+		expect(w.fight.combat.performMinionGroupAttack).not.toHaveBeenCalled();
+		expect(w.fight.combat.turns.map((c) => c.id)).toEqual(['casterCombatant0']);
 
 		// 1/turn charge spent, with an Undo card.
 		expect(w.pool()).toBe(0);
 		expect(w.env.ChatMessage.created.some((m) => m.flags?.[MODULE_ID]?.undo?.type === 'poolDelta')).toBe(true);
-
-		// Summary card.
-		expect(summary.mode).toBe('groupAttack');
-		expect(summary.groups).toEqual([
-			expect.objectContaining({ targetId: w.targetTokens[0].id, shadowIds: w.shadowTokens.map((t) => t.id), attacked: 2 }),
-		]);
-		const card = summaryCard(w.env);
-		expect(card.content).toMatch(/Each Shadow may move 6 before attacking/);
-		expect(card.content).toMatch(/Goblin 1/);
 		expect(w.env.Hooks.errors).toEqual([]);
 	});
 
-	it('a leftover Shadow combatant with no action left is reused, topped up, attacks, then removed', async () => {
-		const w = await world({ shadows: [[2, 0], [3, 1]] });
-		const [leftover] = await w.fight.combat.createEmbeddedDocuments('Combatant', [
-			{ type: 'npc', tokenId: w.shadowTokens[0].id, sceneId: w.scene.id, actorId: w.shadowTokens[0].actorId },
-		]);
-		leftover.system.actions.base.current = 0; // it "already acted"
-		const { summary } = await w.cast();
-		const [params] = w.fight.combat.performMinionGroupAttack.mock.calls[0];
-		expect(params.memberCombatantIds).toHaveLength(2);
-		expect(params.memberCombatantIds).toContain(leftover.id); // not added twice
-		expect(summary.skipped).toEqual([]);
-		expect(groupCards(w.env)[0].system.rows).toHaveLength(2);
-		expect(w.fight.shadowCombatants()).toEqual([]);
+	it('a 1 misses its row (0 damage)', async () => {
+		const w = await world();
+		FakeDamageRoll.face = 1;
+		await w.cast();
+		expect(groupCards(w.env)[0].system.rows[0]).toMatchObject({ isMiss: true, totalDamage: 0 });
 	});
 
-	it('Shadows the system cannot roll for are listed on the card', async () => {
-		const w = await world({ shadows: [[2, 0], [3, 1]] });
-		w.shadowTokens[1].actor.items = []; // no attack item
-		const { summary } = await w.cast();
-		expect(summary.skipped).toEqual([{ name: 'Shadow Minion', reason: 'noActionSelected' }]);
-		expect(groupCards(w.env)[0].system.rows).toHaveLength(1);
-		expect(summaryCard(w.env).content).toMatch(/Could not attack:.*no attack found/);
-		expect(w.fight.shadowCombatants()).toEqual([]);
+	it('the count can be raised above the Shadows on the table: extra rows roll a base Shadow', async () => {
+		const w = await world();
+		await w.cast(() => [{ count: 3, rush: 0 }]);
+		const rows = groupCards(w.env)[0].system.rows;
+		expect(rows).toHaveLength(3);
+		expect(rows.map((r) => r.formula)).toEqual(['1d12', '1d12', '1d12']);
+		expect(rows.map((r) => Boolean(r.memberTokenUuid))).toEqual([true, false, false]);
+		expect(new Set(rows.map((r) => r.memberCombatantId)).size).toBe(3);
+	});
+
+	it('no Shadows and no target: not blocked — the dialog asks and the card has no target', async () => {
+		const w = await world({ shadows: [] });
+		w.target();
+		const { blocked } = await w.cast(() => [{ count: 2, rush: 0 }]);
+		expect(blocked).toBe(false);
+		expect(w.env.dialogs.log[0].content).toMatch(/No target/);
+		const [card] = groupCards(w.env);
+		expect(card.system.targets).toEqual([]);
+		expect(card.system.rows).toHaveLength(2);
+	});
+
+	it("another caster's Shadows are not counted", async () => {
+		const w = await world();
+		w.shadowTokens[0].flags[MODULE_ID].summon.summonerActorUuid = 'Actor.someoneElse00001';
+		await w.cast();
+		expect(w.env.dialogs.log[0].content).toMatch(/<strong>0<\/strong> Shadows on the table/);
+		expect(groupCards(w.env)).toEqual([]);
+	});
+
+	it('a Shadow far from its target still attacks (no distance gate)', async () => {
+		const w = await world({ shadows: [[2, 0], [20, 0]], targets: [[3, 0]] });
+		await w.cast();
+		expect(groupCards(w.env)[0].system.rows).toHaveLength(2);
+		expect(w.env.notifications.messages('warn')).toEqual([]);
 	});
 });
 
 describe('Command Shadows — several targets', () => {
-	it('3 Shadows / 2 targets: the dialog pre-fills an even split → one group attack per target', async () => {
+	it('3 Shadows / 2 targets: an even split pre-filled → one card per target', async () => {
 		const w = await world({ shadows: [[2, 0], [2, 1], [2, 2]], targets: [[3, 0], [3, 2]] });
-		expect(w.h.defaultShadowAssignment(3, 2)).toEqual([0, 1, 0]);
-		w.env.dialogs.answerWhen(/Command Shadows/, 'confirm');
-		const { blocked, summary } = await w.cast();
-		expect(blocked).toBe(false);
-		expect(w.env.dialogs.log).toHaveLength(1);
-		expect(w.env.dialogs.log[0].title).toMatch(/Command Shadows/);
-		// Every Shadow is offered both targets, the round-robin pick pre-selected.
-		expect(w.env.dialogs.log[0].content.match(/<select /g)).toHaveLength(3);
-		expect(w.env.dialogs.log[0].content.match(/<option value="1" selected>/g)).toHaveLength(1);
-
-		const perform = w.fight.combat.performMinionGroupAttack;
-		expect(perform).toHaveBeenCalledTimes(2);
-		const byTarget = Object.fromEntries(
-			w.fight.calls.map((c) => [c.params.targetTokenIds[0], [...c.memberTokenIds].sort()]),
-		);
-		// One create for all the Shadows, one delete after both attacks.
-		expect(w.fight.combat.deleteEmbeddedDocuments).toHaveBeenCalledTimes(1);
-		expect(w.fight.shadowCombatants()).toEqual([]);
-		const [s0, s1, s2] = w.shadowTokens.map((t) => t.id);
-		expect(byTarget).toEqual({ [w.targetTokens[0].id]: [s0, s2].sort(), [w.targetTokens[1].id]: [s1] });
-		// Each call saw only its own target.
-		expect(w.fight.calls.map((c) => c.selected)).toEqual([[w.targetTokens[0].id], [w.targetTokens[1].id]]);
-		expect(groupCards(w.env)).toHaveLength(2);
-		expect(summary.groups.map((g) => g.shadowIds.length)).toEqual([2, 1]);
+		expect(w.h.defaultShadowSplit(3, 2)).toEqual([2, 1]);
+		await w.cast();
+		expect(w.env.dialogs.log[0].content).toMatch(/name="bcx-count-0"[^>]*value="2"/);
+		expect(w.env.dialogs.log[0].content).toMatch(/name="bcx-count-1"[^>]*value="1"/);
+		const [first, second] = groupCards(w.env);
+		expect(first.system.targets).toEqual([w.targetTokens[0].uuid]);
+		expect(second.system.targets).toEqual([w.targetTokens[1].uuid]);
+		const [s0, s1, s2] = w.shadowTokens.map((t) => t.uuid);
+		expect(first.system.rows.map((r) => r.memberTokenUuid)).toEqual([s0, s1]);
+		expect(second.system.rows.map((r) => r.memberTokenUuid)).toEqual([s2]);
 		expect(w.pool()).toBe(0);
 	});
 
-	it('Cancel in the split dialog: nothing happens, no charge spent', async () => {
+	it('Cancel: nothing happens, no charge spent', async () => {
 		const w = await world({ shadows: [[2, 0], [2, 1]], targets: [[3, 0], [3, 2]] });
-		w.env.dialogs.answerWhen(/Command Shadows/, 'cancel');
-		expect((await w.cast()).blocked).toBe(true);
+		expect((await w.cast('cancel')).blocked).toBe(true);
 		expect(w.pool()).toBe(1);
-		expect(w.fight.combat.performMinionGroupAttack).not.toHaveBeenCalled();
+		expect(w.h.pending.size).toBe(0);
 		expect(w.env.ChatMessage.created).toEqual([]);
 	});
 });
 
-describe('Command Shadows — no distance gate (tokens are not moved)', () => {
-	it('a Shadow far from its target still attacks; nothing is listed as out of reach', async () => {
-		const w = await world({ shadows: [[2, 0], [12, 0]], targets: [[3, 0]] });
-		const { blocked, summary } = await w.cast();
-		expect(blocked).toBe(false);
-		const [params] = w.fight.combat.performMinionGroupAttack.mock.calls[0];
-		expect(params.memberCombatantIds).toHaveLength(2);
-		expect(w.fight.calls[0].memberTokenIds.sort()).toEqual(w.shadowTokens.map((t) => t.id).sort());
-		expect(summary).not.toHaveProperty('outOfReach');
-		expect(summary.groups[0].attacked).toBe(2);
-		const card = summaryCard(w.env);
-		expect(card.content).not.toMatch(/reach/i);
-		expect(card.content).toMatch(/Each Shadow may move 6 before attacking/);
-	});
-
-	it('every Shadow far away: the cast is NOT blocked, the charge is spent and they attack', async () => {
-		const w = await world({ shadows: [[20, 0]], targets: [[3, 0]] });
-		expect((await w.cast()).blocked).toBe(false);
-		expect(w.env.notifications.messages('warn')).toEqual([]);
-		expect(w.pool()).toBe(0);
-		expect(w.fight.combat.performMinionGroupAttack).toHaveBeenCalledTimes(1);
-		expect(groupCards(w.env)[0].system.rows).toHaveLength(1);
-	});
-
-	it('the split dialog still shows each target\'s distance as a hint', async () => {
-		const w = await world({ shadows: [[2, 0], [20, 0]], targets: [[3, 0], [3, 2]] });
-		w.env.dialogs.answerWhen(/Command Shadows/, 'confirm');
-		expect((await w.cast()).blocked).toBe(false);
-		expect(w.env.dialogs.log[0].content).toMatch(/Goblin 1 \(\d+ spaces\)/);
-		expect(w.fight.combat.performMinionGroupAttack).toHaveBeenCalledTimes(2);
-	});
-});
-
-describe('Command Shadows — Shadows never take turns of their own', () => {
-	it('the turn list never gains Shadow turns; commanding works on 2 consecutive rounds', async () => {
-		const w = await world({ shadows: [[2, 0], [3, 1]] });
-		const turnIds = () => w.fight.combat.turns.map((c) => c.id);
-		expect(turnIds()).toEqual(['casterCombatant0']);
-
-		// Round 1.
-		const r1 = await w.cast();
-		expect(r1.blocked).toBe(false);
-		expect(turnIds()).toEqual(['casterCombatant0']);
-		// Round 2: the pool refills at the caster's turn start (onTurnStart recovery).
-		// Nothing refreshes the Shadows' own actions — they need none.
-		w.fight.combat.round = 2;
-		await w.item.update({ flags: { nimble: { chargePools: { [POOL]: { current: 1 } } } } });
-		const r2 = await w.cast();
-		expect(r2.blocked).toBe(false);
-		expect(turnIds()).toEqual(['casterCombatant0']);
-
-		expect(w.fight.calls.map((c) => c.round)).toEqual([1, 2]);
-		for (const call of w.fight.calls) expect(call.memberTokenIds).toHaveLength(2);
-		const cards = groupCards(w.env);
-		expect(cards).toHaveLength(2);
-		expect(cards.map((c) => c.system.rows.length)).toEqual([2, 2]);
-		expect([r1.summary.skipped, r2.summary.skipped]).toEqual([[], []]);
-		expect(w.fight.shadowCombatants()).toEqual([]);
-	});
-
-	it('the removed combatant ids still resolve to their Shadow tokens (Swarming Shadows)', async () => {
-		const w = await world({ shadows: [[2, 0], [3, 1]] });
-		await w.cast();
-		const [card] = groupCards(w.env);
-		const resolved = card.system.rows.map((row) => w.h.retiredShadowCombatantTokens.get(row.memberCombatantId)?.id);
-		expect(resolved.sort()).toEqual(w.shadowTokens.map((t) => t.id).sort());
-	});
-
-	it('a failed group attack still removes the Shadow combatants', async () => {
-		const w = await world();
-		w.fight.combat.performMinionGroupAttack.mockImplementationOnce(async () => {
-			throw new Error('boom');
-		});
-		await expect(w.h.executeCommandShadows({
-			casterUuid: w.caster.uuid,
-			itemName: 'Command Shadows',
-			sceneId: w.scene.id,
-			move: 6,
-			inCombat: true,
-			assignments: [{ shadowId: w.shadowTokens[0].id, targetId: w.targetTokens[0].id }],
-		})).rejects.toThrow('boom');
-		expect(w.fight.shadowCombatants()).toEqual([]);
-	});
-
+describe('Command Shadows — Shadow combatants from earlier builds', () => {
 	it('the ready sweep removes Shadow combatants an earlier build left in the combat', async () => {
 		const w = await world({ shadows: [[2, 0], [3, 1]] });
 		await w.fight.combat.createEmbeddedDocuments(
@@ -450,47 +289,38 @@ describe('Command Shadows — Shadows never take turns of their own', () => {
 });
 
 describe('Command Shadows — 1/turn', () => {
-	it('a second cast in the same turn is refused until the charge refills', async () => {
+	it('a second cast in the same turn warns but still rolls; no charge to spend', async () => {
 		const w = await world();
 		expect((await w.cast()).blocked).toBe(false);
 		expect(w.pool()).toBe(0);
-		expect((await w.cast()).blocked).toBe(true);
-		expect(w.env.notifications.messages('warn').some((m) => /already used Command Shadows this turn/.test(m))).toBe(true);
-		expect(w.fight.combat.performMinionGroupAttack).toHaveBeenCalledTimes(1);
-		// Refilled at the start of the caster's turn (Nimble's onTurnStart recovery) — or by hand.
-		await w.item.update({ flags: { nimble: { chargePools: { [POOL]: { current: 1 } } } } });
 		expect((await w.cast()).blocked).toBe(false);
-		expect(w.fight.combat.performMinionGroupAttack).toHaveBeenCalledTimes(2);
+		expect(w.env.notifications.messages('warn').some((m) => /already used Command Shadows this turn/.test(m))).toBe(true);
+		expect(groupCards(w.env)).toHaveLength(2);
+		expect(w.pool()).toBe(0);
 	});
 
-	it('outside combat there is no limit: each Shadow attacks with its own item, no charge spent', async () => {
+	it('outside combat: no charge spent, the same cards', async () => {
 		const w = await world({ combat: false, shadows: [[2, 0], [2, 1]] });
-		expect((await w.cast()).blocked).toBe(false);
-		const { summary } = await w.cast();
-		expect(summary.mode).toBe('individual');
+		await w.cast();
 		expect(w.pool()).toBe(1);
-		for (const shadow of w.shadowTokens) {
-			const attack = shadow.actor.items[0];
-			expect(attack.activate).toHaveBeenCalledTimes(2);
-			expect(attack.activate).toHaveBeenCalledWith({ fastForward: true });
-			expect(attack.seenTargets).toEqual([w.targetTokens[0].id]);
-		}
-		expect(groupCards(w.env)).toEqual([]);
+		expect(groupCards(w.env)[0].system.rows).toHaveLength(2);
 		expect(w.env.ChatMessage.created.some((m) => m.flags?.[MODULE_ID]?.undo)).toBe(false);
 	});
+});
 
-	it('a combat that has not started counts as outside combat', async () => {
+describe('Command Shadows — Swarming Shadows reads the rows', () => {
+	it('a maxed row resolves its Shadow token by memberTokenUuid', async () => {
 		const w = await world();
-		w.fight.combat.started = false;
-		const { summary } = await w.cast();
-		expect(summary.mode).toBe('individual');
-		expect(w.pool()).toBe(1);
-		expect(w.fight.combat.performMinionGroupAttack).not.toHaveBeenCalled();
+		FakeDamageRoll.face = 12;
+		await w.cast();
+		const [card] = groupCards(w.env);
+		expect(card.system.rows[0].memberTokenUuid).toBe(w.shadowTokens[0].uuid);
+		await expect(w.h.handleSwarmingShadowsGroupAttack(card)).resolves.toBeUndefined();
 	});
 });
 
 describe('Command Shadows — spell data', () => {
-	it('is a Shadowmancer-only shadow cantrip with a visible 1/turn charge pool refilled on turn start', async () => {
+	it('is a Shadowmancer-only shadow cantrip with a visible 1/round charge pool refilled on turn start', async () => {
 		const w = await world({ combat: false });
 		const src = w.item._source;
 		expect(src.system).toMatchObject({ school: 'shadow', tier: 0, classes: ['shadowmancer'] });
@@ -499,5 +329,80 @@ describe('Command Shadows — spell data', () => {
 		expect(pool.recoveries.map((r) => r.trigger)).toContain('onTurnStart');
 		expect(src.flags[MODULE_ID].automation.commandShadows).toEqual({ template: 'shadow-minion', move: 6, perTurnPool: POOL });
 		expect(src.img).toBe(`modules/${MODULE_ID}/assets/spells/ruin/shadow/command-shadows.webp`);
+	});
+});
+
+describe('Command Shadows — one dialog per cast', () => {
+	it('once the count dialog is answered, the system roll dialog is fast-forwarded', async () => {
+		const w = await world();
+		expect(w.h.commandShadowsActivateOptions(w.item, { rollMode: 1 })).toEqual({ rollMode: 1 });
+		await w.env.dialogs.answerWhen(/Command Shadows/, 'confirm');
+		expect(await w.h.commandShadowsActivationBlocked(w.item)).toBe(false);
+		expect(w.h.commandShadowsActivateOptions(w.item, { rollMode: 1 })).toEqual({ rollMode: 1, fastForward: true });
+		expect(w.h.commandShadowsActivateOptions(w.item, undefined)).toEqual({ fastForward: true });
+	});
+
+	it('a cancelled count dialog leaves the options alone (no plan pending)', async () => {
+		const w = await world();
+		expect((await w.cast('cancel')).blocked).toBe(true);
+		expect(w.h.commandShadowsActivateOptions(w.item, {})).toEqual({});
+	});
+});
+
+describe('Command Shadows — card decoration', () => {
+	const fakeHtml = (rows) => {
+		const lis = Array.from({ length: rows }, () => ({ classes: new Set(), classList: { add(c) { this.owner.add(c); } } }));
+		lis.forEach((li) => (li.classList.owner = li.classes));
+		const title = { textContent: 'Group of Minions' };
+		const root = new Set();
+		return {
+			lis,
+			title,
+			root,
+			classList: { add: (c) => root.add(c) },
+			querySelector: (sel) => (sel === '.nimble-chat-card__title' ? title : null),
+			querySelectorAll: () => lis,
+		};
+	};
+
+	it('a Rush row is named "Rush" and flagged; the card is retitled "Shadows → target"', async () => {
+		const w = await world({ shadows: [[2, 0], [3, 1]] });
+		w.env.dialogs.answerWhen(/Command Shadows/, () => [{ count: 2, rush: 1 }]);
+		// The rush field only shows for Shadow Rush owners; a plan with a rush count suffices here.
+		w.h.pending.clear();
+		w.env.game.user.targets = new Set([{ id: w.targetTokens[0].id, document: w.targetTokens[0] }]);
+		await w.h.executeCommandShadows({
+			casterUuid: w.caster.uuid,
+			itemName: 'Command Shadows',
+			sceneId: w.scene.id,
+			shadowIds: w.shadowTokens.map((t) => t.id),
+			groups: [{ targetId: w.targetTokens[0].id, count: 2, rush: 1 }],
+		});
+		const [card] = groupCards(w.env);
+		expect(card.system.rows.map((r) => r.actionName)).toEqual(['Rush', card.system.rows[1].actionName]);
+		expect(card.system.rows[1].actionName).not.toBe('Rush');
+		expect(card.flags[MODULE_ID].commandShadows.rushRows).toEqual([0]);
+
+		const styles = [];
+		vi.stubGlobal('document', {
+			getElementById: (id) => styles.find((el) => el.id === id) ?? null,
+			createElement: () => ({}),
+			head: { append: (el) => styles.push(el) },
+		});
+		const html = fakeHtml(2);
+		expect(w.h.decorateCommandShadowsCard(card, html)).toBe(true);
+		expect(styles).toHaveLength(1);
+		vi.unstubAllGlobals();
+		expect(html.root.has('bcx-shadow-card')).toBe(true);
+		expect(html.title.textContent).toBe('Shadows → Goblin 1');
+		expect(html.lis[0].classes.has('bcx-shadow-rush')).toBe(true);
+		expect(html.lis[1].classes.has('bcx-shadow-rush')).toBe(false);
+	});
+
+	it('other minion cards are left alone', async () => {
+		const w = await world();
+		const html = fakeHtml(1);
+		expect(w.h.decorateCommandShadowsCard({ type: 'minionGroupAttack', flags: {}, system: {} }, html)).toBe(false);
+		expect(html.title.textContent).toBe('Group of Minions');
 	});
 });

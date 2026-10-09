@@ -124,6 +124,34 @@ describe('Hyperfixation / Shadow Spear: advantage at roll time', () => {
 	});
 });
 
+describe('Hyperfixation: weapon attacks run two wrapped activates (subclass -> super)', () => {
+	it('adds the advantage and the toast once when the weapon class calls super.activate', async () => {
+		const { env, h, actor, scene, shadowBlast } = await shadowmancerWorld({ level: 7 });
+		await giveFeature(actor, 'Hyperfixation');
+		const goblin = placeEnemy(env, scene, 'Goblin', [5, 5]);
+		placeShadow(env, scene, actor, [4, 5]);
+		target(env, goblin);
+		const seen = [];
+		const system = async (opts) => {
+			seen.push(opts.rollMode ?? 0);
+			return { id: 'card' };
+		};
+		// NimbleBaseItem.activate and NimbleObjectItem.activate (-> super.activate), both wrapped.
+		const base = h.makeBlueCodexActivate(system);
+		const weapon = Object.create(shadowBlast);
+		weapon.activate = h.makeBlueCodexActivate(async function (opts) {
+			return base.call(this, opts);
+		});
+		const before = env.notifications.messages('info').length;
+		await weapon.activate({ rollMode: 0 });
+		expect(seen).toEqual([1]);
+		expect(env.notifications.messages('info').length - before).toBe(1);
+		// The guard is released afterwards: the next activation is processed again.
+		await weapon.activate({ rollMode: 0 });
+		expect(seen).toEqual([1, 1]);
+	});
+});
+
 describe('Codex Shadow Blast: the official 0.2 card', () => {
 	async function blastWorld(level) {
 		const w = await shadowmancerWorld({ level });
@@ -451,44 +479,66 @@ describe('Eldritch Usurper: the Greater Shadow (0.2, L20)', () => {
 });
 
 describe('Shadow Rush (Command Shadows)', () => {
-	it('a rushing Shadow deals its max (flat, no roll) and dies; the others roll as usual', async () => {
+	// A stand-in for the system DamageRoll: every die rolls a 5; a flat formula is its number.
+	const installDamageRoll = () => {
+		CONFIG.Dice.rolls = [
+			class {
+				constructor(formula, data, options) {
+					Object.assign(this, { formula, data, options });
+				}
+				async evaluate() {
+					this.total = /^\d+$/.test(this.formula) ? Number(this.formula) : 5;
+					this.isMiss = false;
+					return this;
+				}
+				_evaluate() {}
+				_finalizeOutcome() {}
+				_recalculateTotal() {}
+				toJSON() {
+					return { formula: this.formula, total: this.total, terms: [] };
+				}
+			},
+		];
+	};
+
+	it('a Rushing Shadow deals its max (flat, no roll) and dies; the others roll as usual', async () => {
 		const { env, main, actor, scene } = await shadowmancerWorld({ level: 9 });
+		installDamageRoll();
 		await giveFeature(actor, 'Shadow Rush');
 		const cs = main.__commandShadows__;
 		const command = actor.items.find((i) => i.name === 'Command Shadows');
 		const rusher = placeShadow(env, scene, actor, [1, 0]);
 		const roller = placeShadow(env, scene, actor, [1, 1]);
-		const formulas = {};
-		for (const shadow of [rusher, roller]) {
-			shadow.actor.items[0].activate = vi.fn(async function activate() {
-				formulas[shadow.id] = this.system.activation.effects[0].formula;
-				return { id: 'card' };
-			});
-		}
 		target(env, placeEnemy(env, scene, 'Goblin', [2, 0]));
 		let offered = null;
 		env.dialogs.answerWhen(/Command Shadows/, (config) => {
 			offered = config.content;
-			return { picks: [0, 0], rush: [true, false] };
+			return [{ count: 2, rush: 1 }];
 		});
 		expect(await cs.commandShadowsActivationBlocked(command)).toBe(false);
 		expect(offered).toMatch(/bcx-rush-0/); // offered even with a single target
 		const before = env.ChatMessage.created.length;
 		const summary = await cs.handleCommandShadowsUsed(command, {});
-		expect(formulas).toEqual({ [rusher.id]: '12', [roller.id]: '1d12' });
+		const card = env.ChatMessage.created.slice(before).find((m) => m.type === 'minionGroupAttack');
+		expect(card.system.rows.map((r) => r.formula)).toEqual(['12', '1d12']);
+		expect(card.system.rows[0].actionName).toBe('Rush');
+		expect(card.flags['blue-codex-package'].commandShadows.rushRows).toEqual([0]);
+		expect(card.system.totalDamage).toBe(17);
 		expect(scene.tokens.get(rusher.id)).toBeUndefined();
 		expect(scene.tokens.get(roller.id)).toBeTruthy();
 		expect(summary.rushed).toEqual(['Shadow Minion']);
-		expect(cards(env, before).at(-1).content).toMatch(/Shadow Rush:<\/strong> 1 Shadow dealt max damage, then died/);
 	});
 
-	it('without the invocation a single-target command asks nothing', async () => {
+	it('without the invocation the dialog has no Rush field', async () => {
 		const { env, main, actor, scene } = await shadowmancerWorld();
+		installDamageRoll();
 		const command = actor.items.find((i) => i.name === 'Command Shadows');
 		placeShadow(env, scene, actor, [1, 0]);
 		target(env, placeEnemy(env, scene, 'Goblin', [2, 0]));
+		env.dialogs.answerWhen(/Command Shadows/, 'confirm');
 		expect(await main.__commandShadows__.commandShadowsActivationBlocked(command)).toBe(false);
-		expect(env.dialogs.log).toEqual([]);
+		expect(env.dialogs.log).toHaveLength(1);
+		expect(env.dialogs.log[0].content).not.toMatch(/bcx-rush/);
 	});
 });
 
@@ -516,8 +566,17 @@ describe('Defense Mechanism (Pact of the Id, L3)', () => {
 		await expect(h.shadowmancerFeatureActivationBlocked(dm)).resolves.toBe(false);
 		expect(env.dialogs.log).toEqual([]);
 		const before = env.ChatMessage.created.length;
+		const realUpdate = casterToken.update.bind(casterToken);
+		const optionsSeen = [];
+		casterToken.update = (data, options) => {
+			optionsSeen.push(options);
+			return realUpdate(data, options);
+		};
 		await h.handleShadowmancerFeatureUsed(dm);
 		expect([casterToken.x, casterToken.y, shadow.x, shadow.y]).toEqual([300, 200, 0, 0]);
+		// v14: a `displace` waypoint, never the deprecated `teleport` option.
+		expect(optionsSeen[0]).not.toHaveProperty('teleport');
+		expect(optionsSeen[0].movement[casterToken.id].waypoints).toEqual([{ x: 300, y: 200, action: 'displace' }]);
 		expect(cards(env, before).at(-1).content).toMatch(/Reaction.*hits Shadow Minion instead/);
 	});
 

@@ -1872,7 +1872,7 @@ const CODEX_COMMAND_SHADOWS_UUID = `Compendium.${MODULE_ID}.blue-codex-spells.It
 // Conduit of Shadow (Nim+ 0.2) links the Nim+ cantrips; under Codex magic the
 // character learns the Codex ones (the Codex Shadow Blast matches the 0.2 card).
 const CONDUIT_OF_SHADOW_CODEX_NOTE =
-	'<p data-blue-codex-note="conduit-of-shadow">[M] <strong>Blue’s Codex:</strong> you learn the Codex versions of these cantrips. <strong>Shadow Blast</strong> is the same as the 0.2 card (Range 8, 1d12+DEX, 1/round, +1d12 every 5 levels). <strong>Summon Shadow</strong> and <strong>Command Shadows</strong> summon and command the Shadow tokens for you.</p>';
+	'<p data-blue-codex-note="conduit-of-shadow">[M] <strong>Blue’s Codex:</strong> you learn the Codex versions of these cantrips. <strong>Shadow Blast</strong> is the same as the 0.2 card (Range 8, 1d12+DEX, 1/round, +1d12 every 5 levels). <strong>Summon Shadow</strong> places the Shadow tokens for you; <strong>Command Shadows</strong> rolls their attacks (you move them).</p>';
 // Shadowmastery under Codex magic: the Codex re-homes Necrotic into Shadow, which
 // has no utility spells — so the choice is empty by design (BUG-bc-3).
 const SHADOWMASTERY_CODEX_NOTE =
@@ -3087,6 +3087,31 @@ function wrapTriggerLevelUp(actor) {
 			levelUpContext = previous;
 		}
 	};
+	// The "Missing level choices" banner / Level Correction dialog count a pool's
+	// picks from the same class-feature index, which hides subclass:true features —
+	// so a Blue's Codex pool pick (e.g. Hamstringer) was never counted and the
+	// banner showed a false shortfall. Run the check inside the same levelUpContext
+	// so the subclass's pool options are un-hidden (maybeInjectSubclassPoolOptions).
+	if (typeof proto.getMissingLevelSelections === 'function') {
+		const originalGetMissing = proto.getMissingLevelSelections;
+		proto.getMissingLevelSelections = async function blueCodexGetMissingLevelSelections(...args) {
+			const previous = levelUpContext;
+			try {
+				const classInfo = getPrimaryClass(this);
+				const subclassId = classInfo?.classId ? getActorSubclassId(this, classInfo.classId) : '';
+				if (subclassId && !previous) {
+					levelUpContext = { actorId: this.id, subclassId, classId: classInfo.classId };
+				}
+			} catch (error) {
+				console.error(`[${MODULE_ID}] Missing-level-choices context failed`, error);
+			}
+			try {
+				return await originalGetMissing.apply(this, args);
+			} finally {
+				levelUpContext = previous;
+			}
+		};
+	}
 	proto.__blueCodexLevelUpWrapped = true;
 	levelUpWrapInstalled = true;
 }
@@ -3178,6 +3203,17 @@ const ON_HIT_APPLIERS = {
 // created, with the aggregate hit/miss of its primary attack. For any item that
 // declares on-hit automations, apply each to every target the attack hit.
 async function onItemUsed(item, _chatCard, context) {
+	let nightfrost = null;
+	try {
+		nightfrost = claimNightfrostShadowBlast(item, context);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Master of Nightfrost check failed`, error);
+	}
+	try {
+		await nightfrost?.();
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Master of Nightfrost grant failed`, error);
+	}
 	try {
 		await applyOnHitAutomations(item, context);
 	} catch (error) {
@@ -3201,7 +3237,7 @@ async function onItemUsed(item, _chatCard, context) {
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] summoner-pool spend failed`, error);
 	}
-	// Command Shadows: spend the 1/turn charge, then every commanded Shadow attacks.
+	// Command Shadows: spend the 1/turn charge, then roll every Shadow's attack card.
 	try {
 		await handleCommandShadowsUsed(item, context);
 	} catch (error) {
@@ -3285,14 +3321,22 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.error(`[${MODULE_ID}] summoner-pool pre-activate check failed`, error);
 	}
-	// Command Shadows: Shadows + targets (+ the 1/turn charge in combat) before the
-	// cast, and the per-target split when several are targeted. Blocking here
-	// costs nothing (originalActivate never runs).
+	// Empowered Companion: Harm's +STR vs Undead, decided on the current targets.
+	try {
+		await applyEmpoweredHarmFormula(this);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Empowered Companion Harm formula failed`, error);
+	}
+	// Command Shadows: how many Shadows attack each target, asked before the cast.
+	// Only Cancel blocks, and blocking costs nothing (originalActivate never runs).
 	try {
 		if (await commandShadowsActivationBlocked(this)) return null;
 	} catch (error) {
 		console.error(`[${MODULE_ID}] Command Shadows pre-activate gate failed`, error);
 	}
+	// The count dialog above is the cast's only prompt: the system's activation
+	// dialog (roll mode, primary die) does nothing for this spell, so skip it.
+	options = commandShadowsActivateOptions(this, options);
 	// Shadowmancer features with a module flow (Unified Psyche, Defense Mechanism,
 	// Eldritch Usurper): checked/planned before their chargeConsumer spends anything.
 	try {
@@ -3445,6 +3489,12 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	} catch (error) {
 		console.error(`[${MODULE_ID}] Engineer pre-activate failed`, error);
 	}
+	let shadowfrostRestore = null;
+	try {
+		shadowfrostRestore = applyShadowfrost(this);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Shadowfrost pre-activate failed`, error);
+	}
 	let result;
 	try {
 		if (engineer?.blocked) return null;
@@ -3529,6 +3579,11 @@ async function runWrappedActivate(originalActivate, options = {}) {
 		}
 		return result;
 	} finally {
+		try {
+			shadowfrostRestore?.();
+		} catch (error) {
+			console.warn(`[${MODULE_ID}] Could not remove the Shadowfrost node`, error);
+		}
 		// Engineer in-memory activation patches (see prepareEngineerActivation).
 		try {
 			engineer?.restore?.();
@@ -3578,6 +3633,29 @@ async function runWrappedActivate(originalActivate, options = {}) {
 	}
 }
 
+// Items whose wrapped `originalActivate` is running right now. A class that
+// overrides `activate` and then calls `super.activate` (NimbleObjectItem —
+// every weapon) has BOTH prototypes wrapped, so one activation reached
+// runWrappedActivate twice and stacked every pre-activation bonus twice
+// (Hyperfixation read Advantage x2). The nested call goes straight to the
+// original; re-entry from our own pre-activate steps still runs in full.
+const activateInFlight = new WeakSet();
+
+function makeBlueCodexActivate(originalActivate) {
+	const guarded = async function (options) {
+		activateInFlight.add(this);
+		try {
+			return await originalActivate.call(this, options);
+		} finally {
+			activateInFlight.delete(this);
+		}
+	};
+	return async function blueCodexActivate(options = {}) {
+		if (activateInFlight.has(this)) return originalActivate.call(this, options);
+		return runWrappedActivate.call(this, guarded, options);
+	};
+}
+
 // Wrap `activate` on every distinct item document class prototype that defines
 // its own. `NimbleSpellItem` reimplements activate (it only calls super in the
 // macro path), so wrapping `NimbleBaseItem` alone would miss attack spells —
@@ -3602,10 +3680,7 @@ function installOnHitAutomation() {
 			// activate. Only skip a prototype we have already wrapped directly.
 			if (typeof proto.activate !== 'function') continue;
 			if (Object.prototype.hasOwnProperty.call(proto, '__blueCodexActivateWrapped')) continue;
-			const originalActivate = proto.activate;
-			proto.activate = async function blueCodexActivate(options = {}) {
-				return runWrappedActivate.call(this, originalActivate, options);
-			};
+			proto.activate = makeBlueCodexActivate(proto.activate);
 			proto.__blueCodexActivateWrapped = true;
 		}
 	} else {
@@ -6641,6 +6716,102 @@ function onPotentConcoctionTempGone(actor, changes) {
 }
 Hooks.on('updateActor', onPotentConcoctionTempGone);
 
+/* ── Leeching Dark (Shadow, tier 3): "You regain HP equal to the damage done" ──
+ * Nimble's Apply Damage (chat card -> `applyAllDamage`) applies each target's
+ * reductions / armor / save halving, then fires `<system>.damageApplied` once per
+ * target ({ sourceItem, sourceActor, targetActor, card }) without the amount. So
+ * preUpdateActor snapshots the target's HP + temp HP and updateActor turns that
+ * into the HP actually lost (an overkill hit counts only what the target had);
+ * the hook then heals the caster by that, capped at their max HP, with an Undo.
+ * Both hooks run on the GM client that clicked Apply Damage (the only one that can).
+ */
+const LEECHING_DARK_ID = 'leeching-dark';
+const leechingHpBefore = new Map(); // actor id -> { hp, temp } before a pending update
+const leechingHpLoss = new Map(); // actor id -> HP + temp HP lost by the last update
+
+const hpPair = (actor) => ({
+	hp: Number(actor?.system?.attributes?.hp?.value) || 0,
+	temp: Number(actor?.system?.attributes?.hp?.temp) || 0,
+});
+
+function onLeechingDarkPreUpdateActor(actor) {
+	try {
+		leechingHpBefore.set(actor.id, hpPair(actor));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Leeching Dark HP snapshot failed`, error);
+	}
+}
+
+function onLeechingDarkUpdateActor(actor) {
+	try {
+		const before = leechingHpBefore.get(actor?.id);
+		if (!before) return;
+		leechingHpBefore.delete(actor.id);
+		const after = hpPair(actor);
+		leechingHpLoss.set(actor.id, Math.max(0, before.hp - after.hp) + Math.max(0, before.temp - after.temp));
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Leeching Dark HP tracking failed`, error);
+	}
+}
+
+const isLeechingDark = (item) =>
+	item?.system?.identifier === LEECHING_DARK_ID || (item?.type === 'spell' && /^leeching dark$/i.test(String(item?.name ?? '').trim()));
+
+// Heal the caster by what `target` just lost. Returns the HP regained (0 when nothing).
+async function healLeechingDarkCaster(caster, target) {
+	const lost = leechingHpLoss.get(target?.id) ?? 0;
+	leechingHpLoss.delete(target?.id);
+	if (!caster || lost <= 0) return 0;
+	const { hp } = hpPair(caster);
+	const max = Number(caster.system?.attributes?.hp?.max) || 0;
+	const healed = Math.max(0, Math.min(lost, max - hp));
+	if (healed > 0) await caster.setCurrentHP(hp + healed);
+	await postLeechingDarkCard(caster, target, lost, healed);
+	return healed;
+}
+
+async function postLeechingDarkCard(caster, target, lost, healed) {
+	const who = escapeHtml(target?.name ?? 'the target');
+	if (healed <= 0) {
+		await ChatMessage.create({
+			speaker: ChatMessage.getSpeaker({ actor: caster }),
+			flavor: '<strong>Leeching Dark</strong>',
+			content: `<p>${who} lost <strong>${lost}</strong> HP, but ${escapeHtml(caster.name)} is already at full HP.</p>`,
+		});
+		return;
+	}
+	await postUndoCard({
+		actor: caster,
+		flavor: 'Leeching Dark',
+		text: `<p><strong>${escapeHtml(caster.name)}</strong> regains <strong>${healed} HP</strong> from the ${lost} damage done to ${who}.</p>`,
+		undoAction: { type: 'leechingDark', data: { actorUuid: caster.uuid, healed } },
+	});
+}
+
+function onLeechingDarkDamageApplied(payload) {
+	try {
+		const { sourceItem, sourceActor, targetActor, card } = payload ?? {};
+		if (!isLeechingDark(sourceItem) || card?.system?.isMiss) return;
+		return healLeechingDarkCaster(sourceActor, targetActor).catch((error) =>
+			console.warn(`[${MODULE_ID}] Leeching Dark healing failed`, error),
+		);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Leeching Dark check failed`, error);
+	}
+}
+
+registerUndoHandler('leechingDark', async ({ actorUuid, healed }) => {
+	const caster = resolveActorByUuid(actorUuid);
+	if (!caster) return false;
+	const hp = hpPair(caster).hp;
+	await caster.setCurrentHP(Math.max(0, hp - (Number(healed) || 0)));
+	return `${caster.name} back to ${Math.max(0, hp - (Number(healed) || 0))} HP.`;
+});
+
+Hooks.on('preUpdateActor', onLeechingDarkPreUpdateActor);
+Hooks.on('updateActor', onLeechingDarkUpdateActor);
+Hooks.once('init', () => Hooks.on(`${game.system?.id ?? 'nimble'}.damageApplied`, onLeechingDarkDamageApplied));
+
 /* ── Kinetic Stabilizers (Scrapper L11): an equipped-mail tag ── */
 // Nimble's `armor:equipped` is set by any OWNED armor with an armor rule (every
 // Engineer owns Cheap Hides), so the feature predicates on `self:mailArmorEquipped`:
@@ -6844,6 +7015,10 @@ async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod, ca
 	try {
 		const synth = tokenDoc?.actor;
 		if (!synth) return;
+		// Sacred Grace "Empowered Companion" (any copy; 0.2/3.0 text): +STR damage on
+		// Harm vs Undead (decided per target at use, see applyEmpoweredHarmFormula) and
+		// +WIL on Mend's healing (baked here).
+		const empowered = !!caster && actorOwnsFeature(caster, 'empowered-companion', 'Empowered Companion');
 		const updates = [];
 		for (const item of listEmbeddedItems(synth)) {
 			const cfg = getItemAutomationFlag(item, 'summonFormula');
@@ -6861,17 +7036,46 @@ async function patchLifebindingSpiritFormulas(tokenDoc, steppedFaces, wilMod, ca
 				const times = 1 + (every > 0 ? Math.floor(getCharacterLevel(caster) / every) : 0);
 				formula += ` + ${getAbilityMod(caster, 'strength') * times}`;
 			}
+			const update = { _id: item.id ?? item._id };
+			if (empowered && cfg.addStr) {
+				// Harm: remember the base and the STR owed vs Undead (flag read at use).
+				update.flags = {
+					[MODULE_ID]: { empoweredHarm: { base: formula, str: getAbilityMod(caster, 'strength') } },
+				};
+			} else if (empowered && typeof cfg.countFrom === 'string' && cfg.countFrom === 'will' && wilMod) {
+				formula += ` + ${wilMod}`; // Mend: +WIL healing
+			}
 
 			const effects = foundry.utils.deepClone(item.system?.activation?.effects ?? []);
 			const node = effects.find((e) => e?.type === 'damage' || e?.type === 'healing');
 			if (!node) continue;
 			node.formula = formula;
-			updates.push({ _id: item.id ?? item._id, system: { activation: { effects } } });
+			update.system = { activation: { effects } };
+			updates.push(update);
 		}
 		if (updates.length) await synth.updateEmbeddedDocuments('Item', updates);
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Could not patch Lifebinding Spirit formulas`, error);
 	}
+}
+
+// Empowered Companion, Harm half: before the spirit's Harm is used, set its damage
+// formula to base (+ STR when a targeted creature is Undead). The base and STR were
+// stored on the item at summon time (patchLifebindingSpiritFormulas).
+async function applyEmpoweredHarmFormula(item) {
+	const cfg =
+		item?.getFlag?.(MODULE_ID, 'empoweredHarm') ?? item?.flags?.[MODULE_ID]?.empoweredHarm;
+	if (!cfg || typeof cfg.base !== 'string') return;
+	const undead = [...(game.user?.targets ?? [])].some((t) =>
+		/undead/i.test(String((t?.actor ?? t?.document?.actor)?.system?.details?.creatureType ?? '')),
+	);
+	const str = Number(cfg.str) || 0;
+	const formula = undead && str ? `${cfg.base} + ${str}` : cfg.base;
+	const effects = foundry.utils.deepClone(item.system?.activation?.effects ?? []);
+	const node = effects.find((e) => e?.type === 'damage');
+	if (!node || node.formula === formula) return;
+	node.formula = formula;
+	await item.update({ system: { activation: { effects } } });
 }
 
 // The set of spell schools a caster knows: distinct `system.school` over the
@@ -7038,6 +7242,15 @@ const SHADOW_TEMPLATES = new Set([SHADOW_MINION_TEMPLATE, GREATER_SHADOW_TEMPLAT
 // equals its faces. Works on a live DamageRoll (primaryDie accessor / .terms) and
 // on a serialized rollData JSON (damageRoll.toJSON() → .terms).
 function rollHasPrimaryMaxFace(rollLike) {
+	// A spell's `nimble.useItem` context carries its rolls as JSON strings (the
+	// serialized chat-card rolls), not Roll objects.
+	if (typeof rollLike === 'string') {
+		try {
+			rollLike = JSON.parse(rollLike);
+		} catch {
+			return false;
+		}
+	}
 	if (!rollLike || typeof rollLike !== 'object') return false;
 	const dieHasMaxFace = (die) => {
 		const faces = Number(die?.faces);
@@ -7073,19 +7286,35 @@ function findSummonConfigForTemplate(actor, template) {
 
 // First free grid square among a target token's 8 neighbours (orthogonals first),
 // else overlap to the east as a last resort.
-function findFreeAdjacentPosition(scene, targetToken) {
+function findFreeAdjacentPosition(scene, targetToken, { width = 1, height = 1 } = {}) {
 	const grid = scene?.grid?.size ?? 100;
 	const tx = Number(targetToken?.x) || 0;
 	const ty = Number(targetToken?.y) || 0;
-	const occupied = new Set();
-	for (const t of scene?.tokens ?? []) occupied.add(`${Math.round(t.x)},${Math.round(t.y)}`);
-	const offsets = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
-	for (const [dx, dy] of offsets) {
-		const x = tx + dx * grid;
-		const y = ty + dy * grid;
-		if (!occupied.has(`${Math.round(x)},${Math.round(y)}`)) return { x, y };
+	const tw = Math.max(1, Number(targetToken?.width) || 1);
+	const th = Math.max(1, Number(targetToken?.height) || 1);
+	const boxes = [];
+	for (const t of scene?.tokens ?? []) {
+		boxes.push({
+			x: Number(t.x) || 0,
+			y: Number(t.y) || 0,
+			w: Math.max(1, Number(t.width) || 1) * grid,
+			h: Math.max(1, Number(t.height) || 1) * grid,
+		});
 	}
-	return { x: tx + grid, y: ty };
+	const w = width * grid;
+	const h = height * grid;
+	const free = (x, y) => !boxes.some((b) => x < b.x + b.w - 1 && x + w > b.x + 1 && y < b.y + b.h - 1 && y + h > b.y + 1);
+	// Candidate origins hugging the target's footprint: the east column, west
+	// column, south row and north row first (top to bottom / left to right), then
+	// the four corners. A Medium target gives the old 8-cell order.
+	const candidates = [];
+	for (let j = 0; j < th; j += 1) candidates.push([tx + tw * grid, ty + j * grid]);
+	for (let j = 0; j < th; j += 1) candidates.push([tx - w, ty + j * grid]);
+	for (let i = 0; i < tw; i += 1) candidates.push([tx + i * grid, ty + th * grid]);
+	for (let i = 0; i < tw; i += 1) candidates.push([tx + i * grid, ty - h]);
+	candidates.push([tx + tw * grid, ty + th * grid], [tx + tw * grid, ty - h], [tx - w, ty + th * grid], [tx - w, ty - h]);
+	for (const [x, y] of candidates) if (free(x, y)) return { x, y };
+	return { x: tx + tw * grid, y: ty };
 }
 
 // Whisper the summoner's owner(s) that the swarm is at its limit.
@@ -7154,6 +7383,12 @@ async function maybeSwarmFromMinionAttack(minionTokenDoc, rollLikes, targetToken
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] Hungering Shadows grant failed`, error);
 	}
+	// Master of Nightfrost: the same max roll raises the summoner's temp HP.
+	try {
+		await grantNightfrost(resolveSummonerFromToken(minionTokenDoc), minionTokenDoc?.name ?? 'A Shadow');
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Master of Nightfrost grant failed`, error);
+	}
 
 	const caster = resolveSummonerFromToken(minionTokenDoc);
 	const swarming = caster ? findOwnedFeature(caster, null, SWARMING_SHADOWS_FEATURE) : null;
@@ -7209,6 +7444,20 @@ function resolveGroupAttackTargetToken(targetUuids) {
 	return null;
 }
 
+// The Shadow token behind a group-attack card row.
+function resolveGroupAttackMemberToken(row) {
+	if (row?.memberTokenUuid) {
+		try {
+			const doc = fromUuidSync?.(row.memberTokenUuid);
+			const tokenDoc = doc?.document ?? doc;
+			if (tokenDoc) return tokenDoc;
+		} catch {
+			/* fall back to the combatant */
+		}
+	}
+	return resolveCombatantById(row?.memberCombatantId)?.token ?? null;
+}
+
 // Path 2: group attacks post ONE `minionGroupAttack` card with a per-member row
 // (row.roll = damageRoll.toJSON()). Each would-crit shadow-minion member whose
 // summoner owns Swarming Shadows spawns one minion beside the shared target.
@@ -7219,19 +7468,23 @@ async function handleSwarmingShadowsGroupAttack(message) {
 	const targetDoc = resolveGroupAttackTargetToken(message.system?.targets);
 	const scene = targetDoc?.parent ?? canvas?.scene;
 
-	// Resolve every member's token before the first await: Command Shadows removes
-	// its transient Shadow combatants right after the attack (retired map fallback).
+	// Resolve every member's token before the first await. Command Shadows rows
+	// name their Shadow token (`memberTokenUuid`; a row counted above the Shadows
+	// on the table stands for any of the caster's Shadows); a system group attack
+	// row names a combatant.
+	const commandCaster = resolveActorByUuid(message?.flags?.[MODULE_ID]?.[COMMAND_SHADOWS_FLAG]?.casterUuid);
+	const anyShadow = commandCaster ? findCommandableShadows(commandCaster, SHADOW_MINION_TEMPLATE, null)[0] ?? null : null;
 	const hits = [];
 	for (const row of rows) {
 		if (row?.isMiss) continue;
 		if (!rollHasPrimaryMaxFace(row?.roll)) continue;
-		const id = row?.memberCombatantId;
-		const tokenDoc = resolveCombatantById(id)?.token ?? retiredShadowCombatantTokens.get(id) ?? null;
+		const tokenDoc = resolveGroupAttackMemberToken(row) ?? anyShadow;
 		if (tokenDoc) hits.push({ tokenDoc, roll: row.roll });
 	}
 	for (const { tokenDoc, roll } of hits) {
-		// Each qualifying member spawns its own minion (cap re-checked per spawn).
-		await maybeSwarmFromMinionAttack(tokenDoc, [roll], targetDoc, scene);
+		// Each qualifying member spawns its own minion beside the target (or, with
+		// no target, beside itself); the cap is re-checked per spawn.
+		await maybeSwarmFromMinionAttack(tokenDoc, [roll], targetDoc ?? tokenDoc, scene ?? tokenDoc.parent);
 	}
 }
 
@@ -7255,50 +7508,29 @@ async function onCreateChatMessage(message) {
 //     template: 'shadow-minion', move: 6, perTurnPool: 'command-shadows'
 //   }
 //
-// Same activate-wrap / useItem split as the summon framework:
-//   • gate (commandShadowsActivationBlocked, before the dialog and chat card, so
-//     blocking costs nothing): the caster's live Shadows (tokens of `template` it
-//     summoned, on its scene) and the user's targets — none of either: warn and
-//     block. In a started combat the spell's item pool `perTurnPool` (a visible
-//     native chargePool, refilled onTurnStart) must hold a charge. 2+ targets: a
-//     dialog assigns each Shadow to a target (even round-robin split pre-filled,
-//     distances shown as a hint); Cancel blocks. There is no distance gate: every
-//     Shadow attacks its target (the Shadows "move 6 then attack" — the GM moves
-//     the tokens by hand if they care). The plan waits for the useItem half.
-//   • useItem (the cast resolved; handleCommandShadowsUsed): in combat spend the
-//     pool (Undo card), then run the attacks with GM authority (runAsGM
-//     'commandShadows', executeCommandShadows):
-//       – in a started combat, through the system's minion group attack
-//         (Combat#performMinionGroupAttack), one per target. The system only
-//         rolls for minion COMBATANTS (and spends their `system.actions.base`),
-//         so the Shadows join the tracker just for the attack (fresh combatants
-//         = a full action every cast) and are removed again right after: Shadows
-//         never keep a combatant, so they never get turns of their own (Nimble
-//         has no "in combat but no turn" state — its minion groups still give the
-//         group leader a turn and dissolve every round). The system reads the
-//         target from the executing user's targets, so they are swapped in for
-//         the call (withUserTargets). The `minionGroupAttack` cards are
-//         self-contained (rows carry name/img/roll) and feed Swarming Shadows,
-//         which maps removed combatant ids back to their tokens;
-//       – outside combat (testing: no 1/turn limit), each Shadow's attack item is
-//         activated at its target (fast-forwarded).
-//     One summary card follows: assignments, "each Shadow may move 6 before
-//     attacking", Shadows the system could not roll for.
-// Shadow combatants left in a running combat (the first 0.9.1 draft kept them)
-// are swept on the acting GM's `ready` and by every command.
-// Tokens are never moved. The Pact of the Endless Swarm "your Hives can also
-// move" rider stays text-only.
+// A plain spell: nothing joins the combat tracker and nothing is checked — the
+// player moves the Shadows by hand and the table rules on Reach.
+//   • gate (commandShadowsActivationBlocked, before the dialog and chat card): a
+//     dialog asks how many Shadows attack each target (one field per target, or
+//     one with no target), pre-filled with an even split of the caster's live
+//     Shadows on its scene, free to change. Shadow Rush owners also say how many
+//     of them Rush. Cancel blocks (costs nothing). An empty 1/turn pool only
+//     warns. The plan waits for the useItem half.
+//   • useItem (handleCommandShadowsUsed): in combat spend the pool's charge when
+//     it holds one (Undo card), then roll with GM authority (runAsGM
+//     'commandShadows', executeCommandShadows): one row per Shadow — the live
+//     Shadows in order (a Greater Shadow keeps its 5d12), then base Shadows for a
+//     count above them — rolled like the system's minion attack (never crits, a 1
+//     misses) onto a `minionGroupAttack` card per target. A Rushing Shadow's row
+//     is its flat max (no roll, no max-roll trigger) and the Shadow dies after.
+//     Rows carry `memberTokenUuid`, which Swarming Shadows, Hungering Shadows and
+//     Master of Nightfrost read off the card.
+// Shadow combatants an earlier build left in a running combat are swept on the
+// acting GM's `ready`. The Pact of the Endless Swarm "your Hives can also move"
+// rider stays text-only.
 const COMMAND_SHADOWS_FLAG = 'commandShadows';
-const COMMAND_SHADOWS_SKIP_LABELS = {
-	noActionSelected: 'no attack found',
-	noActionsRemaining: 'no action left',
-	actorCannotActivate: 'cannot act',
-	actionNotFound: 'no attack found',
-	noDamageFormula: 'no damage formula',
-	activationFailed: 'the attack failed',
-	notInCombat: 'not in the combat',
-	missing: 'gone',
-};
+const COMMAND_SHADOWS_RUSH_ACTION = 'Rush';
+const BASE_SHADOW_FORMULA = '1d12';
 // item uuid → the plan the gate built for that cast (consumed by the useItem half).
 const pendingCommandShadows = new Map();
 
@@ -7313,14 +7545,18 @@ function getCommandShadowsAutomation(item) {
 	};
 }
 
-// A minion's attack: its first item whose activation has a damage node (what the
-// system's group attack rolls).
+// A minion's attack: its first item whose activation has a damage node.
 function findMinionAttackItem(actorLike) {
 	return (
 		listEmbeddedItems(actorLike).find((item) =>
 			(item?.system?.activation?.effects ?? []).some((node) => node?.type === 'damage'),
 		) ?? null
 	);
+}
+
+function minionAttackFormula(attack) {
+	const node = (attack?.system?.activation?.effects ?? []).find((entry) => entry?.type === 'damage');
+	return typeof node?.formula === 'string' && node.formula.trim() ? node.formula.trim() : null;
 }
 
 function isTokenDefeated(tokenDoc) {
@@ -7337,39 +7573,38 @@ function findCommandableShadows(caster, template, scene) {
 		.filter((token) => (!scene || token.parent?.id === scene.id) && !isTokenDefeated(token));
 }
 
-// Even round-robin split: Shadow i → target i mod n.
-function defaultShadowAssignment(shadowCount, targetCount) {
-	return Array.from({ length: shadowCount }, (_, i) => (targetCount > 0 ? i % targetCount : 0));
+// Even split of `count` Shadows over `targetCount` targets (one slot with none).
+function defaultShadowSplit(count, targetCount) {
+	const slots = Math.max(1, targetCount);
+	return Array.from({ length: slots }, (_, t) => Math.floor(count / slots) + (t < count % slots ? 1 : 0));
 }
 
-// Ask how to split the Shadows over 2+ targets. Resolves an array (target index
-// per Shadow) or null (cancelled).
-async function promptShadowAssignment(caster, shadows, targets) {
-	const defaults = defaultShadowAssignment(shadows.length, targets.length);
-	const rows = shadows
-		.map((shadow, i) => {
-			const options = targets
-				.map(
-					(target, t) =>
-						`<option value="${t}" ${defaults[i] === t ? 'selected' : ''}>${escapeHtml(target.name ?? `Target ${t + 1}`)} (${tokenDistanceSpaces(shadow, target)} spaces)</option>`,
-				)
-				.join('');
-			return `
-			<label class="bcx-command-row">
-				<span>${escapeHtml(shadow.name ?? 'Shadow')} #${i + 1}</span>
-				<select name="bcx-command-${i}">${options}</select>
-			</label>`;
+// How many Shadows attack each target (and, for Shadow Rush, how many of them
+// Rush). Resolves [{ count, rush }] per slot, or null (cancelled).
+async function promptCommandShadows(caster, shadows, targets, { rush = false } = {}) {
+	const defaults = defaultShadowSplit(shadows.length, targets.length);
+	const rows = (targets.length ? targets : [null])
+		.map((target, i) => {
+			const label = target ? `Shadows attacking ${escapeHtml(target.name ?? `Target ${i + 1}`)}` : 'Shadows attacking';
+			const rushField = rush
+				? `<label>Rush <input type="number" name="bcx-rush-${i}" min="0" step="1" value="0"></label>`
+				: '';
+			return `<div class="bcx-command-row"><span>${label}</span>
+				<input type="number" name="bcx-count-${i}" min="0" step="1" value="${defaults[i]}">${rushField}</div>`;
 		})
 		.join('');
+	const plural = shadows.length === 1 ? '' : 's';
 	return foundry.applications.api.DialogV2.wait({
 		window: { title: `${caster.name} — Command Shadows` },
-		content: `<form class="bcx-command-form">
-				<p>Choose which target each Shadow attacks:</p>
+		content: `<div class="bcx-command-form">
+				<p><strong>${shadows.length}</strong> Shadow${plural} on the table. Each moves 6 then attacks — move them by hand and rule on Reach at the table.</p>
+				${targets.length ? '' : '<p><em>No target: the card is rolled without one.</em></p>'}
+				${rush ? '<p><strong>Shadow Rush:</strong> a Rushing Shadow deals its max damage instead of rolling, then dies.</p>' : ''}
 				<div class="bcx-command-list">${rows}</div>
-			</form>
+			</div>
 			<style>
 				.bcx-command-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
-				.bcx-command-row select{flex:0 1 60%}
+				.bcx-command-row input{width:4em}
 			</style>`,
 		buttons: [
 			{
@@ -7378,9 +7613,13 @@ async function promptShadowAssignment(caster, shadows, targets) {
 				default: true,
 				callback: (_event, button, dialog) => {
 					const root = dialog?.element ?? button?.form ?? null;
+					const read = (name, fallback) => {
+						const value = Math.floor(Number(root?.querySelector?.(`input[name="${name}"]`)?.value));
+						return Number.isFinite(value) && value >= 0 ? value : fallback;
+					};
 					return defaults.map((fallback, i) => {
-						const value = Number(root?.querySelector?.(`select[name="bcx-command-${i}"]`)?.value);
-						return Number.isInteger(value) && value >= 0 && value < targets.length ? value : fallback;
+						const count = read(`bcx-count-${i}`, fallback);
+						return { count, rush: Math.min(count, read(`bcx-rush-${i}`, 0)) };
 					});
 				},
 			},
@@ -7393,7 +7632,7 @@ async function promptShadowAssignment(caster, shadows, targets) {
 		.catch(() => null);
 }
 
-// Pre-activate gate: true = blocked (warned; the cast costs nothing).
+// Pre-activate gate: true = blocked (the cast costs nothing). Only Cancel blocks.
 async function commandShadowsActivationBlocked(item) {
 	const cfg = getCommandShadowsAutomation(item);
 	if (!cfg) return false;
@@ -7403,62 +7642,45 @@ async function commandShadowsActivationBlocked(item) {
 
 	const scene = findActorTokenDoc(caster)?.parent ?? canvas?.scene ?? null;
 	const shadows = findCommandableShadows(caster, cfg.template, scene);
-	if (!shadows.length) {
-		ui.notifications?.warn(`${caster.name} has no Shadows to command — ${item.name} was not cast.`);
-		return true;
-	}
 	const shadowIds = new Set(shadows.map((token) => token.id));
 	const targets = uniqueList(
 		Array.from(game.user?.targets ?? [])
 			.map((placeable) => placeable?.document ?? placeable)
 			.filter((doc) => doc?.id && !shadowIds.has(doc.id)),
 	);
-	if (!targets.length) {
-		ui.notifications?.warn(`Target the creature(s) your Shadows attack, then cast ${item.name} again.`);
-		return true;
-	}
 
 	const inCombat = Boolean(game.combat?.started);
 	if (inCombat && cfg.perTurnPool) {
 		const pool = getChargePoolEntry(caster, cfg.perTurnPool, { item });
 		if (pool && pool.current < 1) {
-			ui.notifications?.warn(
-				`${caster.name} already used ${item.name} this turn (${pool.current}/${pool.max}). If that is wrong, click the counter on the sheet to fix it.`,
-			);
-			return true;
+			ui.notifications?.warn(`${caster.name} already used ${item.name} this turn (${pool.current}/${pool.max}).`);
 		}
 	}
 
-	let picks = defaultShadowAssignment(shadows.length, targets.length);
-	let rush = shadows.map(() => false);
-	if (ownsFeature(caster, SHADOW_RUSH)) {
-		// Shadow Rush: which Shadows deal their max and die is a choice every command.
-		const answer = await promptShadowRush(caster, shadows, targets, picks);
-		if (!answer) return true;
-		({ picks, rush } = answer);
-	} else if (targets.length > 1) {
-		picks = await promptShadowAssignment(caster, shadows, targets);
-		if (!picks) return true;
-	}
-	const assignments = shadows.map((shadow, i) => ({ shadow, target: targets[picks[i]] ?? targets[0], rush: rush[i] === true }));
+	const answer = await promptCommandShadows(caster, shadows, targets, { rush: ownsFeature(caster, SHADOW_RUSH) });
+	if (!answer) return true;
 
 	pendingCommandShadows.set(item.uuid, {
 		casterUuid: caster.uuid,
 		itemName: item.name,
-		sceneId: scene?.id ?? assignments[0].shadow.parent?.id ?? null,
+		sceneId: scene?.id ?? shadows[0]?.parent?.id ?? null,
 		move: cfg.move,
 		template: cfg.template,
 		inCombat,
-		assignments: assignments.map(({ shadow, target, rush: rushed }) => ({
-			shadowId: shadow.id,
-			targetId: target.id,
-			...(rushed ? { rush: true } : {}),
-		})),
+		shadowIds: shadows.map((token) => token.id),
+		groups: answer.map(({ count, rush }, i) => ({ targetId: targets[i]?.id ?? null, count, rush })),
 	});
 	return false;
 }
 
-// useItem half: spend the 1/turn charge (combat only), then attack with GM authority.
+// The activate options once the gate answered: fastForward skips the system's
+// roll dialog (its roll-mode / primary-die controls are inert for this spell).
+function commandShadowsActivateOptions(item, options) {
+	if (!item?.uuid || !pendingCommandShadows.has(item.uuid)) return options;
+	return { ...(options ?? {}), fastForward: true };
+}
+
+// useItem half: spend the 1/turn charge (combat, when there is one), then roll with GM authority.
 async function handleCommandShadowsUsed(item, _context) {
 	const cfg = getCommandShadowsAutomation(item);
 	if (!cfg) return undefined;
@@ -7466,10 +7688,10 @@ async function handleCommandShadowsUsed(item, _context) {
 	pendingCommandShadows.delete(item?.uuid);
 	if (!plan) return undefined;
 	const caster = item.actor;
-	if (plan.inCombat && cfg.perTurnPool) {
+	if (plan.inCombat && cfg.perTurnPool && (getChargePoolEntry(caster, cfg.perTurnPool, { item })?.current ?? 0) >= 1) {
 		await spendPoolWithUndo(caster, cfg.perTurnPool, 1, {
 			item,
-			label: `${item.name} (1/turn)`,
+			label: `${item.name} (1/round)`,
 			reason: 'Shadows commanded',
 			flavor: item.name,
 		});
@@ -7478,9 +7700,9 @@ async function handleCommandShadowsUsed(item, _context) {
 }
 
 // Run `fn` while the current user's targets are exactly `tokenDocs` (the system's
-// group attack and item activation read `game.user.targets`). User#targets is an
-// own instance field, so it is shadowed and restored — never re-targeted on the
-// canvas, which would broadcast.
+// item activation reads `game.user.targets`). User#targets is an own instance
+// field, so it is shadowed and restored — never re-targeted on the canvas, which
+// would broadcast.
 async function withUserTargets(tokenDocs, fn) {
 	const user = game.user;
 	if (!user) return fn();
@@ -7512,56 +7734,8 @@ function combatantTokenDoc(combatant) {
 	);
 }
 
-// Removed Shadow combatant id → its token, so a `minionGroupAttack` card whose
-// rows name a combatant that is already gone (Swarming Shadows) still finds the
-// Shadow. Bounded; only the newest entries matter.
-const retiredShadowCombatantTokens = new Map();
-function rememberRetiredShadowCombatant(combatantId, tokenDoc) {
-	if (!combatantId || !tokenDoc) return;
-	retiredShadowCombatantTokens.set(combatantId, tokenDoc);
-	while (retiredShadowCombatantTokens.size > 200) {
-		retiredShadowCombatantTokens.delete(retiredShadowCombatantTokens.keys().next().value);
-	}
-}
-
-// Join `tokenDocs` to the tracker for a group attack: a Shadow without a
-// combatant gets a fresh one (the system gives it a full action), one that
-// already has one (left over) is topped up to its action max, so a command never
-// fails on "no action left". Returns Map(token id → combatant).
-async function prepareShadowCombatants(combat, tokenDocs) {
-	const find = (token) =>
-		combat.combatants?.find?.((c) => c.tokenId === token.id && (!c.sceneId || c.sceneId === token.parent?.id)) ?? null;
-	const missing = tokenDocs.filter((token) => !find(token));
-	if (missing.length) {
-		await combat.createEmbeddedDocuments(
-			'Combatant',
-			missing.map((token) => ({
-				type: 'npc',
-				tokenId: token.id,
-				sceneId: token.parent?.id ?? null,
-				actorId: token.actorId ?? token.actor?.id ?? '',
-				hidden: Boolean(token.hidden),
-				flags: { [MODULE_ID]: { commandShadowsTransient: true } },
-			})),
-		);
-	}
-	const topUps = [];
-	for (const token of tokenDocs) {
-		const combatant = find(token);
-		if (!combatant?.id) continue;
-		const base = combatant.system?.actions?.base ?? {};
-		const max = Math.max(1, Number.isFinite(Number(base.max)) ? Number(base.max) : 1);
-		const current = Number(base.current);
-		if (!(Number.isFinite(current) && current >= max)) {
-			topUps.push({ _id: combatant.id, 'system.actions.base.current': max });
-		}
-	}
-	if (topUps.length) await combat.updateEmbeddedDocuments('Combatant', topUps);
-	return new Map(tokenDocs.map((token) => [token.id, find(token)]));
-}
-
-// Remove every Shadow combatant from `combat` (Shadows never keep a turn).
-// Returns the number removed.
+// Remove every Shadow combatant from `combat` (Shadows never keep a turn; earlier
+// builds added them for the attack). Returns the number removed.
 async function removeShadowCombatants(combat, template = SHADOW_MINION_TEMPLATE) {
 	if (!combat?.combatants || typeof combat.deleteEmbeddedDocuments !== 'function') return 0;
 	const doomed = [];
@@ -7569,7 +7743,6 @@ async function removeShadowCombatants(combat, template = SHADOW_MINION_TEMPLATE)
 		const token = combatantTokenDoc(combatant);
 		const transient = Boolean(combatant?.flags?.[MODULE_ID]?.commandShadowsTransient);
 		if (!combatant?.id || !(transient || isShadowSummonToken(token, template))) continue;
-		rememberRetiredShadowCombatant(combatant.id, token);
 		doomed.push(combatant.id);
 	}
 	if (!doomed.length) return 0;
@@ -7596,177 +7769,189 @@ Hooks.once('ready', () => {
 	void sweepShadowCombatants();
 });
 
-// GM side: resolve the plan against the scene and run the attacks. Returns a
-// summary ({ mode, groups, skipped }) — also posted as a card.
+// One Shadow's row, rolled like the system's minion attack (never crits, a 1
+// misses); a Rushing Shadow's row is its flat max. Null without a DamageRoll.
+async function rollCommandShadowRow(slot, index, rush) {
+	const max = rush ? formulaMaxValue(slot.formula) : null;
+	const formula = max === null ? slot.formula : String(max);
+	const DamageRollClass = cbzDamageRollClass();
+	if (!DamageRollClass) return null;
+	const roll = new DamageRollClass(formula, slot.rollData, {
+		canCrit: false,
+		canMiss: max === null,
+		rollMode: 0,
+		primaryDieValue: 0,
+		primaryDieModifier: 0,
+	});
+	await roll.evaluate();
+	const isMiss = Boolean(roll.isMiss);
+	const total = Number(roll.total ?? 0);
+	return {
+		memberCombatantId: `${slot.id}-${index}`,
+		memberTokenUuid: slot.tokenUuid,
+		memberName: slot.name,
+		memberImage: slot.image,
+		actionId: slot.actionId,
+		// The card truncates long names, so a Rushing row is just "Rush" (plus a
+		// marker from the render hook below).
+		actionName: max === null ? slot.actionName : COMMAND_SHADOWS_RUSH_ACTION,
+		actionImage: slot.actionImage,
+		formula,
+		totalDamage: isMiss ? 0 : Number.isFinite(total) ? Math.max(0, total) : 0,
+		isMiss,
+		roll: roll.toJSON(),
+	};
+}
+
+// The `minionGroupAttack` card for one target (or none), speaking as its first
+// Shadow (the attacker, for "when attacked" reactions), else the caster.
+async function postCommandShadowsCard(caster, plan, target, rows, speakerToken) {
+	const totalDamage = rows.reduce((sum, row) => sum + row.totalDamage, 0);
+	const targetName = target?.name ?? 'no target';
+	const alias = `${caster.name}'s Shadows`;
+	const data = {
+		author: game.user?.id,
+		flavor: `${alias} attack ${targetName}`,
+		speaker: speakerToken
+			? ChatMessage.getSpeaker({ token: speakerToken, actor: speakerToken.actor, alias })
+			: ChatMessage.getSpeaker({ actor: caster, alias }),
+		style: CONST?.CHAT_MESSAGE_STYLES?.OTHER,
+		sound: CONFIG?.sounds?.dice,
+		type: 'minionGroupAttack',
+		content: '',
+		system: {
+			actorName: caster.name,
+			actorType: caster.type ?? 'character',
+			image: caster.img ?? 'icons/svg/cowled.svg',
+			permissions: Number(caster.permission ?? 3) || 0,
+			rollMode: 0,
+			targets: target?.uuid ? [target.uuid] : [],
+			groupLabel: 'Shadows',
+			targetName,
+			totalDamage,
+			rows,
+			skippedMembers: [],
+			unsupportedWarnings: [],
+		},
+		flags: {
+			[MODULE_ID]: {
+				[COMMAND_SHADOWS_FLAG]: {
+					casterUuid: caster.uuid,
+					itemName: plan.itemName ?? 'Command Shadows',
+					// Row indexes (in `system.rows`) that are Shadow Rush attacks.
+					rushRows: rows.flatMap((row, i) => (row.actionName === COMMAND_SHADOWS_RUSH_ACTION ? [i] : [])),
+				},
+			},
+		},
+	};
+	ChatMessage.applyMode?.(data);
+	return ChatMessage.create(data);
+}
+
+// The system titles every minion card "Group of Minions" and truncates the
+// member / action names, so a Shadow Rush row looks like a plain attack. For
+// Codex Command Shadows cards only: retitle ("Shadows → <target>"), give the
+// action column room, and mark Rush rows (class + bolt + accent).
+const SHADOW_CARD_STYLE_ID = 'bcx-shadow-card-style';
+function ensureShadowCardStyles() {
+	if (document.getElementById(SHADOW_CARD_STYLE_ID)) return;
+	const style = document.createElement('style');
+	style.id = SHADOW_CARD_STYLE_ID;
+	style.textContent = `
+		.bcx-shadow-card .nimble-group-member-roll { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) max-content max-content !important; }
+		.bcx-shadow-card .nimble-group-member-roll__member-name,
+		.bcx-shadow-card .nimble-group-member-roll__action-name { text-overflow: clip !important; }
+		.bcx-shadow-card .bcx-shadow-rush { border-color: #8e44ad; box-shadow: inset 3px 0 0 #8e44ad; }
+		.bcx-shadow-card .bcx-shadow-rush .nimble-group-member-roll__action-name::before { content: '\\26A1\\FE0E '; color: #8e44ad; }
+		.bcx-shadow-card .bcx-shadow-rush .nimble-group-member-roll__action-name { color: #8e44ad; text-transform: uppercase; letter-spacing: 0.04em; }
+	`;
+	document.head.append(style);
+}
+
+function decorateCommandShadowsCard(message, html) {
+	const info = message?.flags?.[MODULE_ID]?.[COMMAND_SHADOWS_FLAG];
+	if (!info || message?.type !== 'minionGroupAttack' || !html?.querySelector) return false;
+	ensureShadowCardStyles();
+	html.classList.add('bcx-shadow-card');
+	const title = html.querySelector('.nimble-chat-card__title');
+	const targetName = message.system?.targetName;
+	if (title) title.textContent = targetName && targetName !== 'no target' ? `Shadows \u2192 ${targetName}` : 'Shadows';
+	const lis = html.querySelectorAll('.nimble-group-member-roll');
+	for (const index of info.rushRows ?? []) lis[index]?.classList.add('bcx-shadow-rush');
+	return true;
+}
+Hooks.on('renderChatMessageHTML', (message, html) => {
+	try {
+		decorateCommandShadowsCard(message, html);
+	} catch (error) {
+		console.warn(`[${MODULE_ID}] Could not decorate the Command Shadows card`, error);
+	}
+});
+
+// GM side: roll every Shadow's row and post a card per target. Returns a summary
+// ({ cards: [{ targetId, targetName, rows, chatMessageId }], rushed }).
 async function executeCommandShadows(plan, { user } = {}) {
 	const caster = resolveActorByUuid(plan?.casterUuid);
 	if (!caster) return null;
 	if (user && !userMayActFor(user, caster)) return relayDenied('commandShadows', user, caster.name);
 	const scene = game.scenes?.get?.(plan.sceneId) ?? canvas?.scene ?? null;
-	const tokenOf = (id) => scene?.tokens?.get?.(id) ?? null;
-	const template = typeof plan.template === 'string' && plan.template ? plan.template : SHADOW_MINION_TEMPLATE;
+	const tokenOf = (id) => (id ? scene?.tokens?.get?.(id) ?? null : null);
 
-	const skipped = [];
-	const resolved = [];
-	for (const { shadowId, targetId, rush } of plan.assignments ?? []) {
-		const shadow = tokenOf(shadowId);
-		const target = tokenOf(targetId);
-		if (!shadow || !target || isTokenDefeated(shadow)) {
-			skipped.push({ name: shadow?.name ?? 'Shadow', reason: 'missing' });
-			continue;
-		}
-		resolved.push({ shadow, target, rush: rush === true });
-	}
-	// Shadow Rush: a rushing Shadow's attack deals its max (a flat formula: no roll,
-	// so no max-roll triggers), then it dies once the attacks are done.
-	const rushed = [];
-	for (const entry of resolved) {
-		// eslint-disable-next-line no-await-in-loop
-		if (entry.rush && (await rushShadowAttack(entry.shadow))) rushed.push(entry.shadow);
-	}
-	// One group per target, in first-assignment order. No distance gate.
-	const groups = [];
-	for (const entry of resolved) {
-		let group = groups.find((g) => g.target.id === entry.target.id);
-		if (!group) groups.push((group = { target: entry.target, shadows: [] }));
-		group.shadows.push(entry.shadow);
-	}
+	// The live Shadows in order; a count above them rolls base Shadows.
+	const live = (plan.shadowIds ?? []).map(tokenOf).filter((token) => token && !isTokenDefeated(token));
+	const base =
+		live.find((token) => getTokenSummonFlag(token)?.template !== GREATER_SHADOW_TEMPLATE) ?? live[0] ?? null;
+	const slotFor = (token, index) => {
+		const attack = findMinionAttackItem(token?.actor);
+		const baseAttack = findMinionAttackItem(base?.actor);
+		return {
+			id: token?.id ?? `shadow-${index + 1}`,
+			tokenUuid: token?.uuid ?? null,
+			name: token?.name ?? base?.name ?? 'Shadow',
+			image: token?.texture?.src ?? base?.texture?.src ?? 'icons/svg/cowled.svg',
+			actionId: (attack ?? baseAttack)?.id ?? 'shadow-attack',
+			actionName: (attack ?? baseAttack)?.name ?? 'Attack',
+			actionImage: (attack ?? baseAttack)?.img ?? null,
+			formula: minionAttackFormula(attack) ?? minionAttackFormula(baseAttack) ?? BASE_SHADOW_FORMULA,
+			rollData: (token ?? base)?.actor?.getRollData?.() ?? caster.getRollData?.() ?? {},
+		};
+	};
 
-	const combat = game.combat;
-	const useGroupAttack =
-		Boolean(combat?.started) &&
-		typeof combat.performMinionGroupAttack === 'function' &&
-		(!combat.scene?.id || combat.scene.id === scene?.id);
-	const mode = useGroupAttack ? 'groupAttack' : 'individual';
-	// The Shadows join the tracker only for the group attacks (one create for all
-	// of them) and leave it right after, whatever happens.
-	let combatants = new Map();
-	try {
-		if (useGroupAttack && groups.length) {
-			combatants = await prepareShadowCombatants(
-				combat,
-				groups.flatMap((g) => g.shadows),
-			);
-		}
-		await runCommandShadowsGroups({ groups, useGroupAttack, combat, combatants, skipped });
-	} finally {
-		if (useGroupAttack) {
-			try {
-				await removeShadowCombatants(combat, template);
-			} catch (error) {
-				console.warn(`[${MODULE_ID}] Command Shadows: could not remove the Shadow combatants`, error);
+	const summary = { cards: [], rushed: [] };
+	const rushedTokens = [];
+	let next = 0;
+	for (const group of plan.groups ?? []) {
+		const count = Math.max(0, Math.floor(Number(group.count) || 0));
+		if (!count) continue;
+		const rushCount = Math.min(count, Math.max(0, Math.floor(Number(group.rush) || 0)));
+		const target = tokenOf(group.targetId);
+		const speakerToken = live[next] ?? null;
+		const rows = [];
+		for (let i = 0; i < count; i += 1, next += 1) {
+			const token = live[next] ?? null;
+			const rush = i < rushCount;
+			// eslint-disable-next-line no-await-in-loop
+			const row = await rollCommandShadowRow(slotFor(token, next), next, rush);
+			if (!row) continue;
+			rows.push(row);
+			if (rush) {
+				summary.rushed.push(row.memberName);
+				if (token) rushedTokens.push(token);
 			}
 		}
-		for (const shadow of rushed) {
-			// eslint-disable-next-line no-await-in-loop
-			await dismissSummon(shadow, { summonerActor: caster });
-		}
+		if (!rows.length) continue;
+		// eslint-disable-next-line no-await-in-loop
+		const card = await postCommandShadowsCard(caster, plan, target, rows, speakerToken);
+		summary.cards.push({ targetId: target?.id ?? null, targetName: target?.name ?? null, rows: rows.length, chatMessageId: card?.id ?? null });
 	}
-
-	const summary = {
-		mode,
-		groups: groups.map((g) => ({
-			targetId: g.target.id,
-			targetName: g.target.name ?? 'target',
-			shadowIds: g.shadows.map((s) => s.id),
-			attacked: g.members ?? 0,
-			chatMessageId: g.chatMessageId ?? null,
-		})),
-		skipped,
-	};
-	if (rushed.length) summary.rushed = rushed.map((shadow) => shadow.name ?? 'Shadow');
-	await postCommandShadowsCard(caster, plan, summary);
+	// Shadow Rush: the Rushing Shadows die once their attacks are on the cards.
+	for (const token of rushedTokens) {
+		// eslint-disable-next-line no-await-in-loop
+		await dismissSummon(token, { summonerActor: caster });
+	}
 	return summary;
 }
 registerGMRelayOp('commandShadows', executeCommandShadows);
-
-// Roll every group: the system group attack per target (combat) or each Shadow's
-// own attack item (outside combat). Mutates groups (members, chatMessageId) and
-// `skipped`.
-async function runCommandShadowsGroups({ groups, useGroupAttack, combat, combatants, skipped }) {
-	for (const group of groups) {
-		if (useGroupAttack) {
-			const members = [];
-			const selections = [];
-			for (const shadow of group.shadows) {
-				const combatant = combatants.get(shadow.id);
-				const attack = findMinionAttackItem(shadow.actor);
-				if (!combatant?.id) {
-					skipped.push({ name: shadow.name, reason: 'notInCombat' });
-					continue;
-				}
-				if (!attack?.id) {
-					skipped.push({ name: shadow.name, reason: 'noActionSelected' });
-					continue;
-				}
-				members.push({ shadow, combatantId: combatant.id });
-				selections.push({ memberCombatantId: combatant.id, actionId: attack.id });
-			}
-			group.members = members.length;
-			if (!members.length) continue;
-			// eslint-disable-next-line no-await-in-loop
-			const result = await withUserTargets([group.target], () =>
-				combat.performMinionGroupAttack({
-					memberCombatantIds: members.map((m) => m.combatantId),
-					targetTokenIds: [group.target.id],
-					selections,
-					endTurn: false,
-				}),
-			);
-			group.chatMessageId = result?.chatMessageId ?? null;
-			for (const skip of result?.skippedMembers ?? []) {
-				const member = members.find((m) => m.combatantId === skip.combatantId);
-				skipped.push({ name: member?.shadow?.name ?? 'Shadow', reason: skip.reason });
-			}
-		} else {
-			group.members = 0;
-			for (const shadow of group.shadows) {
-				const attack = findMinionAttackItem(shadow.actor);
-				if (typeof attack?.activate !== 'function') {
-					skipped.push({ name: shadow.name, reason: 'noActionSelected' });
-					continue;
-				}
-				try {
-					// eslint-disable-next-line no-await-in-loop
-					const card = await withUserTargets([group.target], () => attack.activate({ fastForward: true }));
-					if (card) group.members += 1;
-				} catch (error) {
-					console.warn(`[${MODULE_ID}] Command Shadows: ${shadow.name} attack failed`, error);
-					skipped.push({ name: shadow.name, reason: 'activationFailed' });
-				}
-			}
-		}
-	}
-}
-
-async function postCommandShadowsCard(caster, plan, summary) {
-	try {
-		const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
-		const how = summary.mode === 'groupAttack' ? 'minion group attack' : 'individual attacks, outside combat';
-		let content = `<p><em>Each Shadow may move ${plan.move} before attacking.</em></p>`;
-		if (summary.groups.length) {
-			content += `<ul>${summary.groups
-				.map((g) => `<li><strong>${escapeHtml(g.targetName)}</strong> ← ${plural(g.shadowIds.length, 'Shadow')}</li>`)
-				.join('')}</ul><p>(${how})</p>`;
-		}
-		if (summary.skipped.length) {
-			content += `<p><strong>Could not attack:</strong> ${summary.skipped
-				.map((s) => `${escapeHtml(s.name)} (${escapeHtml(COMMAND_SHADOWS_SKIP_LABELS[s.reason] ?? s.reason)})`)
-				.join('; ')}.</p>`;
-		}
-		if (summary.rushed?.length) {
-			content += `<p><strong>Shadow Rush:</strong> ${plural(summary.rushed.length, 'Shadow')} dealt max damage, then died.</p>`;
-		}
-		await ChatMessage.create({
-			content,
-			speaker: ChatMessage.getSpeaker({ actor: caster }),
-			flavor: `<strong>${escapeHtml(plan.itemName ?? 'Command Shadows')}</strong>`,
-			flags: { [MODULE_ID]: { [COMMAND_SHADOWS_FLAG]: summary } },
-		});
-	} catch (error) {
-		console.warn(`[${MODULE_ID}] Could not post the Command Shadows card`, error);
-	}
-}
 
 // Combat-end cleanup (C): remove every token whose summon flag names the combat
 // that just ended. Only one client acts (prefer the active GM).
@@ -8111,6 +8296,7 @@ const deadeyeDialogState = new Map();
 const deadeyeForcedThrown = new Set();
 // Weapons making Press the Advantage's free attack (no second follow-up).
 const deadeyePressFollowUps = new Set();
+const deadeyeFollowedUpHits = new Set(); // attack message ids whose follow-ups already ran
 // Dialog roots already listening for the Vicious Opportunist box.
 const deadeyeWiredRoots = new WeakSet();
 
@@ -8320,6 +8506,9 @@ async function prepareDeadeyeActivation(item, options = {}) {
 	const actor = item?.actor;
 	if (!actor || actor.type !== 'character') return null;
 	if (isWeaponObject(item)) {
+		// Press the Advantage's free attack re-enters this wrap: it is a follow-up
+		// itself and must not offer Ricochet Shot (or another Press) for the same hit.
+		if (deadeyePressFollowUps.has(item.uuid)) return null;
 		const followUps = deadeyeOwns(actor, DEADEYE_RICOCHET) || deadeyeOwns(actor, DEADEYE_PRESS);
 		if (!followUps && !deadeyeOwns(actor, DEADEYE_MASTER_THROWER)) return null;
 		// A fresh dialog state per attack (a cancelled dialog must not leak into the next).
@@ -8390,6 +8579,11 @@ async function deadeyeWeaponFollowUps(item, result, targets) {
 	const state = deadeyeDialogState.get(item.uuid) ?? {};
 	deadeyeDialogState.delete(item.uuid);
 	if (!result || result.system?.isMiss === true) return;
+	// One round of follow-ups per hit (keyed by the attack's chat message).
+	if (result.id) {
+		if (deadeyeFollowedUpHits.has(result.id)) return;
+		deadeyeFollowedUpHits.add(result.id);
+	}
 	const actor = item.actor;
 	const first = targets[0] ?? null;
 	if (!actor || !first) return;
@@ -8420,8 +8614,23 @@ function deadeyeRicochetCandidates(actor, firstDoc) {
 		.sort((a, b) => a.distance - b.distance);
 }
 
+// Ricochet Shot offers in progress (actor uuid): the dialog stays on screen while
+// the feature rolls, so a second click (or a second follow-up for the same hit)
+// must never spend a second use.
+const ricochetOffersOpen = new Set();
+
 // Ricochet Shot: pick the second target, then roll the feature against it.
 async function offerRicochetShot(actor, firstDoc) {
+	if (!actor?.uuid || ricochetOffersOpen.has(actor.uuid)) return false;
+	ricochetOffersOpen.add(actor.uuid);
+	try {
+		return await runRicochetOffer(actor, firstDoc);
+	} finally {
+		ricochetOffersOpen.delete(actor.uuid);
+	}
+}
+
+async function runRicochetOffer(actor, firstDoc) {
 	const feature = findOwnedFeature(actor, DEADEYE_RICOCHET, 'Ricochet Shot');
 	if (!feature) return false;
 	const pool = getChargePoolEntry(actor, DEADEYE_RICOCHET_POOL, { item: feature });
@@ -8441,6 +8650,10 @@ async function offerRicochetShot(actor, firstDoc) {
 			</label>`;
 		})
 		.join('');
+	// Latch: the first click on "Ricochet" claims the offer and disables the
+	// dialog's controls synchronously, before any async work (the dialog closes itself
+	// once this callback returns; closing it from in here would resolve it as dismissed).
+	let claimed = false;
 	const picked = await foundry.applications.api.DialogV2.wait({
 		window: { title: `${actor.name} — Ricochet Shot` },
 		content:
@@ -8452,8 +8665,16 @@ async function offerRicochetShot(actor, firstDoc) {
 				label: 'Ricochet',
 				default: true,
 				callback: (_event, button, dialog) => {
+					if (claimed) return null;
+					claimed = true;
 					const root = dialog?.element ?? button?.form ?? document;
-					return root.querySelector('input[name="bcx-ricochet-target"]:checked')?.value ?? candidates[0].doc.id;
+					const value = root.querySelector('input[name="bcx-ricochet-target"]:checked')?.value ?? candidates[0].doc.id;
+					try {
+						for (const control of root.querySelectorAll?.('button, input') ?? []) control.disabled = true;
+					} catch (_error) {
+						/* disabling is best effort; the latch above is what prevents a second spend */
+					}
+					return value;
 				},
 			},
 			{ action: 'cancel', label: 'Not now', callback: () => null },
@@ -8463,6 +8684,9 @@ async function offerRicochetShot(actor, firstDoc) {
 	}).catch(() => null);
 	const target = typeof picked === 'string' ? candidates.find((c) => c.doc.id === picked)?.doc : null;
 	if (!target) return false;
+	// The use was counted before the dialog: re-read it, it may have been spent meanwhile.
+	const fresh = getChargePoolEntry(actor, DEADEYE_RICOCHET_POOL, { item: feature });
+	if (!fresh || fresh.current < 1) return false;
 
 	const card = await withUserTargets([target], () => feature.activate({}));
 	if (!card) return false;
@@ -10006,6 +10230,19 @@ function nativePilferedPower(actor) {
 	return null;
 }
 
+// Nim+ 3.0 gives the Shadowmancer's Pilfered Power feature its own actor charge
+// pool (`pilfered-power`, max = max(DEX, 0), Safe Rest refresh). On a system with
+// no native cost declaration that pool is the ONE counter: Blue spends it (and
+// counts the overdraft against it) instead of mana, and the mana-based
+// "Pilfered Power" reskin stands down. Returns the pool entry, or null (pool
+// absent — Nim+ inactive/older — or the system runs Pilfered Power natively):
+// the legacy mana model then runs unchanged.
+const PILFERED_POWER_POOL = 'pilfered-power';
+function nimPlusPilferedPool(actor) {
+	if (!isShadowmancerActor(actor) || nativePilferedPower(actor)) return null;
+	return getChargePoolEntry(actor, PILFERED_POWER_POOL);
+}
+
 // Pre-cast mana snapshot per caster (uuid → mana.current before the system's own
 // deduction), written in preUseItem and consumed in useItem. Single-user casting
 // means one live entry at a time; keyed by uuid to stay safe across actors.
@@ -10069,20 +10306,60 @@ function onRenderUpcastDialog(app) {
 		// Read at submit time, not captured now: the player may change it while
 		// the dialog is open.
 		const pick = { index: 0 };
+		// Shadowrime: pay 10 temp HP instead of Pilfering Power (Omenrime / Rimeblades).
+		const rime = { checked: false };
 
 		const submit = app.submitActivation.bind(app);
-		app.submitActivation = (results = {}) =>
-			submit({
+		app.submitActivation = (results = {}) => {
+			const plan = shadowmancerCastPlans.get(actor.uuid);
+			if (plan) plan.shadowrime = rime.checked === true;
+			return submit({
 				...results,
 				upcast: doUpcast
 					? { manaToSpend: cap, choiceIndex: choices.length ? pick.index : undefined }
 					: undefined,
 			});
+		};
 
 		injectForcedUpcastSection(app, { cap, doUpcast, choices, pick });
+		injectShadowrimeOption(app, item, rime);
 	} catch (error) {
 		console.warn(`[${MODULE_ID}] shadowmancer upcast dialog setup failed`, error);
 	}
+}
+
+/**
+ * Shadowrime's alternative cost, as a checkbox on the cast dialog (Omenrime /
+ * Rimeblades only, caster with the feature, and only when this cast would
+ * otherwise cost a use of Pilfered Power: not a Hungering Shadows free cast).
+ * Disabled with the reason when fewer than 10 temp HP are on hand. `state.checked`
+ * is read at submit time (see onRenderUpcastDialog).
+ */
+function shadowrimeOffer(actor, item) {
+	if (!isShadowrimeSpell(item) || !ownsShadowrime(actor)) return null;
+	if (shadowmancerCastPlans.get(actor.uuid)?.free) return null;
+	const temp = Number(actor.system?.attributes?.hp?.temp) || 0;
+	return { temp, enough: temp >= SHADOWRIME_TEMP_HP };
+}
+
+function injectShadowrimeOption(app, item, state) {
+	const actor = app?.actor;
+	const offer = shadowrimeOffer(actor, item);
+	if (!offer) return;
+	const root = app?.element instanceof HTMLElement ? app.element : app?.element?.[0];
+	if (!(root instanceof HTMLElement) || root.querySelector('.bcx-shadowrime')) return;
+	ensurePilferedPowerStyles();
+	const { temp, enough } = offer;
+	const section = document.createElement('div');
+	section.className = 'bcx-forced-upcast bcx-shadowrime';
+	section.innerHTML =
+		'<h3 class="bcx-forced-upcast__heading"><i class="fa-solid fa-snowflake"></i> Shadowrime</h3>' +
+		`<label class="bcx-forced-upcast__option"><input type="checkbox" name="bcx-shadowrime"${enough ? '' : ' disabled'}>` +
+		`<span>Expend ${SHADOWRIME_TEMP_HP} temp HP instead of Pilfering Power${enough ? '' : ` (only ${temp} temp HP)`}</span></label>`;
+	section.querySelector('input')?.addEventListener('change', (event) => {
+		state.checked = event.currentTarget?.checked === true;
+	});
+	(root.querySelector('.nimble-sheet__body') ?? root).append(section);
 }
 
 /**
@@ -10271,7 +10548,11 @@ async function applyShadowmancerFlatCost(item, _context) {
 	const plan = shadowmancerCastPlans.get(actor.uuid) ?? null;
 	shadowmancerCastPlans.delete(actor.uuid);
 	const hungering = !plan || plan.free ? findHungeringShadowsCharge(actor) : null;
-	const desired = hungering ? Math.max(0, preMana) : Math.max(0, preMana - 1);
+	// Nim+'s `pilfered-power` pool is the counter when present: mana is never spent.
+	const ownPool = nimPlusPilferedPool(actor);
+	// Shadowrime: Omenrime / Rimeblades may be paid with 10 temp HP instead.
+	const shadowrime = !hungering && plan?.shadowrime === true;
+	const desired = hungering || shadowrime || ownPool ? Math.max(0, preMana) : Math.max(0, preMana - 1);
 	const current = Number(actor.system?.resources?.mana?.current) || 0;
 	if (current !== desired) {
 		await actor.update({ 'system.resources.mana.current': desired });
@@ -10285,7 +10566,52 @@ async function applyShadowmancerFlatCost(item, _context) {
 		});
 		return;
 	}
+	if (shadowrime) {
+		await payShadowrimeTempHp(actor, item);
+		return;
+	}
+	if (ownPool) {
+		if (ownPool.current > 0) {
+			await spendPoolWithUndo(actor, PILFERED_POWER_POOL, 1, {
+				label: 'Pilfered Power',
+				reason: item.name,
+				flavor: 'Pilfered Power',
+			});
+		} else {
+			await applyPatronBacklash(actor, plan?.overdraft ? plan : null);
+		}
+		return;
+	}
 	if (preMana <= 0) await applyPatronBacklash(actor, plan?.overdraft ? plan : null);
+}
+
+// Shadowrime (Pact of the Abyssal Depths): "You can cast Omenrime or Rimeblades
+// without Pilfering Power by expending 10 temp HP." Takes the temp HP (Undo card
+// gives it back); false, with a warning, when the caster has less than 10.
+const SHADOWRIME_TEMP_HP = 10;
+const SHADOWRIME_SPELLS = ['omenrime', 'rimeblades'];
+function isShadowrimeSpell(item) {
+	if (item?.type !== 'spell') return false;
+	const slug = String(item.system?.identifier || item.name?.slugify?.({ strict: true }) || '').toLowerCase();
+	return SHADOWRIME_SPELLS.includes(slug);
+}
+function ownsShadowrime(actor) {
+	return ownsFeature(actor, SHADOWRIME) || ownsFeature(actor, SHADOWFROST);
+}
+async function payShadowrimeTempHp(actor, item) {
+	const temp = Number(actor.system?.attributes?.hp?.temp) || 0;
+	if (temp < SHADOWRIME_TEMP_HP) {
+		ui.notifications?.warn(`${actor.name} has only ${temp} temp HP — Shadowrime needs ${SHADOWRIME_TEMP_HP} to cast ${item.name} without Pilfering Power.`);
+		return false;
+	}
+	await actor.update({ 'system.attributes.hp.temp': temp - SHADOWRIME_TEMP_HP });
+	await postUndoCard({
+		actor,
+		flavor: 'Shadowrime',
+		text: `<p>Shadowrime — ${escapeHtml(actor.name)} expends <strong>${SHADOWRIME_TEMP_HP} temp HP</strong> to cast ${escapeHtml(item.name)} without Pilfering Power. Temp HP left: <strong>${temp - SHADOWRIME_TEMP_HP}</strong>.</p>`,
+		undoAction: { type: 'patronBacklash', data: { actorUuid: actor.uuid, lostValue: 0, lostTemp: SHADOWRIME_TEMP_HP } },
+	});
+	return true;
 }
 
 // A cancelled cast gives back the Hungering Shadows top-up of the system's pool.
@@ -10486,8 +10812,14 @@ function firstUserTargetDoc() {
 	return null;
 }
 
+// The system's and Nim+'s Shadow Blast copies carry no `system.identifier`, so
+// the name (slugged, as Nim+ does) decides when the identifier is empty; otherwise a caster who owns one
+// of those copies silently loses Master of Nightfrost / Shadow Spear / Shadowfrost.
 function isShadowBlastItem(item) {
-	return item?.type === 'spell' && item.system?.identifier === 'shadow-blast';
+	if (item?.type !== 'spell') return false;
+	const slug = (value) => String(value ?? '').toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+	const identifier = slug(item.system?.identifier);
+	return identifier ? identifier === 'shadow-blast' : slug(item.name) === 'shadow-blast';
 }
 
 function tokenIsProne(tokenDoc) {
@@ -10549,6 +10881,83 @@ function shadowBlastInvocationNotes(actor) {
 	return notes;
 }
 
+// ── Shadowfrost (Pact of the Abyssal Depths, system feature) ──
+// "Your Shadow Blast also Slows." For a caster with the feature, a Slowed
+// condition node is pushed onto Shadow Blast's primary damage `on.hit` (a crit
+// includes the hit context) for the cast only and removed in `finally`, so the
+// card offers Slowed and the item never changes. Nim+ injects the same node id,
+// so with both modules active the second wrap sees it and steps aside.
+const SHADOWFROST = ['shadowfrost', 'Shadowfrost'];
+const SHADOWFROST_SOURCE_ID = 'qihi3i4aGFMlvg00'; // matched by source so a translated name still counts
+const SHADOWFROST_NODE_ID = 'shadowfrost-slowed';
+const SHADOWRIME = ['shadowrime', 'Shadowrime']; // the 3.0 name of the same feature
+
+function ownsShadowfrost(actor) {
+	if (ownsFeature(actor, SHADOWFROST) || ownsFeature(actor, SHADOWRIME)) return true;
+	return listEmbeddedItems(actor).some((item) => {
+		if (item?.type !== 'feature') return false;
+		const source = item._stats?.compendiumSource ?? item.flags?.core?.sourceId ?? '';
+		return String(source).endsWith(`.${SHADOWFROST_SOURCE_ID}`);
+	});
+}
+
+// Returns the restore callback, or null when nothing was added.
+function applyShadowfrost(item) {
+	if (!isShadowBlastItem(item) || !ownsShadowfrost(item.actor)) return null;
+	const node = (item.system?.activation?.effects ?? []).find((n) => n?.type === 'damage');
+	if (!node) return null;
+	node.on ??= {};
+	node.on.hit ??= [];
+	const hit = node.on.hit;
+	if (hit.some((n) => n?.id === SHADOWFROST_NODE_ID)) return null;
+	const added = { id: SHADOWFROST_NODE_ID, type: 'condition', condition: 'slowed', parentContext: 'hit', parentNode: node.id };
+	hit.push(added);
+	return () => {
+		const index = hit.indexOf(added);
+		if (index !== -1) hit.splice(index, 1);
+	};
+}
+
+// ── Master of Nightfrost (Pact of the Abyssal Depths, system feature) ──
+// "Your Shadow Blast and Shadows ... whenever they roll the max, you gain INT+LVL
+// temp HP." "Roll the max" = the primary die's top face (rollHasPrimaryMaxFace,
+// as Hungering/Swarming Shadows read it). Temp HP don't stack in Nimble, so the
+// grant only raises the caster's temp HP. Shadows: from maybeSwarmFromMinionAttack
+// (both the single and the group attack path). Shadow Blast: from onItemUsed,
+// claimed synchronously on the shared `useItem` context with the same key Nim+
+// uses, so with both modules active the cast grants once.
+const MASTER_OF_NIGHTFROST = ['master-of-nightfrost', 'Master of Nightfrost'];
+const NIGHTFROST_CLAIM = 'nightfrostTempHp';
+
+function nightfrostTempHp(actor) {
+	return Math.max(0, getAbilityMod(actor, 'intelligence') + getCharacterLevel(actor));
+}
+
+// Raise the caster's temp HP to INT+LVL (never lower it). True when it rose.
+async function grantNightfrost(caster, source) {
+	if (!caster || !ownsFeature(caster, MASTER_OF_NIGHTFROST)) return false;
+	const amount = nightfrostTempHp(caster);
+	const temp = Number(caster.system?.attributes?.hp?.temp) || 0;
+	if (amount <= temp) return false;
+	await caster.update({ 'system.attributes.hp.temp': amount });
+	postSummonChat(
+		caster,
+		`<p>${escapeHtml(source)} rolled the max: ${escapeHtml(caster.name)} gains <strong>${amount} temp HP</strong>${temp ? ` (was ${temp})` : ''}.</p>`,
+		'Master of Nightfrost',
+	);
+	return true;
+}
+
+// Sync part of the Shadow Blast path: claims the cast and returns the grant to
+// run later, or null. Must run before onItemUsed's first await.
+function claimNightfrostShadowBlast(item, context) {
+	if (!context || context[NIGHTFROST_CLAIM] || !isShadowBlastItem(item)) return null;
+	if (!ownsFeature(item.actor, MASTER_OF_NIGHTFROST)) return null;
+	if (!(context.rolls ?? []).some(rollHasPrimaryMaxFace)) return null;
+	context[NIGHTFROST_CLAIM] = true;
+	return () => grantNightfrost(item.actor, item.name);
+}
+
 // ── Shadow Rush (Command Shadows) ──
 
 // The maximum of a baked minion damage formula ("1d12" → 12, "5d10" → 50, "1d8 + 2"
@@ -10562,74 +10971,6 @@ function formulaMaxValue(formula) {
 		return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : null;
 	} catch {
 		return null;
-	}
-}
-
-// Command Shadows for a Shadow Rush owner: the target split plus, per Shadow, a
-// "Rush" box (deal max damage instead of rolling, then die). Resolves
-// { picks, rush } or null (cancelled).
-async function promptShadowRush(caster, shadows, targets, defaults) {
-	const rows = shadows
-		.map((shadow, i) => {
-			const options = targets
-				.map(
-					(target, t) =>
-						`<option value="${t}" ${defaults[i] === t ? 'selected' : ''}>${escapeHtml(target.name ?? `Target ${t + 1}`)} (${tokenDistanceSpaces(shadow, target)} spaces)</option>`,
-				)
-				.join('');
-			return `<div class="bcx-command-row"><span>${escapeHtml(shadow.name ?? 'Shadow')} #${i + 1}</span>
-				<select name="bcx-command-${i}">${options}</select>
-				<label><input type="checkbox" name="bcx-rush-${i}"> Rush</label></div>`;
-		})
-		.join('');
-	return foundry.applications.api.DialogV2.wait({
-		window: { title: `${caster.name} — Command Shadows` },
-		content: `<div class="bcx-command-form"><p>Choose each Shadow's target. <strong>Shadow Rush:</strong> a Shadow marked Rush deals its max damage instead of rolling, then dies.</p>
-			<div class="bcx-command-list">${rows}</div></div>
-			<style>.bcx-command-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}.bcx-command-row select{flex:0 1 50%}</style>`,
-		buttons: [
-			{
-				action: 'confirm',
-				label: 'Attack',
-				default: true,
-				callback: (_event, button, dialog) => {
-					const root = dialog?.element ?? button?.form ?? null;
-					return {
-						picks: defaults.map((fallback, i) => {
-							const value = Number(root?.querySelector?.(`select[name="bcx-command-${i}"]`)?.value);
-							return Number.isInteger(value) && value >= 0 && value < targets.length ? value : fallback;
-						}),
-						rush: defaults.map((_d, i) => Boolean(root?.querySelector?.(`input[name="bcx-rush-${i}"]`)?.checked)),
-					};
-				},
-			},
-			{ action: 'cancel', label: 'Cancel', callback: () => null },
-		],
-		rejectClose: false,
-		modal: true,
-	})
-		.then((result) => (result && Array.isArray(result.picks) ? result : null))
-		.catch(() => null);
-}
-
-// Make a rushing Shadow's attack deal its max: its damage node becomes the flat
-// maximum (a no-die formula cannot miss and triggers no max-roll feature, as the
-// 0.2 FAQ rules). True when patched.
-async function rushShadowAttack(shadowToken) {
-	const synth = shadowToken?.actor;
-	const attack = synth ? findMinionAttackItem(synth) : null;
-	if (!attack) return false;
-	const effects = foundry.utils.deepClone(attack.system?.activation?.effects ?? []);
-	const node = effects.find((entry) => entry?.type === 'damage');
-	const max = formulaMaxValue(node?.formula);
-	if (!node || max === null) return false;
-	node.formula = String(max);
-	try {
-		await synth.updateEmbeddedDocuments('Item', [{ _id: attack.id ?? attack._id, 'system.activation.effects': effects }]);
-		return true;
-	} catch (error) {
-		console.warn(`[${MODULE_ID}] Shadow Rush: could not set ${shadowToken.name}'s max damage`, error);
-		return false;
 	}
 }
 
@@ -10720,6 +11061,7 @@ async function preparePilferedPowerCast(item) {
 	const plan = { free: false, overdraft: false, damage: 0, save: null, tierBump: false };
 	const native = nativePilferedPower(actor);
 	const pool = native ? getChargePoolEntry(actor, native.poolIdentifier) : null;
+	const ownPool = native ? null : nimPlusPilferedPool(actor);
 	if (findHungeringShadowsCharge(actor)) {
 		plan.free = true;
 		// System 0.9+: an empty pool would make the system overdraw — top it up by
@@ -10731,7 +11073,9 @@ async function preparePilferedPowerCast(item) {
 	} else if (
 		native
 			? !!pool && pool.current < native.amount && native.consequence === 'halfMaxHpDamage' && !native.atTable
-			: (Number(actor.system?.resources?.mana?.current) || 0) <= 0
+			: ownPool
+				? ownPool.current <= 0
+				: (Number(actor.system?.resources?.mana?.current) || 0) <= 0
 	) {
 		plan.overdraft = true;
 		plan.damage = patronBacklashFullDamage(actor);
@@ -11293,6 +11637,13 @@ async function shadowmancerFeatureActivationBlocked(item) {
 
 // Swap a caster's token with one of its summoned Shadows (GM authority: the
 // Shadow token is usually not the player's to move).
+// Move a token without animation or a movement trail. v14 replacement for the
+// deprecated `update(…, { teleport: true })`: a one-waypoint movement whose
+// action is `displace` (a teleporting action that records no measured path).
+function displaceToken(token, { x, y }) {
+	return token.update({ x, y }, { animate: false, movement: { [token.id]: { waypoints: [{ x, y, action: 'displace' }], method: 'api' } } });
+}
+
 async function swapSummonPlaces({ casterTokenUuid, shadowTokenUuid }, { user } = {}) {
 	const own = casterTokenUuid ? fromUuidSync(casterTokenUuid) : null;
 	const shadow = shadowTokenUuid ? fromUuidSync(shadowTokenUuid) : null;
@@ -11303,8 +11654,8 @@ async function swapSummonPlaces({ casterTokenUuid, shadowTokenUuid }, { user } =
 	if (user && !userMayActForSummon(user, shadow)) return relayDenied('swapSummonPlaces', user, shadow.name);
 	const ownSpot = { x: own.x, y: own.y };
 	const shadowSpot = { x: shadow.x, y: shadow.y };
-	await own.update(shadowSpot, { animate: false, teleport: true });
-	await shadow.update(ownSpot, { animate: false, teleport: true });
+	await displaceToken(own, shadowSpot);
+	await displaceToken(shadow, ownSpot);
 	return true;
 }
 registerGMRelayOp('swapSummonPlaces', swapSummonPlaces);
@@ -11314,12 +11665,12 @@ registerGMRelayOp('teleportOwnToken', async ({ tokenUuid, x, y }, { user } = {})
 	const token = tokenUuid ? fromUuidSync(tokenUuid) : null;
 	if (!token) return false;
 	if (user && !userMayActFor(user, token.actor)) return relayDenied('teleportOwnToken', user, token.name);
-	await token.update({ x, y }, { animate: false, teleport: true });
+	await displaceToken(token, { x, y });
 	return true;
 });
 
 async function teleportOwnToken(token, spot) {
-	if (token.isOwner) await token.update(spot, { animate: false, teleport: true });
+	if (token.isOwner) await displaceToken(token, spot);
 	else await runAsGM('teleportOwnToken', { tokenUuid: token.uuid, ...spot });
 }
 
@@ -11802,7 +12153,7 @@ function syncPilferedPower(app) {
 	if (!(actor instanceof Actor) || actor.type !== 'character') return;
 
 	// System 0.9+: Pilfered Power is its own pool in the sheet header, not mana.
-	if (!isShadowmancerActor(actor) || nativePilferedPower(actor)) {
+	if (!isShadowmancerActor(actor) || nativePilferedPower(actor) || nimPlusPilferedPool(actor)) {
 		root.classList.remove('bcx-shadowmancer');
 		return;
 	}
@@ -11884,7 +12235,7 @@ function isManaBar(data) {
 
 function pilferedPowerBarColors(token, data, fallback) {
 	try {
-		if (!isManaBar(data) || !isShadowmancerActor(token?.actor) || nativePilferedPower(token?.actor)) return fallback();
+		if (!isManaBar(data) || !isShadowmancerActor(token?.actor) || nativePilferedPower(token?.actor) || nimPlusPilferedPool(token?.actor)) return fallback();
 		const ColorClass = foundry.utils.Color;
 		return { empty: ColorClass.from(PILFERED_POWER_BAR_EMPTY), full: ColorClass.from(PILFERED_POWER_BAR_FULL) };
 	} catch (error) {
@@ -13060,9 +13411,22 @@ function buildContentSyncUpdate(item, doc) {
 		else setForcedReplacement(flagUpdates, path, foundry.utils.deepClone(to));
 		changed.push(...flagChangeLabels(key, from, to));
 	}
+	// A charge pool's label is copied into the item's flags when the pool is first
+	// seeded, so replacing `system` never refreshes it. Re-label owned pools whose
+	// pack rule reads differently; the pool's current/max stay as they are.
+	const poolLabelUpdates = {};
+	const scope = chargePoolScope();
+	for (const rule of pack.system?.rules ?? []) {
+		if (rule?.type !== 'chargePool' || !rule.identifier || !rule.label || (rule.scope ?? 'item') !== 'item') continue;
+		const entry = current.flags?.[scope]?.chargePools?.[rule.identifier];
+		if (!entry || typeof entry !== 'object' || entry.label === rule.label) continue;
+		poolLabelUpdates[`flags.${scope}.chargePools.${rule.identifier}.label`] = rule.label;
+		changed.push(`${rule.identifier} counter label`);
+	}
 	if (!changed.length) return null;
 
 	const update = { _id: item.id };
+	Object.assign(update, poolLabelUpdates);
 	if (current.name !== pack.name) update.name = pack.name;
 	if (current.img !== pack.img) update.img = pack.img;
 	if (systemChanged) setForcedReplacement(update, 'system', system);
@@ -13362,8 +13726,13 @@ api.syncCodexContent = syncCodexContent;
 // module version — e.g. a world that already ran the 0.9.1 sync before Codex
 // Command Shadows was added (revision 2: hand it to existing Shadowmancers). The
 // stamp is "<version>+sync<revision>"; a plain "<version>" stamp from before
-// revisions existed counts as revision 1.
-const CONTENT_SYNC_REVISION = 2;
+// revisions existed counts as revision 1. (Revision 3: owned item charge-pool
+// labels, e.g. Command Shadows "(1/turn)" -> "(1/round)". Revision 4: the Codex Ice
+// Cryosleep became Omenrime (Core Books 3.0) under the SAME pack _id, so owned
+// Cryosleep copies are renamed/rewritten to Omenrime in place — no second copy,
+// and nothing for Nim+'s own Cryosleep -> Omenrime migration to duplicate: that one
+// only touches system/Nim+-sourced copies and skips an owner of a same-named spell.)
+const CONTENT_SYNC_REVISION = 4;
 function contentSyncStamp() {
 	return `${game.modules.get(MODULE_ID)?.version ?? ''}+sync${CONTENT_SYNC_REVISION}`;
 }
@@ -13405,13 +13774,14 @@ Hooks.once('ready', () => {
 // Adds no behaviour.
 export const __commandShadows__ = {
 	commandShadowsActivationBlocked,
+	commandShadowsActivateOptions,
+	decorateCommandShadowsCard,
 	handleCommandShadowsUsed,
 	executeCommandShadows,
-	defaultShadowAssignment,
+	defaultShadowSplit,
 	removeShadowCombatants,
 	sweepShadowCombatants,
 	handleSwarmingShadowsGroupAttack,
-	retiredShadowCombatantTokens,
 	pending: pendingCommandShadows,
 	CODEX_COMMAND_SHADOWS_UUID,
 	CODEX_SUMMON_SHADOW_UUID,
@@ -15878,6 +16248,7 @@ export const __test__ = {
 // Shadowmancer 0.2 invocations / Pact of the Id (tests/summons,
 // tests/shadowmancer/invocations). Adds no behaviour.
 export const __shadowmancerInvocations__ = {
+	findFreeAdjacentPosition,
 	UNDO_HANDLERS,
 	summonCountCap,
 	getSummonFeatureBoosts,
@@ -15893,9 +16264,14 @@ export const __shadowmancerInvocations__ = {
 	onKnowYourLimitsTurnStart,
 	shadowmancerAttackAdvantage,
 	runWrappedActivate,
+	makeBlueCodexActivate,
 	maybeSwarmFromMinionAttack,
 	findHungeringShadowsCharge,
 	preparePilferedPowerCast,
+	nimPlusPilferedPool,
+	shadowrimeOffer,
+	injectShadowrimeOption,
+	onRenderUpcastDialog,
 	onSpellPreUse,
 	applyShadowmancerFlatCost,
 	shadowmancerCastPlans,
@@ -15912,6 +16288,12 @@ export const __shadowmancerInvocations__ = {
 	handleShadowmancerFeatureUsed,
 	pendingShadowmancerFeatures,
 	featureNoteUpdate,
+	applyShadowfrost,
+	SHADOWFROST_NODE_ID,
+	grantNightfrost,
+	claimNightfrostShadowBlast,
+	patchLifebindingSpiritFormulas,
+	applyEmpoweredHarmFormula,
 };
 
 // Test-only handles for Tools of the Deadeye (tests/deadeye). Adds no behaviour.
@@ -15921,6 +16303,7 @@ export const __deadeye__ = {
 	deadeyeDialogState,
 	deadeyeForcedThrown,
 	deadeyePressFollowUps,
+	deadeyeFollowedUpHits,
 	deadeyeSneakDice,
 	deadeyeDefaultThrown,
 	injectDeadeyeControls,
@@ -15957,6 +16340,7 @@ export const __engineer__ = {
 	onAllyTargetsPreUpdate,
 	onPotentConcoctionMessageUpdate,
 	onPotentConcoctionTempGone,
+	onLeechingDarkDamageApplied,
 	patchTurretScaling,
 	turretOwnershipOverrides,
 	TURRET_FIRE_FLAG,

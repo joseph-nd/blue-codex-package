@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.11.0] - 2026-10-09
+
+### Changed
+- **Codex Ice school follows Core Books 3.0: Omenrime replaces Cryosleep.** Owned Cryosleep copies become Omenrime on
+  the next GM load (same id; a report card lists them).
+- **Command Shadows is a plain spell**: the Shadows no longer join the combat tracker for the attack (that was
+  glitchy). A dialog asks how many Shadows attack each target, pre-filled with the Shadows on the table and free to
+  change; each Shadow's attack is rolled as its own row (never crits, a 1 misses) on the minion attack card, one card per
+  target. No Shadows or no target no longer blocks the cast, and an empty 1/turn counter only warns. Move the Shadows by
+  hand and rule on Reach at the table. Shadow Rush asks how many of them Rush (max damage, then the Shadow dies);
+  Swarming Shadows, Hungering Shadows and Master of Nightfrost still trigger on a maxed row. Shadow combatants left by
+  older versions are still removed when the world loads.
+- **Command Shadows** skips the system's "Activate Command Shadows" roll window: only the count dialog remains. The
+  minion card is titled "Shadows → <target>", the name columns are wider, and Shadow Rush rows read "Rush" with a
+  purple marker.
+- Token swaps (Defense Mechanism, summon place swaps) move tokens with v14's `displace` movement instead of the
+  deprecated `teleport` option.
+
+### Added
+- **Leeching Dark** heals the caster: after Apply Damage, the caster regains the HP the target actually lost (after
+  armor, save halving and overkill; capped at max HP), with an Undo. One heal per target.
+- **Master of Nightfrost** (Pact of the Abyssal Depths, L3): when Shadow Blast or a Shadow rolls the max on its
+  primary die, the Shadowmancer's temp HP rise to INT+LVL (temp HP don't stack, so a higher amount is kept). Works on Codex Shadows (single and group attacks) and Shadow Blast;
+  with both modules active, a Shadow Blast grants once.
+- **Shadowfrost** (Pact of the Abyssal Depths, L7): Shadow Blast's card now offers Slowed on a hit for a Shadowmancer
+  with the feature. With Nim+ also active, Slowed is only added once.
+
+### Fixed
+- **Pilfered Power has one counter.** With Nim+ active, a Shadowmancer's casts spend Nim+'s *Pilfered Power* pool
+  (with Undo) and overdraft against it; mana is no longer spent or relabelled as Pilfered Power. Without Nim+ the old
+  mana model is unchanged.
+- **Shadowrime** (Pact of the Abyssal Depths): casting Rimeblades or Omenrime offers "Expend 10 temp HP instead of
+  Pilfering Power" in the cast dialog (disabled under 10 temp HP), with Undo. Shadow Blast's Slowed also works under the
+  3.0 name Shadowrime.
+- **Weapon attacks no longer run Blue's pre-attack steps twice**, so Hyperfixation (and other pre-attack bonuses) add
+  +1 advantage once instead of twice.
+- **Master of Nightfrost** now triggers on Shadow Blast: the max-face check reads the serialized rolls the system hands
+  to item-use hooks, and the system's and Nim+'s Shadow Blast copies (no identifier) are recognised too.
+- **Swarming Shadows** places the new Shadow next to a Large or bigger target's footprint, never inside it.
+- **Command Shadows** reads (1/round) as in 3.0; owned copies get the new counter label on the next GM load.
+- **"Missing level choices"** no longer appears for Blue picks (Underhanded Abilities and every other Blue pool): the
+  check now counts them like the level-up window does.
+- **Empowered Companion** reaches the Codex Lifebinding Spirit: Mend adds +WIL, Harm adds +STR against Undead.
+- **Ricochet Shot** spends one use per hit: the offer can't be clicked twice, and a hit is offered Ricochet only once (a
+  second offer used to open after the first ricochet resolved). Press the Advantage's free attack no longer runs the
+  follow-ups either.
+
 ## [0.10.0] - 2026-09-30
 
 Class automation pass for the Blue's Codex classes and subclasses, played L1→L20 in Foundry. Every spend the module

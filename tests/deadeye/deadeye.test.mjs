@@ -281,6 +281,59 @@ describe('Ricochet Shot', () => {
 		expect(actor.id).toBe('deadeyeCheat0001');
 	});
 
+	it('a second click, or a second offer for the same hit, never spends a second use', async () => {
+		const { env, h, actor, item, docs } = await ricochetWorld();
+		const feature = item('Ricochet Shot');
+		let release;
+		feature.activate = vi.fn(() => new Promise((resolve) => (release = () => resolve({ id: 'ricochetCard' }))));
+		let confirm = null;
+		let second = null;
+		const control = { disabled: false };
+		env.dialogs.answerWhen('Ricochet Shot', (config) => {
+			const root = { querySelector: () => ({ value: docs.orc.id }), querySelectorAll: () => [control] };
+			confirm = () => config.buttons[0].callback({}, {}, { element: root });
+			const first = confirm();
+			second = confirm(); // double click before the dialog finished closing
+			return first;
+		});
+		const dagger = item('Dagger');
+		const offer = h.offerRicochetShot(actor, docs.goblin);
+		// A concurrent follow-up for the same actor is refused while the first is in flight.
+		await expect(h.offerRicochetShot(actor, docs.goblin)).resolves.toBe(false);
+		await vi.waitFor(() => expect(feature.activate).toHaveBeenCalledTimes(1));
+		release();
+		await expect(offer).resolves.toBe(true);
+		expect(second).toBeNull();
+		expect(control.disabled).toBe(true);
+		expect(feature.activate).toHaveBeenCalledTimes(1);
+		expect(dagger).toBeTruthy();
+	});
+
+	it('the Press the Advantage free attack and the Ricochet feature itself never re-offer Ricochet; a hit is followed up once', async () => {
+		const { h, item } = await ricochetWorld();
+		const dagger = item('Dagger');
+		// Press the Advantage's free attack re-enters the activate wrap for the same weapon.
+		h.deadeyePressFollowUps.add(dagger.uuid);
+		await expect(h.prepareDeadeyeActivation(dagger, {})).resolves.toBeNull();
+		h.deadeyePressFollowUps.delete(dagger.uuid);
+		// The Ricochet Shot feature's own activation carries no weapon follow-ups.
+		const prep = await h.prepareDeadeyeActivation(item('Ricochet Shot'), {});
+		expect(prep?.complete).toBeUndefined();
+		// The same hit (same attack message) is followed up once.
+		const { docs } = await ricochetWorld();
+		const hit = { id: 'attackMsg1', system: { isMiss: false } };
+		const w = await ricochetWorld();
+		const d2 = w.item('Dagger');
+		w.item('Ricochet Shot').activate = vi.fn(async () => ({ id: 'rc' }));
+		w.env.dialogs.answerWhen('Ricochet Shot', 'cancel');
+		w.h.deadeyeDialogState.set(d2.uuid, { thrown: true, press: false });
+		await w.h.deadeyeWeaponFollowUps(d2, hit, [w.docs.goblin]);
+		w.h.deadeyeDialogState.set(d2.uuid, { thrown: true, press: false });
+		await w.h.deadeyeWeaponFollowUps(d2, hit, [w.docs.goblin]);
+		expect(w.env.dialogs.log).toHaveLength(1);
+		expect(docs).toBeTruthy();
+	});
+
 	it('no uses left, a melee (not thrown) hit, or "Not now": nothing happens', async () => {
 		const { env, h, item, docs } = await ricochetWorld(0);
 		const feature = item('Ricochet Shot');

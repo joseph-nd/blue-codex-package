@@ -1,0 +1,92 @@
+{
+	"name": "Omenrime",
+	"type": "spell",
+	"img": "modules/blue-codex-package/assets/spells/elements/ice/omenrime.webp",
+	"system": {
+		"macro": "",
+		"identifier": "omenrime",
+		"rules": [],
+		"activation": {
+			"acquireTargetsFromTemplate": false,
+			"cost": {
+				"details": "",
+				"quantity": 1,
+				"type": "action",
+				"isReaction": false
+			},
+			"duration": {
+				"details": "Until the end of the encounter, if unused",
+				"quantity": 1,
+				"type": "none"
+			},
+			"effects": [
+				{
+					"id": "JMbBDnErQqhIJqpg",
+					"type": "note",
+					"noteType": "reminder",
+					"text": "Roll 1d6 (+1d6 per upcast mana, keep only 1). You may replace any single die rolled within Reach with it until the end of the encounter.",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
+			"showDescription": true,
+			"targets": {
+				"count": 1,
+				"restrictions": ""
+			},
+			"template": {
+				"length": 1,
+				"radius": 1,
+				"shape": "",
+				"width": 1
+			}
+		},
+		"description": {
+			"baseEffect": "<p><strong>1 Action, Self</strong></p><p><strong>Reach</strong>: 6. Roll 1d6; you may replace any single die rolled within Reach with that die (it expires at the end of the encounter if unused).</p><p><strong>Replacing a die.</strong> Exchange the original die with the d6 that you rolled; treat it exactly as if that die were the one originally rolled.</p>",
+			"higherLevelEffect": "",
+			"upcastEffect": "<p>+1 Reach and roll +1d6 (keep only 1).</p>"
+		},
+		"properties": {
+			"range": {
+				"min": 1,
+				"max": 1
+			},
+			"reach": {
+				"min": 1,
+				"max": 6
+			},
+			"selected": [
+				"reach"
+			]
+		},
+		"school": "ice",
+		"tier": 3,
+		"scaling": {
+			"mode": "upcast",
+			"deltas": [
+				{
+					"operation": "addReach",
+					"value": 1,
+					"dice": null,
+					"condition": null,
+					"targetEffectId": null,
+					"durationType": null
+				}
+			],
+			"choices": null
+		},
+		"classes": []
+	},
+	"effects": [],
+	"folder": "4164b206edbd6957",
+	"flags": {},
+	"_stats": {
+		"coreVersion": "14",
+		"systemId": "nimble",
+		"systemVersion": "0.9.0",
+		"createdTime": null,
+		"modifiedTime": null,
+		"lastModifiedBy": null
+	},
+	"_id": "SVR9jwHeBz9YNRSx"
+}

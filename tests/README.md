@@ -38,7 +38,7 @@ tests/
   summons/          summon framework (fallen 0-HP summons) + the scene/token/combat stand-ins (helpers.mjs)
   content-sync/     owned Codex spell copies synced with the packs (toast, no dialog, version-gated startup)
   class-refresh/    Refresh Codex class content + Lifebinding Spirit conversion (automatic, toast + card, loop guard)
-  command-shadows/  Codex Command Shadows automation (own scene/combat stand-ins: group attack per target, no distance gate, no Shadow turns, 1/turn)
+  command-shadows/  Codex Command Shadows (own scene/combat stand-ins: count dialog, a minion attack card per target, no combatants, 1/turn warns)
   engineer/         Engineer: turret deploy/activation costs + GM relay + ownership, Activate Turret, Reload, Coordinated
                     Assault, Enhanced Formula, Potent Concoction, Charged/Smoldering riders, Fumigate, Overflow, content,
                     the character creator's leftovers (creation.test.mjs: Pistol re-equipped, Codex pools filled)
