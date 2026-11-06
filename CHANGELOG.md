@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-06
+
 ### Changed
 - **Core and Nim+ spells can be added by hand under Codex magic.** Dragging an official or Nim+ spell onto a character sheet now works, so a player
   who prefers the core Rebuke can delete the Codex one and swap it in, or keep both. A swapped-out Codex spell stays out at later level-ups, and every
