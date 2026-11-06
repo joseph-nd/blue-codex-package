@@ -36,6 +36,8 @@ tests/
   shadowmancer/     the Shadowmancer battery (tier ladder, Codex grants L1-20, remaps, empty pack, existing chars,
                     0.2 invocations + Pact of the Id on the Shadow tokens — invocations.test.mjs)
   summons/          summon framework (fallen 0-HP summons) + the scene/token/combat stand-ins (helpers.mjs)
+  option-swap/      the rest window's option swap offers the character's Codex subclass options, and only theirs
+  hand-added-spells/ a core or Nim+ spell dragged onto a sheet stays under Codex magic; grants are still blocked
   content-sync/     owned Codex spell copies synced with the packs (toast, no dialog, version-gated startup)
   class-refresh/    Refresh Codex class content + Lifebinding Spirit conversion (automatic, toast + card, loop guard)
   command-shadows/  Codex Command Shadows (own scene/combat stand-ins: count dialog, a minion attack card per target, no combatants, 1/turn warns)

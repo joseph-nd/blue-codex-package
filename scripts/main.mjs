@@ -442,7 +442,8 @@ Hooks.once('ready', () => {
 //      reverse), so the official spell *browser* is left fully intact.
 //   2. `preCreateItem` — a safety net: block any official-pack spell from being
 //      created on a character when the Codex covers its school/tier, in case a
-//      future system update changes the grant path's field signature.
+//      future system update changes the grant path's field signature. A spell the
+//      player drags onto the sheet passes: only grants are replaced.
 const SETTING_REPLACE_SPELLS = 'replaceOfficialSpells';
 const OFFICIAL_SPELL_PACKS = new Set(['nimble.nimble-spells', 'nimble.nimble-secret-spells']);
 const CODEX_SPELLS_PACK = `${MODULE_ID}.blue-codex-spells`;
@@ -698,6 +699,8 @@ function warnCodexSpellsUnavailable(detail = '') {
 // dialog is open — see wrapTriggerLevelUp. Lets the class-feature index patch
 // scope its subclass-pool injection to the character actually leveling up.
 let levelUpContext = null;
+// The character whose level-up dialog is open, whatever its class or subclass.
+let levelingActorId = null;
 
 /** Set of `${school}:${tier}` the Codex spell pack can grant (non-secret). */
 let codexCoverageSet = null;
@@ -897,10 +900,12 @@ function patchSpellGrantIndex() {
 			if (this.collection === CODEX_SPELLS_PACK) {
 				if (!isGrantPath) return result;
 				const dropped = getLevelUpSwapDroppedSchools();
-				if (!dropped || dropped.size === 0) return result;
+				const swappedIn = swappedInSpellNames(game.actors?.get?.(levelingActorId));
+				if (!dropped?.size && !swappedIn.size) return result;
 				const filtered = new foundry.utils.Collection();
 				for (const [key, entry] of result.entries()) {
-					if (entry?.type === 'spell' && dropped.has(entry?.system?.school)) continue;
+					if (entry?.type === 'spell' && dropped?.has(entry?.system?.school)) continue;
+					if (entry?.type === 'spell' && swappedIn.has(spellNameKey(entry.name))) continue;
 					filtered.set(key, entry);
 				}
 				return filtered;
@@ -966,11 +971,66 @@ function patchSpellGrantIndex() {
 	proto.__blueCodexSpellFilterPatched = true;
 }
 
+const spellNameKey = (name) => String(name ?? '').trim().toLowerCase();
+
+/**
+ * Names of the official and Nim+ spells `actor` owns. A level-up re-grants every
+ * auto-granted spell the character is missing, so without this a Codex spell the
+ * player swapped for its core version would come back at the next level.
+ */
+function swappedInSpellNames(actor) {
+	const names = new Set();
+	for (const item of actor?.items ?? []) {
+		if (item.type === 'spell' && isOfficialCoreSpell(itemSourceUuid(item), item.flags)) names.add(spellNameKey(item.name));
+	}
+	return names;
+}
+
+// A spell dragged onto a character sheet is the player's own choice, so the net below
+// lets it through: anyone who prefers the core or Nim+ version of a spell can swap it
+// in. `dropActorSheetData` names the document just before the sheet creates it. The
+// match is by source, so spells that a dropped class or feature grants stay under the
+// net. The sheet first asks "spell list or scroll?", and the player can take their time
+// over that, so an entry left by a cancelled drop only expires after a long while.
+const HAND_DROP_EXPIRY_MS = 10 * 60 * 1000;
+const handDroppedSpells = new Map();
+
+function markHandDrop(actorId, uuid) {
+	const key = `${actorId}|${uuid}`;
+	clearTimeout(handDroppedSpells.get(key));
+	handDroppedSpells.set(
+		key,
+		setTimeout(() => handDroppedSpells.delete(key), HAND_DROP_EXPIRY_MS),
+	);
+}
+
+function takeHandDrop(actorId, source) {
+	const key = `${actorId}|${source}`;
+	if (!handDroppedSpells.has(key)) return false;
+	clearTimeout(handDroppedSpells.get(key));
+	handDroppedSpells.delete(key);
+	return true;
+}
+
+Hooks.on('dropActorSheetData', (actor, _sheet, data) => {
+	try {
+		const uuid = data?.uuid;
+		if (!actor?.id || typeof uuid !== 'string') return;
+		markHandDrop(actor.id, uuid);
+		// A world or owned item keeps the compendium document it came from as its source.
+		const source = fromUuidSync(uuid, { strict: false })?._stats?.compendiumSource;
+		if (typeof source === 'string' && source) markHandDrop(actor.id, source);
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Could not read a dropped item`, error);
+	}
+});
+
 /**
  * Safety net: block an official-pack spell from being created on a character
- * when the Codex covers its school/tier. The `getIndex` filter normally keeps
- * official spells out of grants entirely; this catches any path that slips
- * through (e.g. a future change to the grant index-field signature).
+ * when the Codex covers its school/tier, unless the player dragged it there. The
+ * `getIndex` filter normally keeps official spells out of grants entirely; this
+ * catches any path that slips through (e.g. a future change to the grant
+ * index-field signature).
  */
 Hooks.on('preCreateItem', (item, data) => {
 	try {
@@ -986,6 +1046,7 @@ Hooks.on('preCreateItem', (item, data) => {
 		// (recognised by the flags the created item carries over from its source).
 		const flags = item?.flags ?? data?.flags ?? null;
 		if (!isOfficialCoreSpell(source, flags)) return true;
+		if (takeHandDrop(actor.id, source)) return true;
 
 		const school = item?.system?.school;
 		const tier = item?.system?.tier ?? 0;
@@ -1052,8 +1113,7 @@ Hooks.on('preCreateItem', (item, data) => {
 // (CLASS_FEATURE_SPELL_REWRITES[classId].uuidMap) is replaced by that Codex spell.
 // The dialogs already grant the Codex spell via the rewritten rules; this covers
 // paths that add the 0.2 document directly — Nim+'s 2.0.3 → 0.2 class migration
-// (the Shepherd's Lifebinding Spirit cantrip) or a drag from the Nim+ pack. Scoped
-// to Nim+ 0.2 documents, so nothing changes without nim-plus-package. Deferred:
+// (the Shepherd's Lifebinding Spirit cantrip). Scoped to Nim+ 0.2 documents, so nothing changes without nim-plus-package. Deferred:
 // a preCreate hook must stay synchronous.
 const pendingCodexSubstitutes = new Set();
 function queueCodexSubstitute(actor, source, flags) {
@@ -1258,7 +1318,7 @@ Hooks.once('init', () => {
 
 	game.settings.register(MODULE_ID, SETTING_REPLACE_SPELLS, {
 		name: "Blue's Codex is the default magic system",
-		hint: "When enabled, leveling a spellcaster grants Blue's Codex spells instead of the official Nimble ones. Official spells for schools the Codex does not re-author (e.g. necrotic) are still granted. Disable to use the official Nimble spells.",
+		hint: "When enabled, leveling a spellcaster grants Blue's Codex spells instead of the official Nimble ones. Official spells for schools the Codex does not re-author (e.g. necrotic) are still granted. Players can still drag any official or Nim+ spell onto a character sheet. Disable to use the official Nimble spells.",
 		scope: 'world',
 		config: true,
 		type: Boolean,
@@ -2677,7 +2737,8 @@ async function grantCodexSchoolSpells(actor, school, maxTier, fromTier, stats = 
 // a duplicate when another spell item on the actor shares its (non-empty)
 // `system.identifier` AND `system.school`. Conservative on purpose — it only ever
 // touches spell items, requires an exact identifier+school match, and always keeps
-// the first occurrence — so a legitimately distinct spell is never removed. Fully
+// the first occurrence — so a legitimately distinct spell is never removed. A core or
+// Nim+ copy the player added next to its Codex namesake is left alone. Fully
 // guarded; returns the number deleted. Cleans characters already affected by the
 // earlier double-grant bug.
 async function pruneDuplicateCodexSpells(actor) {
@@ -2689,6 +2750,7 @@ async function pruneDuplicateCodexSpells(actor) {
 			const identifier = item.system?.identifier;
 			const school = item.system?.school;
 			if (!identifier || !school) continue; // only exact identifier+school matches
+			if (isOfficialCoreSpell(itemSourceUuid(item), item.flags)) continue;
 			const key = `${identifier}|${school}`;
 			if (kept.has(key)) duplicateIds.push(item.id);
 			else kept.add(key);
@@ -3054,8 +3116,10 @@ function wrapTriggerLevelUp(actor) {
 	const originalTriggerLevelUp = proto.triggerLevelUp;
 	proto.triggerLevelUp = async function blueCodexTriggerLevelUp(...args) {
 		const previous = levelUpContext;
+		const previousLeveling = levelingActorId;
 		let carrierId = null;
 		try {
+			levelingActorId = this.id;
 			const classInfo = getPrimaryClass(this);
 			const classId = classInfo?.classId ?? '';
 			const subclassId = classId ? getActorSubclassId(this, classId) : '';
@@ -3085,6 +3149,7 @@ function wrapTriggerLevelUp(actor) {
 				}
 			}
 			levelUpContext = previous;
+			levelingActorId = previousLeveling;
 		}
 	};
 	// The "Missing level choices" banner / Level Correction dialog count a pool's
@@ -3107,6 +3172,30 @@ function wrapTriggerLevelUp(actor) {
 			}
 			try {
 				return await originalGetMissing.apply(this, args);
+			} finally {
+				levelUpContext = previous;
+			}
+		};
+	}
+	// The rest window's "choose different class options" reads the same index, so
+	// without this a Blue's Codex pool option is neither offered nor counted as held
+	// (e.g. a Deadeye's Hamstringer on a Safe Rest). The offer resolves its pools here;
+	// applying the swap works from those pools and never builds the index again.
+	if (typeof proto.getOptionSwapOffer === 'function') {
+		const originalGetOffer = proto.getOptionSwapOffer;
+		proto.getOptionSwapOffer = async function blueCodexGetOptionSwapOffer(...args) {
+			const previous = levelUpContext;
+			try {
+				const classInfo = getPrimaryClass(this);
+				const subclassId = classInfo?.classId ? getActorSubclassId(this, classInfo.classId) : '';
+				if (subclassId && !previous) {
+					levelUpContext = { actorId: this.id, subclassId, classId: classInfo.classId };
+				}
+			} catch (error) {
+				console.error(`[${MODULE_ID}] Option-swap context failed`, error);
+			}
+			try {
+				return await originalGetOffer.apply(this, args);
 			} finally {
 				levelUpContext = previous;
 			}

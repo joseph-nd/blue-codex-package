@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Core and Nim+ spells can be added by hand under Codex magic.** Dragging an official or Nim+ spell onto a character sheet now works, so a player
+  who prefers the core Rebuke can delete the Codex one and swap it in, or keep both. A swapped-out Codex spell stays out at later level-ups, and every
+  other automatic grant still gives Codex spells.
+
+### Fixed
+- **Safe Rest and Field Rest now offer your Codex subclass options.** A Deadeye's Hamstringer or a Skald's Savage Arsenal picks could not be
+  chosen in the rest window, and ones you already held did not count as held.
+
 ## [0.11.0] - 2026-10-09
 
 ### Changed

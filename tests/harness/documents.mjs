@@ -389,6 +389,24 @@ export function createDocumentClasses(env) {
 			const { runLevelUp } = await import('./nimble.mjs');
 			return runLevelUp(env, this, options);
 		}
+
+		/**
+		 * The rest window's offer (character.ts `getOptionSwapOffer`), reduced to what the
+		 * wrap can change: the members of each pool, read from the class-feature index.
+		 */
+		async getOptionSwapOffer() {
+			const { buildClassFeatureIndex } = await import('./nimble.mjs');
+			const index = await buildClassFeatureIndex();
+			const classItem = Object.values(this.classes)[0];
+			const pools = new Map();
+			for (const entries of index.get(classItem?.identifier)?.values() ?? []) {
+				for (const entry of entries) {
+					if (!pools.has(entry.group)) pools.set(entry.group, new Set());
+					pools.get(entry.group).add(entry.uuid);
+				}
+			}
+			return { pools };
+		}
 	}
 
 	// Foundry's Item#updateSource, used by preCreate handlers.
