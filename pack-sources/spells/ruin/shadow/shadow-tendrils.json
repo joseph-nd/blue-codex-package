@@ -46,7 +46,9 @@
 								"formula": "4d12 + 12",
 								"parentContext": "failedSave",
 								"parentNode": "shadowTendrilsSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

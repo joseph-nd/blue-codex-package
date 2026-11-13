@@ -46,7 +46,9 @@
 								"formula": "4d8 + 6",
 								"parentContext": "failedSave",
 								"parentNode": "lightningBoltSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

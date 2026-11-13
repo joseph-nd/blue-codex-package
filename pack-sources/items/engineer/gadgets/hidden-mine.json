@@ -71,7 +71,9 @@
 										"parentNode": "hmBaseDmg"
 									}
 								]
-							}
+							},
+							"canCrit": false,
+							"canMiss": false
 						}
 					]
 				}

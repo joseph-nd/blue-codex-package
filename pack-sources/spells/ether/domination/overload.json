@@ -57,7 +57,9 @@
 								"formula": "2d8",
 								"parentContext": "failedSave",
 								"parentNode": "overloadSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

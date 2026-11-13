@@ -46,7 +46,9 @@
 								"formula": "4d10 + 21",
 								"parentContext": "failedSave",
 								"parentNode": "goutOfFireSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

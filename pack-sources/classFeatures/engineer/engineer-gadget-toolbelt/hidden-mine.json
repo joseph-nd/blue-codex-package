@@ -80,7 +80,9 @@
 										"parentNode": "hmTbDmg"
 									}
 								]
-							}
+							},
+							"canCrit": false,
+							"canMiss": false
 						}
 					]
 				}

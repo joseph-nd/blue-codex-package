@@ -58,7 +58,9 @@
 										"parentNode": "blazeBreakerDmg"
 									}
 								]
-							}
+							},
+							"canCrit": false,
+							"canMiss": false
 						}
 					]
 				},

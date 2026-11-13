@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-11-13
+
+### Fixed
+- **Damage on a save no longer misses or crits.** Leeching Dark, Pyroclasm, Lightning Bolt and the other spells that deal damage on a failed save
+  (15 in all), plus Blaze Breaker, Air Dash, Creeping Ice, Ocean's Prison, Hidden Mine and the Rocket Turret, were rolled like attacks: a 1 on the
+  first die called the spell a miss and a max roll a crit. They now never miss or crit. Spells already on character sheets are fixed by Nim+ 0.17.2;
+  without Nim+, drag a fresh copy from the compendium.
+
 ## [0.12.0] - 2026-11-06
 
 ### Changed

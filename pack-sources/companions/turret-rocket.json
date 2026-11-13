@@ -202,7 +202,9 @@
 												"parentNode": "rocketBasicDmg1"
 											}
 										]
-									}
+									},
+									"canCrit": false,
+									"canMiss": false
 								}
 							]
 						}
@@ -294,7 +296,9 @@
 												"parentNode": "rocketSpecDmg1"
 											}
 										]
-									}
+									},
+									"canCrit": false,
+									"canMiss": false
 								}
 							]
 						}

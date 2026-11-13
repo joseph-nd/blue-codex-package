@@ -46,7 +46,9 @@
 								"formula": "3d10",
 								"parentContext": "failedSave",
 								"parentNode": "tidalSurgeSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

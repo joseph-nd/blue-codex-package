@@ -47,7 +47,9 @@
 								"parentContext": "failedSave",
 								"parentNode": "jokulhlaupSave1",
 								"ignoreArmor": true,
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

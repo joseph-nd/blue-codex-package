@@ -46,7 +46,9 @@
 								"formula": "4d6 + 15",
 								"parentContext": "failedSave",
 								"parentNode": "wardensEmbraceSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

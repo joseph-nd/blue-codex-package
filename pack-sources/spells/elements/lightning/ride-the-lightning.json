@@ -46,7 +46,9 @@
 								"formula": "4d8 + 24",
 								"parentContext": "failedSave",
 								"parentNode": "rideTheLightningSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

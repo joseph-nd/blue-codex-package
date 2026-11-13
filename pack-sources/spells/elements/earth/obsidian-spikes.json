@@ -46,7 +46,9 @@
 								"formula": "4d6 + 5",
 								"parentContext": "failedSave",
 								"parentNode": "obsidianSpikesSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							},
 							{
 								"id": "obsidianSpikesCondition1",

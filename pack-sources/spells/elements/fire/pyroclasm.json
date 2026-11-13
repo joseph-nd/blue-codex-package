@@ -46,7 +46,9 @@
 								"formula": "4d10",
 								"parentContext": "failedSave",
 								"parentNode": "pyroclasmSave1",
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						]
 					},

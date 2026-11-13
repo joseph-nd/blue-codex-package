@@ -37,7 +37,9 @@
 								"parentContext": "passedSave",
 								"parentNode": "hypnoticPatternSave1",
 								"ignoreArmor": true,
-								"on": {}
+								"on": {},
+								"canCrit": false,
+								"canMiss": false
 							}
 						],
 						"failedSave": [
