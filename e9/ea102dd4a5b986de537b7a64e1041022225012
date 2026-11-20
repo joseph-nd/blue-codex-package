@@ -1,0 +1,27 @@
+CHANGELOG.md
+  s_2fe080c4c8e661::t_99a8773ec945a8 10-18
+module.json
+  s_2fe080c4c8e661::t_367ce5eb9935d1 5
+package.json
+  s_2fe080c4c8e661::t_a7a1e555fb2ef8 3
+scripts/main.mjs
+  s_2fe080c4c8e661::t_dfa31a6deac4c5 1007-1016,1025-1032,1067,3122-3128,3136,3138-3140,16392-16401
+tests/hand-added-spells/hand-added-spells.test.mjs
+  s_2fe080c4c8e661::t_bbce30c6c3387a 136-168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e9ea102dd4a5b986de537b7a64e1041022225012",
+  "prompts": {},
+  "sessions": {
+    "s_2fe080c4c8e661": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2fb20842-04c7-4a94-aa63-adfe41297c47",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    }
+  }
+}
