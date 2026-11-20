@@ -1004,6 +1004,16 @@ function markHandDrop(actorId, uuid) {
 	);
 }
 
+/**
+ * Whether the player just dropped this source on this actor. A peek, not a take:
+ * every spell filter below must see the same answer for one drop (the official-
+ * spell net used to consume it, so the subclass-school filter after it blocked the
+ * same hand-dropped spell). The mark is cleared once the item exists (`createItem`).
+ */
+function hasHandDrop(actorId, source) {
+	return !!actorId && typeof source === 'string' && handDroppedSpells.has(`${actorId}|${source}`);
+}
+
 function takeHandDrop(actorId, source) {
 	const key = `${actorId}|${source}`;
 	if (!handDroppedSpells.has(key)) return false;
@@ -1011,6 +1021,14 @@ function takeHandDrop(actorId, source) {
 	handDroppedSpells.delete(key);
 	return true;
 }
+
+// The dropped spell has landed: its mark has done its job.
+Hooks.on('createItem', (item, _options, userId) => {
+	if (userId !== game.user?.id || item?.type !== 'spell') return;
+	const actor = item.parent;
+	const source = item._stats?.compendiumSource;
+	if (actor?.id && typeof source === 'string' && source) takeHandDrop(actor.id, source);
+});
 
 Hooks.on('dropActorSheetData', (actor, _sheet, data) => {
 	try {
@@ -1046,7 +1064,7 @@ Hooks.on('preCreateItem', (item, data) => {
 		// (recognised by the flags the created item carries over from its source).
 		const flags = item?.flags ?? data?.flags ?? null;
 		if (!isOfficialCoreSpell(source, flags)) return true;
-		if (takeHandDrop(actor.id, source)) return true;
+		if (hasHandDrop(actor.id, source)) return true;
 
 		const school = item?.system?.school;
 		const tier = item?.system?.tier ?? 0;
@@ -3101,11 +3119,13 @@ async function classSpellChoiceSync(actor) {
 
 // Suppress ONLY the automated base-class grant that fires during a swapped
 // caster's level-up — this is what stops an Invoker of Ether from re-gaining Book
-// of Elements spells every level-up. It is deliberately scoped to the leveling
-// character's own level-up (levelUpContext): outside a level-up this returns early,
-// so the player can freely add a spell of ANY school and ANY tier from the sheet
-// (drag-in, spell browser, etc.). Runs as its own hook because the official-spell
-// filter above returns early for non-official (i.e. Codex) spells.
+// of Elements spells every level-up. The subclass's chosen schools steer that
+// automation; they never limit what a player adds. So it is scoped to the leveling
+// character's own level-up (levelUpContext), and a spell the player dragged onto
+// the sheet always passes, even while that context is set (the level-up window is
+// open, or a "missing level choices" check is running): any school, any tier, core,
+// Nim+ or Codex. Runs as its own hook because the official-spell filter above
+// returns early for non-official (i.e. Codex) spells.
 Hooks.on('preCreateItem', (item, data) => {
 	try {
 		if (!isReplaceSpellsEnabled()) return true;
@@ -3113,8 +3133,11 @@ Hooks.on('preCreateItem', (item, data) => {
 		const actor = item?.parent;
 		if (!(actor instanceof Actor) || actor.type !== 'character') return true;
 
-		// Manual adds happen outside any level-up dialog — let them all through.
+		// Outside this character's level-up nothing here is automatic.
 		if (levelUpContext?.actorId !== actor.id) return true;
+		// Dragged onto the sheet: the player's choice, whatever the school.
+		const source = item?._stats?.compendiumSource ?? data?._stats?.compendiumSource ?? '';
+		if (hasHandDrop(actor.id, source)) return true;
 
 		const stored = actor.getFlag(MODULE_ID, 'spellSchools');
 		if (!stored || !Array.isArray(stored.schools)) return true;
@@ -16366,6 +16389,16 @@ export const __codexBerserker__ = {
 // suite (tests/). Adds no behaviour: nothing in the module reads it, and Foundry
 // ignores an esmodule's exports.
 export const __test__ = {
+	/** Run `fn` as if `context` were the level-up in progress (the window open). */
+	async withLevelUpContext(context, fn) {
+		const previous = levelUpContext;
+		levelUpContext = context;
+		try {
+			return await fn();
+		} finally {
+			levelUpContext = previous;
+		}
+	},
 	maxSpellTierForLevel,
 	shadowmancerHighestTier,
 	SHADOWMANCER_TIER_THRESHOLDS,

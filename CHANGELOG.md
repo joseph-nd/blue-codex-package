@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.3] - 2026-11-20
+
+### Fixed
+- **Spells you drag onto a sheet are never blocked.** With Codex magic on, a core or Nim+ spell dragged onto a character
+  could be refused ("Blocked necrotic spell … not among this subclass's chosen schools") if the sheet was in the middle
+  of a level-up check, for example with the level-up window open or the "Missing level choices" banner refreshing. The
+  subclass's chosen schools only steer the spells a level-up grants by itself: anything you add by hand now lands,
+  whatever its school or tier.
+
 ## [0.12.2] - 2026-11-20
 
 ### Fixed

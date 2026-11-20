@@ -133,6 +133,39 @@ describe('adding a spell by hand under Codex magic', () => {
 		expect(spellSources(deleted)).toContain(codex.uuid);
 	});
 
+	it('lets a hand-dropped spell of another school past the subclass schools during a level-up', async () => {
+		// A Circle of Venom & Web Stormshifter that kept Wind and took Blood: those
+		// schools steer the level-up's automatic grants, never what the player adds.
+		const { env, main } = await setupWorld({ nimPlus: true });
+		const { actor } = await createCharacter(env, { classId: 'stormshifter' });
+		await actor.setFlag('blue-codex-package', 'spellSchools', { subclass: 'circle-of-venom-and-web', schools: ['wind', 'blood'] });
+		const necrotic = findDocs({ pack: NIM_SPELLS, type: 'spell', school: 'necrotic' })[0];
+		const handDropped = { uuid: necrotic.uuid, data: { ...structuredClone(necrotic.doc), _stats: { compendiumSource: necrotic.uuid } } };
+		const automatic = findDocs({ pack: CODEX_SPELLS, type: 'spell', school: 'lightning' })[0];
+		const context = { actorId: actor.id, subclassId: 'circle-of-venom-and-web', classId: 'stormshifter' };
+
+		await main.__test__.withLevelUpContext(context, async () => {
+			// The level-up window is open and the player drags a spell in: it lands,
+			// even though the official-spell net looks at the same drop first.
+			expect(await dropOnSheet(actor, handDropped)).toHaveLength(1);
+			// The level-up's own grant of an unchosen school is still held back.
+			const granted = await actor.createEmbeddedDocuments('Item', [
+				{ ...structuredClone(automatic.doc), _stats: { compendiumSource: automatic.uuid } },
+			]);
+			expect(granted).toHaveLength(0);
+		});
+		await env.flush();
+		expect(spellSources(actor)).toContain(necrotic.uuid);
+		expect(spellSources(actor)).not.toContain(automatic.uuid);
+		// The drop's mark is spent once the spell exists: an automatic grant of the same
+		// spell later in the level-up is not mistaken for a hand drop.
+		await main.__test__.withLevelUpContext(context, async () => {
+			const again = await actor.createEmbeddedDocuments('Item', [structuredClone(handDropped.data)]);
+			expect(again).toHaveLength(0);
+		});
+		expect(env.Hooks.errors).toEqual([]);
+	});
+
 	it('still collapses two copies of the same Codex spell', async () => {
 		const { env } = await setupWorld();
 		const { actor } = await createCharacter(env, { classId: 'shepherd' });
