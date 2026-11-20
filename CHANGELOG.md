@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-11-20
+
+### Fixed
+- **Nim+'s Circle of Venom & Web swaps a school under Codex magic.** Deadly Nature ("replace your lightning or wind
+  school with necrotic") now asks which of Lightning or Wind to keep and which Book of Ruin school (Shadow, Death,
+  Blood or Curse) replaces the other. Later level-ups grant the two chosen schools. With Codex magic off, Nim+ handles
+  it with the official Necrotic school instead.
+- **School swaps no longer hand out another class's spells.** A subclass school swap granted every Codex spell of the
+  school, so a Stormshifter taking Shadow got the Shadowmancer's Shadow Blast, Summon Shadow and Command Shadows, and
+  a caster keeping Wind got the Songweaver's Vicious Mockery. Class-restricted spells are now skipped, as in the
+  level-up window.
+- **The spell-school prompt shows on one screen.** Every GM also owns each character, so a player's level-up opened
+  the "Spell Schools" prompt on every GM's screen too, and a later answer there overwrote the player's choice. The
+  prompt now opens only for whoever made the level-up, and an answer given after another one is ignored.
+
 ## [0.12.1] - 2026-11-13
 
 ### Fixed

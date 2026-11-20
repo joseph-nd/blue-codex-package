@@ -1828,6 +1828,23 @@ const SUBCLASS_SPELL_POLICY = {
 	'circle-of-earth': { mandatory: ['earth'], cap: 3, summary: 'Learn Earth spells.' },
 	'circle-of-hunger': { mandatory: ['shadow', 'illusion'], cap: 3, summary: 'Learn Shadow and Illusion spells. You can know only 3 spell schools.' },
 	'circle-of-spores': { mandatory: ['nature'], cap: 3, summary: 'Learn Nature spells.' },
+	// Nim+'s Circle of Venom & Web — Deadly Nature: "Replace your lightning or wind
+	// school with necrotic." The Codex splits necrotic into the Book of Ruin, so the
+	// player keeps one of lightning/wind and takes one Ruin school in its place.
+	// `codexMagicOnly`: a Nim+ subclass, so with Codex magic off this policy is
+	// ignored and Nim+ swaps in the official necrotic school itself.
+	'circle-of-venom-and-web': {
+		codexMagicOnly: true,
+		mandatory: [],
+		choose: [
+			{ label: 'Keep Lightning or Wind (the other is replaced)', options: ['lightning', 'wind'] },
+			{ label: 'Replace it with a Book of Ruin school', options: ['shadow', 'death', 'blood', 'curse'] },
+		],
+		cap: 2,
+		replaceAll: true,
+		summary:
+			'Deadly Nature: replace your Lightning or Wind school with necrotic. Under Blue’s Codex, necrotic is the Book of Ruin, so pick one of its schools (Shadow, Death, Blood or Curse).',
+	},
 	// ── Songweaver (base auto: wind + 1 chosen; the extra school is picked at L1
 	// in Heroes 2.0, at L2 in the Nim+ 0.2 copy — both before these L3 subclasses) ──
 	'herald-of-disruption': { mandatory: ['domination'], cap: 3, summary: 'Learn Domination spells.' },
@@ -1846,6 +1863,18 @@ const SUBCLASS_SPELL_POLICY = {
 			'Soul of Rage: learn spells from either the Fire or Lightning School (in addition to your two Book of Ruin schools chosen with Dark Knowledge).',
 	},
 };
+
+/**
+ * The school policy of `subclassId`, or null. A `codexMagicOnly` policy (a Nim+
+ * subclass whose official school swap Nim+ handles itself) only applies while
+ * Codex magic replaces the official spells.
+ */
+function subclassSpellPolicy(subclassId) {
+	const policy = subclassId ? SUBCLASS_SPELL_POLICY[subclassId] : null;
+	if (!policy) return null;
+	if (policy.codexMagicOnly && !isReplaceSpellsEnabled()) return null;
+	return policy;
+}
 
 // ── Class-level necrotic re-home ─────────────────────────────────────────────
 // necrotic is the one base spell school Blue's Codex doesn't re-author — it splits
@@ -2232,7 +2261,7 @@ function installFromUuidRewrite() {
 function getLevelUpSwapDroppedSchools() {
 	const ctx = levelUpContext;
 	if (!ctx?.subclassId) return null;
-	const policy = SUBCLASS_SPELL_POLICY[ctx.subclassId];
+	const policy = subclassSpellPolicy(ctx.subclassId);
 	if (!policy) return null;
 
 	const actor = game.actors?.get?.(ctx.actorId);
@@ -2299,7 +2328,7 @@ async function createSwapGrantCarrier(actor, subclassId) {
 	try {
 		if (!isReplaceSpellsEnabled()) return null;
 		if (!subclassId) return null;
-		const policy = SUBCLASS_SPELL_POLICY[subclassId];
+		const policy = subclassSpellPolicy(subclassId);
 		if (!policy) return null;
 		const stored = actor.getFlag(MODULE_ID, 'spellSchools');
 		if (
@@ -2389,7 +2418,7 @@ function loadCodexSpellsBySchool() {
 			const pack = game.packs?.get?.(CODEX_SPELLS_PACK);
 			if (!pack) return bySchool;
 			const index = await pack.getIndex({
-				fields: ['type', 'system.school', 'system.tier', 'system.properties.selected'],
+				fields: ['type', 'system.school', 'system.tier', 'system.classes', 'system.properties.selected'],
 			});
 			for (const entry of index) {
 				if (entry.type !== 'spell') continue;
@@ -2398,8 +2427,9 @@ function loadCodexSpellsBySchool() {
 				const selected = entry.system?.properties?.selected ?? [];
 				if (selected.includes('secretSpell')) continue; // never auto-granted
 				const tier = Number(entry.system?.tier ?? 0) || 0;
+				const classes = Array.isArray(entry.system?.classes) ? entry.system.classes : [];
 				if (!bySchool.has(school)) bySchool.set(school, []);
-				bySchool.get(school).push({ uuid: entry.uuid, tier });
+				bySchool.get(school).push({ uuid: entry.uuid, tier, classes });
 			}
 			return bySchool;
 		})().catch((error) => {
@@ -2536,7 +2566,8 @@ async function promptSchoolChoice(actor, policy) {
  *     swap's school drop still happens once, at the moment of the choice.
  */
 async function applySpellSchools(actor, finalSchools, level, fromTier = -1, pruneDropped = false) {
-	const maxTier = maxSpellTierForLevel(level, getPrimaryClass(actor)?.classId);
+	const classId = getPrimaryClass(actor)?.classId;
+	const maxTier = maxSpellTierForLevel(level, classId);
 	const spellItems = (actor.items ?? []).filter((item) => item.type === 'spell');
 
 	let removed = 0;
@@ -2573,8 +2604,12 @@ async function applySpellSchools(actor, finalSchools, level, fromTier = -1, prun
 	for (const school of finalSchools) {
 		const list = bySchool.get(school); // necrotic/official schools aren't in the Codex pack
 		if (!list) continue;
-		for (const { uuid, tier } of list) {
+		for (const { uuid, tier, classes } of list) {
 			if (tier > maxTier || tier <= fromTier || seen.has(uuid) || ownedSources.has(uuid)) continue;
+			// Another class's spell (the Shadowmancer's shadow cantrips, the Songweaver's
+			// Vicious Mockery) is not part of the school for this caster — the level-up
+			// window filters it the same way.
+			if (classes?.length && !classes.includes(classId)) continue;
 			if (codexSpiritGrantExcluded(uuid, actor)) continue;
 			seen.add(uuid);
 			// eslint-disable-next-line no-await-in-loop
@@ -2603,7 +2638,7 @@ async function spellSchoolSync(actor) {
 	const classInfo = getPrimaryClass(actor);
 	if (!classInfo?.classId || classInfo.classLevel < 1) return;
 	const subclassId = getActorSubclassId(actor, classInfo.classId);
-	const policy = subclassId ? SUBCLASS_SPELL_POLICY[subclassId] : null;
+	const policy = subclassSpellPolicy(subclassId);
 
 	const stored = actor.getFlag(MODULE_ID, 'spellSchools');
 	if (!policy) {
@@ -2649,6 +2684,10 @@ async function spellSchoolSync(actor) {
 			// apply the school drop this once.
 			finalSchools = await promptSchoolChoice(actor, policy);
 			if (!finalSchools) return; // deferred
+			// Another owner (the player, or a GM viewing the sheet) may have answered
+			// while this dialog was open: keep their pick rather than overwrite it.
+			const answered = actor.getFlag(MODULE_ID, 'spellSchools');
+			if (answered?.subclass === subclassId && Array.isArray(answered.schools)) return;
 			fromTier = -1;
 			pruneDropped = true;
 		}
@@ -12126,8 +12165,11 @@ api.chooseClassSpellSchools = async (actor) => {
 };
 
 // Grant/offer subclass content after any level change, subclass selection, and
-// when a character sheet opens.
-Hooks.on('updateItem', (item, changes) => {
+// when a character sheet opens. A level change or subclass pick is handled by the
+// client that made it: every GM also owns the character, so without the userId
+// test each GM's screen got the player's school / pool prompts too.
+Hooks.on('updateItem', (item, changes, _options, userId) => {
+	if (userId && userId !== game.user?.id) return;
 	if (item?.type !== 'class' && item?.type !== 'subclass') return;
 	if (item?.type === 'class' && foundry.utils.getProperty(changes, 'system.classLevel') === undefined)
 		return;
@@ -12138,8 +12180,9 @@ Hooks.on('updateItem', (item, changes) => {
 	}
 });
 
-Hooks.on('createItem', (item) => {
+Hooks.on('createItem', (item, _options, userId) => {
 	if (item?.type === 'subclass') {
+		if (userId && userId !== game.user?.id) return;
 		const actor = item.parent;
 		if (actor) handleActorFeatures(actor);
 		return;

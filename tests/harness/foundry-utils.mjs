@@ -346,10 +346,19 @@ export function buildUuid({ id, documentName, pack, parent } = {}) {
 
 /**
  * Foundry's `String.prototype.slugify` (common/primitives/string.mjs). The
- * accent CHAR_MAP is approximated with NFD normalisation.
+ * accent CHAR_MAP is approximated with NFD normalisation; its symbol
+ * entries are copied (so "Circle of Venom & Web" → "circle-of-venom-and-web").
  */
+const SLUG_SYMBOLS = { $: 'dollar', '%': 'percent', '&': 'and', '<': 'less', '>': 'greater', '|': 'or' };
+
 export function slugify(str, { replacement = '-', strict = false, lowercase = true } = {}) {
-	let slug = String(str).normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+	let slug = String(str)
+		.split('')
+		.map((c) => SLUG_SYMBOLS[c] ?? c)
+		.join('')
+		.normalize('NFD')
+		.replace(/[̀-ͯ]/g, '')
+		.trim();
 	if (lowercase) slug = slug.toLowerCase();
 	const esc = replacement.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
 	slug = slug.replace(new RegExp(`[\\s${esc}]+`, 'g'), replacement);
