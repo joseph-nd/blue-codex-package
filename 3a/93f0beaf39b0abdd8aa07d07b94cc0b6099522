@@ -1,0 +1,33 @@
+CHANGELOG.md
+  s_2fe080c4c8e661::t_02bb46d907f441 10-24
+module.json
+  s_2fe080c4c8e661::t_3cfbf9d407f750 5
+package.json
+  s_2fe080c4c8e661::t_1fe9c310db0114 3
+scripts/main.mjs
+  s_f306f8c29a2bae::t_8ff650765c9b65 1831-1847,1867-1878,2264,2331,2421,2430,2432,2569-2570,2607,2609-2612,2641,2687-2690,12168-12172,12183,12185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "3a93f0beaf39b0abdd8aa07d07b94cc0b6099522",
+  "prompts": {},
+  "sessions": {
+    "s_2fe080c4c8e661": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2fb20842-04c7-4a94-aa63-adfe41297c47",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    },
+    "s_f306f8c29a2bae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e7cbf54d-dcff-4928-9221-4b840997943d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    }
+  }
+}
