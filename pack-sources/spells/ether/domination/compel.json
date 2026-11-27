@@ -23,16 +23,17 @@
 				{
 					"id": "compelSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "will",
+					"savingThrowType": "will",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"passedSave": [
 							{
 								"id": "compelCondition1",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "z5pymCDn2sy1Qxzb",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "compelSave1"
 							}
@@ -97,7 +98,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "z5pymCDn2sy1Qxzb",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

@@ -22,8 +22,10 @@
 			"effects": [
 				{
 					"id": "SuffRiteMeekCond",
-					"type": "condition",
-					"condition": "dazed",
+					"type": "applyEffect",
+					"effectId": "3rRhY60knlBebTal",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -50,7 +52,37 @@
 		"selectionCountByLevel": {},
 		"subclass": true
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "3rRhY60knlBebTal",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {
 		"blue-codex-package": {
 			"automation": {

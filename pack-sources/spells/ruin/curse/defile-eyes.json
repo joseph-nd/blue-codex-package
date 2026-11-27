@@ -22,8 +22,10 @@
 			"effects": [
 				{
 					"id": "defileEyesCondition1",
-					"type": "condition",
-					"condition": "blinded",
+					"type": "applyEffect",
+					"effectId": "EDjiPUHVeOQ1es9R",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -74,7 +76,49 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "EDjiPUHVeOQ1es9R",
+			"name": "Blind",
+			"img": "icons/svg/blind.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "turn",
+						"boundary": "end",
+						"clock": "holder",
+						"span": "nextTurn",
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"blinded"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

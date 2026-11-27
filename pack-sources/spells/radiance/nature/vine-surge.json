@@ -41,8 +41,10 @@
 							},
 							{
 								"id": "vineSurgeCrit1",
-								"type": "condition",
-								"condition": "restrained",
+								"type": "applyEffect",
+								"effectId": "sFRhL5ExMNpHErME",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "criticalHit",
 								"parentNode": "vineSurgeDamage1"
 							}
@@ -57,8 +59,10 @@
 							},
 							{
 								"id": "vineSurgeCondition1",
-								"type": "condition",
-								"condition": "slowed",
+								"type": "applyEffect",
+								"effectId": "RbzrPGMGSCiyLZWi",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "vineSurgeDamage1"
 							}
@@ -132,7 +136,66 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "sFRhL5ExMNpHErME",
+			"name": "Restrained",
+			"img": "icons/svg/net.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "RbzrPGMGSCiyLZWi",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

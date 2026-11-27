@@ -36,22 +36,24 @@
 				{
 					"id": "gsBaseSave",
 					"type": "savingThrow",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "gsBaseRestr",
-								"type": "condition",
-								"condition": "restrained",
+								"type": "applyEffect",
+								"effectId": "HduYpazTEuXvaqgC",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "gsBaseSave"
 							}
 						],
 						"passedSave": []
 					},
-					"sharedRolls": []
+					"sharedRolls": [],
+					"savingThrowType": "strength"
 				}
 			],
 			"showDescription": true,
@@ -101,7 +103,37 @@
 			"denomination": "gp"
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "HduYpazTEuXvaqgC",
+			"name": "Restrained",
+			"img": "icons/svg/net.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

@@ -57,15 +57,16 @@
 				{
 					"id": "esBaseSave",
 					"type": "savingThrow",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "esBaseRestr",
-								"type": "condition",
-								"condition": "restrained",
+								"type": "applyEffect",
+								"effectId": "2m86opEeIQBMe0Pt",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "esBaseSave"
 							}
@@ -73,14 +74,17 @@
 						"passedSave": [
 							{
 								"id": "esBaseSlow",
-								"type": "condition",
-								"condition": "slowed",
+								"type": "applyEffect",
+								"effectId": "GpMgg6WI2qneZgY1",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "esBaseSave"
 							}
 						]
 					},
-					"sharedRolls": []
+					"sharedRolls": [],
+					"savingThrowType": "strength"
 				}
 			],
 			"showDescription": true,
@@ -130,7 +134,66 @@
 			"denomination": "gp"
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "2m86opEeIQBMe0Pt",
+			"name": "Restrained",
+			"img": "icons/svg/net.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "GpMgg6WI2qneZgY1",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {
 		"blue-codex-package": {
 			"automation": {

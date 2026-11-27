@@ -40,8 +40,10 @@
 							},
 							{
 								"id": "deathShackleCondition1",
-								"type": "condition",
-								"condition": "slowed",
+								"type": "applyEffect",
+								"effectId": "3nvZy5nYLjjKEyTp",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "deathShackleDamage1"
 							}
@@ -126,7 +128,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "3nvZy5nYLjjKEyTp",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

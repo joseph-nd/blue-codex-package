@@ -23,8 +23,7 @@
 				{
 					"id": "obsidianSpikesSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "dexterity",
+					"savingThrowType": "dexterity",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
@@ -52,8 +51,10 @@
 							},
 							{
 								"id": "obsidianSpikesCondition1",
-								"type": "condition",
-								"condition": "restrained",
+								"type": "applyEffect",
+								"effectId": "9MccppPk4Kc4iiuB",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "obsidianSpikesSave1"
 							}
@@ -128,7 +129,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "9MccppPk4Kc4iiuB",
+			"name": "Restrained",
+			"img": "icons/svg/net.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

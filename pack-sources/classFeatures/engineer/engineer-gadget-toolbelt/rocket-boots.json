@@ -54,8 +54,10 @@
 							},
 							{
 								"id": "rbTbSmold",
-								"type": "condition",
-								"condition": "smoldering",
+								"type": "applyEffect",
+								"effectId": "QlRaTzGtZRURMOm1",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "rbTbDmg"
 							}
@@ -83,7 +85,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "QlRaTzGtZRURMOm1",
+			"name": "Smoldering",
+			"img": "icons/svg/fire.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"smoldering"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {
 		"blue-codex-package": {
 			"automation": {

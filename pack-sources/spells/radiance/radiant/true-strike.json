@@ -19,7 +19,17 @@
 				"quantity": 1,
 				"type": "round"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "jznDVdsHl8S4MAvj",
+					"type": "applyEffect",
+					"effectId": "6QGjDXudZTzc83uI",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -54,7 +64,52 @@
 		"tier": 0,
 		"classes": []
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "6QGjDXudZTzc83uI",
+			"name": "True Strike",
+			"img": "modules/blue-codex-package/assets/spells/radiance/radiant/true-strike.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [
+					{
+						"type": "heldRoll",
+						"disabled": false,
+						"id": "GhNCEqM18ebfX8WT",
+						"identifier": "",
+						"label": "True Strike",
+						"predicate": {},
+						"priority": 1,
+						"heldKind": "advantage",
+						"value": 1,
+						"whichRoll": "holderAttacks",
+						"usedUp": true,
+						"meleeOnly": false,
+						"fromSourceOnly": false,
+						"damageType": ""
+					}
+				],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

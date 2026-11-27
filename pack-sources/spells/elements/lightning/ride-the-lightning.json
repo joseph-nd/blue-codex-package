@@ -24,7 +24,6 @@
 					"id": "rideTheLightningSave1",
 					"type": "savingThrow",
 					"savingThrowType": "strength",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
@@ -49,6 +48,24 @@
 								"on": {},
 								"canCrit": false,
 								"canMiss": false
+							},
+							{
+								"id": "7QHvImOVWN2JDXvH",
+								"type": "applyEffect",
+								"effectId": "Ld5D2MM6iAkG5ecT",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
+								"parentContext": "failedSave",
+								"parentNode": "rideTheLightningSave1"
+							},
+							{
+								"id": "Czqb0uErAAIgAE0H",
+								"type": "applyEffect",
+								"effectId": "Fd9d2qlE1X3Hexjl",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
+								"parentContext": "failedSave",
+								"parentNode": "rideTheLightningSave1"
 							}
 						]
 					},
@@ -121,7 +138,78 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "Ld5D2MM6iAkG5ecT",
+			"name": "Prone",
+			"img": "icons/svg/falling.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"prone"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "Fd9d2qlE1X3Hexjl",
+			"name": "Deafened",
+			"img": "icons/svg/deaf.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "time",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": 1,
+						"units": "hours",
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"deafened"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

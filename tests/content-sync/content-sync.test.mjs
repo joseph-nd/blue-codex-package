@@ -73,6 +73,22 @@ describe('planning', () => {
 		expect(entry.changed).not.toContain('grantedById');
 	});
 
+	it("Nimble 0.11: a copy missing the pack's item effects (its Apply Effect step points at them) gets them, once", async () => {
+		const { main, env } = await setupWorld();
+		const owned = currentCopy('Ice Ray', 'ownedIceRay00001');
+		const wanted = owned.effects.map((e) => e._id);
+		expect(wanted.length).toBeGreaterThan(0);
+		owned.effects = [{ _id: 'migration086Made', name: 'Slowed', type: 'nimble', transfer: false, statuses: ['slowed'], system: { changes: [], rules: [], lastsUntil: [] } }];
+		const actor = shadowmancer(env, [owned]);
+		const plan = await main.__contentSync__.planCodexContentSync(actor);
+		const [entry] = plan.updates;
+		expect(entry.changed).toEqual(['effects']);
+		await main.__contentSync__.applyCodexContentSync(plan);
+		const item = actor.items.get('ownedIceRay00001');
+		expect([...item.effects.keys()].sort()).toEqual([...wanted].sort());
+		expect((await main.__contentSync__.planCodexContentSync(actor)).updates).toEqual([]);
+	});
+
 	it('reports (and leaves alone) a copy whose pack entry is gone', async () => {
 		const { main, env } = await setupWorld();
 		const gone = currentCopy('Shadow Blast', 'ownedGone0000001');

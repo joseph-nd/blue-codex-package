@@ -5,7 +5,36 @@
 	"system": {
 		"macro": "",
 		"identifier": "frost-shield",
-		"rules": [],
+		"rules": [
+			{
+				"type": "defendOption",
+				"disabled": false,
+				"id": "D9jmXmUYJHPji68k",
+				"identifier": "",
+				"label": "Frost Shield",
+				"predicate": {},
+				"priority": 1,
+				"way": "freeDefend",
+				"attackDelivery": "any",
+				"outcome": "none",
+				"armorBonus": "",
+				"useReroll": false,
+				"attackerEffectId": "",
+				"reminder": "Target yourself to take the temp HP.",
+				"useItem": true,
+				"withInterpose": false,
+				"wholeRound": false,
+				"range": 2,
+				"chargePoolIdentifier": "",
+				"chargeCost": 1,
+				"actionCost": 0,
+				"manaCost": 0,
+				"woundCost": 0,
+				"upcastArmor": 0,
+				"alsoInterpose": false,
+				"oncePerTurn": false
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -19,7 +48,25 @@
 				"quantity": 1,
 				"type": "round"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "RWdGMD2vot3oAkJ0",
+					"type": "healing",
+					"healingType": "tempHealing",
+					"formula": "2*@key",
+					"parentContext": null,
+					"parentNode": null
+				},
+				{
+					"id": "fqvSUOdpdcNggCeG",
+					"type": "applyEffect",
+					"effectId": "TM4Rp8M4S2B4zOYz",
+					"recipient": "targets",
+					"tempHealingNodeId": "RWdGMD2vot3oAkJ0",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -66,7 +113,58 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "TM4Rp8M4S2B4zOYz",
+			"name": "Frost Shield",
+			"img": "modules/blue-codex-package/assets/spells/elements/ice/frost-shield.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "turn",
+						"boundary": "end",
+						"clock": "holder",
+						"span": "nextTurn",
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": null,
+						"effectName": ""
+					},
+					{
+						"kind": "event",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": "combatEnd",
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

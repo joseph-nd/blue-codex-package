@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-27
+
+### Changed
+- **Blue Codex now needs Nimble 0.11.0.** Nimble 0.11 rebuilt effects, reactions, the roll windows and the character
+  sheet, and it changes your world's data (its World Migration window asks first; back up your world). Blue Codex's
+  compendiums are in the new format, and its content sync and class-content refresh now bring each spell's and
+  feature's effects along to the copies your characters own.
+- **Defend spells are Defend options** (Frost Shield, Spark Counter, Flame Targe, Shield of Justice, Wind Barrier): pick
+  them in Nimble's Defend window, which Defends and casts at once.
+
+### Fixed
+- **Conditions from Codex spells and features apply again** (Ice Ray, Deathly Cry, Spark Counter, Death Shackle,
+  Enfeebling Blood, Howl in the Night, Electro Baton…): the old condition steps are Apply Effect steps with the
+  condition as an effect. Shadowfrost's Slowed and King of Fires' Smoldering land again.
+- **Codex Berserker on Nimble 0.11:** Immolating Fury (Ablaze), Beast Form and Soul Forged are item effects; Ablaze
+  ends when Raging ends; the Codex features that fire on Rage (Ablaze offer, Battle Hymn, Thunderous Bellow, Flaming
+  Heart) fire again, free Rages included.
+- **Codex rows in the roll and cast windows are back** (Deadeye, Shadowrime, Pilfered Power notices), and the sheet-open
+  repair (granted features, school sync, Dark Knowledge) runs on Nimble's new character sheet too.
+- Codex spells take Nimble 0.11's automation where the Blue design matches (Enchant Weapon, Seething Storm,
+  Electrocharge, Fly, Dread Visage, Dragonform, Frost Shield…), Arc Lightning and Razor Wind are one shared attack
+  (0.11 multi-target attacks cannot crit or miss otherwise), and saving throws use 0.11's save field.
+
 ## [0.12.3] - 2026-11-20
 
 ### Fixed

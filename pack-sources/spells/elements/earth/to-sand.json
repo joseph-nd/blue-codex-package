@@ -23,23 +23,26 @@
 				{
 					"id": "toSandSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "dexterity",
+					"savingThrowType": "dexterity",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "toSandCondition1",
-								"type": "condition",
-								"condition": "restrained",
+								"type": "applyEffect",
+								"effectId": "ajwCeg2pg9P6qhR9",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "toSandSave1"
 							},
 							{
 								"id": "toSandCondition2",
-								"type": "condition",
-								"condition": "prone",
+								"type": "applyEffect",
+								"effectId": "CA59r6bjSp7ry4GU",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "toSandSave1"
 							}
@@ -101,7 +104,66 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "CA59r6bjSp7ry4GU",
+			"name": "Prone",
+			"img": "icons/svg/falling.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"prone"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "ajwCeg2pg9P6qhR9",
+			"name": "Restrained",
+			"img": "icons/svg/net.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

@@ -5,7 +5,36 @@
 	"system": {
 		"macro": "",
 		"identifier": "spark-counter",
-		"rules": [],
+		"rules": [
+			{
+				"type": "defendOption",
+				"disabled": false,
+				"id": "jG57phtziq7CNPUg",
+				"identifier": "",
+				"label": "Spark Counter",
+				"predicate": {},
+				"priority": 1,
+				"way": "freeDefend",
+				"attackDelivery": "any",
+				"outcome": "none",
+				"armorBonus": "",
+				"useReroll": false,
+				"attackerEffectId": "",
+				"reminder": "After damage is dealt, you become Charged and can teleport anywhere in Range 4. Target yourself.",
+				"useItem": true,
+				"withInterpose": false,
+				"wholeRound": false,
+				"range": 2,
+				"chargePoolIdentifier": "",
+				"chargeCost": 1,
+				"actionCost": 0,
+				"manaCost": 0,
+				"woundCost": 0,
+				"upcastArmor": 0,
+				"alsoInterpose": false,
+				"oncePerTurn": false
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -22,8 +51,10 @@
 			"effects": [
 				{
 					"id": "sparkCounterCondition1",
-					"type": "condition",
-					"condition": "charged",
+					"type": "applyEffect",
+					"effectId": "EvgjB4jqgfESr70g",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -78,7 +109,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "EvgjB4jqgfESr70g",
+			"name": "Charged",
+			"img": "systems/nimble/assets/icons/charged.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"charged"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

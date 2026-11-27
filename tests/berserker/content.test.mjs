@@ -47,9 +47,14 @@ describe('Lycan natural weapons', () => {
 		});
 	});
 
-	it('Beast Form is a toggle (tag self:beast-form) that costs nothing', () => {
+	it('Beast Form is an item effect (tag self:beast-form) its free use applies to you (Nimble 0.11)', () => {
 		const doc = codex('lycan', 'beast-form');
-		expect(rule(doc, 'toggleEffect')).toMatchObject({ identifier: 'beast-form', tags: ['self:beast-form'] });
+		expect(doc.system.rules.some((r) => r.type === 'toggleEffect')).toBe(false);
+		const [effect] = doc.effects;
+		expect(effect).toMatchObject({ name: 'Beast Form', type: 'nimble', transfer: false });
+		expect(effect.system.rules).toMatchObject([{ type: 'tags', tags: ['self:beast-form'] }]);
+		expect(effect.system.lastsUntil.map((m) => m.event)).toEqual(['die', 'zeroHp', 'rest']);
+		expect(doc.system.activation.effects).toMatchObject([{ type: 'applyEffect', effectId: effect._id, recipient: 'self' }]);
 		expect(doc.system.activation.cost.type).toBe('none');
 	});
 });
@@ -67,9 +72,13 @@ describe('stat fixes (@key → STR)', () => {
 
 describe('save and damage nodes', () => {
 	it('Howl in the Night: a WIL save, Frightened on a failure', () => {
-		const [save] = codex('lycan', 'howl-in-the-night').system.activation.effects;
+		const doc = codex('lycan', 'howl-in-the-night');
+		const [save] = doc.system.activation.effects;
 		expect(save).toMatchObject({ type: 'savingThrow', saveType: 'will', savingThrowType: 'will' });
-		expect(save.on.failedSave.find((n) => n.type === 'condition')).toMatchObject({ condition: 'frightened', parentNode: save.id });
+		// Nimble 0.11: an Apply Effect step and its item effect, not a condition step.
+		const step = save.on.failedSave.find((n) => n.type === 'applyEffect');
+		expect(step).toMatchObject({ recipient: 'targets', parentNode: save.id });
+		expect(doc.effects.find((e) => e._id === step.effectId)).toMatchObject({ statuses: ['frightened'], transfer: false });
 	});
 
 	it('Blaze Breaker: Cone 3, DEX save, fire damage in full / half, a burning-area note', () => {
@@ -93,12 +102,19 @@ describe('save and damage nodes', () => {
 });
 
 describe('Cinderheart rules', () => {
-	it('Immolating Fury carries the Ablaze toggle (tag self:ablaze, only while Raging)', () => {
-		expect(rule(codex('cinderheart', 'immolating-fury'), 'toggleEffect')).toMatchObject({
-			identifier: 'ablaze',
-			tags: ['self:ablaze'],
-			predicate: { self: 'raging' },
-		});
+	it('Immolating Fury carries the Ablaze item effect (tag self:ablaze, ends when Raging ends)', () => {
+		const doc = codex('cinderheart', 'immolating-fury');
+		expect(doc.system.rules.some((r) => r.type === 'toggleEffect')).toBe(false);
+		const [effect] = doc.effects;
+		expect(effect).toMatchObject({ name: 'Ablaze', type: 'nimble', transfer: false });
+		expect(effect.system.rules).toMatchObject([{ type: 'tags', tags: ['self:ablaze'] }]);
+		expect(effect.system.lastsUntil.map((m) => [m.event, m.effectName])).toEqual([
+			['die', ''],
+			['combatEnd', ''],
+			['rest', ''],
+			['effectEnds', 'Raging'],
+		]);
+		expect(doc.system.activation.effects).toMatchObject([{ type: 'applyEffect', effectId: effect._id, recipient: 'self' }]);
 	});
 
 	it('King of Fires: fire resistance, and −STR fire while Ablaze', () => {

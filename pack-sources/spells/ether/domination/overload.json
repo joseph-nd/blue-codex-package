@@ -34,8 +34,7 @@
 				{
 					"id": "overloadSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "will",
+					"savingThrowType": "will",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {

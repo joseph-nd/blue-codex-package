@@ -40,6 +40,15 @@
 							}
 						]
 					}
+				},
+				{
+					"id": "aIGfndbWKW55u3UP",
+					"type": "applyEffect",
+					"effectId": "Rb9utkCIpUMOebM7",
+					"recipient": "self",
+					"tempHealingNodeId": null,
+					"parentContext": null,
+					"parentNode": null
 				}
 			],
 			"showDescription": true,
@@ -82,7 +91,76 @@
 			"choices": null
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "Rb9utkCIpUMOebM7",
+			"name": "Seething Storm",
+			"img": "modules/blue-codex-package/assets/spells/elements/lightning/seething-storm.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [
+					{
+						"type": "grantMovement",
+						"disabled": false,
+						"id": "7nUZGECxpy8Jn0ad",
+						"identifier": "",
+						"label": "Seething Storm",
+						"predicate": {},
+						"priority": 1,
+						"mode": "fly",
+						"speed": "@attributes.movement.walk"
+					},
+					{
+						"type": "heldRoll",
+						"disabled": false,
+						"id": "g5SUbD1cfZoFgsbD",
+						"identifier": "",
+						"label": "Seething Storm",
+						"predicate": {},
+						"priority": 1,
+						"heldKind": "advantage",
+						"value": -1,
+						"whichRoll": "attacksOnHolder",
+						"usedUp": false,
+						"meleeOnly": false,
+						"rangedOnly": true,
+						"fromSourceOnly": false,
+						"damageType": ""
+					}
+				],
+				"lastsUntil": [
+					{
+						"kind": "event",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "source",
+						"event": "loseConcentration",
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

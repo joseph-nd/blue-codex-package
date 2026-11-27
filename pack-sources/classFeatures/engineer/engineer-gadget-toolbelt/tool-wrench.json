@@ -53,8 +53,10 @@
 							},
 							{
 								"id": "twTbDazed",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "Jq0KZVz9WfmOC5BM",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "twTbDmg"
 							}
@@ -82,7 +84,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "Jq0KZVz9WfmOC5BM",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {
 		"blue-codex-package": {
 			"automation": {

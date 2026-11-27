@@ -36,22 +36,24 @@
 				{
 					"id": "ssTbSave",
 					"type": "savingThrow",
-					"saveType": "dexterity",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "ssTbProne",
-								"type": "condition",
-								"condition": "prone",
+								"type": "applyEffect",
+								"effectId": "i5XwqlsWImkjdUM8",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "ssTbSave"
 							}
 						],
 						"passedSave": []
 					},
-					"sharedRolls": []
+					"sharedRolls": [],
+					"savingThrowType": "dexterity"
 				}
 			],
 			"showDescription": true,
@@ -74,7 +76,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "i5XwqlsWImkjdUM8",
+			"name": "Prone",
+			"img": "icons/svg/falling.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"prone"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

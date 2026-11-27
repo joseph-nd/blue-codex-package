@@ -35,8 +35,10 @@
 			"effects": [
 				{
 					"id": "gbSlow",
-					"type": "condition",
-					"condition": "slowed",
+					"type": "applyEffect",
+					"effectId": "0otNcguDhuQtniFq",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -61,7 +63,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "0otNcguDhuQtniFq",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

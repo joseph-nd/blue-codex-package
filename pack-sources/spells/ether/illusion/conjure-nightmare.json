@@ -23,16 +23,17 @@
 				{
 					"id": "conjureNightmareSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "will",
+					"savingThrowType": "will",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"passedSave": [
 							{
 								"id": "conjureNightmareCondition2",
-								"type": "condition",
-								"condition": "taunted",
+								"type": "applyEffect",
+								"effectId": "ozFbJLgUigxKD7tJ",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "conjureNightmareSave1"
 							}
@@ -40,8 +41,10 @@
 						"failedSave": [
 							{
 								"id": "conjureNightmareCondition1",
-								"type": "condition",
-								"condition": "frightened",
+								"type": "applyEffect",
+								"effectId": "YVE7cKnYFlqGsrUM",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "conjureNightmareSave1"
 							}
@@ -117,7 +120,66 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "ozFbJLgUigxKD7tJ",
+			"name": "Taunted",
+			"img": "systems/nimble/assets/icons/taunted.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"taunted"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "YVE7cKnYFlqGsrUM",
+			"name": "Frightened",
+			"img": "icons/svg/terror.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"frightened"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

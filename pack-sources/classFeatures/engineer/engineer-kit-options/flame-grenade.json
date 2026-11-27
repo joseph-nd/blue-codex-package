@@ -53,8 +53,10 @@
 							},
 							{
 								"id": "fgSmold",
-								"type": "condition",
-								"condition": "smoldering",
+								"type": "applyEffect",
+								"effectId": "epLW5ky3pi2Bhj1F",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "fgDmg"
 							}
@@ -82,7 +84,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "epLW5ky3pi2Bhj1F",
+			"name": "Smoldering",
+			"img": "icons/svg/fire.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"smoldering"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

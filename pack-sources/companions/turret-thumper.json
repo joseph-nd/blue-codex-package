@@ -189,15 +189,16 @@
 						{
 							"id": "thumpBasicSave1",
 							"type": "savingThrow",
-							"saveType": "dexterity",
 							"parentContext": null,
 							"parentNode": null,
 							"on": {
 								"failedSave": [
 									{
 										"id": "thumpBasicProne1",
-										"type": "condition",
-										"condition": "prone",
+										"type": "applyEffect",
+										"effectId": "KBkohsDmquRUDLxS",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "failedSave",
 										"parentNode": "thumpBasicSave1"
 									}
@@ -205,14 +206,17 @@
 								"passedSave": [
 									{
 										"id": "thumpBasicSlow1",
-										"type": "condition",
-										"condition": "slowed",
+										"type": "applyEffect",
+										"effectId": "1cME9f7DzlCYS0k0",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "passedSave",
 										"parentNode": "thumpBasicSave1"
 									}
 								]
 							},
-							"sharedRolls": []
+							"sharedRolls": [],
+							"savingThrowType": "dexterity"
 						}
 					],
 					"showDescription": true,
@@ -230,7 +234,66 @@
 				"description": "<p><strong>1 Action (or on deploy), Burst: 1.</strong> Damage 1d8 Force. On a failed DEX save, Large and smaller enemies are knocked Prone. On a save, they are Slowed, 1 turn, instead.</p><hr><p><em>[A] DEX save: Prone on a fail, Slowed on a save.</em></p><p><em>[A] Overclocked bonuses are added by the module.</em></p><p><em>[M] Huge or larger enemies are not knocked Prone.</em></p>",
 				"subtype": "action"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"_id": "KBkohsDmquRUDLxS",
+					"name": "Prone",
+					"img": "icons/svg/falling.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"prone"
+					],
+					"flags": {},
+					"folder": null
+				},
+				{
+					"_id": "1cME9f7DzlCYS0k0",
+					"name": "Slowed",
+					"img": "systems/nimble/assets/icons/slowed.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"slowed"
+					],
+					"flags": {},
+					"folder": null
+				}
+			],
 			"folder": null,
 			"sort": 0,
 			"flags": {},
@@ -288,7 +351,6 @@
 						{
 							"id": "thumpSpecSave1",
 							"type": "savingThrow",
-							"saveType": "dexterity",
 							"parentContext": null,
 							"parentNode": null,
 							"on": {
@@ -305,14 +367,17 @@
 								"passedSave": [
 									{
 										"id": "thumpSpecSlow1",
-										"type": "condition",
-										"condition": "slowed",
+										"type": "applyEffect",
+										"effectId": "MTTIjcSMg5ragaeB",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "passedSave",
 										"parentNode": "thumpSpecSave1"
 									}
 								]
 							},
-							"sharedRolls": []
+							"sharedRolls": [],
+							"savingThrowType": "dexterity"
 						}
 					],
 					"showDescription": true,
@@ -330,7 +395,37 @@
 				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Burst: 2. The turret is destroyed afterwards.</strong> +Damage <strong>INTd8</strong> Force. On a failed DEX save, Large or smaller enemies are pushed INT spaces away, or Slowed, 1 minute, on a save. Targets pushed the full distance are also knocked Prone.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d8 (plus Overclocked) and posts the DEX save (Slowed on a save).</em></p><p><em>[M] On a failed save push Large or smaller enemies INT spaces (Prone if pushed the full distance); Slowed lasts 1 minute.</em></p>",
 				"subtype": "action"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"_id": "MTTIjcSMg5ragaeB",
+					"name": "Slowed",
+					"img": "systems/nimble/assets/icons/slowed.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"slowed"
+					],
+					"flags": {},
+					"folder": null
+				}
+			],
 			"folder": null,
 			"sort": 10,
 			"flags": {

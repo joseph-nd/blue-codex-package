@@ -42,8 +42,10 @@
 							},
 							{
 								"id": "doomBloomCrit1",
-								"type": "condition",
-								"condition": "prone",
+								"type": "applyEffect",
+								"effectId": "nVrAW9FRlrNe7BYF",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "criticalHit",
 								"parentNode": "doomBloomDamage1"
 							}
@@ -104,7 +106,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "nVrAW9FRlrNe7BYF",
+			"name": "Prone",
+			"img": "icons/svg/falling.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"prone"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

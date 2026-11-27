@@ -19,7 +19,17 @@
 				"quantity": 1,
 				"type": "minute"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "rNofv4CPXlfN0paw",
+					"type": "applyEffect",
+					"effectId": "4qJdrMhgXLiCq4of",
+					"recipient": "self",
+					"tempHealingNodeId": null,
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -59,12 +69,128 @@
 			"choices": [
 				{
 					"label": "+1 multiplier",
-					"deltas": []
+					"deltas": [
+						{
+							"operation": "raiseEffectRule",
+							"value": null,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "rNofv4CPXlfN0paw",
+							"durationType": null,
+							"maxDieFaces": null,
+							"ruleId": "eiTU9cGDEDcnN99E",
+							"ruleField": "formula",
+							"formula": "@key",
+							"momentIndex": null
+						}
+					]
 				}
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "4qJdrMhgXLiCq4of",
+			"name": "Dread Visage",
+			"img": "modules/blue-codex-package/assets/spells/ruin/shadow/dread-visage.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [
+					{
+						"type": "damageBack",
+						"disabled": false,
+						"id": "eiTU9cGDEDcnN99E",
+						"identifier": "",
+						"label": "Dread Visage",
+						"predicate": {},
+						"priority": 1,
+						"trigger": "damaged",
+						"attackDelivery": "melee",
+						"notOnAllies": false,
+						"onlyCrits": false,
+						"answeredAttack": false,
+						"amount": "formula",
+						"formula": "2*@key",
+						"damageType": "",
+						"ignoreArmor": true,
+						"woundDoubles": false,
+						"attackerEffectId": "fvFvGYBJAUOzBpvo"
+					}
+				],
+				"lastsUntil": [
+					{
+						"kind": "event",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "source",
+						"event": "loseConcentration",
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "fvFvGYBJAUOzBpvo",
+			"name": "Frightened",
+			"img": "icons/svg/terror.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "turn",
+						"boundary": "end",
+						"clock": "holder",
+						"span": "nextTurn",
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"frightened"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

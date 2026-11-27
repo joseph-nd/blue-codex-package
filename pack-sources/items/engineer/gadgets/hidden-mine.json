@@ -36,7 +36,6 @@
 				{
 					"id": "hmBaseSave",
 					"type": "savingThrow",
-					"saveType": "dexterity",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
@@ -75,7 +74,8 @@
 							"canCrit": false,
 							"canMiss": false
 						}
-					]
+					],
+					"savingThrowType": "dexterity"
 				}
 			],
 			"showDescription": true,

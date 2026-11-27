@@ -172,11 +172,105 @@ export function createDocumentClasses(env) {
 		}
 	}
 
+	/** An item's embedded ActiveEffect, read straight from the item's `_source.effects` entry. */
+	class ItemEffect {
+		constructor(src, parent) {
+			this._source = src;
+			this.parent = parent;
+		}
+		get id() {
+			return this._source._id;
+		}
+		get _id() {
+			return this._source._id;
+		}
+		get name() {
+			return this._source.name;
+		}
+		get img() {
+			return this._source.img;
+		}
+		get type() {
+			return this._source.type;
+		}
+		get system() {
+			return this._source.system;
+		}
+		get statuses() {
+			return new Set(this._source.statuses ?? []);
+		}
+		get transfer() {
+			return !!this._source.transfer;
+		}
+		get flags() {
+			return this._source.flags ?? {};
+		}
+		toObject() {
+			return deepClone(this._source);
+		}
+	}
+
 	class Item extends Document {
 		static documentName = 'Item';
 		static metadata = { name: 'Item', compendiumIndexFields: ITEM_INDEX_FIELDS };
 		static get database() {
 			return env.database;
+		}
+
+		/**
+		 * Item effects (Nimble 0.11 keeps what an item gives on the item): a fresh
+		 * Collection over `_source.effects` on each read, with embedded
+		 * ActiveEffect create / update / delete below.
+		 */
+		get effects() {
+			const out = new Collection();
+			for (const src of this._source.effects ?? []) if (src?._id) out.set(src._id, new ItemEffect(src, this));
+			return out;
+		}
+
+		#assertEffects(name) {
+			if (name !== 'ActiveEffect') throw new Error(`harness: embedded ${name} on an Item is not simulated (only ActiveEffect)`);
+		}
+
+		async createEmbeddedDocuments(name, data = [], options = {}) {
+			this.#assertEffects(name);
+			this._source.effects ??= [];
+			const list = this._source.effects;
+			const created = [];
+			for (const raw of data) {
+				const src = deepClone(raw);
+				if (!options.keepId || !src._id) src._id = randomID();
+				if (list.some((e) => e?._id === src._id)) throw new Error(`harness: ActiveEffect id ${src._id} already exists on ${this.name}`);
+				list.push(src);
+				created.push(new ItemEffect(src, this));
+			}
+			env.log.push({ method: 'createEmbeddedDocuments', item: this.uuid, embeddedName: name, ids: created.map((e) => e.id) });
+			return created;
+		}
+
+		async updateEmbeddedDocuments(name, updates = []) {
+			this.#assertEffects(name);
+			const list = this._source.effects ?? [];
+			const updated = [];
+			for (const update of updates) {
+				const src = list.find((e) => e?._id === update?._id);
+				if (!src) throw new Error(`harness: ActiveEffect "${update?._id}" does not exist on ${this.name}`);
+				mergeObject(src, deepClone(expandObject(stripId(update))), { applyOperators: true });
+				updated.push(new ItemEffect(src, this));
+			}
+			env.log.push({ method: 'updateEmbeddedDocuments', item: this.uuid, embeddedName: name, ids: updated.map((e) => e.id) });
+			return updated;
+		}
+
+		async deleteEmbeddedDocuments(name, ids = []) {
+			this.#assertEffects(name);
+			const list = this._source.effects ?? [];
+			for (const id of ids) {
+				if (!list.some((e) => e?._id === id)) throw new Error(`harness: ActiveEffect "${id}" does not exist on ${this.name}`);
+			}
+			this._source.effects = list.filter((e) => !ids.includes(e?._id));
+			env.log.push({ method: 'deleteEmbeddedDocuments', item: this.uuid, embeddedName: name, ids });
+			return ids;
 		}
 
 		prepareBaseData() {

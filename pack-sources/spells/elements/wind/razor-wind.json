@@ -67,7 +67,8 @@
 				"count": 2,
 				"restrictions": "",
 				"attackType": "range",
-				"distance": 12
+				"distance": 12,
+				"singleTargetAttack": true
 			},
 			"template": {
 				"length": 1,

@@ -41,8 +41,10 @@
 							},
 							{
 								"id": "insectSwarmCondition1",
-								"type": "condition",
-								"condition": "poisoned",
+								"type": "applyEffect",
+								"effectId": "i6zcGhxUkxGq9vTK",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "insectSwarmDamage1"
 							}
@@ -126,7 +128,49 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "i6zcGhxUkxGq9vTK",
+			"name": "Poisoned",
+			"img": "icons/svg/poison.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "turn",
+						"boundary": "end",
+						"clock": "holder",
+						"span": "nextTurn",
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"poisoned"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

@@ -35,22 +35,25 @@
 								"id": "enfeeblingBloodSave1",
 								"type": "savingThrow",
 								"savingThrowType": "strength",
-								"saveType": "strength",
 								"parentContext": "hit",
 								"parentNode": "enfeeblingBloodDamage1",
 								"on": {
 									"failedSave": [
 										{
 											"id": "enfeeblingBloodCondition1",
-											"type": "condition",
-											"condition": "poisoned",
+											"type": "applyEffect",
+											"effectId": "FNzv3CYBMjN4wcKP",
+											"recipient": "targets",
+											"tempHealingNodeId": null,
 											"parentContext": "failedSave",
 											"parentNode": "enfeeblingBloodSave1"
 										},
 										{
 											"id": "enfeeblingBloodCondition2",
-											"type": "condition",
-											"condition": "slowed",
+											"type": "applyEffect",
+											"effectId": "yzlhpeG8DRWkaDEP",
+											"recipient": "targets",
+											"tempHealingNodeId": null,
 											"parentContext": "failedSave",
 											"parentNode": "enfeeblingBloodSave1"
 										}
@@ -135,7 +138,90 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "yzlhpeG8DRWkaDEP",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "time",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": 1,
+						"units": "minutes",
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "FNzv3CYBMjN4wcKP",
+			"name": "Poisoned",
+			"img": "icons/svg/poison.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "time",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": 1,
+						"units": "minutes",
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"poisoned"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

@@ -5,7 +5,36 @@
 	"system": {
 		"macro": "",
 		"identifier": "shield-of-justice",
-		"rules": [],
+		"rules": [
+			{
+				"type": "defendOption",
+				"disabled": false,
+				"id": "TpcUKlkhY66TvZd4",
+				"identifier": "",
+				"label": "Shield of Justice",
+				"predicate": {},
+				"priority": 1,
+				"way": "freeDefend",
+				"attackDelivery": "any",
+				"outcome": "none",
+				"armorBonus": "",
+				"useReroll": false,
+				"attackerEffectId": "",
+				"reminder": "The attacker takes damage equal to the damage blocked (ignoring armor).",
+				"useItem": true,
+				"withInterpose": false,
+				"wholeRound": false,
+				"range": 2,
+				"chargePoolIdentifier": "",
+				"chargeCost": 1,
+				"actionCost": 0,
+				"manaCost": 0,
+				"woundCost": 0,
+				"upcastArmor": 0,
+				"alsoInterpose": false,
+				"oncePerTurn": false
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {

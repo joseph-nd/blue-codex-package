@@ -40,8 +40,10 @@
 							},
 							{
 								"id": "flameWallCondition1",
-								"type": "condition",
-								"condition": "smoldering",
+								"type": "applyEffect",
+								"effectId": "FpWKaMx7XSDR4T2w",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "flameWallDamage1"
 							}
@@ -118,7 +120,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "FpWKaMx7XSDR4T2w",
+			"name": "Smoldering",
+			"img": "icons/svg/fire.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"smoldering"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

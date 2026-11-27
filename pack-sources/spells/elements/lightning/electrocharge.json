@@ -19,7 +19,17 @@
 				"quantity": 1,
 				"type": "minute"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "yBVHfHKYrPCsrqk1",
+					"type": "applyEffect",
+					"effectId": "QmQuJeUwbvpFHUgs",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -60,16 +70,133 @@
 			"choices": [
 				{
 					"label": "+5 Armor",
-					"deltas": []
+					"deltas": [
+						{
+							"operation": "raiseEffectRule",
+							"value": null,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "yBVHfHKYrPCsrqk1",
+							"durationType": null,
+							"maxDieFaces": null,
+							"ruleId": "zzb2pfwx10aFfgMY",
+							"ruleField": "formula",
+							"formula": "5",
+							"momentIndex": null
+						}
+					]
 				},
 				{
 					"label": "+6 speed",
-					"deltas": []
+					"deltas": [
+						{
+							"operation": "raiseEffectRule",
+							"value": null,
+							"dice": null,
+							"condition": null,
+							"targetEffectId": "yBVHfHKYrPCsrqk1",
+							"durationType": null,
+							"maxDieFaces": null,
+							"ruleId": "rDgj3s8GSvPFDhKZ",
+							"ruleField": "value",
+							"formula": "6",
+							"momentIndex": null
+						}
+					]
 				}
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "QmQuJeUwbvpFHUgs",
+			"name": "Electrocharge",
+			"img": "modules/blue-codex-package/assets/spells/elements/lightning/electrocharge.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [
+					{
+						"type": "armorClass",
+						"disabled": false,
+						"id": "zzb2pfwx10aFfgMY",
+						"identifier": "",
+						"label": "Electrocharge",
+						"predicate": {},
+						"priority": 1,
+						"formula": "5",
+						"mode": "add"
+					},
+					{
+						"type": "maxActionBonus",
+						"disabled": false,
+						"id": "OsMIjxWyEmctEN1h",
+						"identifier": "",
+						"label": "Electrocharge",
+						"predicate": {},
+						"priority": 1,
+						"value": "1"
+					},
+					{
+						"type": "speedBonus",
+						"disabled": false,
+						"id": "rDgj3s8GSvPFDhKZ",
+						"identifier": "",
+						"label": "Electrocharge",
+						"predicate": {},
+						"priority": 1,
+						"value": "6",
+						"movementType": "walk"
+					},
+					{
+						"type": "situationalRollMode",
+						"disabled": false,
+						"id": "yh3AnVU3EeQc2EEI",
+						"identifier": "",
+						"label": "Electrocharge",
+						"predicate": {},
+						"priority": 1,
+						"value": 1,
+						"checkType": "savingThrow",
+						"saves": [
+							"dexterity"
+						],
+						"abilities": [],
+						"skills": []
+					}
+				],
+				"lastsUntil": [
+					{
+						"kind": "event",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "source",
+						"event": "loseConcentration",
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

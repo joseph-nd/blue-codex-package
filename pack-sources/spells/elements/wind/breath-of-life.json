@@ -19,7 +19,16 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "abEyZMxoMlYV7MO5",
+					"type": "healing",
+					"healingType": "healing",
+					"formula": "1",
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,

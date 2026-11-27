@@ -57,15 +57,16 @@
 				{
 					"id": "ssSave",
 					"type": "savingThrow",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "ssStun",
-								"type": "condition",
-								"condition": "stunned",
+								"type": "applyEffect",
+								"effectId": "Y0GKCw6AChxjLjLV",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "ssSave"
 							}
@@ -73,14 +74,17 @@
 						"passedSave": [
 							{
 								"id": "ssDaze",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "WkJZGTOdQBhqqyNX",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "ssSave"
 							}
 						]
 					},
-					"sharedRolls": []
+					"sharedRolls": [],
+					"savingThrowType": "strength"
 				}
 			],
 			"showDescription": true,
@@ -103,7 +107,66 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "Y0GKCw6AChxjLjLV",
+			"name": "Stunned",
+			"img": "systems/nimble/assets/icons/stunned.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"stunned"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "WkJZGTOdQBhqqyNX",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

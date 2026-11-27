@@ -5,28 +5,7 @@
 	"system": {
 		"macro": "",
 		"identifier": "beast-form",
-		"rules": [
-			{
-				"type": "toggleEffect",
-				"disabled": false,
-				"id": "beastFormToggle",
-				"identifier": "beast-form",
-				"label": "Beast Form",
-				"predicate": {},
-				"priority": 1,
-				"tags": [
-					"self:beast-form"
-				],
-				"turnOff": [
-					"onActorKilled",
-					"onActorDying",
-					"onRest"
-				],
-				"confirmEndPrompt": "",
-				"clearPoolsOnEnd": [],
-				"endAfterInactiveRounds": null
-			}
-		],
+		"rules": [],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {
@@ -40,7 +19,17 @@
 				"quantity": 1,
 				"type": "none"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"id": "beastFormToggle",
+					"type": "applyEffect",
+					"effectId": "pyIWcf822hH0qPLk",
+					"recipient": "self",
+					"tempHealingNodeId": null,
+					"parentContext": null,
+					"parentNode": null
+				}
+			],
 			"showDescription": true,
 			"targets": {
 				"count": 1,
@@ -53,7 +42,7 @@
 				"width": 1
 			}
 		},
-		"description": "<p>Free Action. You can transform into an animal representation of your Lycanthrope curse gaining your Lycan Fury features, but no other benefits from Raging. You cannot speak, do activities requiring hands or anything a normal animal couldn't do.</p><hr><p><em>[A] Using this feature turns Beast Form on (an effect on your token, switched off from the effects panel): your natural weapons, the +DEX speed and the That all you got?! bonus apply without Raging.</em></p><p><em>[M] Speech, hands and what a normal animal could not do are for the table.</em></p>",
+		"description": "<p>Free Action. You can transform into an animal representation of your Lycanthrope curse gaining your Lycan Fury features, but no other benefits from Raging. You cannot speak, do activities requiring hands or anything a normal animal couldn't do.</p><hr><p><em>[A] Using this feature gives you the Beast Form effect (it ends at 0 HP, on death or a rest, or when you remove it from your Effects tab): your natural weapons, the +DEX speed and the That all you got?! bonus apply without Raging.</em></p><p><em>[M] Speech, hands and what a normal animal could not do are for the table.</em></p>",
 		"featureType": "class",
 		"class": "berserker",
 		"group": "path-of-the-lycan",
@@ -63,7 +52,82 @@
 		"selectionCountByLevel": {},
 		"subclass": true
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "pyIWcf822hH0qPLk",
+			"name": "Beast Form",
+			"img": "modules/blue-codex-package/assets/features/berserker/path-of-the-lycan/beast-form.webp",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [
+					{
+						"type": "tags",
+						"disabled": false,
+						"identifier": "",
+						"label": "Beast Form",
+						"predicate": {},
+						"priority": 1,
+						"id": "o1AiCETyzKvu5S6m",
+						"tags": [
+							"self:beast-form"
+						]
+					}
+				],
+				"lastsUntil": [
+					{
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "holder",
+						"event": "die",
+						"effectName": "",
+						"kind": "event"
+					},
+					{
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "holder",
+						"event": "zeroHp",
+						"effectName": "",
+						"kind": "event"
+					},
+					{
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "holder",
+						"event": "rest",
+						"effectName": "",
+						"kind": "event"
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

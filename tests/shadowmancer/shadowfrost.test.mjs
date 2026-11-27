@@ -43,8 +43,11 @@ describe('Shadowfrost', () => {
 		const restore = h.applyShadowfrost(spell);
 		expect(spell.system.activation.effects[0].on.hit.at(-1)).toEqual({
 			id: h.SHADOWFROST_NODE_ID,
-			type: 'condition',
+			type: 'applyEffect',
+			effectId: null,
 			condition: 'slowed',
+			recipient: 'targets',
+			tempHealingNodeId: null,
 			parentContext: 'hit',
 			parentNode: 'shadowBlastDamage1',
 		});

@@ -40,8 +40,10 @@
 							},
 							{
 								"id": "colorSprayCondition1",
-								"type": "condition",
-								"condition": "blinded",
+								"type": "applyEffect",
+								"effectId": "Bf650EWyLaymUFEc",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "hit",
 								"parentNode": "colorSprayDamage1"
 							}
@@ -83,7 +85,60 @@
 		"tier": 0,
 		"classes": []
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "Bf650EWyLaymUFEc",
+			"name": "Blind",
+			"img": "icons/svg/blind.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "time",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": 1,
+						"units": "rounds",
+						"who": null,
+						"event": null,
+						"effectName": ""
+					},
+					{
+						"kind": "event",
+						"boundary": null,
+						"clock": null,
+						"span": null,
+						"value": null,
+						"units": null,
+						"who": "holder",
+						"event": "takeDamage",
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"blinded"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

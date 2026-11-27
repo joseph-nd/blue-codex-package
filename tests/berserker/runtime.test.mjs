@@ -309,11 +309,14 @@ async function cinderWorld(opts = {}) {
 }
 
 describe('Ablaze (Immolating Fury)', () => {
-	it('setting Ablaze creates the toggle effect and burns for STR at once (Undo restores)', async () => {
-		const { env, h, actor } = await cinderWorld();
+	it("setting Ablaze copies Immolating Fury's Ablaze effect and burns for STR at once (Undo restores)", async () => {
+		const { env, h, actor, item } = await cinderWorld();
 		expect(await h.cbzSetAblaze(actor)).toBe(true);
 		expect(h.cbzIsAblaze(actor)).toBe(true);
-		const effect = actor.effects.find((e) => e.flags.nimble?.toggleEffectRuleId === 'ablazeToggle');
+		const effect = actor.effects.find((e) => e.name === 'Ablaze');
+		expect(effect).toMatchObject({ type: 'nimble', origin: item('Immolating Fury').uuid, disabled: false });
+		expect(effect.system.rules).toMatchObject([{ type: 'tags', tags: ['self:ablaze'] }]);
+		expect(effect.system.lastsUntil.at(-1)).toMatchObject({ event: 'effectEnds', effectName: 'Raging' });
 		expect(effect.flags[MODULE_ID].codexBerserker.ablaze).toEqual({ combatId: 'combatArena00001', round: 1 });
 		expect(actor.system.attributes.hp.value).toBe(27);
 		const undo = undoOf(lastCard(env));
@@ -358,12 +361,28 @@ describe('Ablaze (Immolating Fury)', () => {
 		})();
 	});
 
-	it('ends with the Rage', async () => {
+	it('ends with the Rage: the system ends it through its "Raging ends" moment; an old copy without it is ended here', async () => {
 		const { h, actor } = await cinderWorld();
-		await startRaging(actor);
+		const raging = await startRaging(actor);
+		expect(h.cbzIsRaging(actor)).toBe(true);
 		await h.cbzSetAblaze(actor);
-		expect(await h.cbzOnRageEnded(actor)).toBe(true);
+		expect(await h.cbzOnRageEnded(actor, raging)).toBe(false); // the system's Lasts Until does it
+		expect(h.cbzIsAblaze(actor)).toBe(true);
+		const ablaze = actor.effects.find((e) => e.name === 'Ablaze');
+		ablaze.system.lastsUntil = ablaze.system.lastsUntil.filter((m) => m.event !== 'effectEnds'); // a copy from an old toggle
+		expect(await h.cbzOnRageEnded(actor, raging)).toBe(true);
 		expect(h.cbzIsAblaze(actor)).toBe(false);
+	});
+
+	it('a Rage while Raging (the system replaces the effect) leaves Ablaze alone', async () => {
+		const { h, actor } = await cinderWorld();
+		const raging = await startRaging(actor);
+		await h.cbzSetAblaze(actor);
+		const ablaze = actor.effects.find((e) => e.name === 'Ablaze');
+		ablaze.system.lastsUntil = [];
+		await actor.deleteEmbeddedDocuments('ActiveEffect', [raging.id], { nimbleConditionReplaced: true });
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		expect(h.cbzIsAblaze(actor)).toBe(true);
 	});
 
 	it('using Immolating Fury while Raging lights it (the system activation is replaced)', async () => {

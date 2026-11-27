@@ -50,8 +50,10 @@
 							},
 							{
 								"id": "engFlamethrowerDmg-cc",
-								"type": "condition",
-								"condition": "smoldering",
+								"type": "applyEffect",
+								"effectId": "NsUvB5sD4naZqNBr",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "criticalHit",
 								"parentNode": "engFlamethrowerDmg"
 							}
@@ -119,7 +121,37 @@
 			"denomination": "gp"
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "NsUvB5sD4naZqNBr",
+			"name": "Smoldering",
+			"img": "icons/svg/fire.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"smoldering"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

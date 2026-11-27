@@ -54,6 +54,8 @@ export function rage({ faces = [], max = 3, dieSize = 'd4' } = {}) {
 /** ActiveEffect CRUD, statuses, toggleStatusEffect and applyDamage on one actor. */
 export function enableEffects(env, actor) {
 	actor.effects ??= new Collection();
+	// Harness items keep their embedded effects only in the source (Foundry: an EmbeddedCollection).
+	for (const item of actor.items ?? []) item.effects ??= deepClone(item._source?.effects ?? []);
 	const make = (data) => {
 		const effect = {
 			...deepClone(data),
@@ -120,12 +122,11 @@ export function enableEffects(env, actor) {
 	return actor;
 }
 
-/** A Rage toggle effect (as the system's toggleEffect creates it) on a Berserker. */
+/** Raging on a Berserker, as Rage's Apply Effect step makes it (Nimble 0.11): a copy of its item effect, Rage as origin. */
 export async function startRaging(actor) {
 	const item = actor.items.find((i) => i.name === 'Rage');
-	const [effect] = await actor.createEmbeddedDocuments('ActiveEffect', [
-		{ name: 'Rage', disabled: false, flags: { [SYS]: { toggleEffectRuleId: 'rage-toggle', toggleEffectItemId: item.id } } },
-	]);
+	const { _id: _drop, ...raging } = deepClone(RAGE.effects.find((e) => e.name === 'Raging'));
+	const [effect] = await actor.createEmbeddedDocuments('ActiveEffect', [{ ...raging, origin: item.uuid, disabled: false }]);
 	return effect;
 }
 

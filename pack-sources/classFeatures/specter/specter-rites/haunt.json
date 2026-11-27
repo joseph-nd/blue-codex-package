@@ -22,8 +22,10 @@
 			"effects": [
 				{
 					"id": "SoulRiteHauntCnd",
-					"type": "condition",
-					"condition": "frightened",
+					"type": "applyEffect",
+					"effectId": "KF2rW2rnrdG2lnmj",
+					"recipient": "targets",
+					"tempHealingNodeId": null,
 					"parentContext": null,
 					"parentNode": null
 				}
@@ -50,7 +52,37 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "KF2rW2rnrdG2lnmj",
+			"name": "Frightened",
+			"img": "icons/svg/terror.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"frightened"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {
 		"blue-codex-package": {
 			"automation": {

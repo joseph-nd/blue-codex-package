@@ -36,29 +36,34 @@
 				{
 					"id": "cgSave",
 					"type": "savingThrow",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"failedSave": [
 							{
 								"id": "cgBlind",
-								"type": "condition",
-								"condition": "blinded",
+								"type": "applyEffect",
+								"effectId": "WVvkwLUe1kOR2gy4",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "cgSave"
 							},
 							{
 								"id": "cgDazeF",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "bxSWazJHkkZO6aV5",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "cgSave"
 							},
 							{
 								"id": "cgSlow",
-								"type": "condition",
-								"condition": "slowed",
+								"type": "applyEffect",
+								"effectId": "ttCXmyol0UEI7HS5",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "cgSave"
 							}
@@ -66,14 +71,17 @@
 						"passedSave": [
 							{
 								"id": "cgDazeP",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "bxSWazJHkkZO6aV5",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "cgSave"
 							}
 						]
 					},
-					"sharedRolls": []
+					"sharedRolls": [],
+					"savingThrowType": "strength"
 				}
 			],
 			"showDescription": true,
@@ -96,7 +104,95 @@
 		"selectionCountByLevel": {},
 		"subclass": false
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "ttCXmyol0UEI7HS5",
+			"name": "Slowed",
+			"img": "systems/nimble/assets/icons/slowed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"slowed"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "bxSWazJHkkZO6aV5",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		},
+		{
+			"_id": "WVvkwLUe1kOR2gy4",
+			"name": "Blind",
+			"img": "icons/svg/blind.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"blinded"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

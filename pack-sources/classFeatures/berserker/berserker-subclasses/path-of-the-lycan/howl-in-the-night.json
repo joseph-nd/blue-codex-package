@@ -31,8 +31,10 @@
 						"failedSave": [
 							{
 								"id": "howlInTheNightFrightened",
-								"type": "condition",
-								"condition": "frightened",
+								"type": "applyEffect",
+								"effectId": "YTJ7u6THLlZ4l8hf",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "failedSave",
 								"parentNode": "howlInTheNightSave"
 							},
@@ -72,7 +74,37 @@
 		"selectionCountByLevel": {},
 		"subclass": true
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "YTJ7u6THLlZ4l8hf",
+			"name": "Frightened",
+			"img": "icons/svg/terror.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"frightened"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

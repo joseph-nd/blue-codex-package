@@ -40,6 +40,27 @@
 							}
 						]
 					}
+				},
+				{
+					"id": "eFfPZUWj9OGAcisJ",
+					"type": "savingThrow",
+					"savingThrowType": "dexterity",
+					"sharedRolls": [],
+					"on": {
+						"failedSave": [
+							{
+								"id": "fCXJHBU0Y6BQpjSI",
+								"type": "applyEffect",
+								"effectId": "ID7LVAEhQdqWXtiZ",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
+								"parentContext": "failedSave",
+								"parentNode": "eFfPZUWj9OGAcisJ"
+							}
+						]
+					},
+					"parentContext": null,
+					"parentNode": null
 				}
 			],
 			"showDescription": true,
@@ -101,7 +122,49 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "ID7LVAEhQdqWXtiZ",
+			"name": "Restrained",
+			"img": "systems/nimble/assets/icons/restrained.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [
+					{
+						"kind": "turn",
+						"boundary": "start",
+						"clock": "holder",
+						"span": "nextTurn",
+						"value": null,
+						"units": null,
+						"who": null,
+						"event": null,
+						"effectName": ""
+					}
+				],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"restrained"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

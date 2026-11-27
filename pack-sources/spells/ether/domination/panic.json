@@ -64,16 +64,17 @@
 				{
 					"id": "panicSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "intelligence",
+					"savingThrowType": "intelligence",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {
 						"passedSave": [
 							{
 								"id": "panicCondition1",
-								"type": "condition",
-								"condition": "dazed",
+								"type": "applyEffect",
+								"effectId": "q8e0C5eaO23twjYP",
+								"recipient": "targets",
+								"tempHealingNodeId": null,
 								"parentContext": "passedSave",
 								"parentNode": "panicSave1"
 							}
@@ -147,7 +148,37 @@
 			]
 		}
 	},
-	"effects": [],
+	"effects": [
+		{
+			"_id": "q8e0C5eaO23twjYP",
+			"name": "Dazed",
+			"img": "systems/nimble/assets/icons/dazed.svg",
+			"type": "nimble",
+			"system": {
+				"changes": [],
+				"rules": [],
+				"lastsUntil": [],
+				"escape": {
+					"dc": "",
+					"saves": [
+						"strength",
+						"dexterity"
+					]
+				},
+				"tempHp": null,
+				"minor": false
+			},
+			"description": "",
+			"disabled": false,
+			"origin": null,
+			"transfer": false,
+			"statuses": [
+				"dazed"
+			],
+			"flags": {},
+			"folder": null
+		}
+	],
 	"flags": {},
 	"_stats": {
 		"coreVersion": "13",

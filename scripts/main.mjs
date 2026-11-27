@@ -8538,6 +8538,12 @@ function deadeyeShowsPress(actor, item) {
 // Checkbox rows in the system's activation dialog — same placement rules as
 // Nim+'s Vicious Opportunist box: appended last in the dialog body, borrowing a
 // native sibling's svelte-scoped class so the dialog's own styles apply.
+// Nimble 0.11 builds the roll and cast windows on RollWindow (`.roll-window > .fields`);
+// 0.10 had `.nimble-roll-modifiers-container` rows inside `.nimble-sheet__body`.
+function bcxRollWindowBody(root) {
+	return root?.querySelector?.('.roll-window .fields') ?? root?.querySelector?.('.nimble-sheet__body') ?? null;
+}
+
 function injectDeadeyeControls(app, root) {
 	const actor = app?.actor;
 	const item = app?.item;
@@ -8548,7 +8554,7 @@ function injectDeadeyeControls(app, root) {
 	if (!showThrown && !showPress) return;
 
 	const sibling = root.querySelector('.nimble-roll-modifiers-container');
-	const body = sibling?.parentElement ?? root.querySelector('.nimble-sheet__body');
+	const body = sibling?.parentElement ?? bcxRollWindowBody(root);
 	if (!body) return;
 	const scoped = Array.from(sibling?.classList ?? []).find((name) => name.startsWith('svelte-')) ?? '';
 
@@ -10510,7 +10516,7 @@ function injectShadowrimeOption(app, item, state) {
 	section.querySelector('input')?.addEventListener('change', (event) => {
 		state.checked = event.currentTarget?.checked === true;
 	});
-	(root.querySelector('.nimble-sheet__body') ?? root).append(section);
+	(bcxRollWindowBody(root) ?? root).append(section);
 }
 
 /**
@@ -10567,7 +10573,7 @@ function injectForcedUpcastSection(app, { cap, doUpcast, choices, pick }) {
 	}
 
 	if (native instanceof HTMLElement) native.after(section);
-	else (root.querySelector('.nimble-sheet__body') ?? root).append(section);
+	else (bcxRollWindowBody(root) ?? root).append(section);
 }
 
 // preUseItem (fires before the system deducts mana, upcast passed by reference).
@@ -11061,7 +11067,8 @@ function applyShadowfrost(item) {
 	node.on.hit ??= [];
 	const hit = node.on.hit;
 	if (hit.some((n) => n?.id === SHADOWFROST_NODE_ID)) return null;
-	const added = { id: SHADOWFROST_NODE_ID, type: 'condition', condition: 'slowed', parentContext: 'hit', parentNode: node.id };
+	// Nimble 0.11: an Apply Effect step that names a condition (no item effect) applies it from the card.
+	const added = { id: SHADOWFROST_NODE_ID, type: 'applyEffect', effectId: null, condition: 'slowed', recipient: 'targets', tempHealingNodeId: null, parentContext: 'hit', parentNode: node.id };
 	hit.push(added);
 	return () => {
 		const index = hit.indexOf(added);
@@ -11268,7 +11275,7 @@ function injectPilferedPowerNotice(app, plan) {
 		? 'margin:0.25rem 0;color:hsl(275 60% 60%);font-weight:600'
 		: 'margin:0.25rem 0;color:#c0392b;font-weight:600';
 	note.textContent = pilferedPowerNoticeText(app.actor, plan);
-	(root.querySelector('.nimble-sheet__body') ?? root).prepend(note);
+	(bcxRollWindowBody(root) ?? root).prepend(note);
 }
 
 // ── Armor of Shadows ──
@@ -12354,14 +12361,24 @@ function setupPilferedPowerObserver(app) {
 	syncPilferedPower(app);
 }
 
-Hooks.on('renderPlayerCharacterSheet', (app) => {
+// Nimble 0.11 opens characters in its new HeroSheet; the old sheet stays
+// selectable in Configure Sheet. Both run the sheet-open repair. The Pilfered
+// Power reskin is old-sheet only: it patches that sheet's mana heading, and the
+// HeroSheet draws the native Pilfered Power pool as a rail meter.
+function onCharacterSheetOpen(app) {
 	const actor = app?.document ?? app?.actor;
 	if (actor) {
 		wrapTriggerLevelUp(actor);
 		handleActorFeatures(actor);
 	}
+}
+
+Hooks.on('renderPlayerCharacterSheet', (app) => {
+	onCharacterSheetOpen(app);
 	setupPilferedPowerObserver(app);
 });
+
+Hooks.on('renderHeroSheet', onCharacterSheetOpen);
 
 Hooks.on('closePlayerCharacterSheet', (app) => {
 	try {
@@ -12683,11 +12700,14 @@ function buildRefreshUpdate(item, doc) {
 		flagUpdates[`flags.${MODULE_ID}.${key}`] = next === null ? null : foundry.utils.deepClone(next);
 		changed.push(`flag:${key}`);
 	}
+	// Nimble 0.11: the steps point at item effects; bring the pack's along (applied after the update).
+	const effectsChanged = item.type !== 'subclass' && bcxEffectsDiffer(item, doc);
+	if (effectsChanged) changed.push('effects');
 	if (!changed.length) return null;
 
 	const update = { _id: item.id, name: packSource.name, img: packSource.img, ...flagUpdates };
 	for (const key of keys) update[`system.${key}`] = system[key];
-	return { update, changed, name: item.name, to: packSource.name };
+	return { update, changed, name: item.name, to: packSource.name, effectsFrom: effectsChanged ? doc : null };
 }
 
 function grantItemRulesOf(rules) {
@@ -13147,6 +13167,10 @@ async function applyClassContentRefresh(plan) {
 				'Item',
 				updates.map((entry) => entry.update),
 			);
+			for (const entry of updates) {
+				const owned = entry.effectsFrom ? actor.items?.get?.(entry.update._id) : null;
+				if (owned) await bcxSyncItemEffects(owned, entry.effectsFrom);
+			}
 			result.updated = updates.length;
 			result.updatedEntries = updates;
 		} catch (error) {
@@ -13530,6 +13554,91 @@ function flagChangeLabels(key, from, to) {
 	return [key === 'automation' ? 'automation' : `${key} flag`];
 }
 
+
+// ── Item effects in the content sync (Nimble 0.11) ───────────────────────────
+// Nimble 0.11 keeps what an item gives as item effects; an Apply Effect step names
+// one by id. A sync that rewrote only `system` would leave those steps pointing at
+// effects the owned copy lacks, so the sync also brings the copy's effects along.
+function bcxEffectContent(effect) {
+	return JSON.stringify(bcxStableValue({
+		name: effect?.name ?? '',
+		img: effect?.img ?? '',
+		type: effect?.type ?? '',
+		system: effect?.system ?? {},
+		statuses: [...(effect?.statuses ?? [])].sort(),
+		transfer: !!effect?.transfer,
+		description: effect?.description ?? '',
+	}));
+}
+
+function bcxStableValue(value) {
+	if (Array.isArray(value)) return value.map(bcxStableValue);
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(Object.keys(value).sort().map((key) => [key, bcxStableValue(value[key])]));
+	}
+	return value;
+}
+
+function bcxPackEffects(doc) {
+	const src = doc?.toObject?.() ?? doc ?? {};
+	return Array.isArray(src.effects) ? src.effects : [];
+}
+
+/** Whether the owned item lacks one of the pack document's effects, or holds it changed. */
+function bcxEffectsDiffer(item, doc) {
+	const owned = new Map((item?._source?.effects ?? item?.toObject?.()?.effects ?? []).map((e) => [e?._id, e]));
+	return bcxPackEffects(doc).some((e) => {
+		const mine = owned.get(e?._id);
+		return !mine || bcxEffectContent(mine) !== bcxEffectContent(e);
+	});
+}
+
+/**
+ * Create the pack's missing effects on the owned item (same ids), rewrite changed
+ * ones whole, and drop bare one-condition effects Nimble's Migration 086 made for a
+ * condition the pack now ships. Effects the actor added are kept.
+ */
+async function bcxSyncItemEffects(item, doc) {
+	if (!item?.effects || typeof item.createEmbeddedDocuments !== 'function') return 0;
+	const wanted = bcxPackEffects(doc);
+	const create = [];
+	const update = [];
+	for (const effect of wanted) {
+		const mine = item.effects.get(effect._id);
+		if (!mine) create.push(foundry.utils.deepClone(effect));
+		else if (bcxEffectContent(mine._source ?? mine.toObject()) !== bcxEffectContent(effect)) {
+			const { name, img, system, statuses, transfer, description } = foundry.utils.deepClone(effect);
+			const entry = { _id: effect._id, name, img, statuses, transfer, description: description ?? '' };
+			setForcedReplacement(entry, 'system', system ?? {});
+			update.push(entry);
+		}
+	}
+	const wantedIds = new Set(wanted.map((e) => e._id));
+	const shipped = new Set(wanted.filter((e) => e.statuses?.length === 1).map((e) => e.statuses[0]));
+	const remove = [];
+	for (const mine of item.effects) {
+		if (wantedIds.has(mine.id)) continue;
+		const src = mine._source ?? mine.toObject();
+		const bare =
+			src.type === 'nimble' &&
+			!src.transfer &&
+			(src.statuses ?? []).length === 1 &&
+			!(src.system?.changes ?? []).length &&
+			!(src.system?.rules ?? []).length &&
+			!(src.system?.lastsUntil ?? []).length;
+		if (bare && shipped.has(src.statuses[0])) remove.push(mine.id);
+	}
+	try {
+		if (remove.length) await item.deleteEmbeddedDocuments('ActiveEffect', remove);
+		if (update.length) await item.updateEmbeddedDocuments('ActiveEffect', update);
+		if (create.length) await item.createEmbeddedDocuments('ActiveEffect', create, { keepId: true });
+	} catch (error) {
+		console.error(`[${MODULE_ID}] Could not sync the effects of ${item.name}`, error);
+		return 0;
+	}
+	return create.length + update.length + remove.length;
+}
+
 /**
  * The in-place update that brings owned `item` in line with pack `doc`, or null
  * when it already is. `changed` lists what differs (console / chat card).
@@ -13578,6 +13687,8 @@ function buildContentSyncUpdate(item, doc) {
 		poolLabelUpdates[`flags.${scope}.chargePools.${rule.identifier}.label`] = rule.label;
 		changed.push(`${rule.identifier} counter label`);
 	}
+	const effectsChanged = bcxEffectsDiffer(item, doc);
+	if (effectsChanged) changed.push('effects');
 	if (!changed.length) return null;
 
 	const update = { _id: item.id };
@@ -13586,7 +13697,7 @@ function buildContentSyncUpdate(item, doc) {
 	if (current.img !== pack.img) update.img = pack.img;
 	if (systemChanged) setForcedReplacement(update, 'system', system);
 	Object.assign(update, flagUpdates);
-	return { itemId: item.id, name: current.name, to: pack.name, changed, update };
+	return { itemId: item.id, name: current.name, to: pack.name, changed, update, effectsFrom: effectsChanged ? doc : null };
 }
 
 // Pack docs by uuid (the unwrapped fromUuid: pack data as shipped), plus the
@@ -13720,6 +13831,10 @@ async function applyCodexContentSync(plan, itemIds = null) {
 			'Item',
 			updates.map((entry) => entry.update),
 		);
+		for (const entry of updates) {
+			const owned = entry.effectsFrom ? actor.items?.get?.(entry.itemId) : null;
+			if (owned) await bcxSyncItemEffects(owned, entry.effectsFrom);
+		}
 	}
 	let added = [];
 	if (additions.length) {
@@ -14003,7 +14118,7 @@ export const __classRefresh__ = {
 //               Night targets Burst 3 and expends the lowest die; attacks against a
 //               Frightened target count two Fury Dice at max. Feral Pounce: 3+
 //               spaces moved while Raging → next attack +LVL, Prone offer on a hit.
-//   Cinderheart Ablaze (a toggleEffect on Immolating Fury): offered on Rage (or by
+//   Cinderheart Ablaze (an item effect on Immolating Fury): offered on Rage (or by
 //               using the feature), STR fire to self at once and at the start of
 //               each later turn, +1 per Fury Die on attacks, KEY fire aura (armor
 //               ignored, Smoldering with King of Fires) at turn end; ends with the
@@ -14117,49 +14232,82 @@ function cbzEffectData(effect) {
 	return effect?.flags?.[MODULE_ID]?.[CBZ_FLAG] ?? null;
 }
 
-// { item, rule } of the owned toggleEffect with this identifier (rage, ablaze, beast-form).
-function cbzToggle(actor, identifier) {
+// Nimble 0.11 states (Raging, Ablaze, Beast Form) are item effects: a `tags`
+// rule adds `self:<state>` while the effect's copy is on the actor, and the
+// item's Apply Effect self step (or this section) puts that copy there with the
+// item as origin. Copies Migration 088 made from old toggles have random ids, so
+// effects are found by the tag their `tags` rule adds.
+const CBZ_STATE_TAGS = { [CBZ_RAGE]: 'self:raging', [CBZ_ABLAZE]: 'self:ablaze', [CBZ_BEAST_FORM]: 'self:beast-form' };
+
+// The tags an ActiveEffect's `tags` rules add (source rules: an effect's rules are not prepared).
+function cbzEffectTags(effect) {
+	const tags = new Set();
+	for (const rule of Array.isArray(effect?.system?.rules) ? effect.system.rules : []) {
+		if (rule?.type !== 'tags' || rule.disabled) continue;
+		for (const tag of Array.isArray(rule.tags) ? rule.tags : []) {
+			const trimmed = String(tag ?? '').trim();
+			if (trimmed) tags.add(trimmed);
+		}
+	}
+	return tags;
+}
+
+// { item, effect } of the owned feature whose own (not transferred) effect gives this state.
+function cbzStateSource(actor, state) {
+	const tag = CBZ_STATE_TAGS[state];
 	for (const item of listEmbeddedItems(actor)) {
 		if (item?.type !== 'feature') continue;
-		const rule = cbzItemRules(item).find(
-			(r) => r?.type === 'toggleEffect' && String(r.identifier ?? '').trim() === identifier,
-		);
-		if (rule) return { item, rule };
+		const effect = cbzEffects(item).find((entry) => entry?.transfer !== true && cbzEffectTags(entry).has(tag));
+		if (effect) return { item, effect };
 	}
 	return null;
 }
 
-// The toggle's backing ActiveEffect (the system's flag shape), if any.
-function cbzToggleEffect(actor, identifier) {
-	const ruleId = cbzToggle(actor, identifier)?.rule?.id;
-	if (!ruleId) return null;
-	const scope = cbzSys();
-	return cbzEffects(actor).find((effect) => effect?.flags?.[scope]?.toggleEffectRuleId === ruleId) ?? null;
+// The actor's effect that gives this state (enabled first), if any.
+function cbzStateEffect(actor, state) {
+	const tag = CBZ_STATE_TAGS[state];
+	const found = cbzEffects(actor).filter((effect) => cbzEffectTags(effect).has(tag));
+	return found.find((effect) => !effect.disabled) ?? found[0] ?? null;
 }
 
-function cbzToggleOn(actor, identifier, tag) {
-	if (tag && actor?.tags?.has?.(tag)) return true;
-	const effect = cbzToggleEffect(actor, identifier);
+function cbzStateOn(actor, state) {
+	if (actor?.tags?.has?.(CBZ_STATE_TAGS[state])) return true;
+	const effect = cbzStateEffect(actor, state);
 	return !!effect && !effect.disabled;
 }
 
 function cbzIsRaging(actor) {
-	return cbzToggleOn(actor, CBZ_RAGE, 'self:raging');
+	return cbzStateOn(actor, CBZ_RAGE);
 }
 
 function cbzIsAblaze(actor) {
-	return cbzToggleOn(actor, CBZ_ABLAZE, 'self:ablaze');
+	return cbzStateOn(actor, CBZ_ABLAZE);
 }
 
 function cbzInBeastForm(actor) {
-	return cbzToggleOn(actor, CBZ_BEAST_FORM, 'self:beast-form');
+	return cbzStateOn(actor, CBZ_BEAST_FORM);
 }
 
 function cbzIsRageEffect(effect) {
-	const actor = effect?.parent;
-	if (actor?.type !== 'character') return false;
-	const ruleId = cbzToggle(actor, CBZ_RAGE)?.rule?.id;
-	return !!ruleId && effect?.flags?.[cbzSys()]?.toggleEffectRuleId === ruleId;
+	return effect?.parent?.type === 'character' && cbzEffectTags(effect).has(CBZ_STATE_TAGS[CBZ_RAGE]);
+}
+
+// Rage: the system's (identifier `rage`), or a feature whose effect makes you Raging.
+function cbzIsRageItem(item) {
+	if (item?.type !== 'feature' || item.actor?.type !== 'character') return false;
+	const identifier = item.system?.identifier || String(item.name ?? '').slugify?.({ strict: true });
+	if (identifier === CBZ_RAGE) return true;
+	return cbzEffects(item).some((effect) => effect?.transfer !== true && cbzEffectTags(effect).has(CBZ_STATE_TAGS[CBZ_RAGE]));
+}
+
+// Fields of an item effect its copy on the actor does not keep (as the system copies it).
+const CBZ_NOT_COPIED = ['_id', '_stats', 'origin', 'start', 'transfer', 'disabled', 'sort', 'folder'];
+
+// The data of the item effect's copy for its holder, with the item as origin.
+function cbzStateCopy(item, effect, extra = {}) {
+	const data = foundry.utils.deepClone(typeof effect.toObject === 'function' ? effect.toObject() : effect);
+	for (const key of CBZ_NOT_COPIED) delete data[key];
+	return foundry.utils.mergeObject({ ...data, type: data.type ?? 'nimble', origin: item.uuid, disabled: false }, extra, { inplace: false });
 }
 
 // KEY: the highest key-stat modifier (the system's `@key`).
@@ -14778,32 +14926,21 @@ async function cbzSetAblaze(actor) {
 		ui.notifications?.info(`${actor.name} is already Ablaze (end it from the effects panel).`);
 		return false;
 	}
-	const found = cbzToggle(actor, CBZ_ABLAZE);
-	if (!found?.rule?.id) {
-		ui.notifications?.warn(`${actor.name}'s Immolating Fury has no Ablaze toggle — refresh the Codex class content.`);
+	const found = cbzStateSource(actor, CBZ_ABLAZE);
+	if (!found) {
+		ui.notifications?.warn(`${actor.name}'s Immolating Fury has no Ablaze effect — refresh the Codex class content.`);
 		return false;
 	}
 	const combat = game.combat?.started ? game.combat : null;
 	const mark = { combatId: combat?.id ?? null, round: combat?.round ?? null };
-	const scope = cbzSys();
-	const existing = cbzToggleEffect(actor, CBZ_ABLAZE);
+	const existing = cbzStateEffect(actor, CBZ_ABLAZE);
 	let effectId = existing?.id ?? null;
 	if (existing) {
 		await existing.update({ disabled: false, [`flags.${MODULE_ID}.${CBZ_FLAG}.ablaze`]: mark });
 	} else {
-		const [created] =
-			(await actor.createEmbeddedDocuments('ActiveEffect', [
-				{
-					name: found.rule.label || 'Ablaze',
-					img: found.item.img,
-					disabled: false,
-					origin: found.item.uuid,
-					flags: {
-						[scope]: { toggleEffectRuleId: found.rule.id, toggleEffectItemId: found.item.id },
-						[MODULE_ID]: { [CBZ_FLAG]: { ablaze: mark } },
-					},
-				},
-			])) ?? [];
+		// The item's own Ablaze effect (it ends with Raging, on death, a rest or the encounter's end).
+		const data = cbzStateCopy(found.item, found.effect, { flags: { [MODULE_ID]: { [CBZ_FLAG]: { ablaze: mark } } } });
+		const [created] = (await actor.createEmbeddedDocuments('ActiveEffect', [data])) ?? [];
 		effectId = created?.id ?? null;
 	}
 	const amount = Math.max(0, getAbilityMod(actor, 'strength'));
@@ -14834,7 +14971,7 @@ registerUndoHandler('codexAblazeUndo', async ({ actorUuid, effectId, value, temp
 
 // Start of the Cinderheart's turn: burn, unless this is the first turn Ablaze.
 async function cbzAblazeTurnStart(actor, combat) {
-	const effect = cbzToggleEffect(actor, CBZ_ABLAZE);
+	const effect = cbzStateEffect(actor, CBZ_ABLAZE);
 	if (!effect || effect.disabled || !combat?.id) return null;
 	const mark = cbzEffectData(effect)?.ablaze ?? {};
 	if (mark.combatId !== combat.id) {
@@ -14909,10 +15046,19 @@ registerUndoHandler('codexAuraUndo', async ({ entries }) => {
 	return restored ? `Restored ${restored} creature${restored === 1 ? '' : 's'}.` : false;
 });
 
-// The Rage ended (effect deleted or switched off): Ablaze goes with it.
-async function cbzOnRageEnded(actor) {
-	const ablaze = cbzToggleEffect(actor, CBZ_ABLAZE);
-	if (!ablaze || ablaze.disabled) return false;
+// Whether the Ablaze effect ends by itself when an effect named `name` ends (its
+// "until Raging ends" Lasts Until; copies made from an old toggle lack it).
+function cbzEndsWith(effect, name) {
+	const wanted = String(name ?? '').trim().toLowerCase();
+	const moments = Array.isArray(effect?.system?.lastsUntil) ? effect.system.lastsUntil : [];
+	return !!wanted && moments.some((moment) => moment?.event === 'effectEnds' && String(moment.effectName ?? '').trim().toLowerCase() === wanted);
+}
+
+// The Rage ended (effect deleted or switched off): Ablaze goes with it. An Ablaze
+// with an "until Raging ends" moment is ended by the system (with its own line).
+async function cbzOnRageEnded(actor, rage) {
+	const ablaze = cbzStateEffect(actor, CBZ_ABLAZE);
+	if (!ablaze || ablaze.disabled || cbzEndsWith(ablaze, rage?.name)) return false;
 	await ablaze.delete();
 	postSummonChat(actor, `<p>${escapeHtml(actor.name)}'s Rage ends — no longer <strong>Ablaze</strong>.</p>`, 'Immolating Fury');
 	return true;
@@ -15658,11 +15804,15 @@ async function cbzPrepareBlazeBreaker(item, actor, plan) {
 				save.on ??= {};
 				for (const outcome of ['failedSave', 'passedSave']) {
 					save.on[outcome] ??= [];
-					if (save.on[outcome].some((child) => child?.type === 'condition' && child.condition === 'smoldering')) continue;
+					if (save.on[outcome].some((child) => ['condition', 'applyEffect'].includes(child?.type) && child.condition === 'smoldering')) continue;
+					// Nimble 0.11: an Apply Effect step naming the condition (no item effect) applies it from the card.
 					save.on[outcome].push({
 						id: `bcxKingOfFires${outcome}`,
-						type: 'condition',
+						type: 'applyEffect',
+						effectId: null,
 						condition: 'smoldering',
+						recipient: 'targets',
+						tempHealingNodeId: null,
 						parentContext: outcome,
 						parentNode: save.id,
 					});
@@ -15708,7 +15858,7 @@ async function cbzSacrificeForLastBlaze(actor, amount, flavor) {
 	const before = cbzHp(actor);
 	const entry = cbzFuryEntry(actor);
 	const faces = cbzFuryFaces(actor, entry);
-	const rage = cbzToggleEffect(actor, CBZ_RAGE);
+	const rage = cbzStateEffect(actor, CBZ_RAGE);
 	const rageData = rage ? rage.toObject?.() ?? null : null;
 	if (entry && faces.length) await cbzWriteFury(actor, entry, [], { announce: false });
 	if (rage) await rage.delete();
@@ -16042,11 +16192,8 @@ function cbzDamageRollClass() {
 
 function cbzOnUseItem(item, _card, context) {
 	void (async () => {
-		const actor = item?.actor;
-		const isRage =
-			actor?.type === 'character' &&
-			cbzItemRules(item).some((rule) => rule?.type === 'toggleEffect' && String(rule.identifier ?? '').trim() === CBZ_RAGE);
-		if (isRage) await cbzAfterRage(actor);
+		// A free Rage the system folds onto another card still fires this (no card).
+		if (cbzIsRageItem(item)) await cbzAfterRage(item.actor);
 		await cbzWarriorPoetCheck(item, context);
 	})().catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker item follow-up failed`, error));
 }
@@ -16270,13 +16417,15 @@ function installCodexBerserker() {
 		if (!isActingGM()) return;
 		void cbzOnTurnEnd(combatant).catch((error) => console.warn(`[${MODULE_ID}] Codex Berserker turn end failed`, error));
 	});
-	Hooks.on('deleteActiveEffect', (effect) => {
-		if (!isActingGM() || !cbzIsRageEffect(effect)) return;
-		void cbzOnRageEnded(effect.parent).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
+	Hooks.on('deleteActiveEffect', (effect, options) => {
+		// A Rage while Raging replaces the effect (Nimble 0.11): that is no end.
+		if (!isActingGM() || options?.nimbleConditionReplaced || !cbzIsRageEffect(effect)) return;
+		void cbzOnRageEnded(effect.parent, effect).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
 	});
 	Hooks.on('updateActiveEffect', (effect, changes) => {
 		if (!isActingGM() || changes?.disabled !== true || !cbzIsRageEffect(effect)) return;
-		void cbzOnRageEnded(effect.parent).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
+		// Switched off (not ended): the system fires no "Raging ends" moment, so end Ablaze here.
+		void cbzOnRageEnded(effect.parent, null).catch((error) => console.warn(`[${MODULE_ID}] Ablaze end failed`, error));
 	});
 	Hooks.on('preUpdateActor', (actor, changes, options) => {
 		if (actor?.type !== 'character' || cbzWoundsIn(changes) === null || !options) return;

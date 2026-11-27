@@ -65,7 +65,6 @@
 					"id": "banishSave1",
 					"type": "savingThrow",
 					"savingThrowType": "strength",
-					"saveType": "strength",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {

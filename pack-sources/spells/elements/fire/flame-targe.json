@@ -5,7 +5,36 @@
 	"system": {
 		"macro": "",
 		"identifier": "flame-targe",
-		"rules": [],
+		"rules": [
+			{
+				"type": "defendOption",
+				"disabled": false,
+				"id": "HlXrHOph9kqC56jd",
+				"identifier": "",
+				"label": "Flame Targe",
+				"predicate": {},
+				"priority": 1,
+				"way": "freeDefend",
+				"attackDelivery": "any",
+				"outcome": "none",
+				"armorBonus": "",
+				"useReroll": false,
+				"attackerEffectId": "",
+				"reminder": "Until the end of your next turn, melee attackers that hit you take KEY damage (ignoring armor) and gain Smoldering.",
+				"useItem": true,
+				"withInterpose": false,
+				"wholeRound": false,
+				"range": 2,
+				"chargePoolIdentifier": "",
+				"chargeCost": 1,
+				"actionCost": 0,
+				"manaCost": 0,
+				"woundCost": 0,
+				"upcastArmor": 0,
+				"alsoInterpose": false,
+				"oncePerTurn": false
+			}
+		],
 		"activation": {
 			"acquireTargetsFromTemplate": false,
 			"cost": {

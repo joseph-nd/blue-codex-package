@@ -23,8 +23,7 @@
 				{
 					"id": "jokulhlaupSave1",
 					"type": "savingThrow",
-					"savingThrowType": "strength",
-					"saveType": "dexterity",
+					"savingThrowType": "dexterity",
 					"parentContext": null,
 					"parentNode": null,
 					"on": {

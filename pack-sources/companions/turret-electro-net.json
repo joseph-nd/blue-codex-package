@@ -185,8 +185,10 @@
 									},
 									{
 										"id": "elnetBasicSlow1",
-										"type": "condition",
-										"condition": "slowed",
+										"type": "applyEffect",
+										"effectId": "BcEbBC0h3svdiQQL",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "hit",
 										"parentNode": "elnetBasicDmg1"
 									}
@@ -211,7 +213,37 @@
 				"description": "<p><strong>1 Action (or on deploy), Reach: 6.</strong> Damage 1d6 Lightning. On hit: target is Slowed, 1 turn.</p><hr><p><em>[A] Applies Slowed on a hit.</em></p><p><em>[A] Overclocked bonuses are added by the module.</em></p>",
 				"subtype": "action"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"_id": "BcEbBC0h3svdiQQL",
+					"name": "Slowed",
+					"img": "systems/nimble/assets/icons/slowed.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"slowed"
+					],
+					"flags": {},
+					"folder": null
+				}
+			],
 			"folder": null,
 			"sort": 0,
 			"flags": {},
@@ -269,29 +301,33 @@
 						{
 							"id": "elnetSpecSave1",
 							"type": "savingThrow",
-							"saveType": "strength",
 							"parentContext": null,
 							"parentNode": null,
 							"on": {
 								"failedSave": [
 									{
 										"id": "elnetSpecRestr1",
-										"type": "condition",
-										"condition": "restrained",
+										"type": "applyEffect",
+										"effectId": "uioDJW3o14fBMxkd",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "failedSave",
 										"parentNode": "elnetSpecSave1"
 									},
 									{
 										"id": "elnetSpecDazed1",
-										"type": "condition",
-										"condition": "dazed",
+										"type": "applyEffect",
+										"effectId": "F8ZaE6gHfDCLFTcS",
+										"recipient": "targets",
+										"tempHealingNodeId": null,
 										"parentContext": "failedSave",
 										"parentNode": "elnetSpecSave1"
 									}
 								],
 								"passedSave": []
 							},
-							"sharedRolls": []
+							"sharedRolls": [],
+							"savingThrowType": "strength"
 						}
 					],
 					"showDescription": true,
@@ -309,7 +345,66 @@
 				"description": "<p><strong>2 Actions, Costs 1 Toolbelt scrap, Reach: 6, Blast: 2. The turret is destroyed afterwards.</strong> Damage <strong>INTd6</strong>. The area becomes Slowed Terrain for 2 rounds. Creatures that start or end their turn on a space, or enter a space on a turn, take INT Lightning damage (ignoring armor) and must make a STR save; on a fail they are Restrained and Dazed for 1 turn.</p><hr><p><em>[A] Spends 1 of the Engineer's Toolbelt scraps (chat card with Undo) and asks before destroying the turret afterwards.</em></p><p><em>[A] Rolls INT d6 (plus Overclocked) and posts the STR save (fail: Restrained + Dazed) — reuse its save button whenever a creature triggers the area.</em></p><p><em>[M] Mark the Slowed Terrain and apply the INT Lightning (ignores armor) as creatures trigger it.</em></p>",
 				"subtype": "action"
 			},
-			"effects": [],
+			"effects": [
+				{
+					"_id": "F8ZaE6gHfDCLFTcS",
+					"name": "Dazed",
+					"img": "systems/nimble/assets/icons/dazed.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"dazed"
+					],
+					"flags": {},
+					"folder": null
+				},
+				{
+					"_id": "uioDJW3o14fBMxkd",
+					"name": "Restrained",
+					"img": "icons/svg/net.svg",
+					"type": "nimble",
+					"system": {
+						"changes": [],
+						"rules": [],
+						"lastsUntil": [],
+						"escape": {
+							"dc": "",
+							"saves": [
+								"strength",
+								"dexterity"
+							]
+						},
+						"tempHp": null,
+						"minor": false
+					},
+					"description": "",
+					"disabled": false,
+					"origin": null,
+					"transfer": false,
+					"statuses": [
+						"restrained"
+					],
+					"flags": {},
+					"folder": null
+				}
+			],
 			"folder": null,
 			"sort": 10,
 			"flags": {
