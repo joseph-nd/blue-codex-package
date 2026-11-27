@@ -1,0 +1,233 @@
+CHANGELOG.md
+  s_2fe080c4c8e661::t_1c78d8715d4dd5 10-32
+module.json
+  s_2fe080c4c8e661::t_77a62604bba294 5,17,25-26
+pack-sources/classFeatures/berserker/berserker-subclasses/path-of-the-cinderheart/immolating-fury.json
+  s_2fe080c4c8e661::t_515d137e527c0c 8,22-32,45,55-141
+pack-sources/classFeatures/berserker/berserker-subclasses/path-of-the-lycan/beast-form.json
+  s_2fe080c4c8e661::t_64e4ab0c779293 8,22-32,45,55-130
+pack-sources/classFeatures/berserker/berserker-subclasses/path-of-the-lycan/howl-in-the-night.json
+  s_2fe080c4c8e661::t_de175dd01feddb 34-37,77-107
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/endothermic-shell.json
+  s_2fe080c4c8e661::t_10130c01b6b84d 66-69,77-80,86-87,110-169
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/glue-shell.json
+  s_2fe080c4c8e661::t_4d7fe133c58b97 45-48,55-56,79-109
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/hidden-mine.json
+  s_2fe080c4c8e661::t_5452bc1f3a9996 86-87
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/rocket-boots.json
+  s_2fe080c4c8e661::t_496d90bac01aa8 57-60,88-118
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/slick-shoes.json
+  s_2fe080c4c8e661::t_ab18ab710b00f6 45-48,55-56,79-109
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/surprise-battering-ram.json
+  s_2fe080c4c8e661::t_b3ff60bcd4e4a6 56-59,87-117
+pack-sources/classFeatures/engineer/engineer-gadget-toolbelt/tool-wrench.json
+  s_2fe080c4c8e661::t_be83cc48fb7ae6 56-59,87-117
+pack-sources/classFeatures/engineer/engineer-kit-options/air-blast.json
+  s_2fe080c4c8e661::t_50ab64d7cd7e24 75-76
+pack-sources/classFeatures/engineer/engineer-kit-options/concussion-grenade.json
+  s_2fe080c4c8e661::t_4af39f3c153204 45-48,54-57,63-66,74-77,83-84,107-195
+pack-sources/classFeatures/engineer/engineer-kit-options/flame-blast.json
+  s_2fe080c4c8e661::t_3da03473691cf2 57-60,88-118
+pack-sources/classFeatures/engineer/engineer-kit-options/flame-grenade.json
+  s_2fe080c4c8e661::t_77d652e2de99f5 56-59,87-117
+pack-sources/classFeatures/engineer/engineer-kit-options/glob-shot.json
+  s_2fe080c4c8e661::t_5d7194b76cf205 38-41,66-96
+pack-sources/classFeatures/engineer/engineer-kit-options/system-shock.json
+  s_2fe080c4c8e661::t_e1d8f1d337a9a8 66-69,77-80,86-87,110-169
+pack-sources/classFeatures/specter/specter-rites/haunt.json
+  s_2fe080c4c8e661::t_de55f9badccbf3 25-28,55-85
+pack-sources/classFeatures/specter/specter-subclasses/eidolon-of-iron/chain.json
+  s_2fe080c4c8e661::t_70426c409f103e 25-28,55-85
+pack-sources/classFeatures/specter/specter-subclasses/eidolon-of-iron/soul-forged.json
+  s_2fe080c4c8e661::t_98c3507500a6e1 41-51,64,74-138
+pack-sources/classFeatures/specter/specter-subclasses/eidolon-of-suffering/meekness.json
+  s_2fe080c4c8e661::t_1c72d7d6148568 25-28,55-85
+pack-sources/classFeatures/zephyr/zephyr-subclasses/way-of-air/air-dash.json
+  s_2fe080c4c8e661::t_482addfb828d90 26
+pack-sources/classFeatures/zephyr/zephyr-subclasses/way-of-water/creeping-ice.json
+  s_2fe080c4c8e661::t_3dff66422665a9 26
+pack-sources/classFeatures/zephyr/zephyr-subclasses/way-of-water/oceans-prison.json
+  s_2fe080c4c8e661::t_e0d031d53c056b 26
+pack-sources/companions/turret-electro-net.json
+  s_2fe080c4c8e661::t_8f26da558dde19 188-191,216-246,310-313,319-322,329-330,348-407
+pack-sources/companions/turret-rocket.json
+  s_2fe080c4c8e661::t_b136ed15bb10e3 208-209,302-303
+pack-sources/companions/turret-thumper.json
+  s_2fe080c4c8e661::t_8084071f6526c2 198-201,209-212,218-219,237-296,370-373,379-380,398-428
+pack-sources/items/engineer/gadgets/endothermic-shell.json
+  s_2fe080c4c8e661::t_ea706fd837ea06 66-69,77-80,86-87,137-196
+pack-sources/items/engineer/gadgets/glue-shell.json
+  s_2fe080c4c8e661::t_6f8aa2dc8674a0 45-48,55-56,106-136
+pack-sources/items/engineer/gadgets/hidden-mine.json
+  s_2fe080c4c8e661::t_f9c4412b7576c7 77-78
+pack-sources/items/engineer/gadgets/slick-shoes.json
+  s_2fe080c4c8e661::t_b1ae857f4a0bd6 45-48,55-56,106-136
+pack-sources/items/engineer/kits/flamethrower.json
+  s_2fe080c4c8e661::t_d6539073a3851a 53-56,124-154
+pack-sources/spells/elements/earth/obsidian-spikes.json
+  s_2fe080c4c8e661::t_ff6c85d71b7dc5 26,54-57,132-162
+pack-sources/spells/elements/earth/to-sand.json
+  s_2fe080c4c8e661::t_1065041278cbfe 26,33-36,42-45,107-166
+pack-sources/spells/elements/fire/enchant-weapon.json
+  s_2fe080c4c8e661::t_9fc1b4ace766b9 22-32,88-102,120-188
+pack-sources/spells/elements/fire/flame-dart.json
+  s_2fe080c4c8e661::t_21df321d458062 44-47,110-140
+pack-sources/spells/elements/fire/flame-targe.json
+  s_2fe080c4c8e661::t_2bc733ad93f12a 8-37
+pack-sources/spells/elements/fire/flame-wall.json
+  s_2fe080c4c8e661::t_b0921c96ef21e0 43-46,123-153
+pack-sources/spells/elements/fire/gout-of-fire.json
+  s_2fe080c4c8e661::t_c8ec2a193b2d29 26
+pack-sources/spells/elements/fire/meteor-swarm.json
+  s_2fe080c4c8e661::t_70da00b8fc8cdb 44-47,95-125
+pack-sources/spells/elements/fire/pyroclasm.json
+  s_2fe080c4c8e661::t_0b5f1d6f190443 26
+pack-sources/spells/elements/ice/arctic-annihilation.json
+  s_2fe080c4c8e661::t_715c183676dfa9 43-46,94-124
+pack-sources/spells/elements/ice/frost-shield.json
+  s_2fe080c4c8e661::t_75066f50e0e074 8-37,51-69,116-167
+pack-sources/spells/elements/ice/ice-ray.json
+  s_2fe080c4c8e661::t_dfdce4c693efb6 43-46,110-140
+pack-sources/spells/elements/lightning/arc-lightning.json
+  s_2fe080c4c8e661::t_cf7a63b55d411e 70-71
+pack-sources/spells/elements/lightning/electrocharge.json
+  s_2fe080c4c8e661::t_0f41d6e217ac07 22-32,73-87,91-105,110-199
+pack-sources/spells/elements/lightning/lightning-bolt.json
+  s_2fe080c4c8e661::t_249d29a5281211 26
+pack-sources/spells/elements/lightning/ride-the-lightning.json
+  s_2fe080c4c8e661::t_8e3f30492fbf58 51-68,141-212
+pack-sources/spells/elements/lightning/seething-storm.json
+  s_2fe080c4c8e661::t_db820b9ff6467a 43-51,94-163
+pack-sources/spells/elements/lightning/spark-counter.json
+  s_2fe080c4c8e661::t_ba30f210dfc9c6 8-37,54-57,112-142
+pack-sources/spells/elements/water/jokulhlaup.json
+  s_2fe080c4c8e661::t_70c70b70999a45 26
+pack-sources/spells/elements/wind/breath-of-life.json
+  s_2fe080c4c8e661::t_6fba42384f35c6 22-31
+pack-sources/spells/elements/wind/fly.json
+  s_2fe080c4c8e661::t_7d19208f1ef14d 22-32,101-115,120-172
+pack-sources/spells/elements/wind/razor-wind.json
+  s_2fe080c4c8e661::t_deb8999a4d16fb 70-71
+pack-sources/spells/elements/wind/updraft.json
+  s_2fe080c4c8e661::t_55ac6a1596487e 43-63,125-167
+pack-sources/spells/elements/wind/wind-barrier.json
+  s_2fe080c4c8e661::t_1f02458cb72159 8-67
+pack-sources/spells/ether/domination/compel.json
+  s_2fe080c4c8e661::t_5145d3c3b755f8 26,33-36,101-131
+pack-sources/spells/ether/domination/mistrust.json
+  s_2fe080c4c8e661::t_93d37b36279544 26
+pack-sources/spells/ether/domination/overload.json
+  s_2fe080c4c8e661::t_223a2aa07ac93c 37
+pack-sources/spells/ether/domination/panic.json
+  s_2fe080c4c8e661::t_cf592e3572b637 67,74-77,151-181
+pack-sources/spells/ether/illusion/color-spray.json
+  s_2fe080c4c8e661::t_5af16c5fe12f81 43-46,88-141
+pack-sources/spells/ether/illusion/conjure-nightmare.json
+  s_2fe080c4c8e661::t_5e1fac608d3ff3 26,33-36,44-47,123-182
+pack-sources/spells/ether/illusion/hypnotic-pattern.json
+  s_2fe080c4c8e661::t_3961bdeb0b9859 26
+pack-sources/spells/ether/illusion/imagined-burden.json
+  s_2fe080c4c8e661::t_ddccf99c61776e 26
+pack-sources/spells/ether/inspiration/chaotic-ether.json
+  s_2fe080c4c8e661::t_dd01391ac73130 43-46,129-159
+pack-sources/spells/radiance/nature/doom-bloom.json
+  s_2fe080c4c8e661::t_e4cb6e232d2a8e 45-48,109-139
+pack-sources/spells/radiance/nature/insect-swarm.json
+  s_2fe080c4c8e661::t_649fd30f39ec76 44-47,131-173
+pack-sources/spells/radiance/nature/vine-surge.json
+  s_2fe080c4c8e661::t_1728c820e02eab 44-47,62-65,139-198
+pack-sources/spells/radiance/nature/vinelash.json
+  s_2fe080c4c8e661::t_2e2550f4414955 44-47,110-152
+pack-sources/spells/radiance/protection/wardens-embrace.json
+  s_2fe080c4c8e661::t_f350adae18ff26 26
+pack-sources/spells/radiance/radiant/shield-of-justice.json
+  s_2fe080c4c8e661::t_acfe8304d77355 8-37
+pack-sources/spells/radiance/radiant/true-strike.json
+  s_2fe080c4c8e661::t_d3334853974aea 22-32,67-112
+pack-sources/spells/radiance/radiant/warding-bond.json
+  s_2fe080c4c8e661::t_de1bd05460af7d 22-32,80-92,103-165
+pack-sources/spells/ruin/blood/enfeebling-blood.json
+  s_2fe080c4c8e661::t_b4f46565edfe3a 44-47,53-56,141-224
+pack-sources/spells/ruin/curse/defile-eyes.json
+  s_2fe080c4c8e661::t_1c0abf986258f2 25-28,79-121
+pack-sources/spells/ruin/curse/doom.json
+  s_2fe080c4c8e661::t_589f44e530e6fc 25-28,69-111
+pack-sources/spells/ruin/curse/weaken-knees.json
+  s_2fe080c4c8e661::t_199f5a716b3cee 25-28,69-99
+pack-sources/spells/ruin/death/death-shackle.json
+  s_2fe080c4c8e661::t_f4154e039289b8 43-46,131-161
+pack-sources/spells/ruin/death/deathly-cry.json
+  s_2fe080c4c8e661::t_f0eae472294c18 43-46,88-118
+pack-sources/spells/ruin/shadow/dread-visage.json
+  s_2fe080c4c8e661::t_2c5c140f788078 22-32,72-86,91-193
+pack-sources/spells/secret/fire/dragonform.json
+  s_2fe080c4c8e661::t_e48e9d334b94cb 22-41,81-164
+pack-sources/spells/secret/lightning/alacrity.json
+  s_2fe080c4c8e661::t_bce3919c842717 22-32,81-111
+pack-sources/spells/secret/lightning/electrickery.json
+  s_2fe080c4c8e661::t_b0d7cb9539d0af 26
+pack-sources/spells/secret/shadow/memory-veil.json
+  s_2fe080c4c8e661::t_82e8003e7bd93c 26,48-56,120-160
+pack-sources/spells/secret/shadow/unspeakable-word.json
+  s_2fe080c4c8e661::t_2d79b5e5664e2f 26
+pack-sources/spells/secret/wind/greater-windform.json
+  s_2fe080c4c8e661::t_890641206011c6 22-32,87-142
+pack-sources/spells/secret/wind/lesser-windform.json
+  s_2fe080c4c8e661::t_3b467548a80836 22-41,77-160
+package.json
+  s_2fe080c4c8e661::t_0ace22585211e9 3
+scripts/main.mjs
+  s_2fe080c4c8e661::t_16647d9b53637f 8541-8546,8557,10519,10576,11070-11071,11278,12364-12368,12374-12377,12381-12382,12703-12705,12710,13170-13173,13557-13641,13690-13691,13700,13834-13837,14121,14235-14257,14260-14261,14266-14270,14273-14275,14280,14284,14288,14292-14310,14929-14931,14936,14941-14943,14974,15049-15061,15807-15808,15811-15812,15814-15815,15861,16195-16196,16420-16423,16427-16428
+tests/berserker/content.test.mjs
+  s_c4a1061a3245f3::t_649435ee8e98e0 50,52-57,75-76,78-81,105-117
+tests/berserker/helpers.mjs
+  s_c4a1061a3245f3::t_ef455f73992a5f 57-58,125,128-129
+tests/berserker/runtime.test.mjs
+  s_c4a1061a3245f3::t_9aa2b33ba5e6ed 312-313,316-319,364,366-367,369-373,377-387
+tests/content-sync/content-sync.test.mjs
+  s_d281496f7ea459::t_ce3038b1375419 76-91
+tests/harness/documents.mjs
+  s_2fe080c4c8e661::t_ac7b70ca8731fc 175-212,218-273
+tests/shadowmancer/shadowfrost.test.mjs
+  s_e674d6aecf05ac::t_6e2826507ac4a1 46-47,49-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "66d90bcf33da3cbcc9b69c636342b267925269a8",
+  "prompts": {},
+  "sessions": {
+    "s_2fe080c4c8e661": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2fb20842-04c7-4a94-aa63-adfe41297c47",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    },
+    "s_c4a1061a3245f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "32a7d1c9-5601-4c6d-943b-aac3749b07f3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    },
+    "s_d281496f7ea459": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "244edbc9-226c-492a-ab0e-fe9bf57202fc",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    },
+    "s_e674d6aecf05ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "982b2026-7b77-4218-8de2-8c3bf80f98b9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Joseph <virtue.3t@gmail.com>"
+    }
+  }
+}
